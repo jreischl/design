@@ -1,0 +1,3747 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Med Trends – ControlCheck</title>
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --red:         #f24335;
+      --green:       #16b434;
+      --yellow:      #f5dd67;
+      --orange:      #f5a623;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #757575;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* ── Custom element display ─────────────────── */
+    app-component, navigation, nav-menu, user-menu,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-card, mat-drawer-container,
+    mat-drawer-content, mat-drawer, router-outlet { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex;
+      align-items: center;
+      border-radius: var(--radius);
+      flex-direction: row;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    /* ── nav-menu .navigation ───────────────────────────── */
+    .navigation {
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin-left: 1rem;
+      padding-top: 0;
+    }
+    .mdc-button.mat-mdc-button {
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--blue-dark);
+      cursor: pointer;
+      padding: 0 12px;
+      height: 48px;
+      border-radius: var(--radius);
+      transition: background .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+      white-space: nowrap;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    /* Active top-nav item */
+    .nav-link.active { color: var(--blue-dark); }
+    .nav-link.active .mdc-button__label {
+      color: inherit;
+      box-shadow: 0 2px;
+      align-items: center;
+      display: inline-flex;
+      line-height: 32px;
+      justify-content: center;
+    }
+    .mdc-button__label { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-chevron { display: none; }
+
+    /* badge */
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 14px; height: 14px;
+      text-align: center;
+      line-height: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+
+    /* ── user-menu ──────────────────────────────────────── */
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center;
+      background-color: transparent;
+      border: none;
+      border-radius: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      transition: background-color .2s ease-in-out;
+      padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark);
+      font-size: .813rem;
+      letter-spacing: .01rem;
+      line-height: 1.25rem;
+      min-height: 40px;
+      padding-left: 1rem;
+      white-space: normal;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .header-customer-fullName  { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark);
+      color: #fff;
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s;
+      padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    /* inline icon button (user avatar wrapper) */
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    /* ══════════════════════════════════════════════
+       MATERIAL TABS  (Tabular / Visualized Data)
+    ══════════════════════════════════════════════ */
+    .view-tab-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+      margin: 1rem 0;
+    }
+    .tab-bar-tabs { display: flex; gap: 1rem; }
+    .tab-bar-download { flex-shrink: 0; }
+    .view-tab-bar .mdc-tab {
+      min-width: 90px;
+      padding: 0;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border: none;
+      background: none;
+      outline: none;
+      white-space: nowrap;
+      cursor: pointer;
+      height: 48px;
+      font-family: var(--font);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-54);
+      position: relative;
+      transition: color .15s;
+    }
+    .view-tab-bar .mdc-tab:hover { color: var(--text-87); }
+    .view-tab-bar .mdc-tab.mdc-tab--active { color: var(--blue-dark); }
+    .view-tab-bar .mdc-tab__content {
+      display: flex; align-items: center;
+      justify-content: center; height: 100%;
+      gap: 8px; pointer-events: none;
+    }
+    .view-tab-bar .mdc-tab .mat-icon {
+      font-size: 18px; width: 18px; height: 18px;
+    }
+    .view-tab-bar .mdc-tab-indicator {
+      display: flex; position: absolute;
+      top: 0; left: 0;
+      justify-content: center;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .view-tab-bar .mdc-tab-indicator__content--underline {
+      align-self: flex-end;
+      width: 100%;
+      border-top-style: solid;
+      border-top-width: 2px;
+      border-color: var(--blue-dark);
+      transform: scaleX(0);
+      transition: transform 250ms cubic-bezier(.4,0,.2,1);
+      opacity: 0;
+    }
+    .view-tab-bar .mdc-tab-indicator--active .mdc-tab-indicator__content--underline {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+
+
+
+    /* ── Users table: horizontal scroll + sticky columns ── */
+    #users-table-view .data-table-wrap {
+      overflow-x: auto;
+    }
+    #users-table-view .data-table {
+      width: max-content;
+      min-width: 100%;
+    }
+    /* Sticky column: User (col 1) */
+    #users-table-view .data-table th:nth-child(1),
+    #users-table-view .data-table td:nth-child(1) {
+      position: sticky; left: 0; z-index: 2;
+      background: #fff;
+      box-shadow: 2px 0 4px rgba(0,0,0,.06);
+    }
+    #users-table-view .data-table thead th:nth-child(1) { z-index: 3; }
+    #users-table-view .data-table tbody tr:hover td:nth-child(1) {
+      background: #e7f4fb;
+    }
+
+    /* Focus user row (Level 3 — the user we drilled in from) */
+    #users-table-view .data-table tbody tr.focus-user td {
+      background: #e7f4fb;
+      font-weight: 600;
+    }
+    #users-table-view .data-table tbody tr.focus-user td:nth-child(1) {
+      background: #e7f4fb;
+      box-shadow: inset 3px 0 0 #0096b8, 2px 0 4px rgba(0,0,0,.06);
+    }
+
+    /* ── Comparison Score filter bar ──────────── */
+    .pill-filters-row {
+      display: flex; align-items: center; gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    /* Pillter secondary — shared + L3 panel filter bars (below the tabs) */
+    .comp-score-filter {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 32px; padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 24px;
+      background: transparent;
+      font-family: var(--font); font-size: 14px; font-weight: 600;
+      color: #00718a; cursor: pointer; white-space: nowrap;
+      transition: background-color .15s, border-color .15s, color .15s;
+    }
+    .comp-score-filter:hover { background: #e7f4f8; }
+    /* Label prefix ('Context:', 'Event Type:', etc.) sits inside the chip */
+    .comp-score-filter .cs-label {
+      color: #00718a; font-weight: 500; opacity: .85;
+    }
+    .comp-score-filter .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #00718a; }
+    /* Selected (secondary) — teal text only, no background fill */
+    .pill-filter-wrap.selected > .comp-score-filter {
+      color: #0096b8;
+      background: transparent;
+    }
+    .pill-filter-wrap.selected > .comp-score-filter .cs-label { color: #0096b8; opacity: 1; }
+    .pill-filter-wrap.selected > .comp-score-filter .mat-icon { color: #0096b8; }
+    .pill-filter-wrap.selected > .comp-score-filter:hover { background: #e7f4f8; }
+    /* Active = dropdown open — teal fill, white text */
+    .pill-filter-wrap.open > .comp-score-filter {
+      background: #0096b8;
+      border-color: transparent;
+      color: #fff;
+    }
+    .pill-filter-wrap.open > .comp-score-filter .cs-label { color: #fff; opacity: .9; }
+    .pill-filter-wrap.open > .comp-score-filter .mat-icon { color: #fff; }
+    .cs-menu {
+      position: absolute; top: calc(100% + 4px); left: 0;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      z-index: 50; min-width: 240px; padding: 4px 0;
+      border: none;
+    }
+    .cs-option {
+      display: flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 16px;
+      font-family: var(--font); font-size: 13px; font-weight: 400;
+      color: #555; cursor: pointer;
+      transition: background .1s;
+    }
+    .cs-option:hover { background: #fafafa; }
+    .cs-option.selected { color: #00718a; font-weight: 500; }
+    .cs-option.selected::before {
+      content: 'check';
+      font-family: 'Material Icons';
+      font-size: 16px;
+      color: #0096b8;
+    }
+    .cs-option:not(.selected)::before {
+      content: '';
+      width: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ── Comparison Score cell ──────────────────── */
+    .comp-score {
+      font-size: .875rem; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    /* Comparison-score text colors — 3 tiers */
+    .comp-score.score-critical { color: #b53228; }  /* Red   — 4.6+ */
+    .comp-score.score-moderate { color: #a49020; }  /* Yellow — 1.4–4.5 */
+    .comp-score.score-normal   { color: #0e7221; }  /* Green  — 0.0–1.3 */
+    /* Legacy aliases */
+    .comp-score.score-high     { color: #b53228; }
+    .comp-score.score-elevated { color: #b53228; }
+
+    /* ══════════════════════════════════════════════
+       ECHARTS CONTAINERS
+    ══════════════════════════════════════════════ */
+    .chart-wrap {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 24px 16px 16px;
+    }
+    .chart-container {
+      width: 100%;
+      height: 480px;
+    }
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 12px 8px 0;
+      border-top: 1px solid var(--gray-200);
+      margin-top: 8px;
+    }
+    .chart-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .813rem;
+      color: var(--text-54);
+    }
+    .chart-legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════════
+       DRAWER LAYOUT
+    ══════════════════════════════════════════════ */
+    mat-drawer-container {
+      display: flex; flex-direction: row;
+      flex: 1 1 auto; overflow: hidden; position: relative;
+    }
+    mat-drawer-content {
+      display: flex; flex-direction: column;
+      flex: 1 1 auto; overflow: auto; position: relative;
+      max-width: 1440px;
+    }
+    mat-drawer {
+      display: block; position: relative; overflow: visible;
+      background: #fff; border-right: 1px solid var(--gray-300);
+      width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%; height: 100%; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    .mdc-fab.mat-mdc-mini-fab {
+      width: 24px; height: 24px; min-height: 24px;
+      border-radius: 50%; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--teal); color: #fff;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+      transition: background .15s, transform .3s cubic-bezier(.4,0,.2,1);
+      position: absolute; right: -12px; top: 10px; z-index: 99; padding: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background: var(--teal-dark); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; transition: transform .3s; }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    /* ── accordion ── */
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    .navigation-accordion mat-expansion-panel {
+      background: #fff; border-radius: 0; box-shadow: none;
+      border-bottom: none;
+    }
+    .navigation-accordion mat-expansion-panel-header {
+      height: 45px !important; padding: 0 16px;
+      cursor: pointer; display: flex; align-items: center;
+      transition: background .15s;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .mat-content { display: flex; flex: 1; align-items: center; }
+    .navigation-accordion mat-panel-title {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      flex-grow: 1;
+      text-transform: uppercase;
+    }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg { width: 24px; height: 24px; fill: var(--gray-600); transition: transform 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px;
+      text-decoration: none; cursor: pointer; position: relative;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active { background: rgba(4,74,130,.08); border-left-color: var(--blue-dark); }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon {
+      font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600);
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span { display: none; }
+    mat-drawer.collapsed .mdc-list-item__primary-text .mat-icon { margin: 0; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-expansion-panel-header { justify-content: center; padding: 0; }
+
+    /* ══════════════════════════════════════════════
+       PAGE SHELL
+    ══════════════════════════════════════════════ */
+    #app-view {
+      display: flex; flex-direction: column;
+      flex: 1 1 auto; overflow: hidden;
+    }
+    footer {
+      padding: 12px 32px; font-size: .75rem; color: var(--gray-400);
+      background: #fff; border-top: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+
+    /* ══════════════════════════════════════════════
+       PAGE HEADER  (title + global filters)
+    ══════════════════════════════════════════════ */
+    .page-header {
+      display: flex; align-items: center;
+      padding: 0 40px;
+      height: 72px;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .page-title {
+      font-size: 24px; font-weight: 700;
+      color: var(--blue-dark);
+      white-space: nowrap;
+    }
+    .page-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-right: auto;
+    }
+
+    /* ── Legacy Experience mode ── */
+    .legacy-placeholder {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 180px);
+      padding: 40px;
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-54, #757575);
+      font-family: var(--font);
+      letter-spacing: .3px;
+    }
+    body.legacy-mode .shared-tab-bar-wrap,
+    body.legacy-mode #view-all-users,
+    body.legacy-mode #view-user-drugs {
+      display: none !important;
+    }
+    body.legacy-mode .legacy-placeholder {
+      display: flex;
+    }
+
+    /* Version selector (Latest / Legacy) */
+    .version-selector { position: relative; display: inline-flex; }
+    .version-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 8px 4px 10px;
+      background: transparent;
+      border: 1px solid var(--gray-300);
+      border-radius: 14px;
+      color: var(--gray-600);
+      font-family: var(--font); font-size: .8125rem; font-weight: 400;
+      cursor: pointer;
+      transition: background-color .15s, border-color .15s;
+    }
+    .version-btn:hover {
+      background-color: #f5f9fb;
+      border-color: var(--blue-500, #0096b8);
+    }
+    .version-btn .mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--text-54); }
+    .version-menu {
+      position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 240px;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      z-index: 50;
+      padding: 4px 0;
+    }
+    .version-option {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background-color .1s;
+    }
+    .version-option:hover { background-color: #e7f4fb; }
+    .version-option.selected .version-option-main { color: var(--blue-500, #0096b8); }
+    .version-option-main {
+      font-size: .875rem; font-weight: 400;
+      color: var(--text-87);
+      line-height: 1.3;
+    }
+    .version-option-sub {
+      font-size: .75rem; font-weight: 400;
+      color: var(--text-54);
+      margin-top: 2px;
+    }
+    /* breadcrumb state */
+    .page-title.breadcrumb { font-size: .813rem; font-weight: 500; display: flex; align-items: center; gap: 6px; color: var(--text-54); }
+    .page-title.breadcrumb .bc-parent { color: var(--teal); font-weight: 600; cursor: pointer; text-decoration: none; background: none; border: none; font-family: var(--font); font-size: .813rem; padding: 0; }
+    .page-title.breadcrumb .bc-parent:hover { text-decoration: underline; }
+    .page-title.breadcrumb .bc-sep { color: var(--gray-400); }
+    .page-title.breadcrumb .bc-current { color: var(--text-54); font-weight: 500; }
+
+    /* ── Global filter chips ── */
+    .filter-chip-group {
+      display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;
+    }
+    /* Pillter primary — page-header filter chips (Date Range / Department / User / Role) */
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 32px; padding: 0 12px;
+      border: 1px solid rgba(0,113,138,.5);
+      border-radius: 24px;
+      background: transparent;
+      font-family: var(--font); font-size: 14px; font-weight: 600;
+      color: #00718a; cursor: pointer; white-space: nowrap;
+      transition: background-color .15s, border-color .15s, color .15s;
+    }
+    .filter-chip:hover { background: #e7f4f8; }
+    .filter-chip.selected {
+      background: #e7f4f8;
+      color: #00718a;
+      border-color: rgba(0,113,138,.5);
+    }
+    .filter-chip.selected:hover { background: #d3ecf3; }
+    /* 'active' = dropdown open — teal fill, white text */
+    .filter-chip.active,
+    .filter-chip.active.selected {
+      background: #0096b8;
+      border-color: #0096b8;
+      color: #fff;
+    }
+    .filter-chip .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    .filter-chip.active .mat-icon { color: #fff; }
+
+    .clear-all-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .813rem; font-weight: 600;
+      color: var(--teal); padding: 4px 8px; border-radius: var(--radius);
+      white-space: nowrap; transition: background .15s;
+    }
+    .clear-all-btn:hover { background: rgba(0,150,184,.08); }
+
+    /* ══════════════════════════════════════════════
+       CONTENT AREA
+    ══════════════════════════════════════════════ */
+    .content-area {
+      flex: 1 1 auto; overflow: auto;
+      padding: 0 40px 40px;
+    }
+
+    /* ── Toolbar ── */
+    .content-toolbar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .pill-filters { gap: 24px; }
+    .pill-filter-wrap { position: relative; }
+    .toolbar-right { display: flex; align-items: center; gap: 0; }
+
+    /* Dropdown */
+    .bcs-dropdown {
+      display: inline-flex; flex-direction: column; gap: 2px;
+      position: relative;
+    }
+    .bcs-dropdown label {
+      font-size: .688rem; font-weight: 600; color: var(--text-54);
+      letter-spacing: .04em; text-transform: uppercase; padding-left: 2px;
+    }
+    .bcs-dropdown select {
+      height: 36px; padding: 0 32px 0 12px;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='%23727272' d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E") no-repeat right 8px center / 18px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-87); cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      transition: border-color .15s;
+    }
+    .bcs-dropdown select:hover { border-color: var(--gray-400); }
+    .bcs-dropdown select:focus { outline: none; border-color: var(--blue-dark); }
+
+    /* .view-toggle removed — replaced by .view-tab-bar */
+
+    .download-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; margin-left: 8px;
+      background: none; border: none;
+      border-radius: var(--radius); cursor: pointer; color: var(--gray-600);
+      transition: background .15s;
+    }
+    .download-btn:hover { background: var(--gray-100); border-color: var(--gray-400); }
+    .download-btn .mat-icon { font-size: 20px; }
+    /* Download dropdown menu (attached to the tab-bar download icon) */
+    .download-menu-wrap { position: relative; display: inline-block; }
+    .download-menu-wrap > .download-btn { margin-left: 0; }
+    .download-menu {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      min-width: 300px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      z-index: 100;
+      padding: 8px 0;
+    }
+    .download-menu-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      width: 100%;
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      font-family: var(--font);
+      color: var(--text-87);
+      transition: background .1s;
+    }
+    .download-menu-item:hover { background: #fafafa; }
+    .download-menu-item .material-icons {
+      font-size: 20px; color: #0096b8; flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .download-menu-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-87);
+      line-height: 1.3;
+    }
+    .download-menu-label-group {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .download-menu-help {
+      font-size: 12px;
+      color: var(--gray-600);
+      line-height: 1.35;
+    }
+
+
+    /* ══════════════════════════════════════════════
+       DATA TABLE
+    ══════════════════════════════════════════════ */
+    .data-table-wrap {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-family: var(--font); font-size: .875rem;
+    }
+    .data-table thead { background: #fff; }
+    .data-table th {
+      padding: 0 16px; height: 48px; text-align: left;
+      font-size: .75rem; font-weight: 600;
+      color: var(--text-54); white-space: nowrap;
+      border-bottom: 2px solid var(--gray-300);
+      user-select: none;
+    }
+    .data-table th.sortable { cursor: pointer; }
+    .data-table th.sortable:hover { color: var(--blue-dark); }
+    .data-table th .th-inner {
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .data-table th .sort-icon { font-size: 16px; opacity: .4; }
+    .data-table th.sort-asc .sort-icon,
+    .data-table th.sort-desc .sort-icon { opacity: 1; color: var(--blue-dark); }
+    .data-table th.sort-desc .sort-icon { transform: rotate(180deg); }
+    .data-table th.right, .data-table td.right { text-align: right; }
+    .data-table th.center, .data-table td.center { text-align: center; }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: background .1s;
+      cursor: pointer;
+    }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody tr:hover { background: #e7f4fb; }
+    .data-table tbody tr.selected { background: rgba(4,74,130,.06); }
+
+    .data-table td {
+      padding: 0 16px; height: 56px; vertical-align: middle;
+      color: var(--text-87);
+    }
+    .data-table td.td-priority { width: 48px; text-align: center; padding: 0 8px; }
+
+    /* Priority dot */
+    .priority-dot {
+      display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .priority-dot.high { background: var(--red); }
+    .priority-dot.medium { background: var(--orange); }
+    .priority-dot.low { background: var(--green); }
+
+    /* Drug name cell */
+    .drug-name { font-weight: 600; color: var(--text-87); }
+    .drug-subtext { font-size: .75rem; color: var(--text-54); font-weight: 400; }
+
+    /* User name+role cell */
+    .user-name { font-weight: 600; color: var(--text-87); line-height: 1.3; }
+    .user-name a { color: #0096b8; text-decoration: none; }
+    .user-name a:hover { color: #00718a; text-decoration: none; }
+    .user-role-dept {
+      font-size: .75rem; color: var(--text-54);
+      font-weight: 400; line-height: 1.3;
+    }
+
+    /* IRIS score chip */
+    .iris-score {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 36px; height: 28px; padding: 0 8px;
+      border-radius: 4px; font-size: .875rem; font-weight: 700;
+      color: #fff;
+    }
+    /* 3-tier IRIS colors — Red / Yellow / Green */
+    .iris-score.score-critical { background: #f24335; }                    /* Red   — 4.6+ (Danger 500) */
+    .iris-score.score-moderate { background: #f5dd67; color: #555555; }    /* Yellow — 1.4–4.5 */
+    .iris-score.score-normal   { background: #16b434; }                    /* Green  — 0.0–1.3 */
+    /* Legacy aliases (no longer emitted by scoreClassFor, kept defensive) */
+    .iris-score.score-high     { background: #f24335; }
+    .iris-score.score-elevated { background: #f24335; }
+
+    /* Investigate link */
+    .investigate-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: #0096b8; font-weight: 600; font-size: .875rem;
+      text-decoration: none; white-space: nowrap;
+      transition: color .15s;
+    }
+    .investigate-link:hover { color: var(--teal-dark); text-decoration: underline; }
+    .investigate-link .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Quaternary button (row action — no underline, light-blue hover) */
+    .row-action-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      color: #0096b8;
+      font-family: var(--font);
+      font-size: .8125rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      border-radius: 4px;
+      transition: background-color .15s, color .15s;
+    }
+    .row-action-btn:hover {
+      background-color: #e7f4fb;          /* Blue 100 */
+      color: var(--blue-dark, #00718a);
+      text-decoration: none;
+    }
+    .row-action-btn .material-icons { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Level 2 action cell — stack Compare / Investigate vertically, right-aligned */
+    .l2-action-cell {
+      text-align: right;
+      white-space: nowrap;
+    }
+    .l2-action-cell .row-action-btn + .row-action-btn {
+      margin-left: 4px;
+    }
+
+    /* Chevron cell */
+    .td-chevron {
+      width: 40px; text-align: right; padding-right: 12px;
+      color: var(--teal);
+    }
+    .td-chevron .mat-icon { font-size: 20px; vertical-align: middle; }
+
+    /* Numeric cells */
+    .data-table td.num { text-align: center; font-variant-numeric: tabular-nums; }
+
+    /* Event type pills in drug table header */
+    .event-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 22px; padding: 0 8px; border-radius: 11px;
+      font-size: .75rem; font-weight: 600; white-space: nowrap;
+      border: 1px solid;
+    }
+    .event-pill.dispense { color: var(--blue-dark); border-color: rgba(4,74,130,.3); background: rgba(4,74,130,.05); }
+    .event-pill.admin    { color: var(--teal-dark); border-color: rgba(0,150,184,.3); background: rgba(0,150,184,.05); }
+    .event-pill.waste    { color: #7b1fa2; border-color: rgba(123,31,162,.3); background: rgba(123,31,162,.05); }
+    .event-pill.return   { color: var(--green); border-color: rgba(22,180,52,.3); background: rgba(22,180,52,.05); }
+    .event-pill.cancel   { color: var(--gray-600); border-color: var(--gray-300); background: var(--gray-100); }
+
+    /* ══════════════════════════════════════════════
+       DRILLDOWN VIEW — breadcrumb + back
+    ══════════════════════════════════════════════ */
+    .drilldown-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: -7px;
+      margin-bottom: 1rem;
+      margin-left: 40px;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .875rem; font-weight: 600;
+      color: var(--teal); padding: 4px 8px 4px 4px;
+      border-radius: var(--radius);
+      transition: background .15s, color .15s;
+    }
+    .back-btn:hover { background: rgba(0,150,184,.08); }
+    .back-btn .mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+    .drilldown-title {
+      font-size: 16px; font-weight: 700; color: #0a3861;
+    }
+
+    /* ══════════════════════════════════════════════
+       SUMMARY STATS BAR  (drilldown view)
+    ══════════════════════════════════════════════ */
+    .summary-stats {
+      display: flex; gap: 0; margin-bottom: 16px;
+      flex-wrap: wrap;
+      background: #fff;
+      box-shadow: 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12), 0 1px 3px 0 rgba(0,0,0,.20);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════════════
+       VIEW STATES
+    ══════════════════════════════════════════════ */
+    .view { display: none; }
+    .view.visible { display: block; }
+
+    /* ══════════════════════════════════════════════
+       GRAPH PLACEHOLDER
+    ══════════════════════════════════════════════ */
+    .graph-placeholder {
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+      height: 480px; background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      color: var(--text-54);
+    }
+    .graph-placeholder .mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: .3; }
+    .graph-placeholder p { font-size: .875rem; font-weight: 500; }
+
+
+    /* ── All Drugs summary row ─────────────────────── */
+    .all-drugs-row { border-bottom: 2px solid var(--gray-300) !important; }
+    .all-drugs-label { font-weight: 700; color: var(--blue-dark); }
+
+    /* ── All Drugs summary row ──────────────────── */
+    .all-drugs-row { background: #fff !important; }
+    .all-drugs-row td { border-bottom: 2px solid var(--gray-300) !important; }
+    .all-drugs-label { font-weight: 700; color: var(--blue-dark); letter-spacing: -.01em; }
+
+        /* ══════════════════════════════════════════════
+       RESPONSIVE tweaks
+    ══════════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .data-table td.td-hide, .data-table th.td-hide { display: none; }
+    }
+
+    /* ══════════════════════════════════════════════
+       TOOLTIP hover
+    ══════════════════════════════════════════════ */
+    #tt {
+      position: fixed; z-index: 9999;
+      background: rgba(0,0,0,.82); color: #fff;
+      font-size: .75rem; font-family: var(--font);
+      padding: 5px 10px; border-radius: 4px;
+      max-width: 140px; text-align: center;
+      white-space: normal; line-height: 1.35;
+      pointer-events: none;
+      opacity: 0; transition: opacity .1s;
+    }
+
+    /* ── All Users table: horizontal scroll + sticky columns (same pattern as drug-users) ── */
+    #all-users-table-view .data-table-wrap,
+    #user-drugs-table-view .data-table-wrap {
+      overflow-x: auto;
+    }
+    #all-users-table-view .data-table,
+    #user-drugs-table-view .data-table {
+      width: max-content;
+      min-width: 100%;
+    }
+
+    /* All Users: sticky Metric Score (1), Comp Score (2), User (3) + Investigate (last) */
+    #all-users-table-view .data-table th:nth-child(1),
+    #all-users-table-view .data-table td:nth-child(1) {
+      position: sticky; left: 0; z-index: 2;
+      background: #fff;
+      box-shadow: 1px 0 0 var(--gray-300);
+    }
+    #all-users-table-view .data-table th:nth-child(2),
+    #all-users-table-view .data-table td:nth-child(2) {
+      position: sticky; left: 90px; z-index: 2;
+      background: #fff;
+      box-shadow: 1px 0 0 var(--gray-300);
+    }
+    #all-users-table-view .data-table th:nth-child(3),
+    #all-users-table-view .data-table td:nth-child(3) {
+      position: sticky; left: 185px; z-index: 2;
+      background: #fff;
+      box-shadow: 2px 0 4px rgba(0,0,0,.06);
+    }
+    #all-users-table-view .data-table th:last-child,
+    #all-users-table-view .data-table td:last-child {
+      position: sticky; right: 0; z-index: 2;
+      background: #fff;
+      box-shadow: -2px 0 4px rgba(0,0,0,.06);
+    }
+    #all-users-table-view .data-table thead th:nth-child(1),
+    #all-users-table-view .data-table thead th:nth-child(2),
+    #all-users-table-view .data-table thead th:nth-child(3),
+    #all-users-table-view .data-table thead th:last-child { z-index: 3; }
+    #all-users-table-view .data-table tbody tr:hover td:nth-child(1),
+    #all-users-table-view .data-table tbody tr:hover td:nth-child(2),
+    #all-users-table-view .data-table tbody tr:hover td:nth-child(3),
+    #all-users-table-view .data-table tbody tr:hover td:last-child {
+      background: #e7f4fb;
+    }
+
+    /* Right border on Total Events column to visually separate summary cols from per-event-type breakdown */
+    #all-users-table-view .data-table th:nth-child(7),
+    #all-users-table-view .data-table td:nth-child(7) {
+      border-right: 1px solid var(--gray-300);
+    }
+
+    /* User's Drugs: sticky Drug (col 1) + Actions (last col) */
+    #user-drugs-table-view .data-table th:nth-child(1),
+    #user-drugs-table-view .data-table td:nth-child(1) {
+      position: sticky; left: 0; z-index: 2;
+      background: #fff;
+      box-shadow: 2px 0 4px rgba(0,0,0,.06);
+    }
+    #user-drugs-table-view .data-table th:last-child,
+    #user-drugs-table-view .data-table td:last-child {
+      position: sticky; right: 0; z-index: 2;
+      background: #fff;
+      box-shadow: -2px 0 4px rgba(0,0,0,.06);
+    }
+    #user-drugs-table-view .data-table thead th:nth-child(1),
+    #user-drugs-table-view .data-table thead th:last-child { z-index: 3; }
+    /* L2 rows are non-interactive (no row-level click) — suppress hover tint + pointer */
+    #user-drugs-table-view .data-table tbody tr { cursor: default; }
+    #user-drugs-table-view .data-table tbody tr:hover,
+    #user-drugs-table-view .data-table tbody tr:hover td {
+      background: #fff;
+    }
+
+    /* ── Count + search row (above tables) ── */
+    .count-search-row {
+      display: flex; align-items: center;
+      gap: 0; margin-bottom: 8px;
+    }
+    /* Title on the far left, count adjacent, search pushed to the right */
+    .count-search-row .drilldown-title { flex-shrink: 0; }
+    .count-search-row .row-count { flex: 1 1 auto; margin-left: 1rem; }
+    /* Back button and drilldown-title sit flush */
+    .count-search-row .back-btn + .drilldown-title { margin-left: 0; }
+    .row-count {
+      font-size: .813rem; font-weight: 600; color: var(--text-54);
+    }
+    .row-count span { color: var(--text-87); }
+    .search-wrap {
+      position: relative;
+      display: inline-flex; align-items: center;
+    }
+    .search-wrap .search-icon {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px; color: var(--text-54); pointer-events: none;
+    }
+    .search-input {
+      height: 34px; padding: 0 12px 0 36px; width: 260px;
+      border: 1px solid var(--gray-300); border-radius: 17px;
+      font-family: var(--font); font-size: .813rem; font-weight: 500;
+      color: var(--text-87); background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-input:focus {
+      outline: none; border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0,150,184,.12);
+    }
+
+    /* Make user-name link look clickable */
+    .user-name a { cursor: pointer; }
+
+
+    /* Shared filter bar — now lives inside each view, below count-search-row */
+    .shared-filter-bar {
+      flex-shrink: 0;
+      margin-left: 0;
+      margin-bottom: 12px;
+    }
+    .shared-filter-bar .pill-filters-row {
+      margin-bottom: 0;
+    }
+
+
+    /* Chart type selector (bar/scatter toggle inside each graph view) */
+    .chart-type-selector {
+      display: inline-flex;
+      gap: 0;
+      align-self: flex-end;
+      margin: 4px 0 12px;
+      border: 1px solid var(--gray-300, #e0e0e0);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .ct-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--gray-300, #e0e0e0);
+      color: var(--text-54, #757575);
+      font-family: 'proxima-nova', Helvetica, sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background .15s ease, color .15s ease;
+    }
+    .ct-btn:last-child { border-right: none; }
+    .ct-btn:hover { background: #f5f9fb; color: var(--blue-dark, #00718a); }
+    .ct-btn.active {
+      background: var(--blue-500, #0096b8);
+      color: #fff;
+    }
+    .ct-btn.active:hover { background: var(--blue-dark, #00718a); color: #fff; }
+    .ct-btn .mat-icon { font-size: 16px; height: 16px; width: 16px; line-height: 16px; }
+
+    /* Drug name (plain text — non-clickable in user-drugs view) */
+    .user-name .drug-name-plain {
+      color: var(--navy-700, #0a3861);
+      font-weight: 600;
+    }
+
+
+    /* Shared tab bar — lives above the shared filter bar, outside the views */
+    .shared-tab-bar-wrap {
+      padding: 0 40px;
+      flex-shrink: 0;
+    }
+    .shared-tab-bar-wrap .view-tab-bar {
+      /* Existing .view-tab-bar rules already handle borders/layout; nothing to override. */
+    }
+
+
+    /* ═════════════════════════════════════════════
+       IRIS Detail Panel (right-side overlay)
+    ═════════════════════════════════════════════ */
+    .iris-panel-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 56, 97, 0.30);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 998;
+    }
+    .iris-panel-scrim.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .iris-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 1140px;
+      max-width: 90vw;
+      background: #fff;
+      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+      transform: translateX(100%);
+      transition: transform .24s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+    }
+    .iris-panel.open {
+      transform: translateX(0);
+    }
+    .iris-panel-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .iris-panel-heading { min-width: 0; flex: 1; }
+    .iris-panel-title {
+      font-family: 'proxima-nova', Helvetica, sans-serif;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--navy-700, #0a3861);
+      line-height: 1.3;
+    }
+    .iris-panel-subtitle {
+      font-family: 'proxima-nova', Helvetica, sans-serif;
+      font-size: 0.8125rem;
+      color: var(--text-54, #757575);
+      margin-top: 2px;
+    }
+    .iris-panel-subtitle:empty { display: none; }
+    .iris-panel-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      background: transparent;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--text-54, #757575);
+      transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .iris-panel-close:hover {
+      background: rgba(0, 150, 184, 0.08);
+      color: var(--blue-dark, #00718a);
+    }
+    .iris-panel-close .material-icons { font-size: 20px; }
+    .iris-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .iris-panel-placeholder {
+      color: var(--text-54, #757575);
+      font-style: italic;
+      font-family: 'proxima-nova', Helvetica, sans-serif;
+      font-size: 0.9375rem;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+
+    /* Per-view drilldown header (lives inside the view, above count-search-row) */
+    .view-drilldown {
+      margin-top: 0;
+      margin-bottom: 12px;
+      margin-left: 0;   /* overrides the 40px from .drilldown-header — view already has 40px padding */
+    }
+
+
+    /* ═════════════════════════════════════════════
+       LEVEL 3 OVERLAY PANEL (User Comparison)
+    ═════════════════════════════════════════════ */
+    .l3-panel-scrim {
+      position: fixed; inset: 0;
+      background: rgba(10, 56, 97, 0.30);
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 996;
+    }
+    .l3-panel-scrim.open {
+      opacity: 1; pointer-events: auto;
+    }
+    .l3-panel {
+      position: fixed; top: 0; right: 0;
+      height: 100vh;
+      width: 1140px;
+      max-width: 95vw;
+      background: #fff;
+      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+      transform: translateX(100%);
+      transition: transform .24s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 997;
+      display: flex; flex-direction: column;
+    }
+    .l3-panel.open { transform: translateX(0); }
+
+    .l3-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .l3-panel-title {
+      font-family: 'proxima-nova', Helvetica, sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: var(--navy-700, #0a3861);
+      min-width: 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .l3-panel-close {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; padding: 0;
+      background: transparent; border: none; border-radius: 50%;
+      cursor: pointer; color: var(--text-54, #757575);
+      transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .l3-panel-close:hover {
+      background: rgba(0, 150, 184, 0.08);
+      color: var(--blue-dark, #00718a);
+    }
+    .l3-panel-close .material-icons { font-size: 20px; }
+
+    /* Panel tab bar — same structure as .view-tab-bar but flush with panel edges */
+    .l3-panel-tab-bar {
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+
+    .l3-panel-body {
+      flex: 1; overflow: auto;
+      padding: 16px 24px 24px;
+    }
+
+    /* Panel filter bar (scoped) — sits below count-search-row, like the shared one */
+    .l3-panel-filter-bar {
+      margin-bottom: 12px;
+    }
+    .l3-panel-filter-bar .pill-filters-row {
+      margin-bottom: 0;
+    }
+
+
+    /* L2 Visualized chart controls row — drug filter + chart-type toggle */
+    .chart-controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 4px 0 12px;
+      flex-wrap: wrap;
+    }
+    .chart-controls-row .chart-type-selector {
+      margin: 0;       /* align-self not needed here */
+    }
+
+    /* Drug multi-select filter */
+    .drug-filter-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .drug-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid var(--gray-300, #e0e0e0);
+      border-radius: 6px;
+      color: var(--text-87, #333);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color .15s, border-color .15s;
+    }
+    .drug-filter-btn:hover {
+      background-color: #f5f9fb;
+      border-color: var(--blue-500, #0096b8);
+    }
+    .drug-filter-btn .mat-icon { font-size: 16px; width: 16px; height: 16px; color: var(--text-54, #757575); }
+    .drug-filter-btn .mat-icon:first-child { color: var(--blue-500, #0096b8); }
+
+    .drug-filter-menu {
+      position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 280px;
+      max-height: 340px;
+      background: #fff;
+      border: 1px solid var(--gray-300, #e0e0e0);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      z-index: 50;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .drug-filter-actions {
+      display: flex;
+      gap: 16px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--gray-200, #eee);
+    }
+    .drug-filter-link {
+      background: transparent; border: none; padding: 0;
+      color: var(--blue-500, #0096b8);
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .drug-filter-link:hover { color: var(--blue-dark, #00718a); }
+    .drug-filter-list {
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+    .drug-filter-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      font-family: var(--font); font-size: 13px;
+      color: var(--text-87, #333);
+      cursor: pointer;
+      transition: background-color .1s;
+    }
+    .drug-filter-option:hover { background-color: #e7f4fb; }
+    .drug-filter-option input[type="checkbox"] {
+      margin: 0;
+      accent-color: var(--blue-500, #0096b8);
+      cursor: pointer;
+    }
+
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<script data-cfasync="false" defer>
+  /* ══════════════════════════════════════════════
+     CHART STATE
+  ══════════════════════════════════════════════ */
+  let allUsersChart  = null;
+  let userDrugsChart = null;
+  let usersChart     = null;
+  // Chart type selection ('bar' default, 'scatter' alternative) per level
+  let allUsersChartType  = 'bar';
+  let userDrugsChartType = 'bar';
+  let usersChartType     = 'bar';
+  // Shared tab-bar mode ('table' | 'graph')
+  let currentMode = 'table';
+  // Level-1 visualized Context: what the chart measures
+  //   'drugs' | 'shifts' | 'patients' | 'events'
+  let allUsersVizContext = 'events';
+  // Event-type color palette for Level 2/3 stacked bars
+  const EVENT_TYPE_COLORS = {
+    dispense: '#0096b8',   // Blue 500
+    admin:    '#9ca6f1',   // UC 500 (Periwinkle)
+    waste:    '#f5a623',   // Orange 500
+    ret:      '#16b434',   // Success 500
+    cancel:   '#757575'    // Gray 500
+  };
+  const EVENT_TYPE_LABELS = {
+    dispense: 'Dispense',
+    admin:    'Admin',
+    waste:    'Waste',
+    ret:      'Return',
+    cancel:   'Cancel'
+  };
+  const MASS_TYPE_KEYS   = ['massDispense','massAdmin','massWaste','massReturn'];
+  const MASS_TYPE_LABELS = {
+    massDispense: 'Mass Dispensed',
+    massAdmin:    'Mass Admin',
+    massWaste:    'Mass Wasted',
+    massReturn:   'Mass Returned'
+  };
+  const MASS_TYPE_COLORS = {
+    massDispense: '#0096b8',   // Blue 500
+    massAdmin:    '#9ca6f1',   // UC 500 (Periwinkle)
+    massWaste:    '#f5a623',   // Orange 500
+    massReturn:   '#16b434'    // Success 500
+  };
+  const userSortState = { col: 'name', asc: true }; // default: alphabetical by name
+
+
+
+  /* ══════════════════════════════════════════════
+     LEVEL 3 OVERLAY PANEL
+  ══════════════════════════════════════════════ */
+  let l3PanelOpen = false;
+  let panelMode   = 'table';   // 'table' | 'graph'
+
+  function openL3Panel(drugName) {
+    currentDrugName = drugName;
+    l3PanelOpen = true;
+
+    const panel = document.getElementById('l3-panel');
+    const scrim = document.getElementById('l3-panel-scrim');
+    document.getElementById('l3-panel-title').textContent = `User Comparison: ${drugName}`;
+
+    // Reset to tabular view + populate
+    panelMode = 'table';
+    _toggleL3PanelTabs('table');
+    document.getElementById('users-table-view').style.display = '';
+    document.getElementById('users-graph-view').style.display = 'none';
+    updatePanelFilterVisibility();
+    renderUsersTable(drugName);
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+    scrim.classList.add('open');
+    scrim.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeL3Panel() {
+    l3PanelOpen = false;
+    const panel = document.getElementById('l3-panel');
+    const scrim = document.getElementById('l3-panel-scrim');
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+    scrim.classList.remove('open');
+    scrim.setAttribute('aria-hidden', 'true');
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+  }
+
+  function _toggleL3PanelTabs(mode) {
+    const tabular = document.getElementById('l3-panel-tabular-tab');
+    const visual  = document.getElementById('l3-panel-visual-tab');
+    if (!tabular || !visual) return;
+    tabular.classList.toggle('mdc-tab--active', mode === 'table');
+    visual .classList.toggle('mdc-tab--active', mode === 'graph');
+    tabular.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'table');
+    visual .querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'graph');
+  }
+
+  function switchPanelView(mode) {
+    panelMode = mode;
+    _toggleL3PanelTabs(mode);
+    document.getElementById('users-table-view').style.display = mode === 'table' ? '' : 'none';
+    document.getElementById('users-graph-view').style.display = mode === 'graph' ? '' : 'none';
+    updatePanelFilterVisibility();
+    updateChartLegend('users', usersChartType);
+    const csr = document.querySelector('#l3-panel .count-search-row');
+    if (csr) csr.style.display = mode === 'graph' ? 'none' : '';
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+    if (mode === 'graph') setTimeout(() => initUsersChart(currentDrugName), 0);
+  }
+
+  function updatePanelFilterVisibility() {
+    // Event Type filter visible only in Visualized mode
+    const etf = document.getElementById('l3-panel-event-type-filter');
+    if (etf) etf.style.display = panelMode === 'graph' ? 'flex' : 'none';
+  }
+
+  function updatePanelContext() {
+    // Re-render the panel's table/chart after Context change
+    renderUsersTable(currentDrugName);
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+    if (panelMode === 'graph') setTimeout(() => initUsersChart(currentDrugName), 0);
+  }
+
+  // ESC closes the panel (layered with IRIS panel: close whichever is topmost)
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (l3PanelOpen) closeL3Panel();
+  });
+
+  /* ══════════════════════════════════════════════
+     IRIS DETAIL PANEL
+  ══════════════════════════════════════════════ */
+  function openIrisPanel(userId) {
+    const user = getUserById(userId);
+    const panel = document.getElementById('iris-panel');
+    const scrim = document.getElementById('iris-panel-scrim');
+    const titleEl = document.getElementById('iris-panel-title');
+    const subEl = document.getElementById('iris-panel-subtitle');
+    if (user) {
+      titleEl.textContent = user.name;
+      subEl.textContent = `${user.role} · ${user.dept}`;
+    } else {
+      titleEl.textContent = 'IRIS Detail Panel';
+      subEl.textContent = '';
+    }
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+    scrim.classList.add('open');
+    scrim.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeIrisPanel() {
+    const panel = document.getElementById('iris-panel');
+    const scrim = document.getElementById('iris-panel-scrim');
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+    scrim.classList.remove('open');
+    scrim.setAttribute('aria-hidden', 'true');
+  }
+
+  // ESC closes the panel
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const panel = document.getElementById('iris-panel');
+      if (panel && panel.classList.contains('open')) closeIrisPanel();
+    }
+  });
+
+  /* IRIS tier thresholds:
+       0.0–1.3  → Green  (score-normal)
+       1.4–4.5  → Yellow (score-moderate)
+       4.6+     → Red    (score-critical) */
+  function scoreClassFor(score) {
+    const s = Number(score) || 0;
+    if (s >= 4.6) return 'score-critical';
+    if (s >= 1.4) return 'score-moderate';
+    return 'score-normal';
+  }
+  function scoreColor(score) {
+    const s = Number(score) || 0;
+    if (s >= 4.6) return '#b53228'; // Danger 700 (Red)
+    if (s >= 1.4) return '#f5dd67'; // Warning 500 (Yellow)
+    return '#16b434';                // Success 500 (Green)
+  }
+
+
+  function initUsersChart(drugName) {
+    const el = document.getElementById('users-chart');
+    if (!el) return;
+    if (!usersChart) usersChart = echarts.init(el);
+    updateChartLegend('users', usersChartType);
+
+    const users = getUsersForDrug(drugName);
+    const axis = {
+      nameTextStyle: { fontSize: 12, color: '#757575', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
+      axisLine: { lineStyle: { color: '#e5e5e5' } },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+      axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#757575' }
+    };
+    const tooltipBase = {
+      backgroundColor: 'rgba(10,56,97,.92)',
+      borderColor: 'transparent',
+      textStyle: { color: '#fff', fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 13 }
+    };
+
+    let option;
+    if (usersChartType === 'bar') {
+      // Stacked bar by event type, respecting Mass/Events context.
+      const ctx = getContext();
+      const useMass = ctx !== 'event_types';
+      const keys   = useMass ? MASS_TYPE_KEYS : eventTypeKeysCancelIncluded();
+      const labels = useMass ? MASS_TYPE_LABELS : EVENT_TYPE_LABELS;
+      const colors = useMass ? MASS_TYPE_COLORS : EVENT_TYPE_COLORS;
+      const unit   = useMass ? ' mg' : '';
+
+      const total = u => keys.reduce((s, k) => s + (u[k] || 0), 0);
+      const sorted = [...users].sort((a,b) => total(b) - total(a));
+
+      const series = keys.map(k => ({
+        name: labels[k],
+        type: 'bar',
+        stack: 'total',
+        barMaxWidth: 20,
+        itemStyle: { color: colors[k] },
+        emphasis: { focus: 'series' },
+        data: sorted.map(u => u[k] || 0),
+        label: (k === keys[keys.length - 1]) ? {
+          show: true, position: 'right', fontSize: 11, color: '#444',
+          fontFamily: 'proxima-nova, Helvetica, sans-serif',
+          formatter: p => {
+            const t = sorted[p.dataIndex] ? total(sorted[p.dataIndex]) : 0;
+            return t + unit;
+          }
+        } : { show: false }
+      }));
+
+      option = {
+        backgroundColor: 'transparent',
+        grid: { top: 50, right: 60, bottom: 40, left: 180 },
+        legend: {
+          top: 6, left: 'center',
+          icon: 'roundRect',
+          itemWidth: 14, itemHeight: 10,
+          textStyle: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#555' }
+        },
+        tooltip: { ...tooltipBase, trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          formatter: ps => {
+            if (!ps || !ps.length) return '';
+            const userName = ps[0].name;
+            let html = `<strong>${userName}</strong>`;
+            let sum = 0;
+            ps.forEach(p => { sum += p.value; html += `<br/><span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:2px;margin-right:6px;"></span>${p.seriesName}: ${p.value}${unit}`; });
+            html += `<br/><strong>Total: ${sum}${unit}</strong>`;
+            return html;
+          }
+        },
+        xAxis: { type: 'value', name: useMass ? 'Total Mass (mg)' : 'Total Events',
+                 nameLocation: 'middle', nameGap: 26, ...axis },
+        yAxis: { type: 'category',
+          data: sorted.map(u => u.name),
+          axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#333' },
+          axisLine: { lineStyle: { color: '#e5e5e5' } },
+          axisTick: { show: false }
+        },
+        series
+      };
+    } else {
+      const maxShifts = Math.max(...users.map(u => u.shifts), 1);
+      option = {
+        backgroundColor: 'transparent',
+        grid: { top: 40, right: 40, bottom: 60, left: 70 },
+        tooltip: { ...tooltipBase, trigger: 'item', formatter: p => {
+          const u = p.data;
+          return `<strong>${u.userName}</strong><br/>
+            IRIS Score: <strong>${u.score}</strong><br/>
+            Total Events: ${u.value[0]}<br/>
+            Total Mass: ${u.value[1]} mg<br/>
+            Avg Mass / Event: ${u.massPerEvent} mg<br/>
+            Shifts: ${u.shifts}`;
+        }},
+        xAxis: { type: 'value', name: 'Total Events', nameLocation: 'middle', nameGap: 36, ...axis },
+        yAxis: { type: 'value', name: 'Mass Dispensed (mg)', nameLocation: 'middle', nameGap: 52, ...axis },
+        series: [{
+          type: 'scatter',
+          data: users.map(u => ({
+            value: [u.events, u.massDispense ?? u.mass],
+            userName: u.name, score: u.score, shifts: u.shifts,
+            massPerEvent: u.massPerEvent,
+            symbolSize: Math.max(10, Math.round(8 + (u.shifts / maxShifts) * 22)),
+            itemStyle: { color: scoreColor(u.score), opacity: 0.88 },
+            emphasis: { itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } }
+          })),
+          label: {
+            show: true,
+            position: 'right',
+            formatter: p => {
+              const parts = p.data.userName.split(' ');
+              return parts[0] + ' ' + (parts[1] ? parts[1][0]+'.' : '');
+            },
+            fontSize: 11,
+            color: '#555',
+            fontFamily: 'proxima-nova, Helvetica, sans-serif'
+          }
+        }]
+      };
+    }
+
+    usersChart.setOption(option, true);
+    window.addEventListener('resize', () => usersChart && usersChart.resize());
+  }
+
+    /* ══════════════════════════════════════════════
+     DATA  (user-first model)
+     Each user contains a nested `drugs` array with per-drug stats.
+     Top-level aggregates are computed at render time.
+  ══════════════════════════════════════════════ */
+  const USERS = [
+    {
+      id:'u1', name:'Francis Overby', role:'RN', dept:'Med North', shifts:42, patients:210,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:9.1, scoreClass:'score-critical', compScore:8.2, events:29, dispense:18, admin:5, waste:4,  ret:2, cancel:1, massDispense:21.3, massAdmin:4.6, massWaste:6.6, massReturn:2.2},
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:7.8, scoreClass:'score-high',     compScore:7.2, events:18, dispense:12, admin:4, waste:2,  ret:0, cancel:0, massDispense:12.4, massAdmin:3.1, massWaste:4.2, massReturn:0.8},
+        {drug:'morphine Sulfate Inj',  priority:'high',   score:6.5, scoreClass:'score-elevated', compScore:6.1, events:11, dispense:8,  admin:2, waste:1,  ret:0, cancel:2, massDispense:9.2,  massAdmin:2.0, massWaste:3.1, massReturn:0.5},
+        {drug:'LORazepam Inj',         priority:'medium', score:4.2, scoreClass:'score-normal',   compScore:4.0, events:6,  dispense:4,  admin:1, waste:1,  ret:0, cancel:0, massDispense:2.1,  massAdmin:0.4, massWaste:0.9, massReturn:0.2},
+      ]
+    },
+    {
+      id:'u2', name:'Evan Westcott', role:'Travel Nurse', dept:'Med North', shifts:36, patients:178,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:8.7, scoreClass:'score-critical', compScore:7.9, events:24, dispense:15, admin:4, waste:3,  ret:2, cancel:1, massDispense:16.1, massAdmin:3.5, massWaste:5.5, massReturn:2.1},
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:6.8, scoreClass:'score-elevated', compScore:6.3, events:14, dispense:10, admin:3, waste:1,  ret:0, cancel:3, massDispense:10.1, massAdmin:2.2, massWaste:2.9, massReturn:0.4},
+        {drug:'midazolam Inj',         priority:'medium', score:5.4, scoreClass:'score-moderate', compScore:5.2, events:9,  dispense:6,  admin:2, waste:1,  ret:0, cancel:0, massDispense:4.8,  massAdmin:1.6, massWaste:1.8, massReturn:0.3},
+      ]
+    },
+    {
+      id:'u3', name:'Destiny Bloss', role:'Pharmacist', dept:'Pharmacy', shifts:48, patients:0,
+      drugs:[
+        {drug:'fentaNYL Inj',                   priority:'high',   score:8.2, scoreClass:'score-high',     compScore:7.4, events:22, dispense:14, admin:3, waste:3, ret:2, cancel:1, massDispense:14.5, massAdmin:3.1, massWaste:5.1, massReturn:1.7},
+        {drug:'OXYcodone Oral',                 priority:'high',   score:7.5, scoreClass:'score-high',     compScore:7.0, events:20, dispense:18, admin:1, waste:0, ret:1, cancel:0, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+        {drug:'HYDROcodone-Acetaminophen Oral', priority:'medium', score:6.2, scoreClass:'score-elevated', compScore:5.8, events:17, dispense:15, admin:1, waste:0, ret:1, cancel:2, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+        {drug:'methadone Oral',                 priority:'medium', score:5.1, scoreClass:'score-moderate', compScore:4.8, events:10, dispense:9,  admin:0, waste:0, ret:1, cancel:1, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+        {drug:'ALPRAZolam Oral',                priority:'medium', score:4.6, scoreClass:'score-moderate', compScore:4.4, events:8,  dispense:7,  admin:0, waste:0, ret:1, cancel:0, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+      ]
+    },
+    {
+      id:'u4', name:'Kristel Dorsey', role:'CRNA', dept:'ICU', shifts:32, patients:128,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:7.9, scoreClass:'score-high',     compScore:7.1, events:21, dispense:13, admin:4, waste:3, ret:1, cancel:2, massDispense:13.3, massAdmin:3.7, massWaste:4.9, massReturn:1.6},
+        {drug:'midazolam Inj',         priority:'medium', score:6.4, scoreClass:'score-elevated', compScore:6.0, events:14, dispense:9,  admin:3, waste:2, ret:0, cancel:0, massDispense:7.1,  massAdmin:2.4, massWaste:3.0, massReturn:0.5},
+        {drug:'morphine Sulfate Inj',  priority:'high',   score:5.3, scoreClass:'score-moderate', compScore:5.0, events:9,  dispense:6,  admin:2, waste:1, ret:0, cancel:1, massDispense:5.4,  massAdmin:1.8, massWaste:2.1, massReturn:0.3},
+      ]
+    },
+    {
+      id:'u5', name:'Claire Fraser', role:'RN', dept:'Med North', shifts:38, patients:190,
+      drugs:[
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:4.3, scoreClass:'score-critical', compScore:3.9, events:26, dispense:17, admin:5, waste:3, ret:1, cancel:3, massDispense:18.2, massAdmin:4.1, massWaste:5.4, massReturn:1.3},
+        {drug:'morphine Sulfate Inj',  priority:'high',   score:3.6, scoreClass:'score-high',     compScore:3.4, events:18, dispense:12, admin:4, waste:2, ret:0, cancel:0, massDispense:11.8, massAdmin:3.2, massWaste:4.2, massReturn:0.6},
+        {drug:'OXYcodone Oral',        priority:'high',   score:2.9, scoreClass:'score-moderate', compScore:2.7, events:12, dispense:10, admin:1, waste:0, ret:1, cancel:1, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+      ]
+    },
+    {
+      id:'u6', name:'Shila Layne', role:'Float Nurse', dept:'Med North', shifts:28, patients:140,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:4.1, scoreClass:'score-high',     compScore:3.8, events:18, dispense:11, admin:3, waste:3, ret:1, cancel:0, massDispense:12.1, massAdmin:3.0, massWaste:5.4, massReturn:1.9},
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:3.4, scoreClass:'score-elevated', compScore:3.2, events:12, dispense:8,  admin:3, waste:1, ret:0, cancel:2, massDispense:7.8,  massAdmin:2.3, massWaste:2.8, massReturn:0.4},
+        {drug:'OXYcodone Oral',        priority:'high',   score:2.8, scoreClass:'score-moderate', compScore:2.6, events:9,  dispense:8,  admin:0, waste:0, ret:1, cancel:1, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+      ]
+    },
+    {
+      id:'u7', name:'Bulah Vahle', role:'RN', dept:'Oncology', shifts:26, patients:130,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:3.9, scoreClass:'score-elevated', compScore:3.7, events:17, dispense:10, admin:3, waste:3, ret:1, cancel:0, massDispense:11.7, massAdmin:3.3, massWaste:5.3, massReturn:1.5},
+        {drug:'morphine Sulfate Inj',  priority:'high',   score:3.1, scoreClass:'score-moderate', compScore:2.9, events:11, dispense:7,  admin:3, waste:1, ret:0, cancel:2, massDispense:6.8,  massAdmin:2.5, massWaste:2.7, massReturn:0.4},
+        {drug:'OXYcodone Oral',        priority:'high',   score:2.5, scoreClass:'score-normal',   compScore:2.4, events:8,  dispense:7,  admin:0, waste:0, ret:1, cancel:0, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+      ]
+    },
+    {
+      id:'u8', name:'Violeta Colmenero', role:'Nursing Student', dept:'ICU', shifts:22, patients:44,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:3.7, scoreClass:'score-elevated', compScore:3.6, events:16, dispense:10, admin:2, waste:2, ret:2, cancel:1, massDispense:10.8, massAdmin:2.4, massWaste:4.1, massReturn:1.8},
+        {drug:'LORazepam Inj',         priority:'medium', score:2.8, scoreClass:'score-moderate', compScore:2.7, events:7,  dispense:5,  admin:1, waste:1, ret:0, cancel:3, massDispense:2.4,  massAdmin:0.5, massWaste:1.0, massReturn:0.3},
+      ]
+    },
+    {
+      id:'u9', name:'Magda Bonelli', role:'RN', dept:'Med South', shifts:27, patients:135,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:3.5, scoreClass:'score-elevated', compScore:3.3, events:16, dispense:10, admin:3, waste:2, ret:1, cancel:0, massDispense:11.1, massAdmin:2.9, massWaste:4.5, massReturn:1.6},
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:2.9, scoreClass:'score-moderate', compScore:2.7, events:11, dispense:8,  admin:2, waste:1, ret:0, cancel:1, massDispense:7.1,  massAdmin:2.0, massWaste:2.4, massReturn:0.3},
+        {drug:'midazolam Inj',         priority:'medium', score:2.4, scoreClass:'score-normal',   compScore:2.3, events:8,  dispense:6,  admin:1, waste:1, ret:0, cancel:0, massDispense:3.8,  massAdmin:1.1, massWaste:1.6, massReturn:0.2},
+      ]
+    },
+    {
+      id:'u10', name:'Norene Turcotte', role:'Anesthesiologist', dept:'OR', shifts:24, patients:120,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:3.3, scoreClass:'score-moderate', compScore:3.2, events:15, dispense:9, admin:2, waste:2, ret:2, cancel:2, massDispense:9.8, massAdmin:2.3, massWaste:4.5, massReturn:1.8},
+        {drug:'midazolam Inj',         priority:'medium', score:2.9, scoreClass:'score-moderate', compScore:2.7, events:11, dispense:7, admin:2, waste:2, ret:0, cancel:1, massDispense:5.5, massAdmin:1.7, massWaste:2.9, massReturn:0.4},
+      ]
+    },
+    {
+      id:'u11', name:'Samantha Taggart', role:'Pharmacy Technician', dept:'Pharmacy', shifts:44, patients:0,
+      drugs:[
+        {drug:'OXYcodone Oral',                 priority:'high',   score:4.0, scoreClass:'score-high',     compScore:3.8, events:19, dispense:17, admin:1, waste:0, ret:1, cancel:0, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+        {drug:'HYDROcodone-Acetaminophen Oral', priority:'medium', score:3.6, scoreClass:'score-elevated', compScore:3.3, events:16, dispense:14, admin:1, waste:0, ret:1, cancel:2, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+        {drug:'traMADol Oral',                  priority:'low',    score:2.8, scoreClass:'score-moderate', compScore:2.6, events:11, dispense:10, admin:0, waste:0, ret:1, cancel:0, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+        {drug:'codeine Oral',                   priority:'low',    score:2.3, scoreClass:'score-normal',   compScore:2.2, events:9,  dispense:8,  admin:0, waste:0, ret:1, cancel:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+      ]
+    },
+    {
+      id:'u12', name:'Pamala Linke', role:'Pharmacy Technician', dept:'Pharmacy', shifts:40, patients:0,
+      drugs:[
+        {drug:'fentaNYL Inj',                   priority:'high',   score:3.1, scoreClass:'score-moderate', compScore:3.0, events:12, dispense:7,  admin:2, waste:2, ret:1, cancel:3, massDispense:9.0, massAdmin:2.5, massWaste:3.8, massReturn:1.5},
+        {drug:'OXYcodone Oral',                 priority:'high',   score:3.0, scoreClass:'score-moderate', compScore:2.9, events:13, dispense:12, admin:0, waste:0, ret:1, cancel:0, massDispense:0,   massAdmin:0,   massWaste:0,   massReturn:0},
+        {drug:'HYDROcodone-Acetaminophen Oral', priority:'medium', score:2.7, scoreClass:'score-moderate', compScore:2.6, events:10, dispense:9,  admin:0, waste:0, ret:1, cancel:1, massDispense:0,   massAdmin:0,   massWaste:0,   massReturn:0},
+        {drug:'buprenorphine Sublingual',       priority:'low',    score:1.8, scoreClass:'score-normal',   compScore:1.7, events:6,  dispense:5,  admin:0, waste:0, ret:1, cancel:0, massDispense:0,   massAdmin:0,   massWaste:0,   massReturn:0},
+      ]
+    },
+    {
+      id:'u13', name:'Margaret Houlihan', role:'RN', dept:'Med South', shifts:30, patients:150,
+      drugs:[
+        {drug:'morphine Sulfate Inj',           priority:'high',   score:3.8, scoreClass:'score-elevated', compScore:3.6, events:16, dispense:11, admin:3, waste:1, ret:1, cancel:2, massDispense:10.4, massAdmin:2.7, massWaste:3.4, massReturn:0.5},
+        {drug:'OXYcodone Oral',                 priority:'high',   score:3.1, scoreClass:'score-moderate', compScore:3.0, events:12, dispense:11, admin:0, waste:0, ret:1, cancel:1, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+        {drug:'HYDROcodone-Acetaminophen Oral', priority:'medium', score:2.6, scoreClass:'score-moderate', compScore:2.5, events:10, dispense:9,  admin:0, waste:0, ret:1, cancel:0, massDispense:0,    massAdmin:0,   massWaste:0,   massReturn:0},
+      ]
+    },
+    {
+      id:'u14', name:'Jennifer Marlowe', role:'Nursing Student', dept:'ICU', shifts:18, patients:36,
+      drugs:[
+        {drug:'LORazepam Inj',         priority:'medium', score:2.9, scoreClass:'score-elevated', compScore:2.7, events:13, dispense:9, admin:2, waste:2, ret:0, cancel:2, massDispense:5.2, massAdmin:1.0, massWaste:2.1, massReturn:0.3},
+        {drug:'midazolam Inj',         priority:'medium', score:2.3, scoreClass:'score-moderate', compScore:2.2, events:9,  dispense:6, admin:2, waste:1, ret:0, cancel:0, massDispense:4.5, massAdmin:1.4, massWaste:1.8, massReturn:0.2},
+      ]
+    },
+    {
+      id:'u15', name:'Rhoda Klemm', role:'RN', dept:'Med North', shifts:20, patients:100,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:2.4, scoreClass:'score-normal',   compScore:2.4, events:11, dispense:7, admin:2, waste:1, ret:1, cancel:1, massDispense:7.9, massAdmin:2.3, massWaste:3.1, massReturn:1.4},
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:2.0, scoreClass:'score-normal',   compScore:1.9, events:8,  dispense:6, admin:1, waste:1, ret:0, cancel:3, massDispense:5.2, massAdmin:1.1, massWaste:2.0, massReturn:0.2},
+      ]
+    },
+    {
+      id:'u16', name:'Betsy Duvall', role:'CRNA', dept:'OR', shifts:22, patients:88,
+      drugs:[
+        {drug:'morphine Sulfate Inj',  priority:'high',   score:2.1, scoreClass:'score-normal',   compScore:2.0, events:9, dispense:6, admin:2, waste:1, ret:0, cancel:0, massDispense:5.1, massAdmin:1.7, massWaste:2.0, massReturn:0.3},
+        {drug:'midazolam Inj',         priority:'medium', score:1.9, scoreClass:'score-normal',   compScore:1.8, events:8, dispense:5, admin:2, waste:1, ret:0, cancel:1, massDispense:3.8, massAdmin:1.3, massWaste:1.6, massReturn:0.2},
+        {drug:'fentaNYL Inj',          priority:'high',   score:1.7, scoreClass:'score-normal',   compScore:1.6, events:6, dispense:4, admin:1, waste:1, ret:0, cancel:0, massDispense:3.8, massAdmin:1.1, massWaste:1.8, massReturn:0.1},
+      ]
+    },
+    {
+      id:'u17', name:'Ann Perkins', role:'CRNA', dept:'OR', shifts:18, patients:72,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:1.8, scoreClass:'score-normal',   compScore:1.8, events:9, dispense:5, admin:2, waste:1, ret:1, cancel:2, massDispense:6.4, massAdmin:2.1, massWaste:2.7, massReturn:1.3},
+        {drug:'midazolam Inj',         priority:'medium', score:1.6, scoreClass:'score-normal',   compScore:1.5, events:7, dispense:5, admin:1, waste:1, ret:0, cancel:1, massDispense:3.1, massAdmin:1.0, massWaste:1.4, massReturn:0.2},
+        {drug:'morphine Sulfate Inj',  priority:'high',   score:1.3, scoreClass:'score-normal',   compScore:1.3, events:6, dispense:4, admin:1, waste:1, ret:0, cancel:0, massDispense:3.8, massAdmin:1.0, massWaste:1.6, massReturn:0.2},
+      ]
+    },
+    {
+      id:'u18', name:'Sue Barton', role:'Pharmacist', dept:'Pharmacy', shifts:36, patients:0,
+      drugs:[
+        {drug:'ALPRAZolam Oral',                priority:'medium', score:1.2, scoreClass:'score-moderate', compScore:1.2, events:11, dispense:10, admin:0, waste:0, ret:1, cancel:2, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+        {drug:'traMADol Oral',                  priority:'low',    score:1.0, scoreClass:'score-normal',   compScore:1.0, events:9,  dispense:8,  admin:0, waste:0, ret:1, cancel:0, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+        {drug:'codeine Oral',                   priority:'low',    score:0.9, scoreClass:'score-normal',   compScore:0.8, events:7,  dispense:6,  admin:0, waste:0, ret:1, cancel:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+        {drug:'buprenorphine Sublingual',       priority:'low',    score:0.7, scoreClass:'score-normal',   compScore:0.6, events:5,  dispense:4,  admin:0, waste:0, ret:1, cancel:3, massDispense:0, massAdmin:0, massWaste:0, massReturn:0},
+      ]
+    },
+    {
+      id:'u19', name:'Rina Harper', role:'RN', dept:'Med South', shifts:24, patients:120,
+      drugs:[
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:0.9, scoreClass:'score-normal',   compScore:0.8, events:8,  dispense:5, admin:2, waste:1, ret:0, cancel:0, massDispense:4.2, massAdmin:1.3, massWaste:1.9, massReturn:0.2},
+        {drug:'morphine Sulfate Inj',  priority:'high',   score:0.7, scoreClass:'score-normal',   compScore:0.7, events:6,  dispense:4, admin:1, waste:1, ret:0, cancel:1, massDispense:3.2, massAdmin:0.9, massWaste:1.4, massReturn:0.1},
+      ]
+    },
+    {
+      id:'u20', name:'Evelyn Frazer', role:'Travel Nurse', dept:'Med North', shifts:16, patients:80,
+      drugs:[
+        {drug:'fentaNYL Inj',          priority:'high',   score:0.5, scoreClass:'score-normal',   compScore:0.5, events:5, dispense:3, admin:1, waste:1, ret:0, cancel:0, massDispense:3.0, massAdmin:0.9, massWaste:1.5, massReturn:0.1},
+        {drug:'HYDROmorphone Inj',     priority:'high',   score:0.4, scoreClass:'score-normal',   compScore:0.4, events:4, dispense:3, admin:1, waste:0, ret:0, cancel:2, massDispense:2.4, massAdmin:0.8, massWaste:0,   massReturn:0},
+      ]
+    },
+  ];
+
+  /* Classify a numeric IRIS score into one of the canonical tier classes.
+     Used for rolled-up user scores that aren't tied to a single drug. */
+  function classifyScore(s) {
+    if (s >= 8.0) return 'score-critical';
+    if (s >= 7.0) return 'score-high';
+    if (s >= 6.0) return 'score-elevated';
+    if (s >= 5.0) return 'score-moderate';
+    return 'score-normal';
+  }
+
+  /* Aggregate one user across their drugs. Top-level score = max per-drug score
+     (the highest-risk drug drives the user's flag). Comp score pulled from same row. */
+  function aggregateUser(u) {
+    const topDrug = u.drugs.reduce((a, b) => (b.score > a.score ? b : a), u.drugs[0]);
+    const sum = (k) => u.drugs.reduce((acc, d) => acc + (d[k] || 0), 0);
+    return {
+      ...u,
+      score: topDrug.score,
+      scoreClass: topDrug.scoreClass,
+      compScore: topDrug.compScore,
+      events: sum('events'),
+      dispense: sum('dispense'),
+      admin: sum('admin'),
+      waste: sum('waste'),
+      ret: sum('ret'),
+      cancel: sum('cancel'),
+      massDispense: +sum('massDispense').toFixed(1),
+      massAdmin:    +sum('massAdmin').toFixed(1),
+      massWaste:    +sum('massWaste').toFixed(1),
+      massReturn:   +sum('massReturn').toFixed(1),
+      drugCount: u.drugs.length,
+    };
+  }
+
+  function getAggregatedUsers() { return USERS.map(aggregateUser); }
+
+  function getUserById(id) { return USERS.find(u => u.id === id); }
+
+  /* Return the drug-breakdown array for a user, with a derived `mass` total
+     per drug (useful for the drug-centric chart). */
+  function getDrugsForUser(userId) {
+    const u = getUserById(userId);
+    if (!u) return [];
+    return u.drugs.map(d => ({
+      ...d,
+      mass: +(d.massDispense + d.massAdmin + d.massWaste + d.massReturn).toFixed(1),
+      massPerEvent: d.events ? +((d.massDispense + d.massAdmin + d.massWaste + d.massReturn) / d.events).toFixed(2) : 0,
+    }));
+  }
+
+  /* Inverse lookup: for a given drug, return all users (with their per-drug row)
+     flattened into the shape the drug-users view expects. */
+  function getUsersForDrug(drugName) {
+    const rows = [];
+    USERS.forEach(u => {
+      const row = u.drugs.find(d => d.drug === drugName);
+      if (row) {
+        rows.push({
+          userId: u.id,
+          name: u.name,
+          role: u.role,
+          dept: u.dept,
+          shifts: u.shifts,
+          patients: u.patients,
+          score: row.score,
+          scoreClass: row.scoreClass,
+          compScore: row.compScore,
+          events: row.events,
+          dispense: row.dispense,
+          admin: row.admin,
+          waste: row.waste,
+          ret: row.ret,
+          cancel: row.cancel,
+          mass: +(row.massDispense + row.massAdmin + row.massWaste + row.massReturn).toFixed(1),
+          massDispense: row.massDispense,
+          massAdmin: row.massAdmin,
+          massWaste: row.massWaste,
+          massReturn: row.massReturn,
+          massPerEvent: row.events ? +((row.massDispense + row.massAdmin + row.massWaste + row.massReturn) / row.events).toFixed(2) : 0,
+        });
+      }
+    });
+    return rows;
+  }
+
+  /* Drugs list derived from USERS (used for drug filter menus, search). */
+  function getAllDrugs() {
+    const set = new Set();
+    USERS.forEach(u => u.drugs.forEach(d => set.add(d.drug)));
+    return Array.from(set);
+  }
+
+  /* ══════════════════════════════════════════════
+     SORT STATE
+  ══════════════════════════════════════════════ */
+  const allUsersSortState  = { col: 'score', asc: false };
+  const userDrugsSortState = { col: 'drug', asc: true };
+
+  /* ══════════════════════════════════════════════
+     RENDER — ALL USERS TABLE  (Level 0)
+  ══════════════════════════════════════════════ */
+  function renderAllUsersHead() {
+    const head = document.getElementById('allUsersTableHead');
+    if (!head) return;
+    const compLabel = document.getElementById('comp-score-label')?.textContent || 'Overall IRIS';
+    const s = allUsersSortState;
+    const arrow = col => {
+      const active = s.col === col;
+      const icon   = active ? (s.asc ? 'arrow_upward' : 'arrow_downward') : 'arrow_upward';
+      const style  = active ? 'color:var(--blue-dark);opacity:1' : 'opacity:.3';
+      return `<span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;${style}">${icon}</span>`;
+    };
+    const th = (key, label, cls, style) =>
+      `<th class="sortable ${cls}" style="${style}" onclick="sortAllUsersTable('${key}')">`+
+      `<span class="th-inner">${label} ${arrow(key)}</span></th>`;
+
+    head.innerHTML = `<tr>
+      ${th('score',    'Metric Score', 'center','width:90px;" data-tooltip="Highest Med Trends score across all drugs')}
+      <th class="sortable right" style="width:95px;" id="th-all-comp-score" onclick="sortAllUsersTable('compScore')">
+        <span class="th-inner">${compLabel} ${arrow('compScore')}</span>
+      </th>
+      <th class="sortable" style="min-width:220px;" onclick="sortAllUsersTable('name')">
+        <span class="th-inner">User ${arrow('name')}</span>
+      </th>
+      ${th('drugCount','Drugs','right','width:70px;')}
+      ${th('shifts','Shifts','right','width:70px;')}
+      ${th('patients','Patients','right','width:75px;')}
+      ${th('events','Total Events','right','width:100px;')}
+      ${th('dispense','Dispense','right','width:85px;')}
+      ${th('admin',   'Admin',   'right','width:75px;')}
+      ${th('waste',   'Waste',   'right','width:75px;')}
+      ${th('ret',     'Return',  'right','width:75px;')}
+      ${th('cancel',  'Cancels', 'right','width:75px;')}
+      <th style="width:130px;"></th>
+    </tr>`;
+  }
+
+  function renderAllUsersTable() {
+    const raw = getAggregatedUsers();
+    const { col, asc } = allUsersSortState;
+    const users = [...raw].sort((a, b) => {
+      let av = a[col], bv = b[col];
+      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      av = av ?? 0; bv = bv ?? 0;
+      return asc ? (av > bv ? 1 : av < bv ? -1 : 0)
+                 : (av < bv ? 1 : av > bv ? -1 : 0);
+    });
+    renderAllUsersHead();
+    const tbody = document.getElementById('allUsersTableBody');
+
+    tbody.innerHTML = users.map(u => {
+      const row = `
+        <td class="center">
+          <span class="iris-score ${scoreClassFor(u.score)}" data-tooltip="Highest Med Trends score across all drugs">${u.score}</span>
+        </td>
+        <td class="num"><span class="comp-score ${scoreClassFor(u.compScore)}">${u.compScore ?? '—'}</span></td>
+        <td>
+          <div class="user-name"><a href="#" onclick="event.stopPropagation();openIrisPanel('${u.id}');return false;" data-tooltip="IRIS Details">${u.name}</a></div>
+          <div class="user-role-dept">${u.role} &bull; ${u.dept}</div>
+        </td>
+        <td class="num">${u.drugCount}</td>
+        <td class="num">${u.shifts}</td>
+        <td class="num">${u.patients || '—'}</td>
+        <td class="num">${u.events}</td>
+        <td class="num">${u.dispense}</td>
+        <td class="num">${u.admin}</td>
+        <td class="num">${u.waste}</td>
+        <td class="num">${u.ret}</td>
+        <td class="num">${u.cancel}</td>
+        <td style="text-align:right">
+          <a class="investigate-link" href="#" onclick="drillToUser('${u.id}');return false;">
+            View Drugs <span class="material-icons">chevron_right</span>
+          </a>
+        </td>`;
+      return `<tr onclick="drillToUser('${u.id}')">${row}</tr>`;
+    }).join('');
+
+    document.getElementById('allUsersCount').textContent = users.length;
+  }
+
+  /* ══════════════════════════════════════════════
+     RENDER — USER'S DRUGS TABLE  (Level 1)
+  ══════════════════════════════════════════════ */
+  function renderUserDrugsHead(context) {
+    const head = document.getElementById('userDrugsTableHead');
+    if (!head) return;
+    const s = userDrugsSortState;
+    const arrow = col => {
+      const active = s.col === col;
+      const icon   = active ? (s.asc ? 'arrow_upward' : 'arrow_downward') : 'arrow_upward';
+      const style  = active ? 'color:var(--blue-dark);opacity:1' : 'opacity:.3';
+      return `<span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;${style}">${icon}</span>`;
+    };
+    const th = (key, label, cls, style) =>
+      `<th class="sortable ${cls}" style="${style}" onclick="sortUserDrugsTable('${key}')">`+
+      `<span class="th-inner">${label} ${arrow(key)}</span></th>`;
+
+    const contextCols = context === 'event_types'
+      ? th('dispense','Dispense','right','width:85px;') +
+        th('admin',   'Admin',   'right','width:70px;') +
+        th('waste',   'Waste',   'right','width:70px;') +
+        th('ret',     'Return',  'right','width:70px;') +
+        th('cancel',  'Cancel',  'right','width:70px;')
+      : th('events',       'Total Events',   'right','width:90px;') +
+        th('massDispense', 'Mass Dispensed', 'right','width:110px;') +
+        th('massAdmin',    'Mass Admin',     'right','width:90px;') +
+        th('massWaste',    'Mass Wasted',    'right','width:90px;') +
+        th('massReturn',   'Mass Returned',  'right','width:100px;');
+
+    head.innerHTML = `<tr>
+      <th class="sortable" style="min-width:280px;" onclick="sortUserDrugsTable('drug')">
+        <span class="th-inner">Drug ${arrow('drug')}</span>
+      </th>
+      ${contextCols}
+      <th style="width:260px;"></th>
+    </tr>`;
+  }
+
+  function renderUserDrugsTable(userId) {
+    const context = getContext();
+    const raw = getDrugsForUser(userId);
+    const { col, asc } = userDrugsSortState;
+    const drugs = [...raw].sort((a, b) => {
+      let av = a[col], bv = b[col];
+      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      av = av ?? 0; bv = bv ?? 0;
+      return asc ? (av > bv ? 1 : av < bv ? -1 : 0)
+                 : (av < bv ? 1 : av > bv ? -1 : 0);
+    });
+    renderUserDrugsHead(context);
+    const tbody = document.getElementById('userDrugsTableBody');
+
+    tbody.innerHTML = drugs.map(d => {
+      const fixed = `
+        <td>
+          <div class="user-name"><span class="drug-name-plain">${d.drug}</span></div>
+        </td>`;
+      const data = context === 'event_types'
+        ? `<td class="num">${d.dispense}</td>
+           <td class="num">${d.admin}</td>
+           <td class="num">${d.waste}</td>
+           <td class="num">${d.ret}</td>
+           <td class="num">${d.cancel}</td>`
+        : `<td class="num">${d.events}</td>
+           <td class="num">${d.massDispense} mg</td>
+           <td class="num">${d.massAdmin} mg</td>
+           <td class="num">${d.massWaste} mg</td>
+           <td class="num">${d.massReturn} mg</td>`;
+      const action = `
+        <td class="l2-action-cell">
+          <a class="row-action-btn" href="#" onclick="drillToDrug('${d.drug.replace(/'/g, "\\'")}');return false;">
+            <span class="material-icons">people</span> Compare
+          </a>
+          <a class="row-action-btn" href="#" onclick="return false;">
+            <span class="material-icons">open_in_new</span> Investigate
+          </a>
+        </td>`;
+      return `<tr>${fixed}${data}${action}</tr>`;
+    }).join('');
+
+    document.getElementById('userDrugsCount').textContent = drugs.length;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderAllUsersTable();
+    // Place shared filter bar into the default visible view (Level 1)
+    const filterBar = document.querySelector('.shared-filter-bar');
+    const countRow  = document.querySelector('#view-all-users .count-search-row');
+    if (filterBar && countRow) countRow.after(filterBar);
+    updateFilterVisibility();
+  });
+
+  /* ══════════════════════════════════════════════
+     CHARTS — ALL USERS (Level 0) & USER'S DRUGS (Level 1)
+  ══════════════════════════════════════════════ */
+  function initAllUsersChart() {
+    const el = document.getElementById('all-users-chart');
+    if (!el) return;
+    if (!allUsersChart) allUsersChart = echarts.init(el);
+    updateChartLegend('allUsers', allUsersChartType);
+
+    const users = getAggregatedUsers();
+    const ctxKey = allUsersVizContext; // 'drugs' | 'shifts' | 'patients' | 'events'
+    const ctxField = ctxKey === 'drugs' ? 'drugCount' : ctxKey;
+    const ctxLabel = {
+      drugs: 'Drugs', shifts: 'Shifts', patients: 'Patients', events: 'Total Events'
+    }[ctxKey];
+
+    const axis = {
+      nameTextStyle: { fontSize: 12, color: '#757575', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
+      axisLine: { lineStyle: { color: '#e5e5e5' } },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+      axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#757575' }
+    };
+    const tooltipBase = {
+      trigger: 'item',
+      backgroundColor: 'rgba(10,56,97,.92)',
+      borderColor: 'transparent',
+      textStyle: { color: '#fff', fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 13 }
+    };
+
+    let option;
+    if (allUsersChartType === 'bar') {
+      const sorted = [...users].sort((a,b) => (b[ctxField]||0) - (a[ctxField]||0));
+      option = {
+        backgroundColor: 'transparent',
+        grid: { top: 20, right: 50, bottom: 40, left: 170 },
+        tooltip: { ...tooltipBase, formatter: p => {
+          const u = p.data;
+          return `<strong>${u.userName}</strong><br/>
+            ${u.role} &bull; ${u.dept}<br/>
+            Metric Score: <strong>${u.score}</strong><br/>
+            Drugs: ${u.drugCount} &bull; Shifts: ${u.shifts}<br/>
+            Patients: ${u.patients || 0} &bull; Events: ${u.events}`;
+        }},
+        xAxis: { type: 'value', name: ctxLabel, nameLocation: 'middle', nameGap: 26, ...axis },
+        yAxis: { type: 'category',
+          data: sorted.map(u => u.name),
+          axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#333' },
+          axisLine: { lineStyle: { color: '#e5e5e5' } },
+          axisTick: { show: false }
+        },
+        series: [{
+          type: 'bar',
+          barMaxWidth: 18,
+          data: sorted.map(u => ({
+            value: u[ctxField] || 0,
+            userName: u.name, role: u.role, dept: u.dept,
+            score: u.score, events: u.events, shifts: u.shifts,
+            patients: u.patients || 0,
+            drugCount: u.drugCount, userId: u.id,
+            itemStyle: { color: '#044a82', borderRadius: [0,3,3,0] },
+            emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,.25)' } }
+          })),
+          label: { show: true, position: 'right', fontSize: 11, color: '#444',
+                   fontFamily: 'proxima-nova, Helvetica, sans-serif',
+                   formatter: p => p.data.value }
+        }]
+      };
+    } else {
+      const maxShifts = Math.max(...users.map(u => u.shifts), 1);
+      option = {
+        backgroundColor: 'transparent',
+        grid: { top: 40, right: 40, bottom: 60, left: 70 },
+        tooltip: { ...tooltipBase, formatter: p => {
+          const u = p.data;
+          return `<strong>${u.userName}</strong><br/>
+            ${u.role} &bull; ${u.dept}<br/>
+            Metric Score: <strong>${u.score}</strong><br/>
+            ${ctxLabel}: ${u.value[0]}<br/>
+            Shifts: ${u.shifts}`;
+        }},
+        xAxis: { type: 'value', name: ctxLabel, nameLocation: 'middle', nameGap: 36, ...axis },
+        yAxis: { type: 'value', name: 'Metric Score', nameLocation: 'middle', nameGap: 40, min: 0, max: 10, ...axis },
+        series: [{
+          type: 'scatter',
+          data: users.map(u => ({
+            value: [u[ctxField] || 0, u.score],
+            userName: u.name, role: u.role, dept: u.dept,
+            score: u.score, shifts: u.shifts, drugCount: u.drugCount,
+            patients: u.patients || 0, events: u.events, userId: u.id,
+            symbolSize: Math.max(10, Math.round(8 + (u.shifts / maxShifts) * 22)),
+            itemStyle: { color: '#044a82', opacity: 0.88 },
+            emphasis: { itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } }
+          })),
+          label: {
+            show: true, position: 'right',
+            formatter: p => {
+              const parts = p.data.userName.split(' ');
+              return parts[0] + ' ' + (parts[1] ? parts[1][0]+'.' : '');
+            },
+            fontSize: 11, color: '#555',
+            fontFamily: 'proxima-nova, Helvetica, sans-serif'
+          }
+        }]
+      };
+    }
+
+    allUsersChart.setOption(option, true);
+    allUsersChart.off('click');
+    allUsersChart.on('click', p => { if (p.data?.userId) drillToUser(p.data.userId); });
+    window.addEventListener('resize', () => allUsersChart && allUsersChart.resize());
+  }
+
+  /* ══════════════════════════════════════════════
+     L2 VISUALIZED — Drug multi-select filter
+  ══════════════════════════════════════════════ */
+  // Selected drug names for the currently-drilled user. null = everything selected.
+  let udDrugFilterSelected = null;
+
+  function udGetFilteredDrugs(userId) {
+    const all = getDrugsForUser(userId);
+    if (!udDrugFilterSelected || udDrugFilterSelected.size === 0) return all;
+    return all.filter(d => udDrugFilterSelected.has(d.drug));
+  }
+
+  function udRebuildDrugFilter(userId) {
+    const list = document.getElementById('ud-drug-filter-list');
+    if (!list) return;
+    const drugs = getDrugsForUser(userId);
+    // Reset selection to all drugs on drill-in
+    udDrugFilterSelected = new Set(drugs.map(d => d.drug));
+    list.innerHTML = drugs.map(d => {
+      const safe = d.drug.replace(/"/g, '&quot;');
+      return `<label class="drug-filter-option">
+        <input type="checkbox" checked onchange="udDrugFilterToggle(&quot;${safe}&quot;, this.checked)">
+        <span>${d.drug}</span>
+      </label>`;
+    }).join('');
+    udUpdateDrugFilterLabel();
+  }
+
+  function udUpdateDrugFilterLabel() {
+    const label = document.getElementById('ud-drug-filter-label');
+    if (!label) return;
+    const all = currentUserId ? getDrugsForUser(currentUserId) : [];
+    const n = udDrugFilterSelected ? udDrugFilterSelected.size : all.length;
+    if (!udDrugFilterSelected || n === all.length) {
+      label.textContent = 'All drugs';
+    } else if (n === 0) {
+      label.textContent = 'No drugs';
+    } else if (n === 1) {
+      label.textContent = '1 drug';
+    } else {
+      label.textContent = n + ' drugs';
+    }
+  }
+
+  function udDrugFilterToggle(drugName, checked) {
+    if (!udDrugFilterSelected) udDrugFilterSelected = new Set();
+    if (checked) udDrugFilterSelected.add(drugName);
+    else udDrugFilterSelected.delete(drugName);
+    udUpdateDrugFilterLabel();
+    // Re-render chart
+    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
+    initUserDrugsChart(currentUserId);
+  }
+
+  function udDrugFilterSelectAll(selectAll) {
+    const all = currentUserId ? getDrugsForUser(currentUserId) : [];
+    udDrugFilterSelected = selectAll ? new Set(all.map(d => d.drug)) : new Set();
+    // Sync checkboxes
+    document.querySelectorAll('#ud-drug-filter-list input[type="checkbox"]').forEach(cb => {
+      cb.checked = selectAll;
+    });
+    udUpdateDrugFilterLabel();
+    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
+    initUserDrugsChart(currentUserId);
+  }
+
+  function toggleUdDrugFilter(ev) {
+    if (ev) ev.stopPropagation();
+    const menu = document.getElementById('ud-drug-filter-menu');
+    if (!menu) return;
+    menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+  }
+
+  // Close menu on outside click
+  document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('ud-drug-filter-wrap');
+    const menu = document.getElementById('ud-drug-filter-menu');
+    if (!wrap || !menu) return;
+    if (menu.style.display === 'none') return;
+    if (!wrap.contains(e.target)) menu.style.display = 'none';
+  });
+
+  function initUserDrugsChart(userId) {
+    const el = document.getElementById('user-drugs-chart');
+    if (!el) return;
+    if (!userDrugsChart) userDrugsChart = echarts.init(el);
+    updateChartLegend('userDrugs', userDrugsChartType);
+
+    const drugs = udGetFilteredDrugs(userId);
+    const axis = {
+      nameTextStyle: { fontSize: 12, color: '#757575', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
+      axisLine: { lineStyle: { color: '#e5e5e5' } },
+      splitLine: { lineStyle: { color: '#f0f0f0' } },
+      axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#757575' }
+    };
+    const tooltipBase = {
+      backgroundColor: 'rgba(10,56,97,.92)',
+      borderColor: 'transparent',
+      textStyle: { color: '#fff', fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 13 }
+    };
+
+    let option;
+    if (userDrugsChartType === 'bar') {
+      // Stacked bar segmented by event type. Respects Mass/Events context.
+      const ctx = getContext(); // 'event_types' or 'mass_per_event'
+      const useMass = ctx !== 'event_types';
+      const keys   = useMass ? MASS_TYPE_KEYS : eventTypeKeysCancelIncluded();
+      const labels = useMass ? MASS_TYPE_LABELS : EVENT_TYPE_LABELS;
+      const colors = useMass ? MASS_TYPE_COLORS : EVENT_TYPE_COLORS;
+      const unit   = useMass ? ' mg' : '';
+
+      // Sort drugs by total (sum of segments) desc
+      const total = d => keys.reduce((s, k) => s + (d[k] || 0), 0);
+      const sorted = [...drugs].sort((a,b) => total(b) - total(a));
+
+      const series = keys.map(k => ({
+        name: labels[k],
+        type: 'bar',
+        stack: 'total',
+        barMaxWidth: 20,
+        itemStyle: { color: colors[k] },
+        emphasis: { focus: 'series' },
+        data: sorted.map(d => d[k] || 0),
+        // Show the total as a label on the LAST series' segment
+        label: (k === keys[keys.length - 1]) ? {
+          show: true, position: 'right', fontSize: 11, color: '#444',
+          fontFamily: 'proxima-nova, Helvetica, sans-serif',
+          formatter: p => {
+            const t = sorted[p.dataIndex] ? total(sorted[p.dataIndex]) : 0;
+            return t + unit;
+          }
+        } : { show: false }
+      }));
+
+      option = {
+        backgroundColor: 'transparent',
+        grid: { top: 50, right: 60, bottom: 40, left: 200 },
+        legend: {
+          top: 6, left: 'center',
+          icon: 'roundRect',
+          itemWidth: 14, itemHeight: 10,
+          textStyle: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#555' }
+        },
+        tooltip: { ...tooltipBase, trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          formatter: ps => {
+            if (!ps || !ps.length) return '';
+            const drugName = ps[0].name;
+            let html = `<strong>${drugName}</strong>`;
+            let sum = 0;
+            ps.forEach(p => { sum += p.value; html += `<br/><span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:2px;margin-right:6px;"></span>${p.seriesName}: ${p.value}${unit}`; });
+            html += `<br/><strong>Total: ${sum}${unit}</strong>`;
+            return html;
+          }
+        },
+        xAxis: { type: 'value', name: useMass ? 'Total Mass (mg)' : 'Total Events',
+                 nameLocation: 'middle', nameGap: 26, ...axis },
+        yAxis: { type: 'category',
+          data: sorted.map(d => d.drug),
+          axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#333',
+            formatter: v => v.length > 26 ? v.slice(0,24)+'…' : v },
+          axisLine: { lineStyle: { color: '#e5e5e5' } },
+          axisTick: { show: false }
+        },
+        series
+      };
+    } else {
+      // Scatter — one series per event type; each point is a (drug, event-type) pair
+      // plotted at (event count, mass). Legend identifies + toggles event types.
+      const keys      = eventTypeKeysCancelIncluded();
+      const massField = { dispense: 'massDispense', admin: 'massAdmin',
+                          waste: 'massWaste', ret: 'massReturn', cancel: null };
+      const series = keys.map(k => ({
+        name: EVENT_TYPE_LABELS[k],
+        type: 'scatter',
+        symbolSize: 14,
+        itemStyle: { color: EVENT_TYPE_COLORS[k], opacity: 0.85 },
+        emphasis: { focus: 'series',
+                    itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } },
+        data: drugs.map(d => {
+          const count = d[k] || 0;
+          const mass  = massField[k] ? (d[massField[k]] || 0) : 0;
+          return { value: [count, mass], drug: d.drug, eventType: EVENT_TYPE_LABELS[k],
+                   count, mass };
+        })
+      }));
+
+      option = {
+        backgroundColor: 'transparent',
+        grid: { top: 50, right: 40, bottom: 60, left: 70 },
+        legend: {
+          top: 10, left: 'center',
+          icon: 'roundRect',
+          itemWidth: 14, itemHeight: 10,
+          textStyle: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#555' }
+        },
+        tooltip: { ...tooltipBase, trigger: 'item', formatter: p => {
+          const d = p.data;
+          return `<strong>${d.drug}</strong><br/>
+            <span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:2px;margin-right:6px;"></span>${d.eventType}<br/>
+            Events: ${d.count}<br/>
+            Mass: ${d.mass} mg`;
+        }},
+        xAxis: { type: 'value', name: 'Events',    nameLocation: 'middle', nameGap: 36, ...axis },
+        yAxis: { type: 'value', name: 'Mass (mg)', nameLocation: 'middle', nameGap: 52, ...axis },
+        series
+      };
+    }
+
+    userDrugsChart.setOption(option, true);
+    userDrugsChart.off('click');
+    userDrugsChart.on('click', p => { if (p.data?.drug) drillToDrug(p.data.drug); });
+    window.addEventListener('resize', () => userDrugsChart && userDrugsChart.resize());
+  }
+
+  /* Event type keys helper — order matters for stacking */
+  function eventTypeKeysCancelIncluded() {
+    return ['dispense','admin','waste','ret','cancel'];
+  }
+
+  /* ══════════════════════════════════════════════
+     RENDER USERS TABLE
+  ══════════════════════════════════════════════ */
+  function getContext() {
+    // When the L3 panel is open, its own Context selector drives the table/chart.
+    const sourceId = l3PanelOpen ? 'l3-panel-context-label' : 'context-label';
+    const lbl = document.getElementById(sourceId)?.textContent.trim();
+    return lbl === 'Events' ? 'event_types' : 'mass_per_event';
+  }
+
+  function renderUsersHead(context) {
+    const head = document.getElementById('usersTableHead');
+    if (!head) return;
+    const s = userSortState;
+    const arrow = col => {
+      const active = s.col === col;
+      const icon   = active ? (s.asc ? 'arrow_upward' : 'arrow_downward') : 'arrow_upward';
+      const style  = active ? 'color:var(--blue-dark);opacity:1' : 'opacity:.3';
+      return `<span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;${style}">${icon}</span>`;
+    };
+    const th = (key, label, cls, style) =>
+      `<th class="sortable ${cls}" style="${style}" onclick="sortUsersTable('${key}')">`+
+      `<span class="th-inner">${label} ${arrow(key)}</span></th>`;
+
+    const contextCols = context === 'event_types'
+      ? th('dispense','Dispense','right','width:85px;') +
+        th('admin',   'Admin',   'right','width:70px;') +
+        th('waste',   'Waste',   'right','width:70px;') +
+        th('ret',     'Return',  'right','width:70px;') +
+        th('cancel',  'Cancel',  'right','width:70px;')
+      : th('events',       'Total Events',   'right','width:90px;') +
+        th('massDispense', 'Mass Dispensed', 'right','width:110px;') +
+        th('massAdmin',    'Mass Admin',     'right','width:90px;') +
+        th('massWaste',    'Mass Wasted',    'right','width:90px;') +
+        th('massReturn',   'Mass Returned',  'right','width:100px;');
+
+    head.innerHTML = `<tr>
+      <th class="sortable" style="min-width:240px;" onclick="sortUsersTable('name')">
+        <span class="th-inner">User ${arrow('name')}</span>
+      </th>
+      ${th('shifts','Shifts','right','width:70px;')}
+      ${th('patients','Patients','right','width:75px;')}
+      ${contextCols}
+    </tr>`;
+  }
+
+  function renderUsersTable(drugName) {
+    const context = getContext();
+    const raw     = getUsersForDrug(drugName);
+    const { col, asc } = userSortState;
+    const users = [...raw].sort((a, b) => {
+      let av = a[col], bv = b[col];
+      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      av = av ?? 0; bv = bv ?? 0;
+      return asc ? (av > bv ? 1 : av < bv ? -1 : 0)
+                 : (av < bv ? 1 : av > bv ? -1 : 0);
+    });
+    const tbody   = document.getElementById('usersTableBody');
+    renderUsersHead(context);
+
+    tbody.innerHTML = users.map(u => {
+      const badge = '';
+      const fixed = `
+        <td>
+          <div class="user-name"><a href="#" onclick="event.stopPropagation();openIrisPanel('${u.userId}');return false;" data-tooltip="IRIS Details">${u.name}</a>${badge}</div>
+          <div class="user-role-dept">${u.role} &bull; ${u.dept}</div>
+        </td>
+        <td class="num">${u.shifts}</td>
+        <td class="num">${u.patients ?? '—'}</td>`;
+      const data = context === 'event_types'
+        ? `<td class="num">${u.dispense ?? '—'}</td>
+           <td class="num">${u.admin    ?? '—'}</td>
+           <td class="num">${u.waste    ?? '—'}</td>
+           <td class="num">${u.ret      ?? '—'}</td>
+           <td class="num">${u.cancel   ?? '—'}</td>`
+        : `<td class="num">${u.events}</td>
+           <td class="num">${u.massDispense ?? '—'} mg</td>
+           <td class="num">${u.massAdmin    ?? '—'} mg</td>
+           <td class="num">${u.massWaste    ?? '—'} mg</td>
+           <td class="num">${u.massReturn   ?? '—'} mg</td>`;
+      return `<tr${u.userId === currentUserId ? ' class="focus-user"' : ''}>${fixed}${data}</tr>`;
+    }).join('');
+    const cnt = document.getElementById('usersCount'); if (cnt) cnt.textContent = users.length;
+  }
+
+  /* ══════════════════════════════════════════════
+     NAVIGATION (3-level hierarchy)
+     Level 0: All Users (default)
+     Level 1: User's Drugs
+     Level 2: Drug's Users
+  ══════════════════════════════════════════════ */
+  let currentLevel = 0;
+  let currentUserId   = null;
+  let currentUserName = null;
+  let currentDrugName = null;
+
+  function setBreadcrumb() {
+    // Page title is now constant — "Med Trends" — for all levels.
+    // Drilldown context (user/drug names) is rendered inline inside each view.
+    const pt = document.querySelector('.page-title');
+    if (!pt) return;
+    pt.classList.remove('breadcrumb');
+    pt.innerHTML = 'Med Trends';
+  }
+
+  function setVisibleView(viewId) {
+    ['view-all-users', 'view-user-drugs'].forEach(id => {
+      document.getElementById(id).classList.toggle('visible', id === viewId);
+    });
+    // Relocate the shared filter bar below the current view's count-search-row
+    const filterBar = document.querySelector('.shared-filter-bar');
+    const countRow  = document.querySelector(`#${viewId} .count-search-row`);
+    if (filterBar && countRow && countRow.nextElementSibling !== filterBar) {
+      countRow.after(filterBar);
+    }
+    updateFilterVisibility();
+  }
+
+  /* Centralized filter show/hide + Context menu rebuild.
+     Called whenever level OR mode changes. */
+  function updateFilterVisibility() {
+    const level = currentLevel;  // 0 (all users), 1 (user drugs), 2 (drug users)
+    const mode  = currentMode;   // 'table' | 'graph'
+
+    const comp    = document.getElementById('comp-score-filter-wrap');
+    const ctx     = document.getElementById('context-filter-wrap');
+    const etf     = document.getElementById('event-type-filter');
+    const stdDev  = document.getElementById('std-dev-filter-wrap');
+
+    // Comparison Score — visible only on Level 1 tabular
+    if (comp) comp.style.display = (level === 0 && mode === 'table') ? '' : 'none';
+
+    // Context — show always EXCEPT on Level 1 tabular
+    if (ctx) ctx.style.display = (level === 0 && mode === 'table') ? 'none' : '';
+
+    // Event Type — shared bar no longer exposes it (L3 panel has its own)
+    if (etf) etf.style.display = 'none';
+
+    // Std. Deviation — always visible
+    if (stdDev) stdDev.style.display = '';
+
+    // Rebuild the Context menu options for this (level, mode) combination
+    rebuildContextMenu(level, mode);
+  }
+
+  function rebuildContextMenu(level, mode) {
+    const menu = document.getElementById('context-menu');
+    const label = document.getElementById('context-label');
+    if (!menu || !label) return;
+
+    let options;
+    if (level === 0 && mode === 'graph') {
+      // Level 1 visualized: dimension selector
+      options = [
+        { key: 'drugs',    label: 'Drugs' },
+        { key: 'shifts',   label: 'Shifts' },
+        { key: 'patients', label: 'Patients' },
+        { key: 'events',   label: 'Total Events' }
+      ];
+      if (!options.some(o => o.key === allUsersVizContext)) allUsersVizContext = 'events';
+      const selected = options.find(o => o.key === allUsersVizContext);
+      label.textContent = selected.label;
+    } else {
+      // Level 2/3 (both modes): Mass vs Events
+      options = [
+        { key: 'mass',   label: 'Mass' },
+        { key: 'events', label: 'Events' }
+      ];
+      // Keep whatever label is there if it matches; otherwise default to Mass
+      const current = label.textContent.trim();
+      if (current !== 'Mass' && current !== 'Events') label.textContent = 'Mass';
+    }
+
+    // Render options
+    const currentLabel = label.textContent.trim();
+    menu.innerHTML = options.map(o => {
+      const selected = o.label === currentLabel;
+      // The click handler is scope-dependent
+      const onClick = (level === 0 && mode === 'graph')
+        ? `setAllUsersVizContext('${o.key}','${o.label}')`
+        : `setPillFilter(null,'context-label','context-menu',this);updateContext()`;
+      return `<div class="cs-option${selected ? ' selected' : ''}" onclick="${onClick}">${o.label}</div>`;
+    }).join('');
+  }
+
+  function setAllUsersVizContext(key, label) {
+    allUsersVizContext = key;
+    document.getElementById('context-label').textContent = label;
+    // Update selected state in the menu
+    document.querySelectorAll('#context-menu .cs-option').forEach(el => {
+      el.classList.toggle('selected', el.textContent.trim() === label);
+    });
+    document.getElementById('context-menu').style.display = 'none';
+    // Re-render the Level 1 chart
+    if (allUsersChart) { allUsersChart.dispose(); allUsersChart = null; }
+    initAllUsersChart();
+  }
+
+  function drillToUser(userId) {
+    const user = getUserById(userId);
+    if (!user) return;
+    currentLevel = 1;
+    currentUserId = userId;
+    currentUserName = user.name;
+    setVisibleView('view-user-drugs');
+    setDrilldownHeader('user-drugs', user.name,
+      `${user.role} · ${user.dept} · ${user.shifts} shifts · ${user.patients || 0} patients`);
+    renderUserDrugsTable(userId);
+    udRebuildDrugFilter(userId);
+    setBreadcrumb();
+    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
+    switchUserDrugsView('table');
+  }
+
+  function drillToDrug(drugName) {
+    // Level 3 is now an overlay panel. Underlying view stays at L2.
+    openL3Panel(drugName);
+  }
+
+  function goToAllUsers() {
+    currentLevel = 0;
+    currentUserId = null;
+    currentUserName = null;
+    currentDrugName = null;
+    setVisibleView('view-all-users');
+    setBreadcrumb();
+    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
+    if (usersChart)     { usersChart.dispose();     usersChart = null; }
+    switchAllUsersView('table');
+  }
+
+  /* Back button handlers (one level up) */
+  function goBackFromUserDrugs() { goToAllUsers(); }
+  function goBack() {
+    if (currentLevel === 1) goBackFromUserDrugs();
+  }
+
+  /* Per-view drilldown title helper (lives inside count-search-row) */
+  function setDrilldownHeader(viewScope, title /* , _ignoredSubtitle */) {
+    const titleEl = document.getElementById(`${viewScope}-drilldown-title`);
+    if (titleEl) titleEl.textContent = title;
+  }
+
+  /* ══════════════════════════════════════════════
+     CHART LEGEND VISIBILITY
+     Rules:
+       Level 1 (All Users)    — always show legend; toggle the dot-size hint
+                                (visible only in scatter).
+       Level 2 & 3 (drilldown) — bar charts are colored by event type (ECharts
+                                 renders its own legend), so hide the static
+                                 severity legend. Show it in scatter mode.
+  ══════════════════════════════════════════════ */
+  function updateChartLegend(level, type) {
+    const selector = {
+      allUsers:  '#all-users-graph-view .chart-legend',
+      userDrugs: '#user-drugs-graph-view .chart-legend',
+      users:     '#users-graph-view .chart-legend'
+    }[level];
+    const el = document.querySelector(selector);
+    if (!el) return;
+    if (level === 'allUsers') {
+      el.style.display = '';
+      const hint = el.querySelector('.dot-size-hint');
+      if (hint) hint.style.display = type === 'scatter' ? '' : 'none';
+    } else {
+      el.style.display = type === 'scatter' ? '' : 'none';
+    }
+  }
+
+    /* ══════════════════════════════════════════════
+     CHART TYPE SELECTOR
+  ══════════════════════════════════════════════ */
+  function setChartType(level, type) {
+    // Update state
+    if      (level === 'allUsers')  allUsersChartType  = type;
+    else if (level === 'userDrugs') userDrugsChartType = type;
+    else if (level === 'users')     usersChartType     = type;
+
+    // Update button active state within this level's selector
+    const containerId = {
+      allUsers:  'all-users-graph-view',
+      userDrugs: 'user-drugs-graph-view',
+      users:     'users-graph-view'
+    }[level];
+    const container = document.getElementById(containerId);
+    if (container) {
+      container.querySelectorAll('.ct-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.type === type);
+      });
+    }
+
+    // Dispose + re-init the appropriate chart
+    if (level === 'allUsers') {
+      if (allUsersChart) { allUsersChart.dispose(); allUsersChart = null; }
+      initAllUsersChart();
+    } else if (level === 'userDrugs') {
+      if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
+      initUserDrugsChart(currentUserId);
+    } else {
+      if (usersChart) { usersChart.dispose(); usersChart = null; }
+      initUsersChart(currentDrugName);
+    }
+  }
+
+    /* ══════════════════════════════════════════════
+     VIEW TOGGLES — table vs. scatter for each level
+  ══════════════════════════════════════════════ */
+  function _toggleTab(tableId, graphId, mode) {
+    document.getElementById(tableId).style.display = mode==='table' ? '' : 'none';
+    document.getElementById(graphId).style.display = mode==='graph' ? '' : 'none';
+    // Tab active states live on the shared tab bar — sync them here.
+    const tabular = document.getElementById('shared-tabular-tab');
+    const visual  = document.getElementById('shared-visual-tab');
+    if (tabular && visual) {
+      tabular.classList.toggle('mdc-tab--active', mode==='table');
+      visual .classList.toggle('mdc-tab--active', mode==='graph');
+      tabular.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode==='table');
+      visual .querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode==='graph');
+    }
+  }
+
+  function switchCurrentView(mode) {
+    if (currentLevel === 0) switchAllUsersView(mode);
+    else if (currentLevel === 1) switchUserDrugsView(mode);
+  }
+
+  function switchAllUsersView(mode) {
+    currentMode = mode;
+    _toggleTab('all-users-table-view','all-users-graph-view', mode);
+    updateFilterVisibility();
+    updateChartLegend('allUsers', allUsersChartType);
+    const csr = document.querySelector('#view-all-users .count-search-row');
+    if (csr) csr.style.display = mode === 'graph' ? 'none' : '';
+    if (allUsersChart) { allUsersChart.dispose(); allUsersChart = null; }
+    if (mode === 'graph') setTimeout(() => initAllUsersChart(), 0);
+  }
+
+  function switchUserDrugsView(mode) {
+    currentMode = mode;
+    _toggleTab('user-drugs-table-view','user-drugs-graph-view', mode);
+    updateFilterVisibility();
+    updateChartLegend('userDrugs', userDrugsChartType);
+    const csr = document.querySelector('#view-user-drugs .count-search-row');
+    if (csr) _toggleCsrForGraph(csr, mode);
+    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
+    if (mode === 'graph') setTimeout(() => initUserDrugsChart(currentUserId), 0);
+  }
+
+  /* L2 count-search-row contains back+title (must stay) plus row-count+search (hide on graph).
+     Toggle only the children that are count/search-related. */
+  function _toggleCsrForGraph(csr, mode) {
+    const hide = mode === 'graph';
+    const rowCount = csr.querySelector('.row-count');
+    const searchWrap = csr.querySelector('.search-wrap');
+    if (rowCount)   rowCount.style.display   = hide ? 'none' : '';
+    if (searchWrap) searchWrap.style.display = hide ? 'none' : '';
+  }
+
+  function updateContext() {
+    // Re-render whichever view is currently active (panel uses updatePanelContext instead)
+    if (currentLevel === 0) renderAllUsersTable();
+    else if (currentLevel === 1) renderUserDrugsTable(currentUserId);
+    // Dispose any open chart so it re-renders with new context dims
+    if (allUsersChart)  { allUsersChart.dispose();  allUsersChart = null; }
+    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
+  }
+
+  /* ══════════════════════════════════════════════
+     SIDEBAR
+  ══════════════════════════════════════════════ */
+  function toggleDrawer() {
+    document.getElementById('analyze-drawer').classList.toggle('collapsed');
+  }
+  function togglePanel(header) {
+    const panel = header.closest('mat-expansion-panel');
+    const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+    const isOpen = panel.classList.contains('mat-expanded');
+    panel.classList.toggle('mat-expanded', !isOpen);
+    header.classList.toggle('mat-expanded', !isOpen);
+    header.setAttribute('aria-expanded', !isOpen);
+    isOpen ? wrapper.setAttribute('inert','') : wrapper.removeAttribute('inert');
+  }
+
+  /* ══════════════════════════════════════════════
+     DOWNLOAD MENU (CSV / PDF options)
+  ══════════════════════════════════════════════ */
+  function toggleDownloadMenu(btn, ev) {
+    if (ev) ev.stopPropagation();
+    const wrap = btn.closest('.download-menu-wrap');
+    if (!wrap) return;
+    const menu = wrap.querySelector('.download-menu');
+    if (!menu) return;
+    // Close any OTHER download menus that might be open
+    document.querySelectorAll('.download-menu').forEach(m => {
+      if (m !== menu) m.style.display = 'none';
+    });
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  function closeDownloadMenus() {
+    document.querySelectorAll('.download-menu').forEach(m => m.style.display = 'none');
+  }
+  // Outside-click closes any open download menu
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.download-menu-wrap')) closeDownloadMenus();
+  });
+
+  /* ══════════════════════════════════════════════
+     VERSION SELECTOR (Latest / Legacy)
+  ══════════════════════════════════════════════ */
+  function toggleVersionMenu(ev) {
+    if (ev) ev.stopPropagation();
+    const menu = document.getElementById('version-menu');
+    const btn  = document.querySelector('.version-btn');
+    if (!menu) return;
+    const show = menu.style.display === 'none';
+    menu.style.display = show ? '' : 'none';
+    if (btn) btn.setAttribute('aria-expanded', String(show));
+  }
+  function selectVersion(label, el) {
+    document.getElementById('version-label').textContent = label;
+    document.querySelectorAll('#version-menu .version-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('version-menu').style.display = 'none';
+    document.querySelector('.version-btn')?.setAttribute('aria-expanded', 'false');
+
+    // Toggle legacy mode — hides all main content, shows placeholder
+    const isLegacy = label === 'Legacy Experience';
+    document.body.classList.toggle('legacy-mode', isLegacy);
+    // Close any open panels when entering Legacy so they don't float above placeholder
+    if (isLegacy) {
+      if (typeof closeL3Panel === 'function' && l3PanelOpen) closeL3Panel();
+      if (typeof closeIrisPanel === 'function') {
+        const iris = document.getElementById('iris-panel');
+        if (iris && iris.classList.contains('open')) closeIrisPanel();
+      }
+    }
+  }
+  // Close version menu on outside click
+  document.addEventListener('click', (e) => {
+    const sel = document.getElementById('version-selector');
+    const menu = document.getElementById('version-menu');
+    if (!sel || !menu) return;
+    if (menu.style.display === 'none') return;
+    if (!sel.contains(e.target)) {
+      menu.style.display = 'none';
+      document.querySelector('.version-btn')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  /* ══════════════════════════════════════════════
+     FILTER CHIP TOGGLE (demo only)
+  ══════════════════════════════════════════════ */
+  function togglePillMenu(menuId) {
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    // Close all other open menus + clear their 'open' state
+    document.querySelectorAll('.cs-menu').forEach(m => {
+      if (m.id !== menuId) {
+        m.style.display = 'none';
+        m.closest('.pill-filter-wrap')?.classList.remove('open');
+      }
+    });
+    const showing = menu.style.display === 'none';
+    menu.style.display = showing ? '' : 'none';
+    menu.closest('.pill-filter-wrap')?.classList.toggle('open', showing);
+  }
+  function setPillFilter(btnId, labelId, menuId, el) {
+    document.getElementById(labelId).textContent = el.textContent;
+    const menu = document.getElementById(menuId);
+    menu.style.display = 'none';
+    const wrap = menu.closest('.pill-filter-wrap');
+    wrap?.classList.remove('open');
+    el.closest('.cs-menu').querySelectorAll('.cs-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    // Mark wrap as 'selected' if the chosen option is not the first (default) one
+    if (wrap) {
+      const options = el.closest('.cs-menu').querySelectorAll('.cs-option');
+      const idx = Array.from(options).indexOf(el);
+      wrap.classList.toggle('selected', idx > 0);
+    }
+  }
+
+  function toggleCompScoreMenu() { togglePillMenu('comp-score-menu'); }
+  function setCompScore(el) {
+    document.getElementById('comp-score-label').textContent = el.textContent;
+    const menu = document.getElementById('comp-score-menu');
+    menu.style.display = 'none';
+    const wrap = menu.closest('.pill-filter-wrap');
+    wrap?.classList.remove('open');
+    document.querySelectorAll('#comp-score-menu .cs-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    // Selected state — Comp Score has no neutral default, so mark selected always (if different from first)
+    if (wrap) {
+      const options = menu.querySelectorAll('.cs-option');
+      const idx = Array.from(options).indexOf(el);
+      wrap.classList.toggle('selected', idx > 0);
+    }
+    // Re-render the active view so header labels + sort states refresh
+    if (currentLevel === 0) renderAllUsersTable();
+    else if (currentLevel === 1) renderUserDrugsTable(currentUserId);
+    else renderUsersTable(currentDrugName);
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.comp-score-filter') && !e.target.closest('.cs-menu')) {
+      document.querySelectorAll('.cs-menu').forEach(m => {
+        m.style.display = 'none';
+        m.closest('.pill-filter-wrap')?.classList.remove('open');
+      });
+    }
+  });
+
+  function toggleFilter(el) {
+    el.classList.toggle('active');
+  }
+
+  /* ══════════════════════════════════════════════
+     SORT handlers
+  ══════════════════════════════════════════════ */
+  function sortUsersTable(col) {
+    if (userSortState.col === col) {
+      userSortState.asc = !userSortState.asc;
+    } else {
+      userSortState.col = col;
+      userSortState.asc = col === 'name';
+    }
+    renderUsersTable(currentDrugName);
+  }
+
+  function sortAllUsersTable(col) {
+    if (allUsersSortState.col === col) {
+      allUsersSortState.asc = !allUsersSortState.asc;
+    } else {
+      allUsersSortState.col = col;
+      allUsersSortState.asc = col === 'name';
+    }
+    renderAllUsersTable();
+  }
+
+  function sortUserDrugsTable(col) {
+    if (userDrugsSortState.col === col) {
+      userDrugsSortState.asc = !userDrugsSortState.asc;
+    } else {
+      userDrugsSortState.col = col;
+      userDrugsSortState.asc = col === 'drug';
+    }
+    renderUserDrugsTable(currentUserId);
+  }
+
+  /* ══════════════════════════════════════════════
+     SEARCH helpers
+  ══════════════════════════════════════════════ */
+  function filterAllUsersTable(q) {
+    q = (q || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('#allUsersTableBody tr');
+    let visible = 0;
+    rows.forEach(r => {
+      const hit = !q || r.textContent.toLowerCase().includes(q);
+      r.style.display = hit ? '' : 'none';
+      if (hit) visible++;
+    });
+    document.getElementById('allUsersCount').textContent = visible;
+  }
+  function filterUserDrugsTable(q) {
+    q = (q || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('#userDrugsTableBody tr');
+    let visible = 0;
+    rows.forEach(r => {
+      const hit = !q || r.textContent.toLowerCase().includes(q);
+      r.style.display = hit ? '' : 'none';
+      if (hit) visible++;
+    });
+    document.getElementById('userDrugsCount').textContent = visible;
+  }
+  function filterUsersTable(q) {
+    q = (q || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('#usersTableBody tr');
+    let visible = 0;
+    rows.forEach(r => {
+      const hit = !q || r.textContent.toLowerCase().includes(q);
+      r.style.display = hit ? '' : 'none';
+      if (hit) visible++;
+    });
+    const cnt = document.getElementById('usersCount');
+    if (cnt) cnt.textContent = visible;
+  }
+
+  // ── Tooltip ──────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    const tt = document.getElementById('tt');
+    document.addEventListener('mouseover', e => {
+      const el = e.target.closest('[data-tooltip]');
+      if (!el) return;
+      tt.textContent = el.getAttribute('data-tooltip');
+      tt.style.opacity = '1';
+      positionTT(el);
+    });
+    document.addEventListener('mouseout', e => {
+      if (!e.target.closest('[data-tooltip]')) return;
+      tt.style.opacity = '0';
+    });
+    document.addEventListener('mousemove', e => {
+      if (tt.style.opacity === '0') return;
+      const el = e.target.closest('[data-tooltip]');
+      if (el) positionTT(el);
+    });
+    function positionTT(el) {
+      const r  = el.getBoundingClientRect();
+      const tw = tt.offsetWidth;
+      let left = r.left + r.width / 2 - tw / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      tt.style.left = left + 'px';
+      tt.style.top  = (r.top - tt.offsetHeight - 8) + 'px';
+    }
+  });
+
+
+</script>
+</head>
+
+<body>
+<div id="tt"></div>
+<app-component class="flex-col-100">
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
+  <navigation>
+    <header>
+
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+
+        <!-- Logo -->
+        <a class="nav-link" href="/dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
+            <g><g><g id="ControlCheck_Logo_Color">
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+            </g></g></g>
+          </svg>
+        </a>
+
+        <!-- nav-menu -->
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Audit<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active">
+              <span class="mdc-button__label">Analyze<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Cases<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
+                  Report
+                </span>
+              </span>
+            </a>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Upload<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
+                  Manage&nbsp;<span id="mat-badge-content-0" aria-hidden="true" class="mat-badge-content mat-badge-active">!</span>
+                </span>
+              </span>
+            </a>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/labs">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
+                  Labs
+                </span>
+              </span>
+            </a>
+          </div>
+        </nav-menu>
+
+        <!-- user-menu -->
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Alex Morrow</div>
+                  <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
+                </div>
+
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">AM</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ══ APP VIEW ════════════════════════════════════════════════════ -->
+  <div id="app-view" class="flex-col-100">
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── ANALYZE SIDEBAR ── -->
+      <mat-drawer mode="side" opened="" class="mat-drawer mat-drawer-opened mat-drawer-side" id="analyze-drawer">
+        <div class="mat-drawer-inner-container">
+          <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <span class="mat-icon material-icons">chevron_left</span>
+          </button>
+          <mat-accordion class="mat-accordion navigation-accordion mat-accordion-multi">
+
+            <!-- Health System -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span>Active IRIS Reviews</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span>Multi-Hospital Users</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+            <!-- Nursing -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
+                    <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span>User Mobility</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span>Waste Networks</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span>Full Package Waste</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span>Shift Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+            <!-- OR -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">OR</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <!-- ── MAIN CONTENT ── -->
+      <mat-drawer-content class="mat-drawer-content">
+
+        <!-- ═══════════════════════════════════════
+             PAGE HEADER (shared across both views)
+        ═══════════════════════════════════════ -->
+        <div class="page-header">
+          <div class="page-title-group">
+            <span class="page-title">Med Trends</span>
+            <div class="version-selector" id="version-selector">
+              <button class="version-btn" onclick="toggleVersionMenu(event)" aria-haspopup="listbox" aria-expanded="false">
+                <span id="version-label">New Experience</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="version-menu" id="version-menu" role="listbox" style="display:none;">
+                <div class="version-option selected" role="option" onclick="selectVersion('New Experience', this)">
+                  <div class="version-option-main">New Experience</div>
+                </div>
+                <div class="version-option" role="option" onclick="selectVersion('Legacy Experience', this)">
+                  <div class="version-option-main">Legacy Experience</div>
+                  <div class="version-option-sub">Available until end of 2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="filter-chip-group">
+            <button class="filter-chip active" onclick="toggleFilter(this)">
+              03/07/2026 – 04/06/2026
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="filter-chip" onclick="toggleFilter(this)">
+              Department
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="filter-chip" onclick="toggleFilter(this)">
+              User
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="filter-chip" onclick="toggleFilter(this)">
+              Role
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="clear-all-btn">Clear All</button>
+          </div>
+        </div>
+
+
+
+
+        <!-- ═══════════════════════════════════════
+             SHARED TAB BAR (Tabular / Visualized, dispatches to current level)
+        ═══════════════════════════════════════ -->
+        <div class="shared-tab-bar-wrap">
+          <div class="view-tab-bar">
+            <div class="tab-bar-tabs">
+              <button class="mdc-tab mdc-tab--active" id="shared-tabular-tab" onclick="switchCurrentView('table')">
+                <span class="mdc-tab__content">
+                  <span class="material-icons mat-icon">table_chart</span>
+                  <span class="mdc-tab__text-label">Tabular Data</span>
+                </span>
+                <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+              </button>
+              <button class="mdc-tab" id="shared-visual-tab" onclick="switchCurrentView('graph')">
+                <span class="mdc-tab__content">
+                  <span class="material-icons mat-icon">scatter_plot</span>
+                  <span class="mdc-tab__text-label">Visualized Data</span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+              </button>
+            </div>
+            <div class="download-menu-wrap">
+              <button class="download-btn tab-bar-download" title="Download" onclick="toggleDownloadMenu(this, event)">
+                <span class="material-icons">download</span>
+              </button>
+              <div class="download-menu" style="display:none;">
+                <button class="download-menu-item" onclick="closeDownloadMenus()">
+                  <span class="material-icons">download</span>
+                  <span class="download-menu-label">Download CSV</span>
+                </button>
+                <button class="download-menu-item" onclick="closeDownloadMenus()">
+                  <span class="material-icons">print</span>
+                  <span class="download-menu-label-group">
+                    <span class="download-menu-label">Save as PDF or Print</span>
+                    <span class="download-menu-help">Set the Destination to Save as PDF in the Print window</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             SHARED PILL FILTERS (live above all three views)
+        ═══════════════════════════════════════ -->
+        <div class="shared-filter-bar">
+          <div class="pill-filters-row">
+            <div class="pill-filter-wrap" id="comp-score-filter-wrap">
+              <button class="comp-score-filter" onclick="toggleCompScoreMenu()">
+                <span class="cs-label">Comparison Score:</span>
+                <span id="comp-score-label">Overall IRIS</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="cs-menu" id="comp-score-menu" style="display:none;">
+                <div class="cs-option selected" onclick="setCompScore(this)">Overall IRIS</div>
+                <div class="cs-option" onclick="setCompScore(this)">Action Times</div>
+                <div class="cs-option" onclick="setCompScore(this)">Variance Trends</div>
+                <div class="cs-option" onclick="setCompScore(this)">Dispense Patterns</div>
+                <div class="cs-option" onclick="setCompScore(this)">Med Trends</div>
+                <div class="cs-option" onclick="setCompScore(this)">Full Package Waste</div>
+                <div class="cs-option" onclick="setCompScore(this)">Shift Analysis</div>
+              </div>
+            </div>
+            <div class="pill-filter-wrap" id="context-filter-wrap">
+              <button class="comp-score-filter" onclick="togglePillMenu('context-menu')">
+                <span class="cs-label">Context:</span>
+                <span id="context-label">Mass</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="cs-menu" id="context-menu" style="display:none;">
+                <div class="cs-option selected" onclick="setPillFilter(null,'context-label','context-menu',this);updateContext()">Mass</div>
+                <div class="cs-option" onclick="setPillFilter(null,'context-label','context-menu',this);updateContext()">Events</div>
+              </div>
+            </div>
+            <div class="pill-filter-wrap" id="event-type-filter" style="display:none;">
+              <button class="comp-score-filter" onclick="togglePillMenu('event-type-menu')">
+                <span class="cs-label">Event Type:</span>
+                <span id="event-type-label">Dispense</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="cs-menu" id="event-type-menu" style="display:none;">
+                <div class="cs-option selected" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">All Event Types</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Dispense</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Admin</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Waste</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Return</div>
+              </div>
+            </div>
+            <div class="pill-filter-wrap" id="std-dev-filter-wrap">
+              <button class="comp-score-filter" onclick="togglePillMenu('std-dev-menu')">
+                <span class="cs-label">Std. Deviation:</span>
+                <span id="std-dev-label">None</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="cs-menu" id="std-dev-menu" style="display:none;">
+                <div class="cs-option selected" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">None</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+1σ</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+2σ</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+3σ</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             VIEW 1 — ALL USERS (Level 0, default)
+        ═══════════════════════════════════════ -->
+        <div id="view-all-users" class="view visible">
+          <div class="content-area">
+
+            <!-- Count + search row -->
+            <div class="count-search-row">
+              <div class="row-count"><span id="allUsersCount">0</span> users</div>
+              <div class="search-wrap">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" class="search-input" placeholder="Search users…" oninput="filterAllUsersTable(this.value)">
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div id="all-users-table-view">
+              <div class="data-table-wrap users-table-wrap">
+                <table class="data-table" id="allUsersTable">
+                  <thead id="allUsersTableHead"></thead>
+                  <tbody id="allUsersTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Chart -->
+            <div id="all-users-graph-view" style="display:none;">
+              <div class="chart-wrap">
+                <div class="chart-type-selector">
+                  <button class="ct-btn active" data-type="bar" onclick="setChartType('allUsers','bar')">
+                    <span class="material-icons mat-icon">bar_chart</span> Bar
+                  </button>
+                  <button class="ct-btn" data-type="scatter" onclick="setChartType('allUsers','scatter')">
+                    <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
+                  </button>
+                </div>
+                <div id="all-users-chart" class="chart-container"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             VIEW 2 — USER'S DRUGS (Level 1)
+        ═══════════════════════════════════════ -->
+        <div id="view-user-drugs" class="view">
+          <div class="content-area">
+
+            <!-- Count + search (with back button + title inline) -->
+            <div class="count-search-row">
+              <button class="back-btn" onclick="goBackFromUserDrugs()" title="Back to All Users" aria-label="Back to All Users">
+                <span class="material-icons mat-icon">arrow_back</span>
+              </button>
+              <div class="drilldown-title" id="user-drugs-drilldown-title"></div>
+              <div class="row-count"><span id="userDrugsCount">0</span> drugs</div>
+              <div class="search-wrap">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" class="search-input" placeholder="Search drugs…" oninput="filterUserDrugsTable(this.value)">
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div id="user-drugs-table-view">
+              <div class="data-table-wrap user-drugs-table-wrap">
+                <table class="data-table" id="userDrugsTable">
+                  <thead id="userDrugsTableHead"></thead>
+                  <tbody id="userDrugsTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Chart -->
+            <div id="user-drugs-graph-view" style="display:none;">
+              <div class="chart-wrap">
+                <div class="chart-controls-row">
+                  <!-- Drug multi-select filter -->
+                  <div class="drug-filter-wrap" id="ud-drug-filter-wrap">
+                    <button class="drug-filter-btn" id="ud-drug-filter-btn" onclick="toggleUdDrugFilter(event)">
+                      <span class="material-icons mat-icon">filter_alt</span>
+                      <span id="ud-drug-filter-label">All drugs</span>
+                      <span class="material-icons mat-icon">expand_more</span>
+                    </button>
+                    <div class="drug-filter-menu" id="ud-drug-filter-menu" style="display:none;">
+                      <div class="drug-filter-actions">
+                        <button class="drug-filter-link" onclick="udDrugFilterSelectAll(true)">Select all</button>
+                        <button class="drug-filter-link" onclick="udDrugFilterSelectAll(false)">Clear</button>
+                      </div>
+                      <div class="drug-filter-list" id="ud-drug-filter-list"><!-- populated on drill --></div>
+                    </div>
+                  </div>
+                  <div class="chart-type-selector">
+                    <button class="ct-btn active" data-type="bar" onclick="setChartType('userDrugs','bar')">
+                      <span class="material-icons mat-icon">bar_chart</span> Bar
+                    </button>
+                    <button class="ct-btn" data-type="scatter" onclick="setChartType('userDrugs','scatter')">
+                      <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
+                    </button>
+                  </div>
+                </div>
+                <div id="user-drugs-chart" class="chart-container"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Legacy Experience placeholder (shown when Legacy is selected) -->
+        <div id="legacy-placeholder" class="legacy-placeholder">Legacy Med Trends</div>
+
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div><!-- /#app-view -->
+
+  <footer>
+    Copyright &copy; 2011&ndash;2026 by Bluesight, Inc. &bull; 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help&#64;bluesight.com">help&#64;bluesight.com</a>
+    &bull; All Rights Reserved |
+    <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+  </footer>
+
+
+
+  <!-- ═══════════════════════════════════════════════
+       LEVEL 3 OVERLAY PANEL — User Comparison for a drug
+  ═══════════════════════════════════════════════ -->
+  <div id="l3-panel-scrim" class="l3-panel-scrim" onclick="closeL3Panel()" aria-hidden="true"></div>
+  <aside id="l3-panel" class="l3-panel" role="dialog" aria-modal="true" aria-labelledby="l3-panel-title" aria-hidden="true">
+    <header class="l3-panel-header">
+      <div class="l3-panel-title" id="l3-panel-title">User Comparison</div>
+      <button class="l3-panel-close" onclick="closeL3Panel()" aria-label="Close User Comparison panel" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </header>
+
+    <!-- Panel tab bar -->
+    <div class="l3-panel-tab-bar view-tab-bar">
+      <div class="tab-bar-tabs">
+        <button class="mdc-tab mdc-tab--active" id="l3-panel-tabular-tab" onclick="switchPanelView('table')">
+          <span class="mdc-tab__content">
+            <span class="material-icons mat-icon">table_chart</span>
+            <span class="mdc-tab__text-label">Tabular Data</span>
+          </span>
+          <span class="mdc-tab-indicator mdc-tab-indicator--active">
+            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+          </span>
+        </button>
+        <button class="mdc-tab" id="l3-panel-visual-tab" onclick="switchPanelView('graph')">
+          <span class="mdc-tab__content">
+            <span class="material-icons mat-icon">scatter_plot</span>
+            <span class="mdc-tab__text-label">Visualized Data</span>
+          </span>
+          <span class="mdc-tab-indicator">
+            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+          </span>
+        </button>
+      </div>
+      <div class="download-menu-wrap">
+        <button class="download-btn tab-bar-download" title="Download" onclick="toggleDownloadMenu(this, event)">
+          <span class="material-icons">download</span>
+        </button>
+        <div class="download-menu" style="display:none;">
+          <button class="download-menu-item" onclick="closeDownloadMenus()">
+            <span class="material-icons">download</span>
+            <span class="download-menu-label">Download CSV</span>
+          </button>
+          <button class="download-menu-item" onclick="closeDownloadMenus()">
+            <span class="material-icons">print</span>
+            <span class="download-menu-label-group">
+              <span class="download-menu-label">Save as PDF or Print</span>
+              <span class="download-menu-help">Set the Destination to Save as PDF in the Print window</span>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="l3-panel-body">
+      <!-- Count + search -->
+      <div class="count-search-row">
+        <div class="row-count"><span id="usersCount">0</span> users</div>
+        <div class="search-wrap">
+          <span class="material-icons search-icon">search</span>
+          <input type="text" class="search-input" placeholder="Search users…" oninput="filterUsersTable(this.value)">
+        </div>
+      </div>
+
+      <!-- Panel-scoped filter bar (Context / Event Type / Std Dev) -->
+      <div class="l3-panel-filter-bar">
+        <div class="pill-filters-row">
+          <div class="pill-filter-wrap">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-context-menu')">
+              <span class="cs-label">Context:</span>
+              <span id="l3-panel-context-label">Mass</span>
+              <span class="material-icons mat-icon">expand_more</span>
+            </button>
+            <div class="cs-menu" id="l3-panel-context-menu" style="display:none;">
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-context-label','l3-panel-context-menu',this);updatePanelContext()">Mass</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-context-label','l3-panel-context-menu',this);updatePanelContext()">Events</div>
+            </div>
+          </div>
+          <div class="pill-filter-wrap" id="l3-panel-event-type-filter" style="display:none;">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-event-type-menu')">
+              <span class="cs-label">Event Type:</span>
+              <span id="l3-panel-event-type-label">All Event Types</span>
+              <span class="material-icons mat-icon">expand_more</span>
+            </button>
+            <div class="cs-menu" id="l3-panel-event-type-menu" style="display:none;">
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">All Event Types</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Dispense</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Admin</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Waste</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Return</div>
+            </div>
+          </div>
+          <div class="pill-filter-wrap">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-std-dev-menu')">
+              <span class="cs-label">Std. Deviation:</span>
+              <span id="l3-panel-std-dev-label">None</span>
+              <span class="material-icons mat-icon">expand_more</span>
+            </button>
+            <div class="cs-menu" id="l3-panel-std-dev-menu" style="display:none;">
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">None</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+1σ</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+2σ</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+3σ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabular view -->
+      <div id="users-table-view">
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead id="usersTableHead"></thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Visualized view -->
+      <div id="users-graph-view" style="display:none;">
+        <div class="chart-wrap">
+          <div class="chart-type-selector">
+            <button class="ct-btn active" data-type="bar" onclick="setChartType('users','bar')">
+              <span class="material-icons mat-icon">bar_chart</span> Bar
+            </button>
+            <button class="ct-btn" data-type="scatter" onclick="setChartType('users','scatter')">
+              <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
+            </button>
+          </div>
+          <div id="users-chart" class="chart-container"></div>
+          <div class="chart-legend">
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#b53228"></span>Critical (4.6+)</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4&ndash;4.5)</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#16b434"></span>Normal (&lt;1.4)</span>
+            <span class="chart-legend-item" style="margin-left:12px;color:var(--text-54);font-style:italic;">Dot size = shifts worked</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════
+       IRIS DETAIL PANEL (right-side overlay)
+  ═══════════════════════════════════════════════ -->
+  <div id="iris-panel-scrim" class="iris-panel-scrim" onclick="closeIrisPanel()" aria-hidden="true"></div>
+  <aside id="iris-panel" class="iris-panel" role="dialog" aria-modal="true" aria-labelledby="iris-panel-title" aria-hidden="true">
+    <header class="iris-panel-header">
+      <div class="iris-panel-heading">
+        <div class="iris-panel-title" id="iris-panel-title">IRIS Detail Panel</div>
+        <div class="iris-panel-subtitle" id="iris-panel-subtitle"></div>
+      </div>
+      <button class="iris-panel-close" onclick="closeIrisPanel()" aria-label="Close IRIS Detail Panel" title="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </header>
+    <div class="iris-panel-body">
+      <p class="iris-panel-placeholder">IRIS Detail Panel</p>
+    </div>
+  </aside>
+
+</app-component>
+</body>
+</html>

@@ -1,0 +1,5072 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Action Times – ControlCheck</title>
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --red:         #f24335;
+      --green:       #16b434;
+      --yellow:      #f5dd67;
+      --orange:      #f5a623;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #727272;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* ── Custom element display ─────────────────── */
+    app-component, navigation, nav-menu, user-menu,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-card, mat-drawer-container,
+    mat-drawer-content, mat-drawer, router-outlet { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex;
+      align-items: center;
+      border-radius: var(--radius);
+      flex-direction: row;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    /* ── nav-menu .navigation ───────────────────────────── */
+    .navigation {
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin-left: 1rem;
+      padding-top: 0;
+    }
+    .mdc-button.mat-mdc-button {
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--blue-dark);
+      cursor: pointer;
+      padding: 0 12px;
+      height: 48px;
+      border-radius: var(--radius);
+      transition: background .15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.05); }
+    .mdc-button.mat-mdc-button.active {
+      background: var(--teal);
+      color: #fff;
+    }
+    
+    .nav-chevron {
+      font-size: 18px;
+      margin-left: 4px;
+    }
+
+    /* ── user-menu styles ──── */
+    .header-info { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      margin-left: auto; 
+    }
+    .header-user-button {
+      padding: 8px 12px;
+      background: none;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--blue-dark);
+      font-weight: 500;
+      transition: background .15s;
+    }
+    .header-user-button:hover { background: rgba(4,74,130,.05); }
+    .header-customer-name { text-align: right; line-height: 1.25; margin-right: 8px; }
+    .header-customer-fullName { font-size: .875rem; font-weight: 600; }
+    .header-customer-hospitalName { font-size: .75rem; color: var(--text-54); }
+    .inline-avatar { width: 36px; height: 36px; border: none; background: none; }
+    .user-circle {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--blue-dark); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .875rem; font-weight: 600;
+    }
+    .text-primary { color: var(--blue-dark); }
+
+    /* ── CONTROLCHECK NAVIGATION TOOLBAR ─────────────── */
+    mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-87);
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: background-color 0.15s;
+    }
+    
+    .nav-link:hover {
+      background-color: var(--gray-100);
+    }
+    
+    .navigation {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .nav-chevron {
+      margin-left: 4px;
+      font-size: 18px;
+    }
+    
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .header-customer-name {
+      text-align: right;
+    }
+    
+    .header-customer-fullName {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-87);
+    }
+    
+    .header-customer-hospitalName {
+      font-size: 12px;
+      color: var(--text-60);
+    }
+    
+    .user-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--blue-dark);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .text-primary {
+      color: var(--blue-dark);
+    }
+    
+    .help-resources-icon {
+      background: none;
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .mdc-tab.mdc-tab--active {
+      color: var(--blue-dark);
+    }
+    
+    .mdc-button__label {
+      line-height: 32px;
+    }
+    
+    button.mdc-button.mat-mdc-button-base.nav-link.mat-mdc-button.mat-unthemed {
+      min-height: 40px;
+      padding: .5rem 1rem;
+      border: none;
+    }
+    
+    .mdc-button.mat-mdc-button.active {
+      background: transparent;
+      color: var(--blue-dark);
+    }
+    
+    .nav-link.active .mdc-button__label {
+      color: inherit;
+      box-shadow: 0 2px;
+      align-items: center;
+      display: inline-flex;
+      justify-content: center;
+    }
+    
+    .mat-badge-hidden {
+      display: none;
+    }
+    
+    .mat-badge-content {
+      background: #ff6b35;
+      color: white;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 4px;
+    }
+
+    /* ── PAGE HEADER ──────────────────────────────────── */
+    .page-header {
+      background: transparent;
+      border: none;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-87);
+    }
+
+    /* ── Global filter chips ── */
+    /* ── Pillter filter chips (aligned with pillter-variations.html) ── */
+    .filter-chip-group {
+      display: flex; align-items: center; gap: 6px; flex-wrap: nowrap;
+    }
+    
+    .pillter-wrapper { position: relative; display: inline-block; }
+    
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 32px; padding: 0 12px;
+      border: 1px solid rgba(0,113,138,.5);
+      border-radius: 24px;
+      background: transparent;
+      font-family: var(--font); font-size: 14px; font-weight: 600; line-height: 1;
+      color: #00718a; cursor: pointer; white-space: nowrap; user-select: none;
+      transition: background .15s, border-color .15s, color .15s;
+      position: relative;
+    }
+    .filter-chip::after {
+      content: "\25be"; /* small down triangle */
+      font-size: 11px;
+      opacity: .7;
+      margin-left: 2px;
+    }
+    .filter-chip:hover { background: #e7f4f8; }
+    
+    /* selected = a value has been applied (teal-50 fill) */
+    .filter-chip.selected {
+      background: #e7f4f8;
+      color: #00718a;
+      border-color: rgba(0,113,138,.5);
+    }
+    .filter-chip.selected:hover { background: #d3ecf3; }
+    
+    /* active = dropdown is currently open (teal-500 fill) */
+    .filter-chip.active,
+    .filter-chip.active.selected {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+    
+    .filter-chip .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    .filter-chip.active .mat-icon { color: #fff; }
+    
+    /* Multi-select count badge */
+    .chip-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      border-radius: 9px;
+      background: #00718a;
+      color: #fff;
+      font-size: 11px; font-weight: 500;
+      margin-right: 2px;
+    }
+    .filter-chip.active .chip-badge {
+      background: #fff;
+      color: var(--teal);
+    }
+    
+    /* Pillter menus */
+    .pillter-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      width: 280px;
+      z-index: 100;
+      overflow: hidden;
+      font-size: 13px;
+    }
+    .pillter-wrapper.open .pillter-menu { display: block; }
+    
+    .pillter-menu .menu-search {
+      padding: 8px 12px 4px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .pillter-menu .menu-search input {
+      width: 100%;
+      height: 32px;
+      padding: 0 8px 0 30px;
+      border: 1px solid #cfcfcf;
+      border-radius: 4px;
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font);
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%239e9e9e'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 8px center;
+    }
+    .pillter-menu .menu-search input:focus { border-color: var(--teal); }
+    
+    .pillter-menu .menu-actions {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 12px;
+    }
+    .pillter-menu .link-btn {
+      background: none; border: none; color: var(--teal);
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      padding: 4px 0; font-family: var(--font);
+    }
+    .pillter-menu .link-btn:hover { text-decoration: underline; }
+    .pillter-menu .link-btn:disabled { color: #bbb; cursor: default; text-decoration: none; }
+    
+    .pillter-menu .menu-options {
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .pillter-menu .menu-option {
+      display: flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 16px;
+      font-size: 13px; cursor: pointer;
+    }
+    .pillter-menu .menu-option:hover { background: var(--gray-50); }
+    .pillter-menu .menu-option input[type="checkbox"] {
+      accent-color: var(--teal);
+      width: 16px; height: 16px; flex-shrink: 0;
+    }
+    
+    .pillter-menu .menu-divider {
+      height: 1px; background: var(--gray-300); margin: 0;
+    }
+    
+    .pillter-menu .menu-footer {
+      display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+      padding: 8px 12px;
+    }
+    .pillter-menu .btn-cancel {
+      background: none; border: none;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      color: var(--text-87); cursor: pointer;
+      padding: 6px 12px; border-radius: 4px;
+    }
+    .pillter-menu .btn-cancel:hover { background: var(--gray-50); }
+    .pillter-menu .btn-apply {
+      background: #eb4699; border: none; border-radius: 4px;
+      color: #fff;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      cursor: pointer; padding: 6px 16px;
+    }
+    .pillter-menu .btn-apply:hover { background: #d93d88; }
+    .pillter-menu .btn-apply:disabled { background: #cfcfcf; cursor: not-allowed; }
+    
+    /* Date range menu — wider with preset column */
+    .pillter-menu.date-menu { width: 400px; }
+    .pillter-menu.date-menu .date-presets {
+      padding: 8px 0;
+    }
+    .pillter-menu.date-menu .date-preset-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 16px;
+      font-size: 13px; cursor: pointer;
+    }
+    .pillter-menu.date-menu .date-preset-item:hover { background: var(--gray-50); }
+    .pillter-menu.date-menu .date-preset-item.selected-item {
+      color: var(--teal); font-weight: 500;
+    }
+    .pillter-menu.date-menu .date-preset-item input[type="radio"] {
+      accent-color: var(--teal);
+    }
+    .pillter-menu.date-menu .date-footer-inputs {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 12px 0;
+    }
+    .pillter-menu.date-menu .date-footer-inputs input {
+      flex: 1; height: 30px;
+      border: 1px solid #cfcfcf; border-radius: 4px;
+      padding: 0 8px;
+      font-family: var(--font); font-size: 13px;
+    }
+    .pillter-menu.date-menu .date-footer-inputs .material-icons {
+      color: #9e9e9e; font-size: 18px;
+    }
+    
+    .clear-all-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      color: var(--teal); padding: 6px 8px; border-radius: 4px;
+      white-space: nowrap; letter-spacing: .03em;
+      text-transform: uppercase;
+      transition: background .15s;
+    }
+    .clear-all-btn:hover { background: rgba(0,150,184,.08); }
+
+    /* ══════════════════════════════════════════════
+       CONTENT AREA
+    ══════════════════════════════════════════════ */
+    .content-area {
+      flex: 1 1 auto; overflow: auto;
+      padding: 0 40px 40px;
+    }
+
+    /* ── Tab bar (from Med Trends) ── */
+    .view-tab-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .tab-bar-tabs { display: flex; }
+    .mdc-tab {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-54);
+      border-bottom: 2px solid transparent;
+      position: relative;
+      transition: color .15s;
+    }
+    .mdc-tab:hover { color: var(--text-87); }
+    .mdc-tab.mdc-tab--active { color: var(--blue-dark); }
+    .mdc-tab__content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mdc-tab-indicator {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+    }
+    .mdc-tab-indicator--active .mdc-tab-indicator__content {
+      background: var(--teal);
+      height: 2px;
+    }
+    .tab-bar-download { margin-left: auto; }
+
+    /* ── Toolbar ── */
+    .content-toolbar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 24px; flex: 1; }
+
+    .download-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; margin-left: 8px;
+      background: none; border: none;
+      border-radius: var(--radius); cursor: pointer; color: var(--gray-600);
+      transition: background .15s;
+    }
+    .download-btn:hover { background: var(--gray-100); border-color: var(--gray-400); }
+    .download-btn .mat-icon { font-size: 20px; }
+
+    /* ── Pill filters ── */
+    .pill-filter-wrap { position: relative; display: flex; align-items: center; gap: 8px; }
+    
+    /* In-pill prefix label (e.g. "Comparison Score:"), per pillter-variations
+       "With date label prefix" variant. */
+    .filter-chip .cs-label {
+      font-size: 14px;
+      font-weight: 500;
+      margin-right: 4px;
+      letter-spacing: .02em;
+    }
+    .filter-label {
+      font-size: .813rem;
+      font-weight: 600;
+      color: var(--text-87);
+      white-space: nowrap;
+    }
+    /* ── Secondary pillter chip variant (aligned with pillter-variations.html)
+       Used for in-view filters like Comparison Score / Time Elapsed. No border
+       by default, teal-900 text. Hover reveals teal-50; active = solid teal. */
+    .filter-chip.secondary {
+      background: transparent;
+      color: #00718a;
+      border-color: transparent;
+    }
+    .filter-chip.secondary:hover { background: #e7f4f8; }
+    
+    /* selected (secondary) = in-flight pending state inside the menu */
+    .filter-chip.secondary.selected {
+      background: #e7f4f8;
+      color: #00718a;
+      border-color: transparent;
+    }
+    .filter-chip.secondary.selected:hover { background: #d3ecf3; }
+    
+    /* active (secondary) = filter is applied. Per design, secondary applied
+       state is FLAT: no background, no border. Label appears in charcoal, the
+       value remains teal so the applied value still reads as the accent. */
+    .filter-chip.secondary.active,
+    .filter-chip.secondary.active.selected {
+      background: transparent;
+      border-color: transparent;
+    }
+    .filter-chip.secondary.active:hover,
+    .filter-chip.secondary.active.selected:hover {
+      background: #e7f4f8;
+    }
+    .filter-chip.secondary.active .cs-label,
+    .filter-chip.secondary.active.selected .cs-label {
+      color: inherit;
+      font-weight: 400;
+    }
+    
+    /* Slider menu body — shared between Time Elapsed and any future slider pillters */
+    .pillter-menu .slider-section { padding: 14px 16px 4px; }
+    .pillter-menu .slider-section h5 {
+      margin: 0 0 10px;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-87);
+    }
+    .pillter-menu .slider-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .pillter-menu .slider-row input[type="range"] {
+      flex: 1; accent-color: var(--teal);
+    }
+    .pillter-menu .slider-row input[type="number"] {
+      width: 60px; height: 30px;
+      border: 1px solid #cfcfcf; border-radius: 4px;
+      padding: 0 6px; text-align: center;
+      font-family: var(--font); font-size: 13px;
+    }
+    .pillter-menu .slider-help {
+      padding: 0 16px 10px;
+      font-size: 11px; color: #9e9e9e; line-height: 1.4;
+    }
+    
+    /* Single-select list used by Comparison Score */
+    .pillter-menu .menu-item {
+      display: flex; align-items: center;
+      height: 36px; padding: 0 16px;
+      font-size: 13px; cursor: pointer;
+      color: var(--text-87); white-space: nowrap;
+    }
+    .pillter-menu .menu-item:hover { background: var(--gray-50); }
+    .pillter-menu .menu-item.selected-item {
+      color: var(--teal); font-weight: 500;
+    }
+    /* ── Rules Chips ── */
+    .rules-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    
+    .rule-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      min-height: 32px;
+      border-radius: 20px;
+      border: 1px solid var(--teal);
+      background: #fff;
+      color: var(--teal);
+      font-family: var(--font);
+      font-size: .813rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+    
+    .rule-chip:hover {
+      background: rgba(0,150,184,.05);
+    }
+    
+    .rule-chip.selected {
+      background: var(--teal);
+      color: #fff;
+      border-color: var(--teal);
+    }
+    
+    .rule-chip.selected:hover {
+      background: var(--teal-dark);
+      border-color: var(--teal-dark);
+    }
+    
+    .chip-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+    
+    .chip-text {
+      font-size: .813rem;
+      font-weight: 600;
+    }
+
+    /* Checkboxes */
+    .checkbox {
+      width: 16px; height: 16px; border: 2px solid var(--gray-400);
+      border-radius: 2px; display: flex; align-items: center; justify-content: center;
+      transition: all .15s; flex-shrink: 0;
+    }
+    .checkbox.checked {
+      background: var(--teal); border-color: var(--teal);
+    }
+    .checkbox.checked::after {
+      content: '✓'; color: #fff; font-size: 12px; font-weight: 600;
+    }
+
+    /* ══════════════════════════════════════════════
+       DATA TABLE WITH HORIZONTAL SCROLL
+    ══════════════════════════════════════════════ */
+    .data-table-wrap {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .table-scroll-container {
+      overflow-x: auto;
+      overflow-y: hidden;
+      position: relative;
+    }
+    
+    .data-table {
+      width: auto; 
+      min-width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-family: var(--font); 
+      font-size: .875rem;
+      position: relative;
+    }
+    
+    /* Fixed columns styling */
+    .data-table th.fixed-col,
+    .data-table td.fixed-col {
+      position: sticky;
+      background: #fff;
+      z-index: 10;
+    }
+    
+    /* Hover effect for fixed columns */
+    .data-table tbody tr:hover td.fixed-col {
+      background: #fafafa !important;
+    }
+    
+    .data-table th.fixed-col:nth-child(1),
+    .data-table td.fixed-col:nth-child(1) {
+      left: 0;
+      z-index: 12;
+    }
+    
+    .data-table th.fixed-col:nth-child(2),
+    .data-table td.fixed-col:nth-child(2) {
+      left: 120px;
+      z-index: 11;
+    }
+    
+    .data-table th.fixed-col:nth-child(3),
+    .data-table td.fixed-col:nth-child(3) {
+      left: 240px;
+      z-index: 11;
+      min-width: 200px;
+      border-right: 1px solid var(--gray-300);
+    }
+    
+    /* Fixed right column */
+    .data-table th.fixed-col-right,
+    .data-table td.fixed-col-right {
+      position: sticky;
+      right: 0;
+      background: #fff;
+      z-index: 10;
+      border-left: 1px solid var(--gray-300);
+      min-width: 120px;
+    }
+    
+    /* Hover effect for right fixed column */
+    .data-table tbody tr:hover td.fixed-col-right {
+      background: #fafafa !important;
+    }
+    
+    /* Group headers for fixed columns */
+    .fixed-col-group,
+    .fixed-col-group-right {
+      background: var(--gray-100) !important;
+      position: sticky;
+      z-index: 12;
+    }
+    
+    .fixed-col-group {
+      left: 0;
+    }
+    
+    .fixed-col-group-right {
+      right: 0;
+      border-left: 1px solid var(--gray-300);
+    }
+    
+    /* Rule column group separators - add borders before each new rule group */
+    .data-table th.col-lalw-events,
+    .data-table td.col-lalw-events,
+    .data-table th.col-abd-events,
+    .data-table td.col-abd-events,
+    .data-table th.col-fdfw-events,
+    .data-table td.col-fdfw-events,
+    .data-table th.col-rnea-events,
+    .data-table td.col-rnea-events {
+      border-left: 1px solid var(--gray-300);
+    }
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-family: var(--font); font-size: .875rem;
+    }
+    .data-table thead { background: #fff; }
+    .data-table th {
+      padding: 0 16px; height: 48px; text-align: left;
+      font-size: .75rem; font-weight: 600;
+      color: var(--text-54); white-space: nowrap;
+      border-bottom: 2px solid var(--gray-300);
+      user-select: none;
+    }
+    .data-table th.sortable { cursor: pointer; }
+    .data-table th.sortable:hover { color: var(--blue-dark); }
+    .data-table th .th-inner {
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .data-table th .sort-icon { font-size: 16px; opacity: .4; }
+    .data-table th.sort-asc .sort-icon,
+    .data-table th.sort-desc .sort-icon { opacity: 1; color: var(--blue-dark); }
+    .data-table th.sort-desc .sort-icon { transform: rotate(180deg); }
+    .data-table th.right, .data-table td.right { text-align: right; }
+    .data-table th.center, .data-table td.center { text-align: center; }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: background .15s ease;
+      cursor: default;
+    }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody tr:hover { 
+      background: #fafafa !important; 
+    }
+    .data-table tbody tr:hover td {
+      background: #fafafa !important;
+    }
+    .data-table tbody tr.selected { background: rgba(4,74,130,.06); }
+
+    .data-table td {
+      padding: 0 16px; height: 56px; vertical-align: middle;
+      color: var(--text-87);
+    }
+
+    /* Action Times score chip */
+    .action-score {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 36px; height: 28px; padding: 0 8px;
+      border-radius: 4px; font-size: .875rem; font-weight: 700;
+      color: #fff;
+    }
+    .action-score.score-high { background: #e53935; }
+    .action-score.score-elevated { background: #f5dd67; color: #555555; }
+    .action-score.score-normal { background: #16b434; }
+    
+    .no-data {
+      color: var(--gray-400, #b0b0b0);
+      font-weight: 400;
+    }
+
+    /* Comparison score (numeric, colored) */
+    .comp-score {
+      font-weight: 700; font-variant-numeric: tabular-nums;
+    }
+    .comp-score.score-high { color: #b53228; }
+    .comp-score.score-elevated { color: #a4902d; }
+    .comp-score.score-normal { color: #0e7221; }
+
+    /* User name cell */
+    .user-name { font-weight: 600; color: var(--text-87); line-height: 1.3; }
+    .user-name a { color: #0096b8; text-decoration: none; }
+    .user-name a:hover { color: #00718a; text-decoration: none; }
+    .user-role-dept {
+      font-size: .75rem; color: var(--text-54);
+      font-weight: 400; line-height: 1.3;
+    }
+
+    /* Investigate link */
+    .investigate-link {
+      display: inline-flex; 
+      align-items: center; 
+      gap: 6px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: #007BA3;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      transition: all .15s ease;
+      white-space: nowrap;
+    }
+    .investigate-link:hover { 
+      background: #e7f4f8;
+      color: #007BA3;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .investigate-link .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Interactive elements should still show pointer cursor */
+    .data-table .user-name a,
+    .data-table .investigate-link {
+      cursor: pointer;
+    }
+
+    /* Numeric cells */
+    .data-table td.num { text-align: center; font-variant-numeric: tabular-nums; }
+
+    /* Action Times specific: grouped columns */
+    .col-group-header {
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--gray-300);
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-87);
+    }
+    
+    /* Hidden columns */
+    .hidden { display: none !important; }
+
+    /* Hidden columns for multi-rule display */
+    .hidden { display: none !important; }
+
+    /* ── mat-drawer-container ────────────────────────────────── */
+    mat-drawer-container {
+      display: flex;
+      flex-direction: row;
+      flex: 1 1 auto;
+      overflow: hidden;
+      position: relative;
+    }
+    mat-drawer-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      overflow: auto;
+      position: relative;
+    }
+
+    /* ── mat-drawer ──────────────────────────────────────────── */
+    mat-drawer {
+      display: block;
+      position: relative;
+      overflow: visible;
+      background: #fff;
+      border-right: 1px solid var(--gray-300);
+      width: 220px;
+      flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── collapse FAB ────────────────────────────────────────── */
+    .mdc-fab.mat-mdc-mini-fab {
+      width: 24px;
+      height: 24px;
+      min-height: 24px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--teal);
+      color: #fff;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+      transition: background .15s, transform .3s cubic-bezier(.4,0,.2,1);
+      position: absolute;
+      right: -12px;
+      top: 10px;
+      z-index: 99;
+      padding: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background: var(--teal-dark); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; transition: transform .3s cubic-bezier(.4,0,.2,1); }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    /* ── navigation accordion ────────────────────────────────── */
+    .navigation-accordion.mat-accordion {
+      display: block;
+      flex: 1;
+      overflow: hidden;
+    }
+    .navigation-accordion mat-expansion-panel {
+      background: #fff;
+      border-radius: 0;
+      box-shadow: none;
+      border-bottom: 0;
+    }
+    .navigation-accordion mat-expansion-panel-header {
+      height: 45px !important;
+      padding: 0 16px;
+      cursor: pointer;
+      transition: background .15s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover {
+      background: rgba(0,0,0,.04);
+    }
+    .navigation-accordion mat-panel-title {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      flex-grow: 1;
+      text-transform: uppercase;
+    }
+
+    /* expansion indicator SVG chevron */
+    .mat-expansion-indicator {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .mat-expansion-indicator svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--gray-600);
+      transition: transform 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg {
+      transform: rotate(0deg);
+    }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg {
+      transform: rotate(-90deg);
+    }
+
+    /* panel body */
+    .mat-expansion-panel-content-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content {
+      overflow: hidden;
+    }
+    .mat-expansion-panel-body {
+      padding: 0;
+    }
+
+    /* navigation list */
+    .mat-mdc-nav-list {
+      padding: 0;
+    }
+    .mat-mdc-list-item {
+      color: var(--gray-700);
+      font-size: .875rem;
+      font-weight: 500;
+      height: 40px;
+      padding: 0 16px 0 40px;
+      transition: background .15s, color .15s;
+      position: relative;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .mat-mdc-list-item:hover {
+      background: rgba(0,0,0,.04);
+      color: var(--blue-dark);
+    }
+    .mat-mdc-list-item.active {
+      background: rgba(0,150,184,.1);
+      color: var(--teal);
+      font-weight: 600;
+    }
+    .mat-mdc-list-item .mat-icon {
+      position: absolute;
+      left: 16px;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    /* collapsed state hiding */
+    mat-drawer.collapsed .mat-expansion-panel-header mat-panel-title,
+    mat-drawer.collapsed .mat-mdc-list-item .mdc-list-item__primary-text {
+      display: none;
+    }
+
+    /* ── Tooltip ──────────────────────────────────────────── */
+    #tt {
+      position: fixed; z-index: 1000; pointer-events: none;
+      background: rgba(0,0,0,.87); color: #fff; padding: 6px 8px;
+      border-radius: var(--radius); font-size: .75rem; font-weight: 500;
+      max-width: 140px; line-height: 1.25; word-wrap: break-word;
+      opacity: 0; transition: opacity .15s;
+    }
+
+    /* ── View management ── */
+    .view { display: none; }
+    .view.visible { display: block; }
+
+    /* ── Chart area ── */
+    #action-times-graph-view {
+      height: 600px;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+  </style>
+
+  <script data-cfasync="false">
+    // Mock data for Action Times - based on real outlier scoring
+    const ACTION_TIMES_USERS = [
+      {
+        id: 2,
+        outlierScore: 5.2,
+        isOutlier: true,
+        name: "Hannah Sumner",
+        role: "RN",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 5.2,
+          actionTimes: 5.2,
+          varianceTrends: 4.8,
+          dispensePatterns: 6.1,
+          medTrends: 4.9,
+          fullPackageWaste: 5.5,
+          shiftAnalysis: 5.0
+        },
+        firstDispenseFirstAdmin: { events: 143, avgTime: 19 },
+        lastAdminLastWaste: { events: 98, avgTime: 78 },
+        adminBeforeDispense: { events: 12, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 34, avgTime: 86 },
+        recordedNotEqualAction: { events: 3, avgTime: 12 }
+      },
+      {
+        id: 3,
+        outlierScore: 2.1,
+        isOutlier: false,
+        name: "Katarina Goncalves",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 1.1,
+          actionTimes: 2.1,
+          varianceTrends: 0.8,
+          dispensePatterns: 1.1,
+          medTrends: 0.6,
+          fullPackageWaste: 1.2,
+          shiftAnalysis: 0.9
+        },
+        firstDispenseFirstAdmin: { events: 189, avgTime: 7 },
+        lastAdminLastWaste: { events: 124, avgTime: 28 },
+        adminBeforeDispense: { events: 8, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 45, avgTime: 67 },
+        recordedNotEqualAction: { events: 5, avgTime: 19 }
+      },
+      {
+        id: 4,
+        outlierScore: 3.1,
+        isOutlier: false,
+        name: "Sarah Ath",
+        role: "RN",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 3.1,
+          actionTimes: 3.1,
+          varianceTrends: 0.9,
+          dispensePatterns: 3.4,
+          medTrends: 1.2,
+          fullPackageWaste: 0.8,
+          shiftAnalysis: 3.3
+        },
+        firstDispenseFirstAdmin: { events: 167, avgTime: 15 },
+        lastAdminLastWaste: { events: 89, avgTime: 52 },
+        adminBeforeDispense: { events: 15, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 28, avgTime: 92 },
+        recordedNotEqualAction: { events: 2, avgTime: 22 }
+      },
+      {
+        id: 5,
+        outlierScore: 1.7,
+        isOutlier: false,
+        name: "Susan Hubisz",
+        role: "RN",
+        dept: "Pediatric",
+        isAggregate: false,
+        scores: {
+          overall: 1.7,
+          actionTimes: 1.7,
+          varianceTrends: 1.5,
+          dispensePatterns: 1.9,
+          medTrends: 1.6,
+          fullPackageWaste: 1.8,
+          shiftAnalysis: 1.4
+        },
+        firstDispenseFirstAdmin: { events: 134, avgTime: 11 },
+        lastAdminLastWaste: { events: 76, avgTime: 41 },
+        adminBeforeDispense: { events: 6, avgTime: 11 },
+        firstDispenseFirstWaste: { events: 19, avgTime: 71 },
+        recordedNotEqualAction: { events: 1, avgTime: 8 }
+      },
+      {
+        id: 6,
+        outlierScore: 4.8,
+        isOutlier: true,
+        name: "Samuel White",
+        role: "PharmD",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 4.8,
+          actionTimes: 4.8,
+          varianceTrends: 4.5,
+          dispensePatterns: 5.1,
+          medTrends: 4.6,
+          fullPackageWaste: 4.9,
+          shiftAnalysis: 4.7
+        },
+        firstDispenseFirstAdmin: { events: 201, avgTime: 15 },
+        lastAdminLastWaste: { events: 156, avgTime: 67 },
+        adminBeforeDispense: { events: 11, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 67, avgTime: 56 },
+        recordedNotEqualAction: { events: 7, avgTime: 14 }
+      },
+      {
+        id: 7,
+        outlierScore: 1.8,
+        isOutlier: false,
+        name: "Maria Rodriguez",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 1.8,
+          actionTimes: 1.8,
+          varianceTrends: 0.8,
+          dispensePatterns: 0.9,
+          medTrends: 1.2,
+          fullPackageWaste: 0.7,
+          shiftAnalysis: 1.0
+        },
+        firstDispenseFirstAdmin: { events: 178, avgTime: 9 },
+        lastAdminLastWaste: { events: 142, avgTime: 32 },
+        adminBeforeDispense: { events: 9, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 52, avgTime: 58 },
+        recordedNotEqualAction: { events: 4, avgTime: 11 }
+      },
+      {
+        id: 8,
+        outlierScore: 6.1,
+        isOutlier: true,
+        name: "David Thompson",
+        role: "PharmD",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 6.1,
+          actionTimes: 6.1,
+          varianceTrends: 5.9,
+          dispensePatterns: 6.3,
+          medTrends: 5.8,
+          fullPackageWaste: 6.2,
+          shiftAnalysis: 6.0
+        },
+        firstDispenseFirstAdmin: { events: 89, avgTime: 24 },
+        lastAdminLastWaste: { events: 67, avgTime: 89 },
+        adminBeforeDispense: { events: 18, avgTime: 4 },
+        firstDispenseFirstWaste: { events: 41, avgTime: 102 },
+        recordedNotEqualAction: { events: 8, avgTime: 18 }
+      },
+      {
+        id: 9,
+        outlierScore: 2.7,
+        isOutlier: false,
+        name: "Angela Chen",
+        role: "RN",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 2.7,
+          actionTimes: 2.7,
+          varianceTrends: 2.4,
+          dispensePatterns: 3.1,
+          medTrends: 2.5,
+          fullPackageWaste: 2.8,
+          shiftAnalysis: 2.9
+        },
+        firstDispenseFirstAdmin: { events: 156, avgTime: 13 },
+        lastAdminLastWaste: { events: 98, avgTime: 48 },
+        adminBeforeDispense: { events: 14, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 29, avgTime: 73 },
+        recordedNotEqualAction: { events: 3, avgTime: 16 }
+      },
+      {
+        id: 10,
+        outlierScore: 4.8,
+        isOutlier: false,
+        name: "James Patel",
+        role: "PharmTech",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 0.9,
+          actionTimes: 4.8,
+          varianceTrends: 0.9,
+          dispensePatterns: 1.1,
+          medTrends: 0.8,
+          fullPackageWaste: 1.0,
+          shiftAnalysis: 0.5
+        },
+        firstDispenseFirstAdmin: { events: 203, avgTime: 6 },
+        lastAdminLastWaste: { events: 167, avgTime: 25 },
+        adminBeforeDispense: { events: 5, avgTime: 12 },
+        firstDispenseFirstWaste: { events: 38, avgTime: 61 },
+        recordedNotEqualAction: { events: 2, avgTime: 9 }
+      },
+      {
+        id: 11,
+        outlierScore: 3.8,
+        isOutlier: false,
+        name: "Linda Williams",
+        role: "RN",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 3.8,
+          actionTimes: 3.8,
+          varianceTrends: 3.6,
+          dispensePatterns: 4.1,
+          medTrends: 3.7,
+          fullPackageWaste: 3.9,
+          shiftAnalysis: 4.0
+        },
+        firstDispenseFirstAdmin: { events: 127, avgTime: 16 },
+        lastAdminLastWaste: { events: 94, avgTime: 58 },
+        adminBeforeDispense: { events: 16, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 35, avgTime: 81 },
+        recordedNotEqualAction: { events: 5, avgTime: 19 }
+      },
+      {
+        id: 12,
+        outlierScore: 3.4,
+        isOutlier: false,
+        name: "Michael Johnson",
+        role: "RN",
+        dept: "Oncology",
+        isAggregate: false,
+        scores: {
+          overall: 3.4,
+          actionTimes: 3.4,
+          varianceTrends: 3.1,
+          dispensePatterns: 3.6,
+          medTrends: 3.2,
+          fullPackageWaste: 3.5,
+          shiftAnalysis: 3.3
+        },
+        firstDispenseFirstAdmin: { events: 151, avgTime: 14 },
+        lastAdminLastWaste: { events: 102, avgTime: 54 },
+        adminBeforeDispense: { events: 11, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 31, avgTime: 77 },
+        recordedNotEqualAction: { events: 4, avgTime: 17 }
+      },
+      {
+        id: 13,
+        outlierScore: 2.2,
+        isOutlier: false,
+        name: "Jennifer Lee",
+        role: "PharmD",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 2.2,
+          actionTimes: 2.2,
+          varianceTrends: 1.9,
+          dispensePatterns: 2.4,
+          medTrends: 2.1,
+          fullPackageWaste: 2.3,
+          shiftAnalysis: 2.0
+        },
+        firstDispenseFirstAdmin: { events: 174, avgTime: 10 },
+        lastAdminLastWaste: { events: 118, avgTime: 37 },
+        adminBeforeDispense: { events: 7, avgTime: 11 },
+        firstDispenseFirstWaste: { events: 42, avgTime: 64 },
+        recordedNotEqualAction: { events: 3, avgTime: 14 }
+      },
+      {
+        id: 14,
+        outlierScore: 5.8,
+        isOutlier: true,
+        name: "Robert Garcia",
+        role: "RN",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 5.8,
+          actionTimes: 5.8,
+          varianceTrends: 5.4,
+          dispensePatterns: 6.0,
+          medTrends: 5.5,
+          fullPackageWaste: 5.9,
+          shiftAnalysis: 5.7
+        },
+        firstDispenseFirstAdmin: { events: 112, avgTime: 21 },
+        lastAdminLastWaste: { events: 84, avgTime: 83 },
+        adminBeforeDispense: { events: 16, avgTime: 4 },
+        firstDispenseFirstWaste: { events: 39, avgTime: 95 },
+        recordedNotEqualAction: { events: 6, avgTime: 17 }
+      },
+      {
+        id: 15,
+        outlierScore: 1.5,
+        isOutlier: false,
+        name: "Emily Brown",
+        role: "RN",
+        dept: "NICU",
+        isAggregate: false,
+        scores: {
+          overall: 1.5,
+          actionTimes: 1.5,
+          varianceTrends: 1.3,
+          dispensePatterns: 1.7,
+          medTrends: 1.4,
+          fullPackageWaste: 1.6,
+          shiftAnalysis: 1.2
+        },
+        firstDispenseFirstAdmin: { events: 108, avgTime: 9 },
+        lastAdminLastWaste: { events: 68, avgTime: 36 },
+        adminBeforeDispense: { events: 4, avgTime: 13 },
+        firstDispenseFirstWaste: { events: 17, avgTime: 62 },
+        recordedNotEqualAction: { events: 1, avgTime: 7 }
+      },
+      {
+        id: 16,
+        outlierScore: 0.8,
+        isOutlier: false,
+        name: "Christopher Davis",
+        role: "PharmTech",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 0.8,
+          actionTimes: 0.8,
+          varianceTrends: 0.6,
+          dispensePatterns: 1.0,
+          medTrends: 0.7,
+          fullPackageWaste: 0.9,
+          shiftAnalysis: 0.5
+        },
+        firstDispenseFirstAdmin: { events: 196, avgTime: 6 },
+        lastAdminLastWaste: { events: 148, avgTime: 24 },
+        adminBeforeDispense: { events: 3, avgTime: 14 },
+        firstDispenseFirstWaste: { events: 31, avgTime: 53 },
+        recordedNotEqualAction: { events: 1, avgTime: 8 }
+      },
+      {
+        id: 17,
+        outlierScore: 2.6,
+        isOutlier: false,
+        name: "Amanda Martinez",
+        role: "RN",
+        dept: "Cardiology",
+        isAggregate: false,
+        scores: {
+          overall: 2.6,
+          actionTimes: 2.6,
+          varianceTrends: 2.3,
+          dispensePatterns: 2.8,
+          medTrends: 2.5,
+          fullPackageWaste: 2.7,
+          shiftAnalysis: 2.4
+        },
+        firstDispenseFirstAdmin: { events: 139, avgTime: 12 },
+        lastAdminLastWaste: { events: 91, avgTime: 46 },
+        adminBeforeDispense: { events: 10, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 26, avgTime: 70 },
+        recordedNotEqualAction: { events: 3, avgTime: 15 }
+      },
+      {
+        id: 18,
+        outlierScore: 4.2,
+        isOutlier: false,
+        name: "Daniel Anderson",
+        role: "NP",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 4.2,
+          actionTimes: 4.2,
+          varianceTrends: 3.9,
+          dispensePatterns: 4.4,
+          medTrends: 4.0,
+          fullPackageWaste: 4.3,
+          shiftAnalysis: 4.1
+        },
+        firstDispenseFirstAdmin: { events: 163, avgTime: 17 },
+        lastAdminLastWaste: { events: 107, avgTime: 63 },
+        adminBeforeDispense: { events: 13, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 44, avgTime: 84 },
+        recordedNotEqualAction: { events: 5, avgTime: 18 }
+      },
+      {
+        id: 19,
+        outlierScore: 2.9,
+        isOutlier: false,
+        name: "Jessica Taylor",
+        role: "RN",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 2.9,
+          actionTimes: 2.9,
+          varianceTrends: 2.6,
+          dispensePatterns: 3.1,
+          medTrends: 2.8,
+          fullPackageWaste: 3.0,
+          shiftAnalysis: 2.7
+        },
+        firstDispenseFirstAdmin: { events: 147, avgTime: 13 },
+        lastAdminLastWaste: { events: 96, avgTime: 49 },
+        adminBeforeDispense: { events: 12, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 32, avgTime: 74 },
+        recordedNotEqualAction: { events: 3, avgTime: 15 }
+      },
+      {
+        id: 20,
+        outlierScore: 5.5,
+        isOutlier: true,
+        name: "Matthew Wilson",
+        role: "PharmD",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 5.5,
+          actionTimes: 5.5,
+          varianceTrends: 5.2,
+          dispensePatterns: 5.7,
+          medTrends: 5.3,
+          fullPackageWaste: 5.6,
+          shiftAnalysis: 5.4
+        },
+        firstDispenseFirstAdmin: { events: 94, avgTime: 22 },
+        lastAdminLastWaste: { events: 71, avgTime: 81 },
+        adminBeforeDispense: { events: 17, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 43, avgTime: 98 },
+        recordedNotEqualAction: { events: 7, avgTime: 16 }
+      },
+      {
+        id: 21,
+        outlierScore: 1.9,
+        isOutlier: false,
+        name: "Ashley Thomas",
+        role: "RN",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 1.9,
+          actionTimes: 1.9,
+          varianceTrends: 1.7,
+          dispensePatterns: 2.1,
+          medTrends: 1.8,
+          fullPackageWaste: 2.0,
+          shiftAnalysis: 1.6
+        },
+        firstDispenseFirstAdmin: { events: 131, avgTime: 11 },
+        lastAdminLastWaste: { events: 82, avgTime: 42 },
+        adminBeforeDispense: { events: 7, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 22, avgTime: 68 },
+        recordedNotEqualAction: { events: 2, avgTime: 12 }
+      },
+      {
+        id: 22,
+        outlierScore: 2.3,
+        isOutlier: false,
+        name: "Joshua Moore",
+        role: "RN",
+        dept: "Pediatric",
+        isAggregate: false,
+        scores: {
+          overall: 2.3,
+          actionTimes: 2.3,
+          varianceTrends: 2.0,
+          dispensePatterns: 2.5,
+          medTrends: 2.2,
+          fullPackageWaste: 2.4,
+          shiftAnalysis: 2.1
+        },
+        firstDispenseFirstAdmin: { events: 122, avgTime: 12 },
+        lastAdminLastWaste: { events: 79, avgTime: 44 },
+        adminBeforeDispense: { events: 8, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 24, avgTime: 72 },
+        recordedNotEqualAction: { events: 2, avgTime: 13 }
+      },
+      {
+        id: 23,
+        outlierScore: 3.6,
+        isOutlier: false,
+        name: "Nicole Jackson",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 3.6,
+          actionTimes: 3.6,
+          varianceTrends: 3.3,
+          dispensePatterns: 3.8,
+          medTrends: 3.4,
+          fullPackageWaste: 3.7,
+          shiftAnalysis: 3.5
+        },
+        firstDispenseFirstAdmin: { events: 172, avgTime: 15 },
+        lastAdminLastWaste: { events: 118, avgTime: 56 },
+        adminBeforeDispense: { events: 12, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 41, avgTime: 78 },
+        recordedNotEqualAction: { events: 4, avgTime: 16 }
+      },
+      {
+        id: 24,
+        outlierScore: 1.2,
+        isOutlier: false,
+        name: "Andrew Harris",
+        role: "PharmD",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 1.2,
+          actionTimes: 1.2,
+          varianceTrends: 1.0,
+          dispensePatterns: 1.4,
+          medTrends: 1.1,
+          fullPackageWaste: 1.3,
+          shiftAnalysis: 0.9
+        },
+        firstDispenseFirstAdmin: { events: 184, avgTime: 8 },
+        lastAdminLastWaste: { events: 132, avgTime: 29 },
+        adminBeforeDispense: { events: 5, avgTime: 13 },
+        firstDispenseFirstWaste: { events: 33, avgTime: 58 },
+        recordedNotEqualAction: { events: 1, avgTime: 10 }
+      },
+      {
+        id: 25,
+        outlierScore: 2.4,
+        isOutlier: false,
+        name: "Stephanie Clark",
+        role: "RN",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 2.4,
+          actionTimes: 2.4,
+          varianceTrends: 2.1,
+          dispensePatterns: 2.6,
+          medTrends: 2.3,
+          fullPackageWaste: 2.5,
+          shiftAnalysis: 2.2
+        },
+        firstDispenseFirstAdmin: { events: 144, avgTime: 12 },
+        lastAdminLastWaste: { events: 88, avgTime: 45 },
+        adminBeforeDispense: { events: 9, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 27, avgTime: 71 },
+        recordedNotEqualAction: { events: 3, avgTime: 14 }
+      },
+      {
+        id: 26,
+        outlierScore: 0.6,
+        isOutlier: false,
+        name: "Brandon Lewis",
+        role: "PharmTech",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 0.6,
+          actionTimes: 0.6,
+          varianceTrends: 0.4,
+          dispensePatterns: 0.8,
+          medTrends: 0.5,
+          fullPackageWaste: 0.7,
+          shiftAnalysis: 0.3
+        },
+        firstDispenseFirstAdmin: { events: 211, avgTime: 5 },
+        lastAdminLastWaste: { events: 162, avgTime: 22 },
+        adminBeforeDispense: { events: 2, avgTime: 15 },
+        firstDispenseFirstWaste: { events: 36, avgTime: 51 },
+        recordedNotEqualAction: { events: 1, avgTime: 7 }
+      },
+      {
+        id: 27,
+        outlierScore: 4.7,
+        isOutlier: true,
+        name: "Rebecca Walker",
+        role: "RN",
+        dept: "Oncology",
+        isAggregate: false,
+        scores: {
+          overall: 4.7,
+          actionTimes: 4.7,
+          varianceTrends: 4.4,
+          dispensePatterns: 4.9,
+          medTrends: 4.5,
+          fullPackageWaste: 4.8,
+          shiftAnalysis: 4.6
+        },
+        firstDispenseFirstAdmin: { events: 134, avgTime: 18 },
+        lastAdminLastWaste: { events: 91, avgTime: 71 },
+        adminBeforeDispense: { events: 14, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 37, avgTime: 88 },
+        recordedNotEqualAction: { events: 6, avgTime: 16 }
+      },
+      {
+        id: 28,
+        outlierScore: 2.0,
+        isOutlier: false,
+        name: "Kevin Young",
+        role: "RN",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 2.0,
+          actionTimes: 2.0,
+          varianceTrends: 1.8,
+          dispensePatterns: 2.2,
+          medTrends: 1.9,
+          fullPackageWaste: 2.1,
+          shiftAnalysis: 1.7
+        },
+        firstDispenseFirstAdmin: { events: 138, avgTime: 11 },
+        lastAdminLastWaste: { events: 87, avgTime: 43 },
+        adminBeforeDispense: { events: 8, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 24, avgTime: 66 },
+        recordedNotEqualAction: { events: 2, avgTime: 13 }
+      },
+      {
+        id: 29,
+        outlierScore: 4.0,
+        isOutlier: false,
+        name: "Lauren King",
+        role: "NP",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 4.0,
+          actionTimes: 4.0,
+          varianceTrends: 3.7,
+          dispensePatterns: 4.2,
+          medTrends: 3.8,
+          fullPackageWaste: 4.1,
+          shiftAnalysis: 3.9
+        },
+        firstDispenseFirstAdmin: { events: 119, avgTime: 17 },
+        lastAdminLastWaste: { events: 84, avgTime: 61 },
+        adminBeforeDispense: { events: 13, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 38, avgTime: 82 },
+        recordedNotEqualAction: { events: 5, avgTime: 17 }
+      },
+      {
+        id: 30,
+        outlierScore: 2.7,
+        isOutlier: false,
+        name: "Jonathan Wright",
+        role: "RN",
+        dept: "Cardiology",
+        isAggregate: false,
+        scores: {
+          overall: 2.7,
+          actionTimes: 2.7,
+          varianceTrends: 2.4,
+          dispensePatterns: 2.9,
+          medTrends: 2.6,
+          fullPackageWaste: 2.8,
+          shiftAnalysis: 2.5
+        },
+        firstDispenseFirstAdmin: { events: 142, avgTime: 13 },
+        lastAdminLastWaste: { events: 93, avgTime: 47 },
+        adminBeforeDispense: { events: 11, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 29, avgTime: 73 },
+        recordedNotEqualAction: { events: 3, avgTime: 15 }
+      },
+      {
+        id: 31,
+        outlierScore: 5.1,
+        isOutlier: true,
+        name: "Megan Scott",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 5.1,
+          actionTimes: 5.1,
+          varianceTrends: 4.8,
+          dispensePatterns: 5.3,
+          medTrends: 4.9,
+          fullPackageWaste: 5.2,
+          shiftAnalysis: 5.0
+        },
+        firstDispenseFirstAdmin: { events: 158, avgTime: 19 },
+        lastAdminLastWaste: { events: 112, avgTime: 75 },
+        adminBeforeDispense: { events: 15, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 48, avgTime: 91 },
+        recordedNotEqualAction: { events: 6, avgTime: 17 }
+      },
+      {
+        id: 32,
+        outlierScore: 4.8,
+        isOutlier: true,
+        name: "Ryan Smith",
+        role: "PharmD",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 4.8,
+          actionTimes: 4.8,
+          varianceTrends: 4.9,
+          dispensePatterns: 5.2,
+          medTrends: 5.2,
+          fullPackageWaste: 4.6,
+          shiftAnalysis: 5
+        },
+        firstDispenseFirstAdmin: { events: 117, avgTime: 13 },
+        lastAdminLastWaste: { events: 99, avgTime: 41 },
+        adminBeforeDispense: { events: 13, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 50, avgTime: 95 },
+        recordedNotEqualAction: { events: 5, avgTime: 17 }
+      },
+      {
+        id: 33,
+        outlierScore: 6.2,
+        isOutlier: true,
+        name: "Jordan Anderson",
+        role: "PharmD",
+        dept: "OR",
+        isAggregate: false,
+        scores: {
+          overall: 6.2,
+          actionTimes: 6.2,
+          varianceTrends: 6.4,
+          dispensePatterns: 6.3,
+          medTrends: 6.3,
+          fullPackageWaste: 5.9,
+          shiftAnalysis: 6.1
+        },
+        firstDispenseFirstAdmin: { events: 183, avgTime: 7 },
+        lastAdminLastWaste: { events: 90, avgTime: 72 },
+        adminBeforeDispense: { events: 6, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 37, avgTime: 94 },
+        recordedNotEqualAction: { events: 5, avgTime: 18 }
+      },
+      {
+        id: 34,
+        outlierScore: 3.2,
+        isOutlier: false,
+        name: "Violet Richardson",
+        role: "PharmD",
+        dept: "OR",
+        isAggregate: false,
+        scores: {
+          overall: 3.2,
+          actionTimes: 3.2,
+          varianceTrends: 3.2,
+          dispensePatterns: 3.6,
+          medTrends: 3.2,
+          fullPackageWaste: 2.9,
+          shiftAnalysis: 3.4
+        },
+        firstDispenseFirstAdmin: { events: 128, avgTime: 14 },
+        lastAdminLastWaste: { events: 128, avgTime: 31 },
+        adminBeforeDispense: { events: 3, avgTime: 4 },
+        firstDispenseFirstWaste: { events: 32, avgTime: 86 },
+        recordedNotEqualAction: { events: 7, avgTime: 21 }
+      },
+      {
+        id: 35,
+        outlierScore: 4.3,
+        isOutlier: false,
+        name: "Lucas Moore",
+        role: "PharmD",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 4.3,
+          actionTimes: 4.3,
+          varianceTrends: 4.5,
+          dispensePatterns: 4,
+          medTrends: 4.6,
+          fullPackageWaste: 4.3,
+          shiftAnalysis: 4
+        },
+        firstDispenseFirstAdmin: { events: 93, avgTime: 18 },
+        lastAdminLastWaste: { events: 55, avgTime: 52 },
+        adminBeforeDispense: { events: 12, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 15, avgTime: 61 },
+        recordedNotEqualAction: { events: 5, avgTime: 21 }
+      },
+      {
+        id: 36,
+        outlierScore: 3.6,
+        isOutlier: false,
+        name: "Samuel Carter",
+        role: "RN",
+        dept: "Neurology",
+        isAggregate: false,
+        scores: {
+          overall: 3.6,
+          actionTimes: 3.6,
+          varianceTrends: 3.8,
+          dispensePatterns: 3.4,
+          medTrends: 3.7,
+          fullPackageWaste: 4,
+          shiftAnalysis: 3.6
+        },
+        firstDispenseFirstAdmin: { events: 153, avgTime: 17 },
+        lastAdminLastWaste: { events: 88, avgTime: 58 },
+        adminBeforeDispense: { events: 14, avgTime: 4 },
+        firstDispenseFirstWaste: { events: 40, avgTime: 74 },
+        recordedNotEqualAction: { events: 1, avgTime: 18 }
+      },
+      {
+        id: 37,
+        outlierScore: 5.4,
+        isOutlier: true,
+        name: "Elijah Johnson",
+        role: "MD",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 5.4,
+          actionTimes: 5.4,
+          varianceTrends: 5.5,
+          dispensePatterns: 5.2,
+          medTrends: 5.6,
+          fullPackageWaste: 5.3,
+          shiftAnalysis: 5.1
+        },
+        firstDispenseFirstAdmin: { events: 74, avgTime: 18 },
+        lastAdminLastWaste: { events: 63, avgTime: 33 },
+        adminBeforeDispense: { events: 11, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 34, avgTime: 105 },
+        recordedNotEqualAction: { events: 1, avgTime: 21 }
+      },
+      {
+        id: 38,
+        outlierScore: 0.5,
+        isOutlier: false,
+        name: "Brooklyn Wilson",
+        role: "RN",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 0.5,
+          actionTimes: 0.5,
+          varianceTrends: 0.6,
+          dispensePatterns: 0.9,
+          medTrends: 0.3,
+          fullPackageWaste: 0.3,
+          shiftAnalysis: 0.4
+        },
+        firstDispenseFirstAdmin: { events: 180, avgTime: 6 },
+        lastAdminLastWaste: { events: 71, avgTime: 20 },
+        adminBeforeDispense: { events: 14, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 62, avgTime: 46 },
+        recordedNotEqualAction: { events: 4, avgTime: 11 }
+      },
+      {
+        id: 39,
+        outlierScore: 1.6,
+        isOutlier: false,
+        name: "Jordan Diaz",
+        role: "RN",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 1.6,
+          actionTimes: 1.6,
+          varianceTrends: 1.7,
+          dispensePatterns: 1.8,
+          medTrends: 1.8,
+          fullPackageWaste: 1.7,
+          shiftAnalysis: 1.4
+        },
+        firstDispenseFirstAdmin: { events: 200, avgTime: 11 },
+        lastAdminLastWaste: { events: 138, avgTime: 22 },
+        adminBeforeDispense: { events: 7, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 32, avgTime: 69 },
+        recordedNotEqualAction: { events: 3, avgTime: 7 }
+      },
+      {
+        id: 40,
+        outlierScore: 5.1,
+        isOutlier: true,
+        name: "Samuel Evans",
+        role: "PharmD",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 5.1,
+          actionTimes: 5.1,
+          varianceTrends: 5,
+          dispensePatterns: 5.4,
+          medTrends: 4.8,
+          fullPackageWaste: 5,
+          shiftAnalysis: 5.4
+        },
+        firstDispenseFirstAdmin: { events: 139, avgTime: 16 },
+        lastAdminLastWaste: { events: 102, avgTime: 47 },
+        adminBeforeDispense: { events: 12, avgTime: 3 },
+        firstDispenseFirstWaste: { events: 58, avgTime: 77 },
+        recordedNotEqualAction: { events: 5, avgTime: 12 }
+      },
+      {
+        id: 41,
+        outlierScore: 2.3,
+        isOutlier: false,
+        name: "Mia Rogers",
+        role: "PharmD",
+        dept: "NICU",
+        isAggregate: false,
+        scores: {
+          overall: 2.3,
+          actionTimes: 2.3,
+          varianceTrends: 2.2,
+          dispensePatterns: 2.6,
+          medTrends: 2,
+          fullPackageWaste: 2,
+          shiftAnalysis: 2.6
+        },
+        firstDispenseFirstAdmin: { events: 94, avgTime: 7 },
+        lastAdminLastWaste: { events: 59, avgTime: 60 },
+        adminBeforeDispense: { events: 11, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 33, avgTime: 70 },
+        recordedNotEqualAction: { events: 7, avgTime: 18 }
+      },
+      {
+        id: 42,
+        outlierScore: 1.8,
+        isOutlier: false,
+        name: "Lincoln Martin",
+        role: "NP",
+        dept: "NICU",
+        isAggregate: false,
+        scores: {
+          overall: 1.8,
+          actionTimes: 1.8,
+          varianceTrends: 1.9,
+          dispensePatterns: 1.7,
+          medTrends: 2,
+          fullPackageWaste: 2,
+          shiftAnalysis: 1.5
+        },
+        firstDispenseFirstAdmin: { events: 100, avgTime: 8 },
+        lastAdminLastWaste: { events: 61, avgTime: 28 },
+        adminBeforeDispense: { events: 6, avgTime: 11 },
+        firstDispenseFirstWaste: { events: 26, avgTime: 50 },
+        recordedNotEqualAction: { events: 5, avgTime: 14 }
+      },
+      {
+        id: 43,
+        outlierScore: 2.2,
+        isOutlier: false,
+        name: "Sophia Johnson",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 2.2,
+          actionTimes: 2.2,
+          varianceTrends: 1.9,
+          dispensePatterns: 2.4,
+          medTrends: 2.3,
+          fullPackageWaste: 2.4,
+          shiftAnalysis: 2.5
+        },
+        firstDispenseFirstAdmin: { events: 141, avgTime: 7 },
+        lastAdminLastWaste: { events: 96, avgTime: 32 },
+        adminBeforeDispense: { events: 5, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 55, avgTime: 68 },
+        recordedNotEqualAction: { events: 1, avgTime: 11 }
+      },
+      {
+        id: 44,
+        outlierScore: 4.1,
+        isOutlier: false,
+        name: "Mia Wood",
+        role: "RN",
+        dept: "OR",
+        isAggregate: false,
+        scores: {
+          overall: 4.1,
+          actionTimes: 4.1,
+          varianceTrends: 3.7,
+          dispensePatterns: 4.5,
+          medTrends: 3.7,
+          fullPackageWaste: 4.5,
+          shiftAnalysis: 3.7
+        },
+        firstDispenseFirstAdmin: { events: 100, avgTime: 12 },
+        lastAdminLastWaste: { events: 65, avgTime: 37 },
+        adminBeforeDispense: { events: 14, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 50, avgTime: 96 },
+        recordedNotEqualAction: { events: 2, avgTime: 22 }
+      },
+      {
+        id: 45,
+        outlierScore: 4.2,
+        isOutlier: false,
+        name: "Jordan Peterson",
+        role: "RN",
+        dept: "Telemetry",
+        isAggregate: false,
+        scores: {
+          overall: 4.2,
+          actionTimes: 4.2,
+          varianceTrends: 4.2,
+          dispensePatterns: 4.6,
+          medTrends: 4.6,
+          fullPackageWaste: 4.4,
+          shiftAnalysis: 4.4
+        },
+        firstDispenseFirstAdmin: { events: 137, avgTime: 16 },
+        lastAdminLastWaste: { events: 121, avgTime: 59 },
+        adminBeforeDispense: { events: 10, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 28, avgTime: 63 },
+        recordedNotEqualAction: { events: 3, avgTime: 13 }
+      },
+      {
+        id: 46,
+        outlierScore: 4.2,
+        isOutlier: false,
+        name: "Emma Scott",
+        role: "RN",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 4.2,
+          actionTimes: 4.2,
+          varianceTrends: 3.9,
+          dispensePatterns: 4.1,
+          medTrends: 4.5,
+          fullPackageWaste: 4.3,
+          shiftAnalysis: 3.8
+        },
+        firstDispenseFirstAdmin: { events: 109, avgTime: 14 },
+        lastAdminLastWaste: { events: 151, avgTime: 40 },
+        adminBeforeDispense: { events: 3, avgTime: 3 },
+        firstDispenseFirstWaste: { events: 32, avgTime: 80 },
+        recordedNotEqualAction: { events: 8, avgTime: 21 }
+      },
+      {
+        id: 47,
+        outlierScore: 0.7,
+        isOutlier: false,
+        name: "Henry Hill",
+        role: "PharmTech",
+        dept: "Telemetry",
+        isAggregate: false,
+        scores: {
+          overall: 0.7,
+          actionTimes: 0.7,
+          varianceTrends: 0.6,
+          dispensePatterns: 0.9,
+          medTrends: 0.6,
+          fullPackageWaste: 0.4,
+          shiftAnalysis: 0.6
+        },
+        firstDispenseFirstAdmin: { events: 205, avgTime: 9 },
+        lastAdminLastWaste: { events: 95, avgTime: 34 },
+        adminBeforeDispense: { events: 2, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 48, avgTime: 52 },
+        recordedNotEqualAction: { events: 2, avgTime: 14 }
+      },
+      {
+        id: 48,
+        outlierScore: 4.9,
+        isOutlier: true,
+        name: "Chloe Baker",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 4.9,
+          actionTimes: 4.9,
+          varianceTrends: 4.6,
+          dispensePatterns: 4.9,
+          medTrends: 4.9,
+          fullPackageWaste: 5.2,
+          shiftAnalysis: 4.7
+        },
+        firstDispenseFirstAdmin: { events: 176, avgTime: 16 },
+        lastAdminLastWaste: { events: 90, avgTime: 29 },
+        adminBeforeDispense: { events: 18, avgTime: 3 },
+        firstDispenseFirstWaste: { events: 59, avgTime: 90 },
+        recordedNotEqualAction: { events: 2, avgTime: 13 }
+      },
+      {
+        id: 49,
+        outlierScore: 4.4,
+        isOutlier: false,
+        name: "Mia Harris",
+        role: "RN",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 4.4,
+          actionTimes: 4.4,
+          varianceTrends: 4.2,
+          dispensePatterns: 4.4,
+          medTrends: 4.1,
+          fullPackageWaste: 4.6,
+          shiftAnalysis: 4.5
+        },
+        firstDispenseFirstAdmin: { events: 206, avgTime: 17 },
+        lastAdminLastWaste: { events: 165, avgTime: 28 },
+        adminBeforeDispense: { events: 11, avgTime: 3 },
+        firstDispenseFirstWaste: { events: 22, avgTime: 73 },
+        recordedNotEqualAction: { events: 2, avgTime: 11 }
+      },
+      {
+        id: 50,
+        outlierScore: 4.1,
+        isOutlier: false,
+        name: "Leo Ward",
+        role: "RN",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 4.1,
+          actionTimes: 4.1,
+          varianceTrends: 3.9,
+          dispensePatterns: 3.8,
+          medTrends: 3.8,
+          fullPackageWaste: 3.9,
+          shiftAnalysis: 4.1
+        },
+        firstDispenseFirstAdmin: { events: 133, avgTime: 7 },
+        lastAdminLastWaste: { events: 136, avgTime: 42 },
+        adminBeforeDispense: { events: 14, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 46, avgTime: 65 },
+        recordedNotEqualAction: { events: 6, avgTime: 11 }
+      },
+      {
+        id: 51,
+        outlierScore: 4.1,
+        isOutlier: false,
+        name: "Claire Stewart",
+        role: "PharmTech",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 4.1,
+          actionTimes: 4.1,
+          varianceTrends: 4.3,
+          dispensePatterns: 4.4,
+          medTrends: 4.5,
+          fullPackageWaste: 3.7,
+          shiftAnalysis: 3.8
+        },
+        firstDispenseFirstAdmin: { events: 130, avgTime: 6 },
+        lastAdminLastWaste: { events: 145, avgTime: 52 },
+        adminBeforeDispense: { events: 9, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 70, avgTime: 94 },
+        recordedNotEqualAction: { events: 2, avgTime: 16 }
+      },
+      {
+        id: 52,
+        outlierScore: 2.1,
+        isOutlier: false,
+        name: "Zoe Hill",
+        role: "RN",
+        dept: "Neurology",
+        isAggregate: false,
+        scores: {
+          overall: 2.1,
+          actionTimes: 2.1,
+          varianceTrends: 2.3,
+          dispensePatterns: 2,
+          medTrends: 1.8,
+          fullPackageWaste: 2.2,
+          shiftAnalysis: 2.3
+        },
+        firstDispenseFirstAdmin: { events: 163, avgTime: 10 },
+        lastAdminLastWaste: { events: 136, avgTime: 27 },
+        adminBeforeDispense: { events: 18, avgTime: 14 },
+        firstDispenseFirstWaste: { events: 54, avgTime: 67 },
+        recordedNotEqualAction: { events: 2, avgTime: 16 }
+      },
+      {
+        id: 53,
+        outlierScore: 5.3,
+        isOutlier: true,
+        name: "Gabriel Reed",
+        role: "RN",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 5.3,
+          actionTimes: 5.3,
+          varianceTrends: 5.2,
+          dispensePatterns: 5.7,
+          medTrends: 5.1,
+          fullPackageWaste: 5,
+          shiftAnalysis: 5.6
+        },
+        firstDispenseFirstAdmin: { events: 93, avgTime: 11 },
+        lastAdminLastWaste: { events: 105, avgTime: 69 },
+        adminBeforeDispense: { events: 5, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 35, avgTime: 92 },
+        recordedNotEqualAction: { events: 6, avgTime: 23 }
+      },
+      {
+        id: 54,
+        outlierScore: 6.1,
+        isOutlier: true,
+        name: "Charlotte Carter",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 6.1,
+          actionTimes: 6.1,
+          varianceTrends: 6.2,
+          dispensePatterns: 6.3,
+          medTrends: 6.5,
+          fullPackageWaste: 5.9,
+          shiftAnalysis: 6.4
+        },
+        firstDispenseFirstAdmin: { events: 178, avgTime: 12 },
+        lastAdminLastWaste: { events: 66, avgTime: 83 },
+        adminBeforeDispense: { events: 4, avgTime: 3 },
+        firstDispenseFirstWaste: { events: 26, avgTime: 106 },
+        recordedNotEqualAction: { events: 5, avgTime: 16 }
+      },
+      {
+        id: 55,
+        outlierScore: 6.2,
+        isOutlier: true,
+        name: "Julian White",
+        role: "PharmTech",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 6.2,
+          actionTimes: 6.2,
+          varianceTrends: 6.3,
+          dispensePatterns: 6.6,
+          medTrends: 6.3,
+          fullPackageWaste: 6.1,
+          shiftAnalysis: 6.5
+        },
+        firstDispenseFirstAdmin: { events: 139, avgTime: 16 },
+        lastAdminLastWaste: { events: 186, avgTime: 78 },
+        adminBeforeDispense: { events: 10, avgTime: 3 },
+        firstDispenseFirstWaste: { events: 68, avgTime: 98 },
+        recordedNotEqualAction: { events: 8, avgTime: 23 }
+      },
+      {
+        id: 56,
+        outlierScore: 3.6,
+        isOutlier: false,
+        name: "Jack Allen",
+        role: "RN",
+        dept: "Rehab",
+        isAggregate: false,
+        scores: {
+          overall: 3.6,
+          actionTimes: 3.6,
+          varianceTrends: 3.9,
+          dispensePatterns: 3.6,
+          medTrends: 3.4,
+          fullPackageWaste: 3.5,
+          shiftAnalysis: 3.9
+        },
+        firstDispenseFirstAdmin: { events: 152, avgTime: 8 },
+        lastAdminLastWaste: { events: 88, avgTime: 49 },
+        adminBeforeDispense: { events: 16, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 50, avgTime: 87 },
+        recordedNotEqualAction: { events: 4, avgTime: 8 }
+      },
+      {
+        id: 57,
+        outlierScore: 3.1,
+        isOutlier: false,
+        name: "Lily Watson",
+        role: "PharmTech",
+        dept: "Pediatric",
+        isAggregate: false,
+        scores: {
+          overall: 3.1,
+          actionTimes: 3.1,
+          varianceTrends: 3.4,
+          dispensePatterns: 3,
+          medTrends: 3.2,
+          fullPackageWaste: 3.1,
+          shiftAnalysis: 3.5
+        },
+        firstDispenseFirstAdmin: { events: 123, avgTime: 9 },
+        lastAdminLastWaste: { events: 129, avgTime: 46 },
+        adminBeforeDispense: { events: 6, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 22, avgTime: 78 },
+        recordedNotEqualAction: { events: 7, avgTime: 12 }
+      },
+      {
+        id: 58,
+        outlierScore: 3.8,
+        isOutlier: false,
+        name: "Charlotte Torres",
+        role: "RN",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 3.8,
+          actionTimes: 3.8,
+          varianceTrends: 3.5,
+          dispensePatterns: 3.7,
+          medTrends: 3.9,
+          fullPackageWaste: 3.7,
+          shiftAnalysis: 3.4
+        },
+        firstDispenseFirstAdmin: { events: 112, avgTime: 6 },
+        lastAdminLastWaste: { events: 74, avgTime: 42 },
+        adminBeforeDispense: { events: 18, avgTime: 3 },
+        firstDispenseFirstWaste: { events: 62, avgTime: 74 },
+        recordedNotEqualAction: { events: 5, avgTime: 10 }
+      },
+      {
+        id: 59,
+        outlierScore: 4,
+        isOutlier: false,
+        name: "Caroline Thomas",
+        role: "RN",
+        dept: "NICU",
+        isAggregate: false,
+        scores: {
+          overall: 4,
+          actionTimes: 4,
+          varianceTrends: 3.6,
+          dispensePatterns: 4.4,
+          medTrends: 4.3,
+          fullPackageWaste: 3.9,
+          shiftAnalysis: 4.2
+        },
+        firstDispenseFirstAdmin: { events: 180, avgTime: 6 },
+        lastAdminLastWaste: { events: 111, avgTime: 33 },
+        adminBeforeDispense: { events: 13, avgTime: 11 },
+        firstDispenseFirstWaste: { events: 17, avgTime: 74 },
+        recordedNotEqualAction: { events: 6, avgTime: 15 }
+      },
+      {
+        id: 60,
+        outlierScore: 2.7,
+        isOutlier: false,
+        name: "Amelia Brooks",
+        role: "MD",
+        dept: "Rehab",
+        isAggregate: false,
+        scores: {
+          overall: 2.7,
+          actionTimes: 2.7,
+          varianceTrends: 2.8,
+          dispensePatterns: 3,
+          medTrends: 3,
+          fullPackageWaste: 2.6,
+          shiftAnalysis: 2.7
+        },
+        firstDispenseFirstAdmin: { events: 104, avgTime: 7 },
+        lastAdminLastWaste: { events: 91, avgTime: 45 },
+        adminBeforeDispense: { events: 9, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 38, avgTime: 74 },
+        recordedNotEqualAction: { events: 1, avgTime: 20 }
+      },
+      {
+        id: 61,
+        outlierScore: 0.3,
+        isOutlier: false,
+        name: "Charlotte Edwards",
+        role: "RN",
+        dept: "Rehab",
+        isAggregate: false,
+        scores: {
+          overall: 0.3,
+          actionTimes: 0.3,
+          varianceTrends: 0.5,
+          dispensePatterns: 0.1,
+          medTrends: 0.2,
+          fullPackageWaste: 0,
+          shiftAnalysis: 0.1
+        },
+        firstDispenseFirstAdmin: { events: 156, avgTime: 9 },
+        lastAdminLastWaste: { events: 78, avgTime: 20 },
+        adminBeforeDispense: { events: 16, avgTime: 13 },
+        firstDispenseFirstWaste: { events: 61, avgTime: 52 },
+        recordedNotEqualAction: { events: 2, avgTime: 14 }
+      },
+      {
+        id: 62,
+        outlierScore: 2,
+        isOutlier: false,
+        name: "Claire Williams",
+        role: "MD",
+        dept: "Telemetry",
+        isAggregate: false,
+        scores: {
+          overall: 2,
+          actionTimes: 2,
+          varianceTrends: 1.9,
+          dispensePatterns: 2.4,
+          medTrends: 1.7,
+          fullPackageWaste: 1.7,
+          shiftAnalysis: 2.2
+        },
+        firstDispenseFirstAdmin: { events: 59, avgTime: 5 },
+        lastAdminLastWaste: { events: 72, avgTime: 22 },
+        adminBeforeDispense: { events: 2, avgTime: 14 },
+        firstDispenseFirstWaste: { events: 19, avgTime: 53 },
+        recordedNotEqualAction: { events: 2, avgTime: 9 }
+      },
+      {
+        id: 63,
+        outlierScore: 1.5,
+        isOutlier: false,
+        name: "Brooklyn Martin",
+        role: "NP",
+        dept: "Rehab",
+        isAggregate: false,
+        scores: {
+          overall: 1.5,
+          actionTimes: 1.5,
+          varianceTrends: 1.5,
+          dispensePatterns: 1.5,
+          medTrends: 1.6,
+          fullPackageWaste: 1.8,
+          shiftAnalysis: 1.3
+        },
+        firstDispenseFirstAdmin: { events: 118, avgTime: 11 },
+        lastAdminLastWaste: { events: 45, avgTime: 53 },
+        adminBeforeDispense: { events: 13, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 50, avgTime: 56 },
+        recordedNotEqualAction: { events: 6, avgTime: 8 }
+      },
+      {
+        id: 64,
+        outlierScore: 5.6,
+        isOutlier: true,
+        name: "Julian Peterson",
+        role: "PharmD",
+        dept: "OR",
+        isAggregate: false,
+        scores: {
+          overall: 5.6,
+          actionTimes: 5.6,
+          varianceTrends: 5.4,
+          dispensePatterns: 5.6,
+          medTrends: 5.5,
+          fullPackageWaste: 5.4,
+          shiftAnalysis: 5.7
+        },
+        firstDispenseFirstAdmin: { events: 157, avgTime: 15 },
+        lastAdminLastWaste: { events: 137, avgTime: 36 },
+        adminBeforeDispense: { events: 5, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 28, avgTime: 102 },
+        recordedNotEqualAction: { events: 5, avgTime: 17 }
+      },
+      {
+        id: 65,
+        outlierScore: 1.8,
+        isOutlier: false,
+        name: "Grace Green",
+        role: "RN",
+        dept: "Neurology",
+        isAggregate: false,
+        scores: {
+          overall: 1.8,
+          actionTimes: 1.8,
+          varianceTrends: 1.5,
+          dispensePatterns: 1.7,
+          medTrends: 1.7,
+          fullPackageWaste: 2.2,
+          shiftAnalysis: 1.9
+        },
+        firstDispenseFirstAdmin: { events: 162, avgTime: 6 },
+        lastAdminLastWaste: { events: 75, avgTime: 37 },
+        adminBeforeDispense: { events: 6, avgTime: 4 },
+        firstDispenseFirstWaste: { events: 67, avgTime: 48 },
+        recordedNotEqualAction: { events: 2, avgTime: 14 }
+      },
+      {
+        id: 66,
+        outlierScore: 1.3,
+        isOutlier: false,
+        name: "Noah Parker",
+        role: "PharmD",
+        dept: "Pediatric",
+        isAggregate: false,
+        scores: {
+          overall: 1.3,
+          actionTimes: 1.3,
+          varianceTrends: 1.6,
+          dispensePatterns: 1.3,
+          medTrends: 1.7,
+          fullPackageWaste: 0.9,
+          shiftAnalysis: 1
+        },
+        firstDispenseFirstAdmin: { events: 105, avgTime: 5 },
+        lastAdminLastWaste: { events: 148, avgTime: 41 },
+        adminBeforeDispense: { events: 9, avgTime: 15 },
+        firstDispenseFirstWaste: { events: 59, avgTime: 67 },
+        recordedNotEqualAction: { events: 3, avgTime: 8 }
+      },
+      {
+        id: 67,
+        outlierScore: 1.3,
+        isOutlier: false,
+        name: "Lucas Allen",
+        role: "RN",
+        dept: "Pediatric",
+        isAggregate: false,
+        scores: {
+          overall: 1.3,
+          actionTimes: 1.3,
+          varianceTrends: 1,
+          dispensePatterns: 1.4,
+          medTrends: 1.4,
+          fullPackageWaste: 1,
+          shiftAnalysis: 1.4
+        },
+        firstDispenseFirstAdmin: { events: 163, avgTime: 5 },
+        lastAdminLastWaste: { events: 96, avgTime: 29 },
+        adminBeforeDispense: { events: 13, avgTime: 16 },
+        firstDispenseFirstWaste: { events: 24, avgTime: 55 },
+        recordedNotEqualAction: { events: 5, avgTime: 12 }
+      },
+      {
+        id: 68,
+        outlierScore: 2.1,
+        isOutlier: false,
+        name: "Samuel Williams",
+        role: "NP",
+        dept: "Neurology",
+        isAggregate: false,
+        scores: {
+          overall: 2.1,
+          actionTimes: 2.1,
+          varianceTrends: 2.1,
+          dispensePatterns: 1.9,
+          medTrends: 2.2,
+          fullPackageWaste: 1.9,
+          shiftAnalysis: 2.4
+        },
+        firstDispenseFirstAdmin: { events: 115, avgTime: 9 },
+        lastAdminLastWaste: { events: 86, avgTime: 42 },
+        adminBeforeDispense: { events: 6, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 47, avgTime: 73 },
+        recordedNotEqualAction: { events: 1, avgTime: 7 }
+      },
+      {
+        id: 69,
+        outlierScore: 5.5,
+        isOutlier: true,
+        name: "Zoe Williams",
+        role: "RN",
+        dept: "Oncology",
+        isAggregate: false,
+        scores: {
+          overall: 5.5,
+          actionTimes: 5.5,
+          varianceTrends: 5.2,
+          dispensePatterns: 5.8,
+          medTrends: 5.5,
+          fullPackageWaste: 5.1,
+          shiftAnalysis: 5.7
+        },
+        firstDispenseFirstAdmin: { events: 91, avgTime: 11 },
+        lastAdminLastWaste: { events: 99, avgTime: 58 },
+        adminBeforeDispense: { events: 10, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 61, avgTime: 79 },
+        recordedNotEqualAction: { events: 4, avgTime: 17 }
+      },
+      {
+        id: 70,
+        outlierScore: 3.9,
+        isOutlier: false,
+        name: "Isaac Phillips",
+        role: "RN",
+        dept: "Telemetry",
+        isAggregate: false,
+        scores: {
+          overall: 3.9,
+          actionTimes: 3.9,
+          varianceTrends: 3.7,
+          dispensePatterns: 3.7,
+          medTrends: 3.9,
+          fullPackageWaste: 4.2,
+          shiftAnalysis: 3.6
+        },
+        firstDispenseFirstAdmin: { events: 162, avgTime: 16 },
+        lastAdminLastWaste: { events: 143, avgTime: 52 },
+        adminBeforeDispense: { events: 16, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 65, avgTime: 89 },
+        recordedNotEqualAction: { events: 8, avgTime: 18 }
+      },
+      {
+        id: 71,
+        outlierScore: 2.9,
+        isOutlier: false,
+        name: "Isaac Murphy",
+        role: "PharmD",
+        dept: "Orthopedic",
+        isAggregate: false,
+        scores: {
+          overall: 2.9,
+          actionTimes: 2.9,
+          varianceTrends: 3,
+          dispensePatterns: 3,
+          medTrends: 3.2,
+          fullPackageWaste: 2.9,
+          shiftAnalysis: 2.7
+        },
+        firstDispenseFirstAdmin: { events: 175, avgTime: 16 },
+        lastAdminLastWaste: { events: 89, avgTime: 39 },
+        adminBeforeDispense: { events: 10, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 34, avgTime: 63 },
+        recordedNotEqualAction: { events: 7, avgTime: 19 }
+      },
+      {
+        id: 72,
+        outlierScore: 0.9,
+        isOutlier: false,
+        name: "William Ramirez",
+        role: "RN",
+        dept: "NICU",
+        isAggregate: false,
+        scores: {
+          overall: 0.9,
+          actionTimes: 0.9,
+          varianceTrends: 0.6,
+          dispensePatterns: 0.6,
+          medTrends: 0.5,
+          fullPackageWaste: 0.9,
+          shiftAnalysis: 0.5
+        },
+        firstDispenseFirstAdmin: { events: 112, avgTime: 10 },
+        lastAdminLastWaste: { events: 162, avgTime: 51 },
+        adminBeforeDispense: { events: 10, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 57, avgTime: 58 },
+        recordedNotEqualAction: { events: 5, avgTime: 7 }
+      },
+      {
+        id: 73,
+        outlierScore: 1.1,
+        isOutlier: false,
+        name: "Charlotte Thompson",
+        role: "RN",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 1.1,
+          actionTimes: 1.1,
+          varianceTrends: 1.4,
+          dispensePatterns: 0.9,
+          medTrends: 1.4,
+          fullPackageWaste: 1.2,
+          shiftAnalysis: 1.2
+        },
+        firstDispenseFirstAdmin: { events: 214, avgTime: 12 },
+        lastAdminLastWaste: { events: 167, avgTime: 33 },
+        adminBeforeDispense: { events: 7, avgTime: 15 },
+        firstDispenseFirstWaste: { events: 68, avgTime: 45 },
+        recordedNotEqualAction: { events: 1, avgTime: 12 }
+      },
+      {
+        id: 74,
+        outlierScore: 1.7,
+        isOutlier: false,
+        name: "Riley Gray",
+        role: "MD",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 1.7,
+          actionTimes: 1.7,
+          varianceTrends: 2,
+          dispensePatterns: 1.7,
+          medTrends: 2,
+          fullPackageWaste: 1.7,
+          shiftAnalysis: 1.4
+        },
+        firstDispenseFirstAdmin: { events: 108, avgTime: 8 },
+        lastAdminLastWaste: { events: 59, avgTime: 25 },
+        adminBeforeDispense: { events: 1, avgTime: 13 },
+        firstDispenseFirstWaste: { events: 40, avgTime: 74 },
+        recordedNotEqualAction: { events: 2, avgTime: 13 }
+      },
+      {
+        id: 75,
+        outlierScore: 3.4,
+        isOutlier: false,
+        name: "Abigail King",
+        role: "NP",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 3.4,
+          actionTimes: 3.4,
+          varianceTrends: 3,
+          dispensePatterns: 3.3,
+          medTrends: 3.3,
+          fullPackageWaste: 3.6,
+          shiftAnalysis: 3.1
+        },
+        firstDispenseFirstAdmin: { events: 152, avgTime: 8 },
+        lastAdminLastWaste: { events: 80, avgTime: 34 },
+        adminBeforeDispense: { events: 5, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 15, avgTime: 65 },
+        recordedNotEqualAction: { events: 2, avgTime: 21 }
+      },
+      {
+        id: 76,
+        outlierScore: 1.9,
+        isOutlier: false,
+        name: "Ella Hughes",
+        role: "PharmTech",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 1.9,
+          actionTimes: 1.9,
+          varianceTrends: 1.9,
+          dispensePatterns: 1.7,
+          medTrends: 1.6,
+          fullPackageWaste: 2.1,
+          shiftAnalysis: 2.2
+        },
+        firstDispenseFirstAdmin: { events: 202, avgTime: 10 },
+        lastAdminLastWaste: { events: 75, avgTime: 33 },
+        adminBeforeDispense: { events: 9, avgTime: 15 },
+        firstDispenseFirstWaste: { events: 40, avgTime: 53 },
+        recordedNotEqualAction: { events: 8, avgTime: 8 }
+      },
+      {
+        id: 77,
+        outlierScore: 6.3,
+        isOutlier: true,
+        name: "Nora Kelly",
+        role: "RN",
+        dept: "Rehab",
+        isAggregate: false,
+        scores: {
+          overall: 6.3,
+          actionTimes: 6.3,
+          varianceTrends: 6,
+          dispensePatterns: 6,
+          medTrends: 5.9,
+          fullPackageWaste: 6.4,
+          shiftAnalysis: 6.3
+        },
+        firstDispenseFirstAdmin: { events: 152, avgTime: 21 },
+        lastAdminLastWaste: { events: 76, avgTime: 50 },
+        adminBeforeDispense: { events: 18, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 27, avgTime: 87 },
+        recordedNotEqualAction: { events: 3, avgTime: 19 }
+      },
+      {
+        id: 78,
+        outlierScore: 3.8,
+        isOutlier: false,
+        name: "Harper Miller",
+        role: "RN",
+        dept: "NICU",
+        isAggregate: false,
+        scores: {
+          overall: 3.8,
+          actionTimes: 3.8,
+          varianceTrends: 4,
+          dispensePatterns: 4.1,
+          medTrends: 3.8,
+          fullPackageWaste: 3.9,
+          shiftAnalysis: 3.9
+        },
+        firstDispenseFirstAdmin: { events: 215, avgTime: 16 },
+        lastAdminLastWaste: { events: 143, avgTime: 70 },
+        adminBeforeDispense: { events: 11, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 42, avgTime: 70 },
+        recordedNotEqualAction: { events: 7, avgTime: 16 }
+      },
+      {
+        id: 79,
+        outlierScore: 3.9,
+        isOutlier: false,
+        name: "Aurora Morgan",
+        role: "PharmD",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 3.9,
+          actionTimes: 3.9,
+          varianceTrends: 4.1,
+          dispensePatterns: 4,
+          medTrends: 4,
+          fullPackageWaste: 3.5,
+          shiftAnalysis: 3.8
+        },
+        firstDispenseFirstAdmin: { events: 165, avgTime: 13 },
+        lastAdminLastWaste: { events: 63, avgTime: 44 },
+        adminBeforeDispense: { events: 11, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 55, avgTime: 81 },
+        recordedNotEqualAction: { events: 6, avgTime: 21 }
+      },
+      {
+        id: 80,
+        outlierScore: 2.9,
+        isOutlier: false,
+        name: "Leo White",
+        role: "RN",
+        dept: "Telemetry",
+        isAggregate: false,
+        scores: {
+          overall: 2.9,
+          actionTimes: 2.9,
+          varianceTrends: 2.8,
+          dispensePatterns: 3.1,
+          medTrends: 2.5,
+          fullPackageWaste: 2.8,
+          shiftAnalysis: 3
+        },
+        firstDispenseFirstAdmin: { events: 106, avgTime: 11 },
+        lastAdminLastWaste: { events: 156, avgTime: 52 },
+        adminBeforeDispense: { events: 16, avgTime: 13 },
+        firstDispenseFirstWaste: { events: 57, avgTime: 58 },
+        recordedNotEqualAction: { events: 3, avgTime: 14 }
+      },
+      {
+        id: 81,
+        outlierScore: 3.3,
+        isOutlier: false,
+        name: "Isaiah Young",
+        role: "NP",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 3.3,
+          actionTimes: 3.3,
+          varianceTrends: 3,
+          dispensePatterns: 3.2,
+          medTrends: 3.3,
+          fullPackageWaste: 3.4,
+          shiftAnalysis: 3.5
+        },
+        firstDispenseFirstAdmin: { events: 160, avgTime: 8 },
+        lastAdminLastWaste: { events: 53, avgTime: 40 },
+        adminBeforeDispense: { events: 11, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 16, avgTime: 67 },
+        recordedNotEqualAction: { events: 5, avgTime: 12 }
+      },
+      {
+        id: 82,
+        outlierScore: 3.2,
+        isOutlier: false,
+        name: "Scarlett King",
+        role: "PharmD",
+        dept: "Orthopedic",
+        isAggregate: false,
+        scores: {
+          overall: 3.2,
+          actionTimes: 3.2,
+          varianceTrends: 3,
+          dispensePatterns: 2.9,
+          medTrends: 3.4,
+          fullPackageWaste: 3.2,
+          shiftAnalysis: 3.2
+        },
+        firstDispenseFirstAdmin: { events: 121, avgTime: 16 },
+        lastAdminLastWaste: { events: 151, avgTime: 38 },
+        adminBeforeDispense: { events: 6, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 25, avgTime: 82 },
+        recordedNotEqualAction: { events: 5, avgTime: 8 }
+      },
+      {
+        id: 83,
+        outlierScore: 5.3,
+        isOutlier: true,
+        name: "William Evans",
+        role: "PharmD",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 5.3,
+          actionTimes: 5.3,
+          varianceTrends: 5.3,
+          dispensePatterns: 5.1,
+          medTrends: 5.7,
+          fullPackageWaste: 5.5,
+          shiftAnalysis: 5.1
+        },
+        firstDispenseFirstAdmin: { events: 140, avgTime: 11 },
+        lastAdminLastWaste: { events: 87, avgTime: 53 },
+        adminBeforeDispense: { events: 5, avgTime: 4 },
+        firstDispenseFirstWaste: { events: 55, avgTime: 80 },
+        recordedNotEqualAction: { events: 5, avgTime: 15 }
+      },
+      {
+        id: 84,
+        outlierScore: 1.8,
+        isOutlier: false,
+        name: "Savannah Brown",
+        role: "PharmD",
+        dept: "Rehab",
+        isAggregate: false,
+        scores: {
+          overall: 1.8,
+          actionTimes: 1.8,
+          varianceTrends: 1.7,
+          dispensePatterns: 1.7,
+          medTrends: 2,
+          fullPackageWaste: 1.9,
+          shiftAnalysis: 1.8
+        },
+        firstDispenseFirstAdmin: { events: 148, avgTime: 8 },
+        lastAdminLastWaste: { events: 108, avgTime: 52 },
+        adminBeforeDispense: { events: 7, avgTime: 15 },
+        firstDispenseFirstWaste: { events: 32, avgTime: 70 },
+        recordedNotEqualAction: { events: 6, avgTime: 15 }
+      },
+      {
+        id: 85,
+        outlierScore: 4,
+        isOutlier: false,
+        name: "Parker Campbell",
+        role: "NP",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 4,
+          actionTimes: 4,
+          varianceTrends: 3.9,
+          dispensePatterns: 3.6,
+          medTrends: 3.7,
+          fullPackageWaste: 3.9,
+          shiftAnalysis: 3.8
+        },
+        firstDispenseFirstAdmin: { events: 102, avgTime: 11 },
+        lastAdminLastWaste: { events: 71, avgTime: 55 },
+        adminBeforeDispense: { events: 9, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 51, avgTime: 84 },
+        recordedNotEqualAction: { events: 5, avgTime: 21 }
+      },
+      {
+        id: 86,
+        outlierScore: 0.3,
+        isOutlier: false,
+        name: "Madison Morgan",
+        role: "RN",
+        dept: "Cardiology",
+        isAggregate: false,
+        scores: {
+          overall: 0.3,
+          actionTimes: 0.3,
+          varianceTrends: 0.2,
+          dispensePatterns: 0.4,
+          medTrends: 0.4,
+          fullPackageWaste: 0.5,
+          shiftAnalysis: 0.2
+        },
+        firstDispenseFirstAdmin: { events: 128, avgTime: 11 },
+        lastAdminLastWaste: { events: 94, avgTime: 22 },
+        adminBeforeDispense: { events: 15, avgTime: 13 },
+        firstDispenseFirstWaste: { events: 59, avgTime: 64 },
+        recordedNotEqualAction: { events: 1, avgTime: 14 }
+      },
+      {
+        id: 87,
+        outlierScore: 5.1,
+        isOutlier: true,
+        name: "Madison Nelson",
+        role: "PharmTech",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 5.1,
+          actionTimes: 5.1,
+          varianceTrends: 5.1,
+          dispensePatterns: 5.5,
+          medTrends: 5.4,
+          fullPackageWaste: 5.1,
+          shiftAnalysis: 5.1
+        },
+        firstDispenseFirstAdmin: { events: 171, avgTime: 8 },
+        lastAdminLastWaste: { events: 182, avgTime: 53 },
+        adminBeforeDispense: { events: 18, avgTime: 5 },
+        firstDispenseFirstWaste: { events: 63, avgTime: 92 },
+        recordedNotEqualAction: { events: 2, avgTime: 18 }
+      },
+      {
+        id: 88,
+        outlierScore: 2.6,
+        isOutlier: false,
+        name: "Scarlett Flores",
+        role: "PharmD",
+        dept: "Oncology",
+        isAggregate: false,
+        scores: {
+          overall: 2.6,
+          actionTimes: 2.6,
+          varianceTrends: 2.5,
+          dispensePatterns: 2.9,
+          medTrends: 2.7,
+          fullPackageWaste: 2.7,
+          shiftAnalysis: 2.9
+        },
+        firstDispenseFirstAdmin: { events: 139, avgTime: 6 },
+        lastAdminLastWaste: { events: 114, avgTime: 36 },
+        adminBeforeDispense: { events: 4, avgTime: 10 },
+        firstDispenseFirstWaste: { events: 26, avgTime: 65 },
+        recordedNotEqualAction: { events: 6, avgTime: 9 }
+      },
+      {
+        id: 89,
+        outlierScore: 3.8,
+        isOutlier: false,
+        name: "Emma Harris",
+        role: "RN",
+        dept: "Emergency",
+        isAggregate: false,
+        scores: {
+          overall: 3.8,
+          actionTimes: 3.8,
+          varianceTrends: 3.7,
+          dispensePatterns: 4,
+          medTrends: 3.4,
+          fullPackageWaste: 3.8,
+          shiftAnalysis: 3.9
+        },
+        firstDispenseFirstAdmin: { events: 163, avgTime: 8 },
+        lastAdminLastWaste: { events: 168, avgTime: 53 },
+        adminBeforeDispense: { events: 18, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 17, avgTime: 94 },
+        recordedNotEqualAction: { events: 7, avgTime: 21 }
+      },
+      {
+        id: 90,
+        outlierScore: 6.2,
+        isOutlier: true,
+        name: "Victoria Jones",
+        role: "RN",
+        dept: "Cardiology",
+        isAggregate: false,
+        scores: {
+          overall: 6.2,
+          actionTimes: 6.2,
+          varianceTrends: 6.1,
+          dispensePatterns: 6.5,
+          medTrends: 6.1,
+          fullPackageWaste: 5.9,
+          shiftAnalysis: 6
+        },
+        firstDispenseFirstAdmin: { events: 143, avgTime: 13 },
+        lastAdminLastWaste: { events: 114, avgTime: 57 },
+        adminBeforeDispense: { events: 18, avgTime: 4 },
+        firstDispenseFirstWaste: { events: 33, avgTime: 103 },
+        recordedNotEqualAction: { events: 4, avgTime: 26 }
+      },
+      {
+        id: 91,
+        outlierScore: 0.6,
+        isOutlier: false,
+        name: "Abigail Anderson",
+        role: "RN",
+        dept: "NICU",
+        isAggregate: false,
+        scores: {
+          overall: 0.6,
+          actionTimes: 0.6,
+          varianceTrends: 0.2,
+          dispensePatterns: 0.9,
+          medTrends: 0.6,
+          fullPackageWaste: 1,
+          shiftAnalysis: 0.9
+        },
+        firstDispenseFirstAdmin: { events: 214, avgTime: 8 },
+        lastAdminLastWaste: { events: 87, avgTime: 50 },
+        adminBeforeDispense: { events: 11, avgTime: 11 },
+        firstDispenseFirstWaste: { events: 51, avgTime: 62 },
+        recordedNotEqualAction: { events: 1, avgTime: 10 }
+      },
+      {
+        id: 92,
+        outlierScore: 3.3,
+        isOutlier: false,
+        name: "Alexander Roberts",
+        role: "PharmD",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 3.3,
+          actionTimes: 3.3,
+          varianceTrends: 3.1,
+          dispensePatterns: 3.4,
+          medTrends: 3.1,
+          fullPackageWaste: 3,
+          shiftAnalysis: 3
+        },
+        firstDispenseFirstAdmin: { events: 181, avgTime: 7 },
+        lastAdminLastWaste: { events: 65, avgTime: 60 },
+        adminBeforeDispense: { events: 11, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 45, avgTime: 68 },
+        recordedNotEqualAction: { events: 1, avgTime: 14 }
+      },
+      {
+        id: 93,
+        outlierScore: 3.5,
+        isOutlier: false,
+        name: "Ella Bennett",
+        role: "PharmD",
+        dept: "Oncology",
+        isAggregate: false,
+        scores: {
+          overall: 3.5,
+          actionTimes: 3.5,
+          varianceTrends: 3.2,
+          dispensePatterns: 3.3,
+          medTrends: 3.8,
+          fullPackageWaste: 3.6,
+          shiftAnalysis: 3.7
+        },
+        firstDispenseFirstAdmin: { events: 141, avgTime: 6 },
+        lastAdminLastWaste: { events: 66, avgTime: 31 },
+        adminBeforeDispense: { events: 11, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 54, avgTime: 80 },
+        recordedNotEqualAction: { events: 6, avgTime: 8 }
+      },
+      {
+        id: 94,
+        outlierScore: 1.4,
+        isOutlier: false,
+        name: "Sophia Wood",
+        role: "RN",
+        dept: "OR",
+        isAggregate: false,
+        scores: {
+          overall: 1.4,
+          actionTimes: 1.4,
+          varianceTrends: 1.3,
+          dispensePatterns: 1.4,
+          medTrends: 1.4,
+          fullPackageWaste: 1.7,
+          shiftAnalysis: 1.1
+        },
+        firstDispenseFirstAdmin: { events: 168, avgTime: 5 },
+        lastAdminLastWaste: { events: 120, avgTime: 21 },
+        adminBeforeDispense: { events: 12, avgTime: 15 },
+        firstDispenseFirstWaste: { events: 56, avgTime: 55 },
+        recordedNotEqualAction: { events: 2, avgTime: 15 }
+      },
+      {
+        id: 95,
+        outlierScore: 2,
+        isOutlier: false,
+        name: "Benjamin Brown",
+        role: "PharmD",
+        dept: "ICU",
+        isAggregate: false,
+        scores: {
+          overall: 2,
+          actionTimes: 2,
+          varianceTrends: 1.7,
+          dispensePatterns: 1.8,
+          medTrends: 1.6,
+          fullPackageWaste: 1.7,
+          shiftAnalysis: 1.7
+        },
+        firstDispenseFirstAdmin: { events: 185, avgTime: 12 },
+        lastAdminLastWaste: { events: 58, avgTime: 51 },
+        adminBeforeDispense: { events: 6, avgTime: 6 },
+        firstDispenseFirstWaste: { events: 38, avgTime: 77 },
+        recordedNotEqualAction: { events: 5, avgTime: 8 }
+      },
+      {
+        id: 96,
+        outlierScore: 0.6,
+        isOutlier: false,
+        name: "Theodore Harris",
+        role: "PharmD",
+        dept: "Oncology",
+        isAggregate: false,
+        scores: {
+          overall: 0.6,
+          actionTimes: 0.6,
+          varianceTrends: 0.5,
+          dispensePatterns: 0.3,
+          medTrends: 0.6,
+          fullPackageWaste: 0.9,
+          shiftAnalysis: 0.9
+        },
+        firstDispenseFirstAdmin: { events: 91, avgTime: 10 },
+        lastAdminLastWaste: { events: 100, avgTime: 30 },
+        adminBeforeDispense: { events: 15, avgTime: 12 },
+        firstDispenseFirstWaste: { events: 28, avgTime: 46 },
+        recordedNotEqualAction: { events: 1, avgTime: 8 }
+      },
+      {
+        id: 97,
+        outlierScore: 5,
+        isOutlier: true,
+        name: "Brooklyn Baker",
+        role: "NP",
+        dept: "Pharmacy",
+        isAggregate: false,
+        scores: {
+          overall: 5,
+          actionTimes: 5,
+          varianceTrends: 4.8,
+          dispensePatterns: 5.4,
+          medTrends: 5.1,
+          fullPackageWaste: 5.4,
+          shiftAnalysis: 4.8
+        },
+        firstDispenseFirstAdmin: { events: 139, avgTime: 9 },
+        lastAdminLastWaste: { events: 122, avgTime: 72 },
+        adminBeforeDispense: { events: 11, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 32, avgTime: 67 },
+        recordedNotEqualAction: { events: 4, avgTime: 9 }
+      },
+      {
+        id: 98,
+        outlierScore: 3.2,
+        isOutlier: false,
+        name: "Oliver Mitchell",
+        role: "RN",
+        dept: "OR",
+        isAggregate: false,
+        scores: {
+          overall: 3.2,
+          actionTimes: 3.2,
+          varianceTrends: 3.5,
+          dispensePatterns: 3.5,
+          medTrends: 3,
+          fullPackageWaste: 3.1,
+          shiftAnalysis: 2.9
+        },
+        firstDispenseFirstAdmin: { events: 130, avgTime: 15 },
+        lastAdminLastWaste: { events: 115, avgTime: 66 },
+        adminBeforeDispense: { events: 2, avgTime: 9 },
+        firstDispenseFirstWaste: { events: 22, avgTime: 89 },
+        recordedNotEqualAction: { events: 6, avgTime: 15 }
+      },
+      {
+        id: 99,
+        outlierScore: 3.7,
+        isOutlier: false,
+        name: "Claire Cruz",
+        role: "NP",
+        dept: "OR",
+        isAggregate: false,
+        scores: {
+          overall: 3.7,
+          actionTimes: 3.7,
+          varianceTrends: 3.5,
+          dispensePatterns: 3.9,
+          medTrends: 3.4,
+          fullPackageWaste: 3.5,
+          shiftAnalysis: 4.1
+        },
+        firstDispenseFirstAdmin: { events: 67, avgTime: 11 },
+        lastAdminLastWaste: { events: 118, avgTime: 66 },
+        adminBeforeDispense: { events: 7, avgTime: 11 },
+        firstDispenseFirstWaste: { events: 36, avgTime: 91 },
+        recordedNotEqualAction: { events: 1, avgTime: 18 }
+      },
+      {
+        id: 100,
+        outlierScore: 2.2,
+        isOutlier: false,
+        name: "Theodore Wright",
+        role: "RN",
+        dept: "Surgical",
+        isAggregate: false,
+        scores: {
+          overall: 2.2,
+          actionTimes: 2.2,
+          varianceTrends: 2.4,
+          dispensePatterns: 2.5,
+          medTrends: 2,
+          fullPackageWaste: 2.1,
+          shiftAnalysis: 2.2
+        },
+        firstDispenseFirstAdmin: { events: 124, avgTime: 12 },
+        lastAdminLastWaste: { events: 103, avgTime: 32 },
+        adminBeforeDispense: { events: 14, avgTime: 8 },
+        firstDispenseFirstWaste: { events: 46, avgTime: 77 },
+        recordedNotEqualAction: { events: 3, avgTime: 8 }
+      },
+      {
+        id: 101,
+        outlierScore: 0.8,
+        isOutlier: false,
+        name: "Victoria Flores",
+        role: "RN",
+        dept: "Medical",
+        isAggregate: false,
+        scores: {
+          overall: 0.8,
+          actionTimes: 0.8,
+          varianceTrends: 0.7,
+          dispensePatterns: 1,
+          medTrends: 0.8,
+          fullPackageWaste: 0.7,
+          shiftAnalysis: 0.9
+        },
+        firstDispenseFirstAdmin: { events: 215, avgTime: 9 },
+        lastAdminLastWaste: { events: 105, avgTime: 49 },
+        adminBeforeDispense: { events: 7, avgTime: 7 },
+        firstDispenseFirstWaste: { events: 46, avgTime: 65 },
+        recordedNotEqualAction: { events: 8, avgTime: 10 }
+      }
+    ];
+
+    let currentView = 'table';
+    let sortState = { col: 'name', asc: true };
+    let actionChart = null;
+    let visibleRules = ['firstDispenseFirstAdmin']; // Array of visible rules
+    let selectedComparisonScore = 'overall'; // Current comparison score metric
+    let timeThreshold = 240; // Current time threshold in minutes
+    let tempTimeThreshold = 240; // Temporary value while adjusting
+    let filteredUsers = [...ACTION_TIMES_USERS]; // Users visible based on time threshold
+
+    function getActionScoreClass(score) {
+      if (score >= 4.6) return 'score-high';
+      if (score >= 1.4) return 'score-elevated';
+      return 'score-normal';
+    }
+
+    function getCompScoreClass(score) {
+      if (score >= 4.6) return 'score-high';
+      if (score >= 1.4) return 'score-elevated';
+      return 'score-normal';
+    }
+
+    function getCurrentCompScore(user) {
+      return user.scores[selectedComparisonScore];
+    }
+
+    function getScoreDisplay(user) {
+      return user.outlierScore.toFixed(1);
+    }
+    
+    // When a user has no events for a rule, both the count and the average time
+    // are meaningless — render an em-dash instead of "0" / "0 min".
+    function fmtEvents(rule) {
+      return rule.events === 0 ? '<span class="no-data">&mdash;</span>' : rule.events;
+    }
+    function fmtAvgTime(rule) {
+      return rule.events === 0 ? '<span class="no-data">&mdash;</span>' : rule.avgTime;
+    }
+
+    function getTooltipText(user) {
+      if (user.isOutlier) {
+        return `Highly unusual timing patterns (score: ${user.outlierScore.toFixed(1)})`;
+      }
+      if (user.outlierScore >= 1.4) {
+        return `Slightly unusual timing patterns (score: ${user.outlierScore.toFixed(1)})`;
+      }
+      return `No unusual timing patterns (score: ${user.outlierScore.toFixed(1)})`;
+    }
+
+    function renderUsersTable() {
+      console.log('renderUsersTable called, visibleRules:', visibleRules);
+      const tbody = document.getElementById('usersTableBody');
+      let html = '';
+      
+      const sorted = [...filteredUsers].sort((a, b) => {
+        let aVal = a[sortState.col];
+        let bVal = b[sortState.col];
+        
+        if (sortState.col.includes('.')) {
+          const parts = sortState.col.split('.');
+          aVal = a[parts[0]][parts[1]];
+          bVal = b[parts[0]][parts[1]];
+        } else if (sortState.col === 'outlierScore') {
+          // Use the selected comparison score for sorting
+          aVal = a.scores[selectedComparisonScore];
+          bVal = b.scores[selectedComparisonScore];
+        }
+        
+        if (typeof aVal === 'string') {
+          aVal = aVal.toLowerCase();
+          bVal = bVal.toLowerCase();
+        }
+        
+        return sortState.asc ? 
+          (aVal > bVal ? 1 : -1) : 
+          (aVal < bVal ? 1 : -1);
+      });
+
+      sorted.forEach((user, index) => {
+        if (index === 0) { // Log first user for debugging
+          console.log('First user:', user.name, 'Visible rules:', visibleRules);
+        }
+        
+        html += `
+          <tr>
+            <td class="center fixed-col">
+              <div class="action-score ${getActionScoreClass(user.outlierScore)}" data-tooltip="${getTooltipText(user)}">
+                ${getScoreDisplay(user)}
+              </div>
+            </td>
+            <td class="center fixed-col">
+              <div class="comp-score ${getCompScoreClass(getCurrentCompScore(user))}">${getCurrentCompScore(user).toFixed(1)}</div>
+            </td>
+            <td class="fixed-col">
+              <div class="user-name">
+                ${user.isAggregate ? user.name : `<a href="#" data-tooltip="User Details">${user.name}</a>`}
+              </div>
+              <div class="user-role-dept">${user.role}${user.dept ? ' • ' + user.dept : ''}</div>
+            </td>
+            <td class="num col-fdfa-events">${fmtEvents(user.firstDispenseFirstAdmin)}</td>
+            <td class="num col-fdfa-time">${fmtAvgTime(user.firstDispenseFirstAdmin)}</td>
+            <td class="num col-lalw-events hidden">${fmtEvents(user.lastAdminLastWaste)}</td>
+            <td class="num col-lalw-time hidden">${fmtAvgTime(user.lastAdminLastWaste)}</td>
+            <td class="num col-abd-events hidden">${fmtEvents(user.adminBeforeDispense)}</td>
+            <td class="num col-abd-time hidden">${fmtAvgTime(user.adminBeforeDispense)}</td>
+            <td class="num col-fdfw-events hidden">${fmtEvents(user.firstDispenseFirstWaste)}</td>
+            <td class="num col-fdfw-time hidden">${fmtAvgTime(user.firstDispenseFirstWaste)}</td>
+            <td class="num col-rnea-events hidden">${fmtEvents(user.recordedNotEqualAction)}</td>
+            <td class="num col-rnea-time hidden">${fmtAvgTime(user.recordedNotEqualAction)}</td>
+            <td class="center fixed-col-right">
+              <a href="#" class="investigate-link" onclick="event.stopPropagation(); openInvestigate('${user.name}')">
+                Investigate
+                <span class="material-icons">open_in_new</span>
+              </a>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+      console.log('Table updated with', sorted.length, 'rows');
+      
+      // renderUsersTable rebuilds the tbody with "hidden" baked into non-default
+      // rule cells. Reapply column visibility from visibleRules so any rules the
+      // user has toggled on stay visible after the re-render.
+      updateRuleVisibility();
+    }
+
+    function sortUsersTable(col) {
+      if (sortState.col === col) {
+        sortState.asc = !sortState.asc;
+      } else {
+        sortState.col = col;
+        sortState.asc = col === 'name';
+      }
+      
+      renderUsersTable();
+      
+      document.querySelectorAll('#usersTable th').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+      });
+      
+      const targetTh = document.querySelector(`#usersTable th[data-col="${col}"]`);
+      if (targetTh) {
+        targetTh.classList.add(sortState.asc ? 'sort-asc' : 'sort-desc');
+      }
+    }
+
+    function switchView(mode) {
+      currentView = mode;
+      document.getElementById('action-times-table-view').style.display = mode === 'table' ? '' : 'none';
+      document.getElementById('action-times-graph-view').style.display = mode === 'graph' ? '' : 'none';
+      
+      const tabular = document.getElementById('action-times-tabular-tab');
+      const visual = document.getElementById('action-times-visual-tab');
+      tabular.classList.toggle('mdc-tab--active', mode === 'table');
+      visual.classList.toggle('mdc-tab--active', mode === 'graph');
+      tabular.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'table');
+      visual.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'graph');
+      
+      if (mode === 'graph') {
+        if (actionChart) { 
+          actionChart.dispose(); 
+          actionChart = null; 
+        }
+        setTimeout(() => {
+          actionChart = initActionChart();
+        }, 100); // Small delay to ensure DOM is ready
+      } else {
+        if (actionChart) { 
+          actionChart.dispose(); 
+          actionChart = null; 
+        }
+      }
+    }
+
+    function initActionChart() {
+      const container = document.getElementById('action-times-graph-view');
+      
+      // With dataZoom, the chart fits the container width. We still compute how
+      // many categories fit at the 8px minimum bar width so we can set a sensible
+      // initial zoom window — user can scrub or mouse-wheel from there.
+      const MIN_BAR_WIDTH = 8;
+      const BAR_GAP_RATIO = 0.3;
+      const CATEGORY_GAP_PX = 28;
+      const AXIS_PADDING_PX = 160;
+      
+      const userCount = filteredUsers.length;
+      const visibleBarCount = Math.max(1, visibleRules.length);
+      const widthPerCategory = visibleBarCount * MIN_BAR_WIDTH * (1 + BAR_GAP_RATIO) + CATEGORY_GAP_PX;
+      
+      const availableWidth = Math.max(400, container.clientWidth - 48);
+      const usersFittable = Math.max(1, Math.floor((availableWidth - AXIS_PADDING_PX) / widthPerCategory));
+      
+      // Initial zoom window: show everything if it fits, else show the leftmost
+      // subset that renders cleanly at the 8px floor.
+      const initialEndPct = userCount <= usersFittable ? 100 : (usersFittable / userCount) * 100;
+      
+      // Clear any existing content — chart now fills container
+      container.innerHTML = `<div id="action-times-chart" style="width: 100%; height: 600px;"></div>`;
+      
+      // Initialize eCharts
+      const chart = echarts.init(document.getElementById('action-times-chart'));
+      
+      // Prepare data from current table data (filtered by time threshold)
+      const chartData = prepareChartData();
+      
+      const option = {
+        title: [
+          {
+            text: 'Action Times Analysis by User',
+            left: 'left',
+            top: 24,
+            textStyle: {
+              fontSize: 18,
+              fontWeight: 600,
+              color: '#044a82'
+            }
+          },
+          {
+            text: `Time Threshold: ${timeThreshold} minutes`,
+            left: 'right',
+            top: 24,
+            textStyle: {
+              fontSize: 14,
+              color: '#727272'
+            }
+          }
+        ],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            }
+          },
+          formatter: function (params) {
+            let result = `<strong>${params[0].name}</strong><br/>`;
+            params.forEach(param => {
+              const value = param.value;
+              if (value === null || value === undefined) {
+                result += `${param.marker}${param.seriesName}: <span style="color:#999">no events</span><br/>`;
+              } else if (param.seriesName.includes('Events')) {
+                result += `${param.marker}${param.seriesName}: ${value} events<br/>`;
+              } else {
+                result += `${param.marker}${param.seriesName}: ${value} min<br/>`;
+              }
+            });
+            return result;
+          }
+        },
+        legend: {
+          data: getChartLegendData(),
+          top: 80,
+          textStyle: {
+            fontSize: 12
+          }
+        },
+        grid: {
+          left: 24,
+          right: 24,
+          bottom: 80,
+          top: 112,
+          containLabel: true
+        },
+        dataZoom: [
+          {
+            type: 'slider',
+            xAxisIndex: 0,
+            start: 0,
+            end: initialEndPct,
+            bottom: 16,
+            height: 20,
+            borderColor: 'transparent',
+            backgroundColor: '#f5f5f5',
+            fillerColor: 'rgba(0, 150, 184, 0.15)',
+            handleStyle: { color: '#0096b8', borderColor: '#0096b8' },
+            moveHandleStyle: { color: '#0096b8' },
+            selectedDataBackground: {
+              lineStyle: { color: '#0096b8', width: 1 },
+              areaStyle: { color: 'rgba(0, 150, 184, 0.2)' }
+            },
+            dataBackground: {
+              lineStyle: { color: '#c0c0c0', width: 1 },
+              areaStyle: { color: 'rgba(192, 192, 192, 0.3)' }
+            },
+            textStyle: { color: '#727272', fontSize: 11 },
+            brushSelect: false
+          },
+          {
+            type: 'inside',
+            xAxisIndex: 0,
+            start: 0,
+            end: initialEndPct,
+            zoomOnMouseWheel: true,
+            moveOnMouseMove: false,
+            moveOnMouseWheel: false
+          }
+        ],
+        xAxis: [
+          {
+            type: 'category',
+            data: chartData.users,
+            axisPointer: {
+              type: 'shadow'
+            },
+            axisLabel: {
+              rotate: 45,
+              fontSize: 11,
+              color: '#666'
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value',
+            name: 'Events',
+            position: 'left',
+            axisLabel: {
+              formatter: '{value}',
+              color: '#666'
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: '#e5e5e5',
+                type: 'dashed'
+              }
+            }
+          },
+          {
+            type: 'value',
+            name: 'Average Time (min)',
+            position: 'right',
+            axisLabel: {
+              formatter: '{value}',
+              color: '#666'
+            }
+          },
+          {
+            type: 'value',
+            name: 'Metric Score',
+            position: 'right',
+            offset: 60,
+            axisLabel: {
+              formatter: '{value}',
+              color: '#ff4444'
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#ff4444'
+              }
+            },
+            splitLine: {
+              show: false
+            }
+          }
+        ],
+        series: generateChartSeries(chartData),
+        animation: true,
+        animationDuration: 1000
+      };
+      
+      chart.setOption(option);
+      
+      // Handle window resize
+      window.addEventListener('resize', function () {
+        chart.resize();
+      });
+      
+      return chart;
+    }
+    
+    function prepareChartData() {
+      const users = [];
+      const data = {
+        users: [],
+        metricScores: [],
+        firstDispenseFirstAdmin: { events: [], avgTime: [] },
+        lastAdminLastWaste: { events: [], avgTime: [] },
+        adminBeforeDispense: { events: [], avgTime: [] },
+        firstDispenseFirstWaste: { events: [], avgTime: [] },
+        recordedNotEqualAction: { events: [], avgTime: [] }
+      };
+      
+      filteredUsers.forEach(user => {
+        // Use first name + last initial for chart labels
+        const shortName = user.name.split(' ')[0] + ' ' + user.name.split(' ')[1].charAt(0) + '.';
+        data.users.push(shortName);
+        data.metricScores.push(user.outlierScore);
+        
+        // Only include data for visible rules
+        visibleRules.forEach(rule => {
+          if (data[rule]) {
+            // Push null (not 0) when the user has no events for this rule.
+            // ECharts renders nulls as gaps — no bar, no line point.
+            const hasEvents = user[rule].events > 0;
+            data[rule].events.push(hasEvents ? user[rule].events : null);
+            data[rule].avgTime.push(hasEvents ? user[rule].avgTime : null);
+          }
+        });
+      });
+      
+      return data;
+    }
+    
+    function getChartLegendData() {
+      const ruleNames = {
+        'firstDispenseFirstAdmin': ['First Dispense → Admin (Events)', 'First Dispense → Admin (Time)'],
+        'lastAdminLastWaste': ['Last Admin → Waste (Events)', 'Last Admin → Waste (Time)'],
+        'adminBeforeDispense': ['Admin Before Dispense (Events)', 'Admin Before Dispense (Time)'],
+        'firstDispenseFirstWaste': ['First Dispense → Waste (Events)', 'First Dispense → Waste (Time)'],
+        'recordedNotEqualAction': ['Recorded ≠ Action (Events)', 'Recorded ≠ Action (Time)']
+      };
+      
+      let legend = [];
+      visibleRules.forEach(rule => {
+        if (ruleNames[rule]) {
+          legend.push(...ruleNames[rule]);
+        }
+      });
+      
+      return legend;
+    }
+    
+    function generateChartSeries(data) {
+      const colors = {
+        'firstDispenseFirstAdmin': ['#0096b8', '#54c8e7'],
+        'lastAdminLastWaste': ['#16b434', '#7ed321'],
+        'adminBeforeDispense': ['#f24335', '#ff6b6b'],
+        'firstDispenseFirstWaste': ['#f5a623', '#ffb347'],
+        'recordedNotEqualAction': ['#9013fe', '#bd10e0']
+      };
+      
+      const ruleNames = {
+        'firstDispenseFirstAdmin': 'First Dispense → Admin',
+        'lastAdminLastWaste': 'Last Admin → Waste',
+        'adminBeforeDispense': 'Admin Before Dispense',
+        'firstDispenseFirstWaste': 'First Dispense → Waste',
+        'recordedNotEqualAction': 'Recorded Admin ≠ Action'
+      };
+      
+      let series = [];
+      
+      // Add metric scores as the first series
+      series.push({
+        name: 'Metric Score',
+        type: 'line',
+        yAxisIndex: 2,
+        data: data.metricScores,
+        lineStyle: {
+          color: '#ff4444',
+          width: 4,
+          type: 'dashed'
+        },
+        itemStyle: {
+          color: '#ff4444',
+          borderWidth: 2,
+          borderColor: '#fff'
+        },
+        symbolSize: 8,
+        emphasis: {
+          focus: 'series'
+        }
+      });
+      
+      visibleRules.forEach(rule => {
+        if (data[rule] && colors[rule]) {
+          // Events bar series
+          series.push({
+            name: `${ruleNames[rule]} (Events)`,
+            type: 'bar',
+            data: data[rule].events,
+            itemStyle: {
+              color: colors[rule][0]
+            },
+            barGap: '10%',
+            barMinWidth: 8
+          });
+          
+          // Average time line series
+          series.push({
+            name: `${ruleNames[rule]} (Time)`,
+            type: 'line',
+            yAxisIndex: 1,
+            data: data[rule].avgTime,
+            lineStyle: {
+              color: colors[rule][1],
+              width: 3
+            },
+            itemStyle: {
+              color: colors[rule][1]
+            },
+            symbolSize: 6
+          });
+        }
+      });
+      
+      return series;
+    }
+
+    function openInvestigate(userName) {
+      alert(`Opening investigation for: ${userName}`);
+    }
+
+    // Sidebar functions
+    function toggleDrawer() {
+      const drawer = document.getElementById('analyze-drawer');
+      drawer.classList.toggle('collapsed');
+    }
+    
+    function togglePanel(header) {
+      const panel = header.closest('mat-expansion-panel');
+      const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+      const isOpen = panel.classList.contains('mat-expanded');
+
+      panel.classList.toggle('mat-expanded', !isOpen);
+      header.classList.toggle('mat-expanded', !isOpen);
+      header.setAttribute('aria-expanded', !isOpen);
+
+      if (isOpen) {
+        wrapper.setAttribute('inert', '');
+      } else {
+        wrapper.removeAttribute('inert');
+      }
+    }
+
+    // Filter functions — Comp Score + Time Elapsed are now pillters; their
+    // menus open via togglePillter() defined further below. Temp values for the
+    // slider are reset inside togglePillter when that pillter opens.
+
+    function toggleRuleChip(ruleKey) {
+      console.log('toggleRuleChip called with:', ruleKey);
+      const chip = document.getElementById(`chip-${ruleKey}`);
+      const isSelected = chip.classList.contains('selected');
+      
+      if (isSelected) {
+        // Don't allow deselecting the last rule
+        if (visibleRules.length > 1) {
+          visibleRules = visibleRules.filter(rule => rule !== ruleKey);
+          chip.classList.remove('selected');
+          // Remove checkmark icon
+          const icon = chip.querySelector('.chip-icon');
+          if (icon) icon.remove();
+        }
+      } else {
+        // Add rule to visible list
+        if (!visibleRules.includes(ruleKey)) {
+          visibleRules.push(ruleKey);
+        }
+        chip.classList.add('selected');
+        // Add checkmark icon
+        const icon = document.createElement('span');
+        icon.className = 'material-icons chip-icon';
+        icon.textContent = 'check';
+        chip.insertBefore(icon, chip.querySelector('.chip-text'));
+      }
+      
+      updateRuleVisibility();
+      
+      // Update chart if currently viewing it
+      if (currentView === 'graph' && actionChart) {
+        actionChart.dispose();
+        actionChart = initActionChart();
+      }
+      
+      console.log('Visible rules updated:', visibleRules);
+    }
+    
+    function updateRuleVisibility() {
+      const ruleColumnMap = {
+        'firstDispenseFirstAdmin': ['col-fdfa-events', 'col-fdfa-time', 'col-fdfa-group'],
+        'lastAdminLastWaste': ['col-lalw-events', 'col-lalw-time', 'col-lalw-group'],
+        'adminBeforeDispense': ['col-abd-events', 'col-abd-time', 'col-abd-group'],
+        'firstDispenseFirstWaste': ['col-fdfw-events', 'col-fdfw-time', 'col-fdfw-group'],
+        'recordedNotEqualAction': ['col-rnea-events', 'col-rnea-time', 'col-rnea-group']
+      };
+      
+      // Hide all rule columns first
+      Object.values(ruleColumnMap).flat().forEach(colClass => {
+        document.querySelectorAll(`.${colClass}`).forEach(el => el.classList.add('hidden'));
+      });
+      
+      // Show only visible rules
+      visibleRules.forEach(rule => {
+        if (ruleColumnMap[rule]) {
+          ruleColumnMap[rule].forEach(colClass => {
+            document.querySelectorAll(`.${colClass}`).forEach(el => el.classList.remove('hidden'));
+          });
+        }
+      });
+    }
+    
+    function updateRuleChips() {
+      // Update chips to reflect current state
+      const allRules = ['firstDispenseFirstAdmin', 'lastAdminLastWaste', 'adminBeforeDispense', 'firstDispenseFirstWaste', 'recordedNotEqualAction'];
+      allRules.forEach(rule => {
+        const chip = document.getElementById(`chip-${rule}`);
+        if (chip) {
+          const isVisible = visibleRules.includes(rule);
+          if (isVisible) {
+            chip.classList.add('selected');
+            // Ensure checkmark icon exists
+            if (!chip.querySelector('.chip-icon')) {
+              const icon = document.createElement('span');
+              icon.className = 'material-icons chip-icon';
+              icon.textContent = 'check';
+              chip.insertBefore(icon, chip.querySelector('.chip-text'));
+            }
+          } else {
+            chip.classList.remove('selected');
+            // Remove checkmark icon
+            const icon = chip.querySelector('.chip-icon');
+            if (icon) icon.remove();
+          }
+        }
+      });
+    }
+
+    function updateTimeThreshold(value) {
+      tempTimeThreshold = parseInt(value);
+      document.getElementById('time-input').value = tempTimeThreshold;
+    }
+    
+    function updateTimeThresholdFromInput(value) {
+      tempTimeThreshold = Math.max(0, Math.min(480, parseInt(value) || 0));
+      document.getElementById('time-slider').value = tempTimeThreshold;
+      document.getElementById('time-input').value = tempTimeThreshold;
+    }
+    
+    function applyTimeThreshold() {
+      timeThreshold = tempTimeThreshold;
+      document.getElementById('time-threshold-label').textContent = `${timeThreshold} Minutes`;
+      closePillter('pillter-time-threshold');
+      
+      // Filter and re-render table based on time threshold
+      filterDataByTimeThreshold();
+      renderUsersTable();
+      
+      // Update chart if currently viewing it
+      if (currentView === 'graph' && actionChart) {
+        actionChart.dispose();
+        actionChart = initActionChart();
+      }
+      
+      console.log('Applied time threshold:', timeThreshold, 'minutes');
+    }
+    
+    function initializeMissingEvents() {
+      // Deterministically zero out some (user, rule) combinations so that not
+      // every user has events for every rule. Runs once; mutates the source
+      // dataset so downstream code (filter, render, chart) can just read 0.
+      if (ACTION_TIMES_USERS._missingInitialized) return;
+      ACTION_TIMES_USERS._missingInitialized = true;
+      
+      // Per-rule rarity — proportion of users who have NO events for that rule.
+      // Calibrated so common flows (first-dispense → admin) are near-universal
+      // while niche events (recorded ≠ action) are sparse.
+      const RULE_RARITY = {
+        firstDispenseFirstAdmin:  0.05,
+        lastAdminLastWaste:       0.08,
+        adminBeforeDispense:      0.25,
+        firstDispenseFirstWaste:  0.15,
+        recordedNotEqualAction:   0.30
+      };
+      const ruleKeys = Object.keys(RULE_RARITY);
+      
+      ACTION_TIMES_USERS.forEach(user => {
+        ruleKeys.forEach((ruleKey, i) => {
+          const hash = ((user.id * 2654435761) ^ (i * 0xdeadbeef)) >>> 0;
+          const prob = hash / 4294967295;
+          if (prob < RULE_RARITY[ruleKey]) {
+            user[ruleKey] = { events: 0, avgTime: 0 };
+          }
+        });
+      });
+    }
+    
+    // Helper: scale a rule's events/time for the current threshold while
+    // preserving zero-baseline (users who never had events for this rule).
+    function scaleRule(base, retentionRate, timeRange) {
+      if (base.events === 0) return { events: 0, avgTime: 0 };
+      return {
+        events: Math.max(1, Math.round(base.events * retentionRate)),
+        avgTime: Math.round(Math.max(timeThreshold + Math.random() * timeRange, base.avgTime))
+      };
+    }
+    
+    function recalculateScores() {
+      // Per-user deterministic "signal character" from id hash:
+      //   ~88% of users have "broad" patterns (many moderate events) → score drops
+      //         as the threshold filters those events out.
+      //   ~12% of users have "sharp" patterns (few extreme events) → score holds
+      //         steady or nudges up slightly at higher thresholds.
+      // Influence ramps from 0 at threshold 0 to full at threshold 240+.
+      const SHARP_THRESHOLD = 0.88;  // hash cutoff above which users are "sharp"
+      const MAX_DAMPEN = 4.8;        // max score drop for broadest patterns
+      const MAX_BOOST = 0.5;         // max score rise for sharpest patterns
+      const FULL_INFLUENCE_AT = 240; // threshold (min) at which shift reaches 100%
+      
+      function hashId(uid) {
+        return ((uid * 2654435761) >>> 0) / 4294967295;
+      }
+      
+      ACTION_TIMES_USERS.forEach(user => {
+        // Snapshot base scores on first call so recalc stays stable
+        if (user.baseOutlierScore === undefined) {
+          user.baseOutlierScore = user.outlierScore;
+          user.baseScores = { ...user.scores };
+        }
+        
+        const h = hashId(user.id);
+        let vol;
+        if (h < SHARP_THRESHOLD) {
+          vol = -((SHARP_THRESHOLD - h) / SHARP_THRESHOLD) * MAX_DAMPEN;
+        } else {
+          vol = ((h - SHARP_THRESHOLD) / (1 - SHARP_THRESHOLD)) * MAX_BOOST;
+        }
+        
+        const influence = Math.min(1, timeThreshold / FULL_INFLUENCE_AT);
+        const shift = vol * influence;
+        
+        // Main outlier score
+        user.outlierScore = Math.max(0.1, Math.min(8.0, +(user.baseOutlierScore + shift).toFixed(1)));
+        user.isOutlier = user.outlierScore >= 4.6;
+        
+        // Sub-scores get the same shift + small per-metric noise for realism.
+        // Noise is deterministic from (id, metric) so scores don't jitter on re-renders.
+        Object.keys(user.baseScores).forEach(key => {
+          const metricHash = hashId(user.id * 31 + key.length * 17);
+          const metricNoise = (metricHash - 0.5) * 0.5 * influence;
+          const newVal = user.baseScores[key] + shift + metricNoise;
+          user.scores[key] = Math.max(0, Math.min(8.0, +newVal.toFixed(1)));
+        });
+      });
+    }
+    
+    function filterDataByTimeThreshold() {
+      // Ensure sparse rule-participation is baked into the dataset on first pass.
+      initializeMissingEvents();
+      
+      // Recalculate outlier scores based on the current threshold.
+      // Conceptual model: raising the threshold filters out mid-severity events,
+      // so users whose score came from many moderate outliers fade, while users
+      // with genuinely extreme events maintain their score. A small minority of
+      // "sharp" users even nudge up slightly as their extreme events dominate.
+      recalculateScores();
+      
+      // Create filtered data based on time threshold
+      // Logic: Lower thresholds = more users qualify (larger dataset)
+      //        Higher thresholds = fewer users qualify (smaller dataset)
+      
+      // Calculate what percentage of users qualify for this threshold
+      // Target: 100 total users in dataset
+      //     0 min      -> 100% (all 100 users) — stress-test view
+      //     1 min      -> ~60% (60 users)      — sharp initial drop
+      //    30 min      -> ~30% (30 users)
+      //    60 min      -> ~27% (27 users)
+      //   120 min      -> ~21% (21 users)
+      //   240 min      -> ~10% (10 users)      — default
+      //   360 min      -> ~7%  (7 users)
+      //   480 min      -> ~3%  (3 users)
+      
+      let userRetentionRate;
+      if (timeThreshold === 0) {
+        userRetentionRate = 1.0; // Special case: show every user
+      } else if (timeThreshold <= 30) {
+        userRetentionRate = 0.60 - ((timeThreshold - 1) / 29) * 0.30; // 60% -> 30%
+      } else if (timeThreshold <= 240) {
+        userRetentionRate = 0.30 - ((timeThreshold - 30) / 210) * 0.20; // 30% -> 10%
+      } else {
+        userRetentionRate = 0.10 - ((timeThreshold - 240) / 240) * 0.07; // 10% -> 3%
+      }
+      
+      userRetentionRate = Math.max(0.03, userRetentionRate); // Never go below 3%
+      
+      // Determine how many users to show (minimum 3, maximum all users)
+      const totalUsers = ACTION_TIMES_USERS.length;
+      const usersToShow = Math.max(3, Math.round(totalUsers * userRetentionRate));
+      
+      // Create filtered user list (prioritize higher outlier scores for consistency)
+      filteredUsers = [...ACTION_TIMES_USERS]
+        .sort((a, b) => b.outlierScore - a.outlierScore) // Sort by highest outlier score first
+        .slice(0, usersToShow);
+      
+      console.log(`Time threshold: ${timeThreshold}min, Showing ${filteredUsers.length}/${totalUsers} users (${(userRetentionRate * 100).toFixed(1)}%)`);
+
+      // Apply event-level filtering within each retained user
+      const retentionRate = userRetentionRate;
+      filteredUsers.forEach(user => {
+        const baseData = user.baseData || {
+          firstDispenseFirstAdmin: user.firstDispenseFirstAdmin,
+          lastAdminLastWaste: user.lastAdminLastWaste,
+          adminBeforeDispense: user.adminBeforeDispense,
+          firstDispenseFirstWaste: user.firstDispenseFirstWaste,
+          recordedNotEqualAction: user.recordedNotEqualAction
+        };
+        
+        // Store original data if not already stored
+        if (!user.baseData) {
+          user.baseData = JSON.parse(JSON.stringify(baseData));
+        }
+        
+        // Apply filtering - events that exceeded the time threshold.
+        // scaleRule preserves zero-event rules (user has none for that rule).
+        user.firstDispenseFirstAdmin = scaleRule(baseData.firstDispenseFirstAdmin, retentionRate, 30);
+        user.lastAdminLastWaste      = scaleRule(baseData.lastAdminLastWaste,      retentionRate, 60);
+        user.adminBeforeDispense     = scaleRule(baseData.adminBeforeDispense,     retentionRate, 15);
+        user.firstDispenseFirstWaste = scaleRule(baseData.firstDispenseFirstWaste, retentionRate, 45);
+        user.recordedNotEqualAction  = scaleRule(baseData.recordedNotEqualAction,  retentionRate, 20);
+      });
+      
+      console.log(`Filtered events for ${timeThreshold} min threshold. Retention rate: ${(retentionRate * 100).toFixed(1)}%`);
+    }
+    
+    function cancelTimeThreshold() {
+      // Reset to current applied values
+      tempTimeThreshold = timeThreshold;
+      document.getElementById('time-slider').value = timeThreshold;
+      document.getElementById('time-input').value = timeThreshold;
+      closePillter('pillter-time-threshold');
+    }
+    
+    function setCompScore(scoreType, el) {
+      selectedComparisonScore = scoreType;
+      document.getElementById('comp-score-label').textContent = el.textContent;
+      // Update selected-item highlight within the menu
+      document.querySelectorAll('#pillter-comp-score .menu-item').forEach(o => o.classList.remove('selected-item'));
+      el.classList.add('selected-item');
+      closePillter('pillter-comp-score');
+      
+      // Update the comparison score column header
+      updateCompScoreHeader();
+      
+      // Re-render table to show new comparison scores
+      renderUsersTable();
+    }
+    
+    function updateCompScoreHeader() {
+      const headerText = {
+        'overall': 'Overall IRIS',
+        'actionTimes': 'Action Times',
+        'varianceTrends': 'Variance Trends',
+        'dispensePatterns': 'Dispense Patterns',
+        'medTrends': 'Med Trends',
+        'fullPackageWaste': 'Full Package Waste',
+        'shiftAnalysis': 'Shift Analysis'
+      };
+      
+      const compScoreHeader = document.querySelector('th[data-col="outlierScore"]:nth-child(2) .th-inner');
+      if (compScoreHeader) {
+        compScoreHeader.innerHTML = `${headerText[selectedComparisonScore]} <span class="material-icons sort-icon">arrow_upward</span>`;
+      }
+    }
+    
+    /* ── Pillter filter handlers ─────────────────────────────────
+       These mirror the pattern from pillter-variations.html: chips toggle a
+       menu, multi-select menus support search + Select All / Clear + Apply,
+       date menu uses preset rows, and all menus close on outside click. */
+    
+    // The Date pillter's chip stays `active` even when its menu is closed, so
+    // we skip it whenever we're clearing the `active` class off closed menus.
+    const ALWAYS_ACTIVE_WRAPPERS = new Set(['pillter-date']);
+    
+    function togglePillter(wrapperId) {
+      const wrapper = document.getElementById(wrapperId);
+      const isOpen = wrapper.classList.contains('open');
+      // Close any other open pillters first
+      document.querySelectorAll('.pillter-wrapper.open').forEach(w => {
+        w.classList.remove('open');
+        const c = w.querySelector('.filter-chip');
+        if (c && !ALWAYS_ACTIVE_WRAPPERS.has(w.id)) c.classList.remove('active');
+      });
+      if (!isOpen) {
+        wrapper.classList.add('open');
+        const chip = wrapper.querySelector('.filter-chip');
+        if (chip) chip.classList.add('active');
+        
+        // Reset temp values for the time-threshold slider each time it opens
+        // so Cancel reverts cleanly.
+        if (wrapperId === 'pillter-time-threshold') {
+          tempTimeThreshold = timeThreshold;
+          const slider = document.getElementById('time-slider');
+          const input = document.getElementById('time-input');
+          if (slider) slider.value = tempTimeThreshold;
+          if (input) input.value = tempTimeThreshold;
+        }
+      }
+    }
+    
+    function closePillter(wrapperId) {
+      const wrapper = document.getElementById(wrapperId);
+      wrapper.classList.remove('open');
+      const chip = wrapper.querySelector('.filter-chip');
+      if (chip && !ALWAYS_ACTIVE_WRAPPERS.has(wrapperId)) chip.classList.remove('active');
+    }
+    
+    function selectAllPillter(wrapperId, check) {
+      document.querySelectorAll(`#options-${wrapperId} .menu-option`).forEach(opt => {
+        if (opt.style.display === 'none') return; // honor search filter
+        const cb = opt.querySelector('input[type="checkbox"]');
+        if (cb) cb.checked = check;
+      });
+    }
+    
+    function filterPillterOptions(input, wrapperId) {
+      const q = input.value.trim().toLowerCase();
+      document.querySelectorAll(`#options-${wrapperId} .menu-option`).forEach(opt => {
+        const label = opt.querySelector('span').textContent.toLowerCase();
+        opt.style.display = label.includes(q) ? '' : 'none';
+      });
+    }
+    
+    function applyPillter(wrapperId, label) {
+      const checked = document.querySelectorAll(`#options-${wrapperId} input[type="checkbox"]:checked`);
+      const count = checked.length;
+      const chipId = wrapperId.replace('pillter-', 'chip-');
+      const chip = document.getElementById(chipId);
+      const badge = document.getElementById(`${chipId}-badge`);
+      
+      if (count > 0) {
+        chip.classList.add('selected');
+        badge.style.display = 'inline-flex';
+        badge.className = 'chip-badge';
+        badge.textContent = count;
+      } else {
+        chip.classList.remove('selected');
+        badge.style.display = 'none';
+      }
+      
+      closePillter(wrapperId);
+      // Hook: if we later wire these to affect the dataset, call filter+render here.
+    }
+    
+    function applyDatePillter() {
+      const selected = document.querySelector('#pillter-date .date-preset-item.selected-item');
+      const label = selected ? selected.textContent.trim() : '04/14/2026 – 04/13/2026';
+      document.getElementById('chip-date-label').textContent = label;
+      document.getElementById('chip-date').classList.add('active');
+      closePillter('pillter-date');
+    }
+    
+    function setDatePreset(el, label) {
+      document.querySelectorAll('#pillter-date .date-preset-item').forEach(i => {
+        i.classList.remove('selected-item');
+        const r = i.querySelector('input[type="radio"]');
+        if (r) r.checked = false;
+      });
+      el.classList.add('selected-item');
+      const r = el.querySelector('input[type="radio"]');
+      if (r) r.checked = true;
+    }
+    
+    function clearAllPillters() {
+      // Reset PRIMARY filters only — Comp Score and Time Elapsed are secondary
+      // pillters (always have a value) and are not cleared by this action.
+      const primaryIds = ['pillter-date', 'pillter-dept', 'pillter-user', 'pillter-role'];
+      primaryIds.forEach(id => {
+        const wrapper = document.getElementById(id);
+        if (!wrapper) return;
+        wrapper.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+        const chip = wrapper.querySelector('.filter-chip');
+        if (chip) chip.classList.remove('selected', 'active');
+        const search = wrapper.querySelector('.menu-search input');
+        if (search) {
+          search.value = '';
+          filterPillterOptions(search, id);
+        }
+      });
+      // Hide badges on multi-select chips
+      ['chip-dept-badge', 'chip-user-badge', 'chip-role-badge'].forEach(bid => {
+        const b = document.getElementById(bid);
+        if (b) b.style.display = 'none';
+      });
+      // Reset date to default
+      document.querySelectorAll('#pillter-date .date-preset-item').forEach((i, idx) => {
+        i.classList.toggle('selected-item', idx === 1); // 'Last 30 days'
+        const r = i.querySelector('input[type="radio"]');
+        if (r) r.checked = (idx === 1);
+      });
+      document.getElementById('chip-date-label').textContent = '04/14/2026 – 04/13/2026';
+      document.getElementById('chip-date').classList.add('active'); // date always has a value
+    }
+    
+    // Close menus on outside click
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.pillter-wrapper')) {
+        document.querySelectorAll('.pillter-wrapper.open').forEach(w => {
+          w.classList.remove('open');
+          const c = w.querySelector('.filter-chip');
+          if (c && !ALWAYS_ACTIVE_WRAPPERS.has(w.id)) c.classList.remove('active');
+        });
+      }
+    });
+    
+    // Populate the User pillter from the dataset
+    function populateUserPillterOptions() {
+      const container = document.getElementById('options-pillter-user');
+      if (!container) return;
+      const users = [...ACTION_TIMES_USERS]
+        .filter(u => !u.isAggregate)
+        .sort((a, b) => a.name.localeCompare(b.name));
+      container.innerHTML = users.map(u =>
+        `<div class="menu-option"><input type="checkbox" data-value="${u.id}" /><span>${u.name}</span></div>`
+      ).join('');
+    }
+
+    // Tooltip system
+    document.addEventListener('DOMContentLoaded', function() {
+      const tt = document.getElementById('tt');
+      document.addEventListener('mouseover', e => {
+        const el = e.target.closest('[data-tooltip]');
+        if (!el) return;
+        tt.textContent = el.getAttribute('data-tooltip');
+        tt.style.opacity = '1';
+        positionTT(el);
+      });
+      document.addEventListener('mouseout', e => {
+        if (!e.target.closest('[data-tooltip]')) return;
+        tt.style.opacity = '0';
+      });
+      document.addEventListener('mousemove', e => {
+        if (tt.style.opacity === '0') return;
+        const el = e.target.closest('[data-tooltip]');
+        if (el) positionTT(el);
+      });
+      
+      function positionTT(el) {
+        const r = el.getBoundingClientRect();
+        const tw = tt.offsetWidth;
+        let left = r.left + r.width / 2 - tw / 2;
+        left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+        tt.style.left = left + 'px';
+        tt.style.top = (r.top - tt.offsetHeight - 8) + 'px';
+      }
+      
+      // Initialize time threshold filtering (must run before first table render)
+      filterDataByTimeThreshold();
+      
+      // Populate User pillter from the dataset
+      populateUserPillterOptions();
+      
+      // Initialize table
+      renderUsersTable();
+      
+      // Initialize rule visibility
+      updateRuleVisibility();
+      updateRuleChips();
+      
+      // Initialize comparison score header
+      updateCompScoreHeader();
+    });
+
+  </script>
+</head>
+
+<body>
+<div id="tt"></div>
+<app-component class="flex-col-100">
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
+  <navigation>
+    <header>
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+
+        <!-- Logo -->
+        <a class="nav-link" href="/dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7;}.cls-2,.cls-4{fill:#004e7d;}.cls-3,.cls-4{fill-rule:evenodd;}</style></defs>
+            <g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><g id="ControlCheck_Logo_Color">
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73a22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73a22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8a36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0A144,144,0,0,0,38.76,3.34Z"/>
+            </g></g></g>
+          </svg>
+        </a>
+
+        <!-- Navigation menu -->
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Audit</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed active">
+              <span class="mdc-button__label">Analyze</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Cases</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
+              <span class="mdc-button__label">Report</span>
+            </a>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Upload</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
+              <span class="mdc-button__label">Manage</span>
+            </a>
+          </div>
+        </nav-menu>
+
+        <!-- User menu -->
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Jon Reischl</div>
+                  <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
+                </div>
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">JR</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ══ APP VIEW ════════════════════════════════════════════════════ -->
+  <div id="app-view" class="flex-col-100">
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── ANALYZE SIDEBAR ── -->
+      <mat-drawer mode="side" opened="" class="mat-drawer mat-drawer-opened mat-drawer-side" id="analyze-drawer">
+        <div class="mat-drawer-inner-container">
+          <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <span class="mat-icon material-icons">chevron_left</span>
+          </button>
+          
+          <mat-accordion class="mat-accordion navigation-accordion mat-accordion-multi">
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
+                <span class="mat-expansion-indicator">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+                    <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path>
+                  </svg>
+                </span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div role="region" class="mat-expansion-panel-content">
+                  <div class="mat-expansion-panel-body">
+                    <mat-nav-list role="navigation" class="mat-mdc-nav-list mat-mdc-list-base mdc-list">
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">list_alt</mat-icon>
+                            <span>Active IRIS Reviews</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">domain_add</mat-icon>
+                            <span>Multi-Hospital Users</span>
+                          </span>
+                        </span>
+                      </a>
+                    </mat-nav-list>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
+                <span class="mat-expansion-indicator">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+                    <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path>
+                  </svg>
+                </span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div role="region" class="mat-expansion-panel-content">
+                  <div class="mat-expansion-panel-body">
+                    <mat-nav-list role="navigation" class="mat-mdc-nav-list mat-mdc-list-base mdc-list">
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">dns</mat-icon>
+                            <span>IRIS Worklist</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">timeline</mat-icon>
+                            <span>Variance Trends</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">vaccines</mat-icon>
+                            <span>Dispense Patterns</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">query_stats</mat-icon>
+                            <span>Med Trends</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line active" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">schedule</mat-icon>
+                            <span>Action Times</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">supervised_user_circle</mat-icon>
+                            <span>User Mobility</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">hub</mat-icon>
+                            <span>Waste Networks</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">delete_outline</mat-icon>
+                            <span>Full Package Waste</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">event_card</mat-icon>
+                            <span>Shift Analysis</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">sentiment_dissatisfied</mat-icon>
+                            <span>Pain Analysis</span>
+                          </span>
+                        </span>
+                      </a>
+                    </mat-nav-list>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">OR</mat-panel-title></span>
+                <span class="mat-expansion-indicator">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true" focusable="false">
+                    <path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path>
+                  </svg>
+                </span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div role="region" class="mat-expansion-panel-content">
+                  <div class="mat-expansion-panel-body">
+                    <mat-nav-list role="navigation" class="mat-mdc-nav-list mat-mdc-list-base mdc-list">
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">dns</mat-icon>
+                            <span>IRIS Worklist</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">timeline</mat-icon>
+                            <span>Variance Trends</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">query_stats</mat-icon>
+                            <span>Med Trends</span>
+                          </span>
+                        </span>
+                      </a>
+                      <a class="mat-mdc-list-item mdc-list-item mat-mdc-list-item-interactive mat-mdc-list-item-single-line mdc-list-item--with-one-line" href="#">
+                        <span class="mdc-list-item__content">
+                          <span class="mat-mdc-list-item-unscoped-content mdc-list-item__primary-text">
+                            <mat-icon role="img" class="mat-icon notranslate material-icons mat-ligature-font mat-icon-no-color">sentiment_dissatisfied</mat-icon>
+                            <span>Pain Analysis</span>
+                          </span>
+                        </span>
+                      </a>
+                    </mat-nav-list>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <!-- ── MAIN CONTENT ── -->
+      <mat-drawer-content class="mat-drawer-content">
+
+        <!-- ═══════════════════════════════════════
+             PAGE HEADER
+        ═══════════════════════════════════════ -->
+        <div class="page-header">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="page-title">Action Times</span>
+          </div>
+          <div class="filter-chip-group">
+            <button class="clear-all-btn" onclick="clearAllPillters()">Clear All</button>
+            
+            <!-- Date Range pillter -->
+            <div class="pillter-wrapper" id="pillter-date">
+              <button class="filter-chip active" id="chip-date" onclick="togglePillter('pillter-date')">
+                <span id="chip-date-label">04/14/2026 – 04/13/2026</span>
+              </button>
+              <div class="pillter-menu date-menu">
+                <div class="date-presets">
+                  <div class="date-preset-item" onclick="setDatePreset(this,'Last 7 days')"><input type="radio" name="dr" />Last 7 days</div>
+                  <div class="date-preset-item selected-item" onclick="setDatePreset(this,'Last 30 days')"><input type="radio" name="dr" checked />Last 30 days</div>
+                  <div class="date-preset-item" onclick="setDatePreset(this,'Last 60 days')"><input type="radio" name="dr" />Last 60 days</div>
+                  <div class="date-preset-item" onclick="setDatePreset(this,'Last 90 days')"><input type="radio" name="dr" />Last 90 days</div>
+                  <div class="date-preset-item" onclick="setDatePreset(this,'Custom Range')"><input type="radio" name="dr" />Custom Range</div>
+                </div>
+                <div class="menu-divider"></div>
+                <div class="date-footer-inputs">
+                  <input type="text" value="04/14/2026" />
+                  <span class="material-icons">arrow_forward</span>
+                  <input type="text" value="04/13/2026" />
+                </div>
+                <div class="menu-footer">
+                  <button class="btn-cancel" onclick="closePillter('pillter-date')">Cancel</button>
+                  <button class="btn-apply" onclick="applyDatePillter()">Apply</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Department pillter -->
+            <div class="pillter-wrapper" id="pillter-dept">
+              <button class="filter-chip" id="chip-dept" onclick="togglePillter('pillter-dept')">
+                <span id="chip-dept-badge" style="display:none"></span>
+                <span>Department</span>
+              </button>
+              <div class="pillter-menu">
+                <div class="menu-search">
+                  <input type="text" placeholder="Search..." oninput="filterPillterOptions(this,'pillter-dept')" />
+                </div>
+                <div class="menu-actions">
+                  <button class="link-btn" onclick="selectAllPillter('pillter-dept', true)">Select All</button>
+                  <button class="link-btn" onclick="selectAllPillter('pillter-dept', false)">Clear</button>
+                </div>
+                <div class="menu-options" id="options-pillter-dept">
+                  <div class="menu-option"><input type="checkbox" data-value="ICU" /><span>ICU</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Emergency" /><span>Emergency</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Medical" /><span>Medical</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Surgical" /><span>Surgical</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Pediatric" /><span>Pediatric</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="NICU" /><span>NICU</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Oncology" /><span>Oncology</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Cardiology" /><span>Cardiology</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Neurology" /><span>Neurology</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Orthopedic" /><span>Orthopedic</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Pharmacy" /><span>Pharmacy</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="OR" /><span>OR</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Rehab" /><span>Rehab</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="Telemetry" /><span>Telemetry</span></div>
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-footer">
+                  <button class="btn-cancel" onclick="closePillter('pillter-dept')">Cancel</button>
+                  <button class="btn-apply" onclick="applyPillter('pillter-dept','Department')">Apply</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- User pillter -->
+            <div class="pillter-wrapper" id="pillter-user">
+              <button class="filter-chip" id="chip-user" onclick="togglePillter('pillter-user')">
+                <span id="chip-user-badge" style="display:none"></span>
+                <span>User</span>
+              </button>
+              <div class="pillter-menu">
+                <div class="menu-search">
+                  <input type="text" placeholder="Search..." oninput="filterPillterOptions(this,'pillter-user')" />
+                </div>
+                <div class="menu-actions">
+                  <button class="link-btn" onclick="selectAllPillter('pillter-user', true)">Select All</button>
+                  <button class="link-btn" onclick="selectAllPillter('pillter-user', false)">Clear</button>
+                </div>
+                <div class="menu-options" id="options-pillter-user">
+                  <!-- Populated from ACTION_TIMES_USERS on init -->
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-footer">
+                  <button class="btn-cancel" onclick="closePillter('pillter-user')">Cancel</button>
+                  <button class="btn-apply" onclick="applyPillter('pillter-user','User')">Apply</button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Role pillter -->
+            <div class="pillter-wrapper" id="pillter-role">
+              <button class="filter-chip" id="chip-role" onclick="togglePillter('pillter-role')">
+                <span id="chip-role-badge" style="display:none"></span>
+                <span>Role</span>
+              </button>
+              <div class="pillter-menu">
+                <div class="menu-actions">
+                  <button class="link-btn" onclick="selectAllPillter('pillter-role', true)">Select All</button>
+                  <button class="link-btn" onclick="selectAllPillter('pillter-role', false)">Clear</button>
+                </div>
+                <div class="menu-options" id="options-pillter-role">
+                  <div class="menu-option"><input type="checkbox" data-value="RN" /><span>RN</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="PharmD" /><span>PharmD</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="PharmTech" /><span>PharmTech</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="NP" /><span>NP</span></div>
+                  <div class="menu-option"><input type="checkbox" data-value="MD" /><span>MD</span></div>
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-footer">
+                  <button class="btn-cancel" onclick="closePillter('pillter-role')">Cancel</button>
+                  <button class="btn-apply" onclick="applyPillter('pillter-role','Role')">Apply</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             ACTION TIMES VIEW
+        ═══════════════════════════════════════ -->
+        <div class="view visible">
+          <div class="content-area">
+
+            <!-- ── Tab bar ── -->
+            <div class="view-tab-bar">
+              <div class="tab-bar-tabs">
+              <button class="mdc-tab mdc-tab--active" id="action-times-tabular-tab" onclick="switchView('table')">
+                <span class="mdc-tab__content">
+                  <span class="material-icons mat-icon">table_chart</span>
+                  <span class="mdc-tab__text-label">Tabular Data</span>
+                </span>
+                <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+              </button>
+              <button class="mdc-tab" id="action-times-visual-tab" onclick="switchView('graph')">
+                <span class="mdc-tab__content">
+                  <span class="material-icons mat-icon">bar_chart</span>
+                  <span class="mdc-tab__text-label">Visualized Data</span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+              </button>
+              </div>
+              <button class="download-btn tab-bar-download" title="Download data" data-tooltip="Download CSV">
+                <span class="material-icons">download</span>
+              </button>
+            </div>
+
+            <!-- ── Secondary pillter filters ── -->
+            <div class="content-toolbar">
+              <div class="toolbar-left">
+                <!-- Comparison Score pillter (single-select) -->
+                <div class="pillter-wrapper" id="pillter-comp-score">
+                  <button class="filter-chip secondary active" id="chip-comp-score" onclick="togglePillter('pillter-comp-score')">
+                    <span class="cs-label">Comparison Score:</span>
+                    <span id="comp-score-label">Overall IRIS</span>
+                  </button>
+                  <div class="pillter-menu" style="width:220px">
+                    <div class="menu-options">
+                      <div class="menu-item selected-item" onclick="setCompScore('overall', this)">Overall IRIS</div>
+                      <div class="menu-item" onclick="setCompScore('actionTimes', this)">Action Times</div>
+                      <div class="menu-item" onclick="setCompScore('varianceTrends', this)">Variance Trends</div>
+                      <div class="menu-item" onclick="setCompScore('dispensePatterns', this)">Dispense Patterns</div>
+                      <div class="menu-item" onclick="setCompScore('medTrends', this)">Med Trends</div>
+                      <div class="menu-item" onclick="setCompScore('fullPackageWaste', this)">Full Package Waste</div>
+                      <div class="menu-item" onclick="setCompScore('shiftAnalysis', this)">Shift Analysis</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Time Elapsed pillter (slider) -->
+                <div class="pillter-wrapper" id="pillter-time-threshold">
+                  <button class="filter-chip secondary active" id="chip-time-threshold" onclick="togglePillter('pillter-time-threshold')">
+                    <span class="cs-label">Time Elapsed:</span>
+                    <span id="time-threshold-label">240 Minutes</span>
+                  </button>
+                  <div class="pillter-menu" style="width:320px">
+                    <div class="slider-section">
+                      <h5>Minutes</h5>
+                      <div class="slider-row">
+                        <input type="range" id="time-slider" min="0" max="480" value="240" step="15"
+                               oninput="updateTimeThreshold(this.value)" />
+                        <input type="number" id="time-input" min="0" max="480" value="240" step="15"
+                               onchange="updateTimeThresholdFromInput(this.value)" />
+                      </div>
+                    </div>
+                    <p class="slider-help">Adjust the minimum time that has elapsed between events.</p>
+                    <div class="menu-divider"></div>
+                    <div class="menu-footer">
+                      <button class="btn-cancel" onclick="cancelTimeThreshold()">Cancel</button>
+                      <button class="btn-apply" onclick="applyTimeThreshold()">Apply</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── Rules Chips ── -->
+            <div class="rules-chips-row">
+              <button class="rule-chip selected" id="chip-firstDispenseFirstAdmin" onclick="toggleRuleChip('firstDispenseFirstAdmin')">
+                <span class="material-icons chip-icon">check</span>
+                <span class="chip-text">First Dispense → First Admin</span>
+              </button>
+              <button class="rule-chip" id="chip-lastAdminLastWaste" onclick="toggleRuleChip('lastAdminLastWaste')">
+                <span class="chip-text">Last Admin → Last Waste</span>
+              </button>
+              <button class="rule-chip" id="chip-adminBeforeDispense" onclick="toggleRuleChip('adminBeforeDispense')">
+                <span class="chip-text">Admin Before Dispense</span>
+              </button>
+              <button class="rule-chip" id="chip-firstDispenseFirstWaste" onclick="toggleRuleChip('firstDispenseFirstWaste')">
+                <span class="chip-text">First Dispense → First Waste</span>
+              </button>
+              <button class="rule-chip" id="chip-recordedNotEqualAction" onclick="toggleRuleChip('recordedNotEqualAction')">
+                <span class="chip-text">Recorded Admin ≠ Action Time</span>
+              </button>
+            </div>
+
+            <!-- Action Times Table -->
+            <div id="action-times-table-view">
+              <div class="data-table-wrap">
+                <div class="table-scroll-container">
+                  <table class="data-table" id="usersTable">
+                    <thead>
+                      <tr>
+                        <th class="center sortable fixed-col" data-col="outlierScore" onclick="sortUsersTable('outlierScore')">
+                          <span class="th-inner">Metric Score <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable fixed-col" data-col="outlierScore" onclick="sortUsersTable('outlierScore')">
+                          <span class="th-inner">Comparison Score <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="sortable sort-asc fixed-col" data-col="name" onclick="sortUsersTable('name')">
+                          <span class="th-inner">User <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-fdfa-events" data-col="firstDispenseFirstAdmin.events" onclick="sortUsersTable('firstDispenseFirstAdmin.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-fdfa-time" data-col="firstDispenseFirstAdmin.avgTime" onclick="sortUsersTable('firstDispenseFirstAdmin.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-lalw-events" data-col="lastAdminLastWaste.events" onclick="sortUsersTable('lastAdminLastWaste.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-lalw-time" data-col="lastAdminLastWaste.avgTime" onclick="sortUsersTable('lastAdminLastWaste.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-abd-events" data-col="adminBeforeDispense.events" onclick="sortUsersTable('adminBeforeDispense.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-abd-time" data-col="adminBeforeDispense.avgTime" onclick="sortUsersTable('adminBeforeDispense.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-fdfw-events" data-col="firstDispenseFirstWaste.events" onclick="sortUsersTable('firstDispenseFirstWaste.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-fdfw-time" data-col="firstDispenseFirstWaste.avgTime" onclick="sortUsersTable('firstDispenseFirstWaste.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-rnea-events" data-col="recordedNotEqualAction.events" onclick="sortUsersTable('recordedNotEqualAction.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-rnea-time" data-col="recordedNotEqualAction.avgTime" onclick="sortUsersTable('recordedNotEqualAction.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center fixed-col-right">Investigate</th>
+                      </tr>
+                      <tr class="col-group-header">
+                        <th colspan="3" class="fixed-col-group"></th>
+                        <th colspan="2" id="group-fdfa" class="col-fdfa-group">First Dispense → First Admin</th>
+                        <th colspan="2" id="group-lalw" class="col-lalw-group hidden">Last Admin → Last Waste</th>
+                        <th colspan="2" id="group-abd" class="col-abd-group hidden">Admin Before Dispense</th>
+                        <th colspan="2" id="group-fdfw" class="col-fdfw-group hidden">First Dispense → First Waste</th>
+                        <th colspan="2" id="group-rnea" class="col-rnea-group hidden">Recorded Admin ≠ Action Time</th>
+                        <th class="fixed-col-group-right"></th>
+                      </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                      <!-- Rows injected by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- Action Times Graph -->
+            <div id="action-times-graph-view" style="display: none;">
+              <!-- Chart will be inserted here -->
+            </div>
+
+          </div>
+        </div>
+
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div>
+
+</app-component>
+
+<footer></app-component></body></html>

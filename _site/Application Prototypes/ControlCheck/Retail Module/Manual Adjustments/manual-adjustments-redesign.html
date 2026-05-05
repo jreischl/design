@@ -1,0 +1,2749 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manual Adjustments | ControlCheck</title>
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --teal-50:     #e7f4f8;
+      --teal-25:     #f3fbfd;
+      --teal-900:    #00718a;
+      --pink:        #eb4699;
+      --red:         #f24335;
+      --red-dark:    #b9211d;
+      --orange:      #e67e2c;
+      --green:       #16b434;
+      --yellow:      #f5dd67;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-500:    #9e9e9e;
+      --gray-600:    #727272;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+
+      /* Heat-map severity tokens (preserved from existing UI) */
+      --hm-green:    #f0e1a5;   /* yellow band 0-2 */
+      --hm-yellow:   #f5dd67;   /* yellow 3-5 */
+      --hm-orange:   #e67e2c;   /* orange 6-7 */
+      --hm-red:      #b9211d;   /* red 8+ */
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* ── Custom element display ──────────────────────────── */
+    app-component, navigation, nav-menu, user-menu,
+    bcs-dashboard, page-title, dashboard-card-title,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-panel-description,
+    mat-card, mat-card-header, mat-card-title, mat-card-subtitle,
+    mat-tab-header, mat-tab-body,
+    router-outlet { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex; align-items: center; border-radius: var(--radius);
+      flex-direction: row; text-decoration: none; flex-shrink: 0;
+    }
+
+    .navigation { display: inline-flex; flex-direction: row; flex-wrap: nowrap; margin-left: 1rem; padding-top: 0; }
+    .mdc-button.mat-mdc-button {
+      background: none; border: none;
+      font-family: var(--font); font-size: 1rem; font-weight: 500;
+      color: var(--blue-dark); cursor: pointer;
+      padding: .5rem 1rem; height: 48px;
+      border-radius: var(--radius); transition: background .15s;
+      display: inline-flex; align-items: center; gap: 2px;
+      text-decoration: none; white-space: nowrap;
+      letter-spacing: normal; text-transform: none;
+    }
+    span.nav-svg-icon { display: flex; }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    .mdc-button__label { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-link.active .mdc-button__label {
+      color: inherit; box-shadow: 0 2px;
+      align-items: center; display: inline-flex;
+      line-height: 32px; justify-content: center;
+    }
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red); color: #fff;
+      font-size: 9px; font-weight: 700;
+      border-radius: 50%; width: 14px; height: 14px;
+      text-align: center; line-height: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-left: -4px;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+
+    /* ── user-menu ──────────────────────────────────────── */
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center; background-color: transparent; border: none;
+      border-radius: 1.5rem; cursor: pointer; display: flex; flex-direction: row;
+      transition: background-color .2s ease-in-out; padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark); font-size: .813rem; letter-spacing: .01rem;
+      line-height: 1.25rem; min-height: 40px; padding-left: 1rem;
+      white-space: normal; text-align: right; display: flex;
+      flex-direction: column; justify-content: center;
+    }
+    .header-customer-fullName  { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark); color: #fff;
+      border-radius: 50%; width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; margin-left: 8px; flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%; background: none; border: none; cursor: pointer;
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s; padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    /* ── #app-view ──────────────────────────────────────── */
+    #app-view { flex: 1 1 auto; position: relative; display: flex; flex-direction: column; }
+
+    /* ═══════════════════════════════════════════════════════
+       PAGE LAYOUT
+    ═══════════════════════════════════════════════════════ */
+    .page-content { padding: 1.5rem 2rem 2rem; flex: 1 1 auto; }
+
+    /* breadcrumb */
+    .breadcrumb {
+      font-size: .813rem; font-weight: 500;
+      display: flex; align-items: center; gap: 6px;
+      color: var(--text-54); margin-bottom: 4px;
+    }
+    .breadcrumb .bc-parent {
+      color: var(--teal); font-weight: 600; cursor: pointer;
+      text-decoration: none; background: none; border: none;
+      font-family: var(--font); font-size: .813rem; padding: 0;
+    }
+    .breadcrumb .bc-parent:hover { text-decoration: underline; }
+    .breadcrumb .bc-sep { color: var(--gray-400); }
+    .breadcrumb .bc-current { color: var(--text-54); font-weight: 500; }
+
+    /* Page header (title row + filters) */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .page-title-group { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .page-back-btn {
+      background: none; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      color: var(--teal); transition: background .15s;
+    }
+    .page-back-btn:hover { background: rgba(0,150,184,.08); }
+    .page-back-btn .material-icons { font-size: 22px; }
+
+    h1.page-title {
+      font-size: 24px; line-height: 30px; font-weight: 600;
+      letter-spacing: .2px; color: var(--blue-dark);
+      display: inline-block;
+    }
+
+    .page-description {
+      color: var(--gray-700); font-size: .9375rem; font-weight: 400;
+      max-width: 760px; margin: 4px 0 24px;
+    }
+
+    /* Wraps the page description (left) and adjustment legend (right) so
+       they sit side-by-side rather than stacked. */
+    .description-legend-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      margin: 32px 0 32px;
+      width: 100%;
+      justify-content: space-between;
+    }
+    .description-legend-row .page-description {
+      flex: 0 1 auto;
+      margin: 0;
+    }
+    .description-legend-row .adj-legend {
+      flex: 0 0 auto;
+      margin: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       PILLTERS (filter chips)  — from /mnt/project/pillter-variations.html
+    ═══════════════════════════════════════════════════════ */
+    .pillter-row {
+      display: flex; align-items: center;
+      gap: 8px; flex-wrap: wrap;
+    }
+
+    .clear-all-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .813rem; font-weight: 600;
+      color: var(--teal); padding: 4px 8px; border-radius: var(--radius);
+      letter-spacing: .04em; text-transform: uppercase;
+      white-space: nowrap; transition: background .15s;
+    }
+    .clear-all-btn:hover { background: rgba(0,150,184,.08); }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 32px; padding: 0 12px;
+      border-radius: 24px;
+      font: 600 14px/1 var(--font);
+      border: 1px solid transparent;
+      cursor: pointer; user-select: none;
+      transition: background .15s, border-color .15s, color .15s;
+      position: relative; white-space: nowrap;
+      background: transparent; color: var(--teal-900);
+      border-color: rgba(0,113,138,.5);
+    }
+    .chip:hover { background: var(--teal-50); }
+    .chip.selected { background: var(--teal-50); }
+    .chip.selected:hover { background: #d3ecf3; }
+    .chip.active, .chip.active.selected {
+      background: var(--teal); color: #fff; border-color: var(--teal);
+    }
+    .chip .material-icons { font-size: 16px; line-height: 1; }
+    .chip::after {
+      content: "▾"; font-size: 11px; opacity: .7; margin-left: 2px;
+    }
+    .chip.no-arrow::after { display: none; }
+    .chip-label-prefix {
+      font-weight: 500; opacity: .8; margin-right: 2px;
+    }
+    .chip-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      border-radius: 9px;
+      background: var(--teal-900); color: #fff;
+      font-size: 11px; font-weight: 600;
+      margin-right: 2px;
+    }
+    .chip.active .chip-badge { background: #fff; color: var(--teal-900); }
+
+    /* ── Pillter menus ─────────────────────────────────── */
+    .menu-wrapper { display: inline-block; position: relative; }
+    .menu {
+      display: none; position: absolute;
+      top: calc(100% + 6px); left: 0;
+      background: #fff; border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      width: 280px; z-index: 200; overflow: hidden;
+    }
+    /* Anchor menu to the right edge of the chip — used for filters
+       near the right edge of the page so the menu doesn't overflow. */
+    .menu-wrapper.align-right .menu { right: 0; left: auto; }
+    .menu-wrapper.open .menu { display: block; }
+
+    .menu-search {
+      padding: 8px 12px 4px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .menu-search input {
+      width: 100%; height: 32px;
+      padding: 0 8px 0 30px;
+      border: 1px solid var(--gray-300); border-radius: 4px;
+      font-size: 13px; outline: none;
+      font-family: var(--font);
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%239e9e9e'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E") no-repeat 8px center #fff;
+    }
+    .menu-search input:focus { border-color: var(--teal); }
+
+    .menu-actions {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 12px;
+    }
+    .link-btn {
+      background: none; border: none; color: var(--teal);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      padding: 4px 0; font-family: var(--font);
+    }
+    .link-btn:hover { text-decoration: underline; }
+    .link-btn:disabled { color: var(--gray-300); cursor: default; text-decoration: none; }
+
+    .menu-options { max-height: 280px; overflow-y: auto; }
+    .menu-option {
+      display: flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 16px;
+      font-size: 13px; cursor: pointer;
+      color: var(--gray-700); font-weight: 500;
+    }
+    .menu-option:hover { background: var(--gray-100); }
+    .menu-option input[type="checkbox"] {
+      accent-color: var(--teal); width: 16px; height: 16px; flex-shrink: 0;
+    }
+
+    .menu-divider { height: 1px; background: var(--gray-300); margin: 0; }
+
+    .menu-footer {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 8px; padding: 8px 12px; border-top: 1px solid var(--gray-300);
+    }
+    .btn-cancel {
+      background: none; border: none;
+      font: 600 13px var(--font);
+      color: var(--gray-700); cursor: pointer;
+      padding: 6px 12px; border-radius: 4px;
+    }
+    .btn-cancel:hover { background: var(--gray-100); }
+    .btn-apply {
+      background: var(--pink); border: none; border-radius: 4px;
+      color: #fff; font: 600 13px var(--font);
+      cursor: pointer; padding: 6px 16px;
+    }
+    .btn-apply:hover { background: #d93d88; }
+
+    /* ── Slider menu (Quantity Adjusted) ─────────────────── */
+    .slider-section { padding: 14px 16px 4px; }
+    .slider-section h5 {
+      margin: 0 0 4px;
+      font-size: 12px; font-weight: 600;
+      color: var(--gray-700);
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .slider-section p {
+      margin: 0 0 12px; font-size: 12px; color: var(--gray-600);
+      font-weight: 400; line-height: 1.4;
+    }
+    .slider-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .slider-row label {
+      font-size: 12px; color: var(--gray-600); font-weight: 500; width: 28px;
+    }
+    .slider-row input[type="number"] {
+      width: 64px; height: 30px;
+      border: 1px solid var(--gray-300); border-radius: 4px;
+      padding: 0 6px; font: 13px var(--font); text-align: center;
+    }
+    .range-hint {
+      font-size: 11px; color: var(--gray-600);
+      padding: 2px 16px 12px; font-weight: 400;
+    }
+
+    /* ── Date range menu ─────────────────────────────────── */
+    .date-menu { width: 320px; }
+    .date-presets { padding: 4px 0 6px; }
+    .date-preset-item {
+      padding: 8px 16px; font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px; font-weight: 500;
+      color: var(--gray-700);
+    }
+    .date-preset-item:hover { background: var(--gray-100); }
+    .date-preset-item.selected-item { color: var(--teal); }
+    .date-preset-item input[type="radio"] { accent-color: var(--teal); }
+
+    /* ═══════════════════════════════════════════════════════
+       ADJUSTMENT TYPE LEGEND  (in-page legend bar)
+    ═══════════════════════════════════════════════════════ */
+    .adj-legend {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      padding: 10px 16px;
+      margin: 0 0 16px;
+    }
+    .adj-legend-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--gray-700);
+      letter-spacing: .04em;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .adj-legend-label .material-icons {
+      font-size: 16px; color: var(--teal); cursor: help;
+    }
+    .adj-legend-pill {
+      display: inline-flex; align-items: center;
+      height: 22px; padding: 0 10px;
+      border-radius: 11px;
+      font-size: 12px; font-weight: 600;
+      color: var(--gray-700);
+    }
+    .adj-legend-pill.lvl-low    { background: transparent; color: var(--blue-dark); border: 1px solid var(--gray-300); }
+    .adj-legend-pill.lvl-mid    { background: var(--hm-yellow); color: #6e5b1b; }
+    .adj-legend-pill.lvl-orange { background: var(--hm-orange); color: #fff; }
+    .adj-legend-pill.lvl-red    { background: var(--hm-red); color: #fff; }
+
+    /* Review-state legend pills: same shape as severity pills,
+       but content is just the indicator (dot or check) — meaning
+       comes from a hover tooltip. */
+    .adj-legend-pill.review-pill {
+      background: transparent;
+      border: 1px solid var(--gray-300);
+      padding: 0 14px;
+      cursor: help;
+    }
+    .adj-legend-pill.review-pill .marker-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      border: 1.5px solid #fff;
+    }
+    .adj-legend-pill.review-pill .marker-dot.active    { background: var(--teal); box-shadow: 0 0 0 1px var(--teal); }
+    .adj-legend-pill.review-pill .marker-dot.completed { background: var(--gray-400); box-shadow: 0 0 0 1px var(--gray-400); }
+    .adj-legend-pill.review-pill .marker-dot.completed svg { width: 7px; height: 7px; }
+
+    /* ═══════════════════════════════════════════════════════
+       HEAT MAP
+    ═══════════════════════════════════════════════════════ */
+    .heatmap-card {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .heatmap-scroll {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    table.heatmap {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 1200px;
+      font-size: .8125rem;
+    }
+    table.heatmap th,
+    table.heatmap td {
+      padding: 14px 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--gray-300);
+      vertical-align: middle;
+      font-weight: 500;
+      color: var(--gray-700);
+    }
+    table.heatmap th {
+      font-size: .75rem; font-weight: 600;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      letter-spacing: .02em;
+      white-space: normal; line-height: 1.25;
+      vertical-align: bottom;
+      position: sticky; top: 0; z-index: 2;
+      cursor: pointer;
+      user-select: none;
+      transition: background .12s;
+    }
+    table.heatmap th:hover {
+      background: var(--gray-100);
+    }
+    table.heatmap th .th-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: center;
+    }
+    table.heatmap th:first-child .th-label { justify-content: flex-start; }
+    table.heatmap th .sort-icon {
+      font-size: 14px;
+      color: var(--gray-400);
+      transition: color .12s;
+    }
+    table.heatmap th.sorted .sort-icon {
+      color: var(--teal-900);
+    }
+    table.heatmap th:first-child,
+    table.heatmap td:first-child {
+      text-align: left;
+      padding-left: 24px;
+      position: sticky; left: 0; z-index: 3;
+      background: #fff;
+      min-width: 240px;
+      max-width: 240px;
+    }
+    /* Sticky header corner cell needs the gray header bg, not white */
+    table.heatmap th:first-child {
+      z-index: 4;
+      background: var(--gray-50);
+    }
+    table.heatmap th:first-child:hover { background: var(--gray-100); }
+
+    table.heatmap tr.totals-row td {
+      font-weight: 700; color: var(--gray-700);
+      background: #fff;
+      border-bottom: 2px solid var(--gray-300);
+    }
+    table.heatmap tr.totals-row td:first-child {
+      background: #fff;
+      color: var(--gray-700);
+    }
+
+    table.heatmap tbody tr.pharmacy-row { transition: background .12s; }
+    table.heatmap tbody tr.pharmacy-row:hover td { background: var(--gray-50); }
+
+    .pharmacy-name {
+      font-weight: 500;
+      color: var(--gray-700);
+      font-size: .8125rem;
+    }
+
+    /* Heat-map cells */
+    .hm-cell {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 28px; height: 24px; padding: 0 8px;
+      border-radius: 4px;
+      font-weight: 700; font-size: .8125rem;
+      cursor: pointer; transition: transform .12s, box-shadow .12s;
+      position: relative;
+      font-family: inherit;
+    }
+    button.hm-cell {
+      border: none;
+    }
+    .hm-cell:hover {
+      transform: scale(1.06);
+      box-shadow: 0 2px 6px rgba(0,0,0,.18);
+    }
+    .hm-cell.zero { color: var(--gray-400); cursor: default; }
+    .hm-cell.zero:hover { transform: none; box-shadow: none; }
+    /* 0–2 = normal range: no background, no border — plain number */
+    .hm-cell.lvl-low    { background: transparent; color: var(--blue-dark); font-weight: 600; }
+    .hm-cell.lvl-mid    { background: var(--hm-yellow); color: #6e5b1b; }
+    .hm-cell.lvl-orange { background: var(--hm-orange); color: #fff; }
+    .hm-cell.lvl-red    { background: var(--hm-red); color: #fff; }
+
+    /* Review-state indicator anchored to top-right of cell.
+       Active review  → solid teal dot
+       Completed all  → gray circle with white check */
+    .hm-cell .review-marker {
+      position: absolute;
+      right: -4px; top: -4px;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      pointer-events: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #fff;
+      box-sizing: border-box;
+    }
+    .hm-cell .review-marker.active {
+      background: var(--teal);
+    }
+    .hm-cell .review-marker.completed {
+      background: var(--gray-400);
+    }
+    .hm-cell .review-marker.completed svg {
+      width: 7px; height: 7px; display: block;
+      stroke: #fff; stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Empty-state placeholder for cells with 0 */
+    .hm-zero { color: var(--gray-400); font-weight: 500; }
+
+    /* ═══════════════════════════════════════════════════════
+       OVERLAY PANEL (right slide-in)
+    ═══════════════════════════════════════════════════════ */
+    .panel-scrim {
+      position: fixed; inset: 0;
+      background: rgba(10, 56, 97, 0.30);
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 998;
+    }
+    .panel-scrim.open { opacity: 1; pointer-events: auto; }
+
+    .detail-panel {
+      position: fixed; top: 0; right: 0;
+      height: 100vh; width: 1080px; max-width: 90vw;
+      background: #fff;
+      box-shadow: -8px 0 24px rgba(0,0,0,.12);
+      transform: translateX(100%);
+      transition: transform .24s cubic-bezier(.4,0,.2,1);
+      z-index: 999;
+      display: flex; flex-direction: column;
+    }
+    .detail-panel.open { transform: translateX(0); }
+
+    .panel-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; padding: 20px 24px 12px;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .panel-eyebrow {
+      font-size: .75rem; font-weight: 700;
+      color: var(--teal-900);
+      text-transform: uppercase; letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+    .panel-title {
+      font-size: 1.375rem; font-weight: 700;
+      color: var(--blue-darker); line-height: 1.2;
+    }
+    .panel-subtitle {
+      font-size: .875rem; color: var(--gray-600);
+      font-weight: 400; margin-top: 2px;
+    }
+    .panel-close {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
+      background: transparent; border: none;
+      border-radius: 50%; cursor: pointer;
+      color: var(--gray-600); transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .panel-close:hover { background: rgba(0,150,184,.08); color: var(--teal-900); }
+    .panel-close .material-icons { font-size: 22px; }
+
+    /* Tabs in panel */
+    .panel-tabs {
+      display: flex; align-items: center;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .panel-tab {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .9375rem;
+      font-weight: 600; color: var(--gray-600);
+      padding: 12px 4px; margin-right: 24px;
+      position: relative;
+      transition: color .15s;
+    }
+    .panel-tab:hover { color: var(--blue-dark); }
+    .panel-tab.active { color: var(--teal); }
+    .panel-tab.active::after {
+      content: ''; position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px; background: var(--teal);
+    }
+    .panel-tab .tab-count {
+      display: inline-flex; align-items: center;
+      margin-left: 4px; font-weight: 500;
+    }
+
+    .panel-body {
+      flex: 1; overflow-y: auto;
+      padding: 20px 24px 24px;
+      background: var(--gray-50);
+    }
+
+    /* Section card style inside panel */
+    .panel-section {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+    .panel-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .panel-section-title {
+      font-size: 1rem; font-weight: 700; color: var(--blue-darker);
+    }
+    .panel-section-actions {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .icon-btn {
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; border: 1px solid var(--gray-300);
+      border-radius: 4px; cursor: pointer; color: var(--gray-700);
+      transition: background .15s, border-color .15s;
+    }
+    .icon-btn:hover { background: var(--gray-100); border-color: var(--gray-400); }
+    .icon-btn .material-icons { font-size: 18px; }
+
+    /* Time series chart (SVG) */
+    .ts-wrap { padding: 8px 0 0; position: relative; }
+
+    /* Floating tooltip on bar hover. Mirrors the existing IRIS chart tip:
+       month label, then one row per direction with a colored dot + value. */
+    .ts-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.10);
+      padding: 10px 12px;
+      font-size: 12px; line-height: 1.45;
+      color: var(--gray-700);
+      min-width: 160px;
+      z-index: 50;
+      opacity: 0;
+      transform: translate(-50%, -100%) translateY(-12px);
+      transition: opacity .12s;
+    }
+    .ts-tooltip.visible { opacity: 1; }
+    .ts-tooltip-title {
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+    .ts-tooltip-type {
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ts-tooltip-type .ts-tooltip-swatch {
+      width: 10px; height: 10px; border-radius: 2px; display: inline-block;
+    }
+    .ts-tooltip-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px;
+      padding: 1px 0;
+    }
+    .ts-tooltip-row .label {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--gray-700);
+    }
+    .ts-tooltip-row .label .dot {
+      width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+    }
+    .ts-tooltip-row .value {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .ts-tooltip-row.pos .value { color: #0E7221; }   /* Success 700 */
+    .ts-tooltip-row.neg .value { color: #B53228; }   /* Danger 700  */
+    .ts-legend {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin: 4px 0 12px;
+      font-size: .75rem; font-weight: 500;
+      color: var(--gray-700);
+    }
+    .ts-legend-item {
+      display: inline-flex; align-items: center; gap: 6px;
+      cursor: pointer; user-select: none;
+      padding: 2px 6px; border-radius: 4px;
+      transition: background .12s;
+    }
+    .ts-legend-item:hover { background: var(--gray-100); }
+    .ts-legend-item.disabled { opacity: .35; }
+    .ts-swatch {
+      width: 12px; height: 12px; border-radius: 2px; display: inline-block;
+    }
+    .ts-chart { width: 100%; height: 260px; display: block; }
+    /* Chart structural colors — Bluesight Palette grays:
+       Gray 100 (#E5E5E5) for grid + baseline
+       Gray 500 (#757575) for axis text */
+    .ts-chart .grid { stroke: #E5E5E5; stroke-width: 1; stroke-dasharray: 2 3; }
+    .ts-chart .axis-text { font-size: 11px; fill: #757575; font-family: var(--font); }
+    .ts-chart .axis-line { stroke: #E5E5E5; stroke-width: 1; }
+
+    /* Type breakdown stats row */
+    .type-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    /* Each stat is a clickable filter for the med table below */
+    button.type-stat {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .12s, border-color .12s, opacity .12s, box-shadow .12s;
+    }
+    button.type-stat:hover {
+      background: #fff;
+      border-color: var(--teal);
+    }
+    button.type-stat.active {
+      background: var(--teal-50);
+      border-color: var(--teal);
+      box-shadow: inset 0 0 0 1px var(--teal);
+    }
+    button.type-stat.active .type-stat-value { color: var(--teal-900); }
+    /* When any filter is active, the unselected ones fade back */
+    button.type-stat.dimmed {
+      opacity: 0.45;
+    }
+    button.type-stat.dimmed:hover { opacity: 1; }
+    .type-stat {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      padding: 10px 12px;
+    }
+    .type-stat-name {
+      display: flex; align-items: center; gap: 6px;
+      font-size: .75rem; font-weight: 600;
+      color: var(--gray-700);
+      text-transform: uppercase; letter-spacing: .04em;
+      margin-bottom: 4px;
+    }
+    .type-stat-name .swatch { width: 10px; height: 10px; border-radius: 2px; }
+    .type-stat-value {
+      font-size: 1.5rem; font-weight: 700;
+      color: var(--blue-darker); line-height: 1;
+    }
+    .type-stat-meta {
+      font-size: .75rem; font-weight: 500;
+      color: var(--gray-600); margin-top: 4px;
+    }
+
+    /* Filter status row above the type-stats grid */
+    .type-stats-status {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: .75rem; color: var(--gray-600); font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .type-stats-status .clear-filter {
+      background: none; border: none; padding: 0;
+      color: var(--teal); font-weight: 600; font-size: .75rem;
+      letter-spacing: .04em; text-transform: uppercase;
+      cursor: pointer; font-family: inherit;
+    }
+    .type-stats-status .clear-filter:hover { text-decoration: underline; }
+
+    /* Adjustments by Medication table */
+    table.med-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .8125rem;
+    }
+    table.med-table th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: .75rem; font-weight: 600;
+      color: var(--gray-700);
+      text-transform: uppercase; letter-spacing: .03em;
+      border-bottom: 1px solid var(--gray-300);
+      cursor: pointer; user-select: none;
+      white-space: nowrap;
+    }
+    table.med-table th .sort-icon {
+      font-size: 14px; vertical-align: middle;
+      opacity: .5; margin-left: 2px;
+    }
+    table.med-table th.active-sort { color: var(--teal); }
+    table.med-table th.active-sort .sort-icon { opacity: 1; }
+    table.med-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--gray-300);
+      vertical-align: middle;
+      color: var(--gray-700);
+    }
+    table.med-table tbody tr {
+      cursor: pointer; transition: background .12s;
+    }
+    table.med-table tbody tr:hover { background: var(--teal-25); }
+    table.med-table tbody tr.expanded { background: var(--teal-50); }
+    table.med-table tbody tr.expanded:hover { background: var(--teal-50); }
+    table.med-table .num { text-align: right; }
+    table.med-table .med-name {
+      font-weight: 600; color: var(--blue-darker);
+    }
+    table.med-table .chev {
+      font-size: 18px; color: var(--gray-400); transition: transform .2s;
+    }
+    table.med-table tr.expanded .chev { transform: rotate(180deg); color: var(--teal); }
+
+    /* Type chip inline */
+    .type-chip {
+      display: inline-flex; align-items: center;
+      height: 20px; padding: 0 8px;
+      border-radius: 10px;
+      font-size: .6875rem; font-weight: 600;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+    /* Plain (un-chipped) Type label — used for non-manual-adjustment
+       events like Dispense. Gives them visible presence without the
+       categorical-color emphasis of an adjustment chip. */
+    .type-plain {
+      display: inline-block;
+      font-size: .8125rem; font-weight: 500;
+      color: var(--gray-700);
+    }
+
+    /* Transactions sub-table */
+    tr.expansion-row > td { padding: 0 !important; background: var(--gray-50) !important; }
+    .tx-wrap {
+      padding: 8px 12px 16px 32px;
+    }
+    .tx-wrap-header {
+      font-size: .75rem; font-weight: 700;
+      color: var(--gray-700); text-transform: uppercase;
+      letter-spacing: .04em;
+      padding: 10px 0 8px; display: flex; align-items: center; gap: 8px;
+    }
+    table.tx-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .8125rem;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    table.tx-table th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: .6875rem; font-weight: 600;
+      color: var(--gray-700);
+      text-transform: uppercase; letter-spacing: .03em;
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--gray-300);
+      white-space: nowrap;
+    }
+    table.tx-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--gray-300);
+      vertical-align: top;
+      color: var(--gray-700);
+    }
+    table.tx-table tbody tr:last-child td { border-bottom: none; }
+    table.tx-table tbody tr:hover { background: var(--gray-50); }
+    table.tx-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    table.tx-table .neg { color: var(--red-dark); font-weight: 600; }
+    table.tx-table .pos { color: var(--green); font-weight: 600; }
+    table.tx-table .comment-cell {
+      font-style: italic; color: var(--gray-700); font-weight: 400;
+      max-width: 320px;
+    }
+    table.tx-table .comment-cell.empty {
+      color: var(--gray-400); font-style: italic; font-weight: 400;
+    }
+    table.tx-table .user-cell {
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* Footer */
+    footer {
+      color: var(--gray-600);
+      display: block;
+      font-size: 11px;
+      padding: 7px 0;
+      text-align: center;
+      width: 100%;
+      border-top: 1px solid var(--gray-300);
+    }
+    footer a { color: var(--gray-600); }
+
+    /* a11y */
+    :focus-visible { outline: var(--teal) auto 1px; }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .heatmap-card { animation: fadeUp .3s .05s ease both; }
+
+    /* Tooltip on legend info icon */
+    .tip-target { position: relative; }
+    .tip-target .tip {
+      position: absolute; left: 50%; top: calc(100% + 8px);
+      transform: translateX(-50%);
+      background: var(--gray-700); color: #fff;
+      padding: 8px 10px; border-radius: 4px;
+      font-size: 11px; font-weight: 500;
+      white-space: nowrap; line-height: 1.4;
+      opacity: 0; pointer-events: none;
+      transition: opacity .15s;
+      z-index: 200;
+    }
+    .tip-target:hover .tip { opacity: 1; }
+
+    /* Right-anchored, wrap-friendly tooltip variant —
+       used by review-pill triggers near the right edge of the page. */
+    .tip-target.tip-right .tip {
+      left: auto; right: 0;
+      transform: none;
+      white-space: normal;
+      width: max-content;
+      max-width: 240px;
+      text-align: left;
+    }
+
+    /* "What's new" callout */
+    .new-callout {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--teal-50); color: var(--teal-900);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .04em; text-transform: uppercase;
+      padding: 2px 6px; border-radius: 3px;
+      margin-left: 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .pillter-row { gap: 6px; }
+    }
+  </style>
+</head>
+<body class="mat-typography">
+
+<app-component class="flex-col-100">
+<div class="app-container flex-col-100">
+
+  <!-- ── navigation ──────────────────────────────────────── -->
+  <navigation>
+    <header>
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+
+        <!-- Logo -->
+        <a class="nav-link" href="/dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
+            <g><g><g id="ControlCheck_Logo_Color">
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+            </g></g></g>
+          </svg>
+        </a>
+
+        <!-- nav-menu -->
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Audit</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active">
+              <span class="mdc-button__label">Analyze</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Cases</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
+                  Report
+                </span>
+              </span>
+            </a>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Upload</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
+                  Manage&nbsp;<span class="mat-badge-content mat-badge-active">!</span>
+                </span>
+              </span>
+            </a>
+          </div>
+        </nav-menu>
+
+        <!-- user-menu -->
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Jane Pharmacist</div>
+                  <div class="header-customer-hospitalName">Steel City Retail Network</div>
+                </div>
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">JP</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ── PAGE CONTENT ────────────────────────────────────── -->
+  <div id="app-view">
+    <div class="page-content">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <button class="bc-parent" type="button">Dashboard</button>
+        <span class="bc-sep">›</span>
+        <span class="bc-current">Manual Adjustments</span>
+      </nav>
+
+      <!-- Page header (title + filter chips) -->
+      <div class="page-header">
+        <div class="page-title-group">
+          <button class="page-back-btn" type="button" aria-label="Back">
+            <span class="material-icons">arrow_back</span>
+          </button>
+          <h1 class="page-title">Manual Adjustments</h1>
+        </div>
+
+        <div class="pillter-row" id="pillter-row">
+          <button class="clear-all-btn" type="button" onclick="clearAllFilters()">Clear All</button>
+
+          <!-- Date Range -->
+          <div class="menu-wrapper" id="mw-date">
+            <button class="chip selected" type="button" onclick="toggleMenu('mw-date', event)">
+              <span class="chip-label-prefix">Date Range:</span>
+              <span id="date-label">Last 30 days</span>
+            </button>
+            <div class="menu date-menu">
+              <div class="date-presets">
+                <label class="date-preset-item">
+                  <input type="radio" name="date" onchange="setDate('Last 7 days')"> Last 7 days
+                </label>
+                <label class="date-preset-item selected-item">
+                  <input type="radio" name="date" checked onchange="setDate('Last 30 days')"> Last 30 days
+                </label>
+                <label class="date-preset-item">
+                  <input type="radio" name="date" onchange="setDate('Last 90 days')"> Last 90 days
+                </label>
+                <label class="date-preset-item">
+                  <input type="radio" name="date" onchange="setDate('Last 6 months')"> Last 6 months
+                </label>
+                <label class="date-preset-item">
+                  <input type="radio" name="date" onchange="setDate('Last 12 months')"> Last 12 months
+                </label>
+                <label class="date-preset-item">
+                  <input type="radio" name="date" onchange="setDate('Custom range')"> Custom range…
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Retail Pharmacy -->
+          <div class="menu-wrapper" id="mw-pharm">
+            <button class="chip" type="button" onclick="toggleMenu('mw-pharm', event)">
+              Retail Pharmacy
+            </button>
+            <div class="menu">
+              <div class="menu-search">
+                <input type="text" placeholder="Search pharmacies…">
+              </div>
+              <div class="menu-actions">
+                <button class="link-btn">Select all</button>
+                <button class="link-btn" disabled>Clear</button>
+              </div>
+              <div class="menu-options" id="pharm-options"></div>
+              <div class="menu-footer">
+                <button class="btn-cancel" onclick="closeAllMenus()">Cancel</button>
+                <button class="btn-apply" onclick="closeAllMenus()">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drug -->
+          <div class="menu-wrapper align-right" id="mw-drug">
+            <button class="chip selected" type="button" onclick="toggleMenu('mw-drug', event)">
+              <span class="chip-badge">10</span>Drug
+            </button>
+            <div class="menu">
+              <div class="menu-search">
+                <input type="text" placeholder="Search drugs…">
+              </div>
+              <div class="menu-actions">
+                <button class="link-btn">Select all</button>
+                <button class="link-btn">Clear</button>
+              </div>
+              <div class="menu-options" id="drug-options"></div>
+              <div class="menu-footer">
+                <button class="btn-cancel" onclick="closeAllMenus()">Cancel</button>
+                <button class="btn-apply" onclick="closeAllMenus()">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Adjustment Type — filters heat-map cell counts -->
+          <div class="menu-wrapper align-right" id="mw-type">
+            <button class="chip" type="button" id="mw-type-chip"
+                    onclick="syncTypeMenuFromFilter(); toggleMenu('mw-type', event)"
+                    title="Filter the heat-map to only count adjustments of the selected types">
+              Adjustment Type
+            </button>
+            <div class="menu">
+              <div class="menu-actions">
+                <button class="link-btn" onclick="selectAllTypes(true)">Select all</button>
+                <button class="link-btn" onclick="selectAllTypes(false)">Clear</button>
+              </div>
+              <div class="menu-options" id="type-options"></div>
+              <div class="menu-footer">
+                <button class="btn-cancel" onclick="syncTypeMenuFromFilter(); closeAllMenus()">Cancel</button>
+                <button class="btn-apply" onclick="applyTypeFilter()">Apply</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- NEW: Quantity Adjusted -->
+          <div class="menu-wrapper align-right" id="mw-qty">
+            <button class="chip" type="button" onclick="toggleMenu('mw-qty', event)" title="New filter — narrow to small repeating adjustments to spot diversion patterns">
+              Quantity Adjusted
+            </button>
+            <div class="menu" style="width: 280px;">
+              <div class="slider-section">
+                <h5>Per-event quantity</h5>
+                <p>Filter to a quantity range per adjustment. Useful for spotting small repeating amounts (e.g. 1–10 units) that can indicate diversion.</p>
+                <div class="slider-row">
+                  <label>Min</label>
+                  <input type="number" id="qty-min" value="1" min="0" step="1">
+                  <label>Max</label>
+                  <input type="number" id="qty-max" value="10" min="0" step="1">
+                </div>
+              </div>
+              <div class="range-hint">Quantities are absolute values regardless of increase or decrease.</div>
+              <div class="menu-footer">
+                <button class="btn-cancel" onclick="closeAllMenus()">Cancel</button>
+                <button class="btn-apply" onclick="closeAllMenus()">Apply</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description + Legend (flex row) -->
+      <div class="description-legend-row">
+        <p class="page-description">
+          Explore manual balance adjustments across your retail network with an interactive heat-map view.
+          Adjustments are inventory changes outside of dispenses — including count corrections, cycle counts, returns to stock, waste, expirations, and other reasons.
+        </p>
+
+        <div class="adj-legend">
+          <span class="adj-legend-label">
+            Manual Adjustments
+            <span class="tip-target">
+              <span class="material-icons" aria-hidden="true">info</span>
+              <span class="tip">Adjustment volume per pharmacy/drug pair</span>
+            </span>
+          </span>
+          <span class="adj-legend-pill lvl-low">0–2</span>
+          <span class="adj-legend-pill lvl-mid">3–5</span>
+          <span class="adj-legend-pill lvl-orange">6–7</span>
+          <span class="adj-legend-pill lvl-red">8+</span>
+          <span style="flex:1"></span>
+          <span class="adj-legend-pill review-pill tip-target tip-right" tabindex="0" aria-label="Active review: there is an active review within the selected date range">
+            <span class="marker-dot active" aria-hidden="true"></span>
+            <span class="tip">There is an active review within the selected date range</span>
+          </span>
+          <span class="adj-legend-pill review-pill tip-target tip-right" tabindex="0" aria-label="Reviews completed: all reviews within the selected date range are completed">
+            <span class="marker-dot completed" aria-hidden="true">
+              <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.2 L4.2 7.4 L8 3.2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="tip">All reviews within the selected date range are completed</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- HEAT MAP -->
+      <div class="heatmap-card">
+        <div class="heatmap-scroll">
+          <table class="heatmap" id="heatmap-table">
+            <thead>
+              <tr id="heatmap-head">
+                <th>Retail Pharmacy</th>
+                <!-- Drug columns injected via JS -->
+              </tr>
+            </thead>
+            <tbody id="heatmap-body">
+              <!-- Rows injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /.page-content -->
+
+    <footer>
+      Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
+      <a href="mailto:help@bluesight.com">help@bluesight.com</a>
+      • All Rights Reserved |
+      <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+    </footer>
+
+  </div><!-- /#app-view -->
+
+</div>
+</app-component>
+
+
+<!-- ════════════════════════════════════════════════════════
+     OVERLAY DETAIL PANEL (right slide-in)
+═════════════════════════════════════════════════════════ -->
+<div class="panel-scrim" id="panel-scrim" onclick="closePanel()"></div>
+<aside class="detail-panel" id="detail-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+  <div class="panel-header">
+    <div>
+      <div class="panel-eyebrow">Manual Adjustments</div>
+      <div class="panel-title" id="panel-title">—</div>
+      <div class="panel-subtitle" id="panel-subtitle">—</div>
+    </div>
+    <button class="panel-close" type="button" onclick="closePanel()" aria-label="Close panel">
+      <span class="material-icons">close</span>
+    </button>
+  </div>
+
+  <div class="panel-tabs">
+    <button class="panel-tab active" type="button" onclick="switchPanelTab('data', this)">Data</button>
+    <button class="panel-tab" type="button" onclick="switchPanelTab('reviews', this)">
+      Reviews <span class="tab-count" id="panel-review-count">(0 Active)</span>
+    </button>
+  </div>
+
+  <div class="panel-body" id="panel-body">
+
+    <!-- Time series chart -->
+    <div class="panel-section">
+      <div class="panel-section-header">
+        <div class="panel-section-title">Adjustments Over 6 Months by Type</div>
+        <div class="panel-section-actions">
+          <button class="icon-btn" title="Download chart">
+            <span class="material-icons">download</span>
+          </button>
+        </div>
+      </div>
+      <div class="ts-legend" id="ts-legend"></div>
+      <div class="ts-wrap">
+        <svg class="ts-chart" id="ts-chart" viewBox="0 0 980 260" preserveAspectRatio="none"></svg>
+        <div class="ts-tooltip" id="ts-tooltip" role="tooltip"></div>
+      </div>
+    </div>
+
+    <!-- Adjustments by Medication -->
+    <div class="panel-section">
+      <div class="panel-section-header">
+        <div class="panel-section-title" id="med-table-title">Adjustments by Medication</div>
+        <div class="panel-section-actions">
+          <button class="btn-apply" type="button" style="height:32px; display:inline-flex; align-items:center; gap:4px;">
+            <span class="material-icons" style="font-size:16px;">add</span>
+            Open Review
+          </button>
+        </div>
+      </div>
+
+      <!-- Type filters: click a card to filter the table by that adjustment type -->
+      <div class="type-stats-status" id="type-stats-status">
+        <span id="type-stats-status-label">Click a type to filter the table below</span>
+        <button class="clear-filter" id="clear-type-filter" style="display:none;" onclick="clearTypeFilter()">Clear filter</button>
+      </div>
+      <div class="type-stats" id="type-stats"></div>
+
+      <table class="med-table" id="med-table">
+        <thead>
+          <tr>
+            <th class="active-sort">Name <span class="material-icons sort-icon">arrow_upward</span></th>
+            <th>Strength</th>
+            <th class="num">Adjustments</th>
+            <th class="num">Total Adjusted</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="med-table-body">
+          <!-- Rows injected -->
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /panel-body -->
+</aside>
+
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════════ -->
+<!--                       SCRIPTS                            -->
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════════ -->
+
+<script>
+/* ============================================================
+   MOCK DATA
+   ============================================================ */
+
+/* Adjustment types — these are the customer-spoken values
+   ("expired", "returned to vendor", "shrinkage", "contaminated"
+   per product-team huddle, plus what we ingest today: count
+   correction, cycle count, return to stock, waste, NDC change).
+
+   Each type carries TWO Bluesight Palette swatches from the SAME
+   hue family:
+     color      — 700-tier ("Dark"): used for text-bearing chips and
+                  small filled swatches that need to read crisply.
+                  All meet AA contrast against white text.
+     colorLight — 500-tier ("Base"): used as bar fills in the chart
+                  and the chart legend, so adjacent bars from the
+                  same hue family stay distinguishable. */
+const ADJ_TYPES = [
+  { key: 'count_correction',     label: 'Count Correction',     color: '#00718A', colorLight: '#0096B8' },  // Blue 700 / Blue 500
+  { key: 'cycle_count',          label: 'Cycle Count',          color: '#0A3961', colorLight: '#044A82' },  // Navy 700 / Navy 500 (brand)
+  { key: 'return_to_stock',      label: 'Return to Stock',      color: '#0E7221', colorLight: '#16B434' },  // Success 700 / 500
+  { key: 'waste',                label: 'Waste',                color: '#AB336F', colorLight: '#EB4699' },  // Pink 700 / 500
+  { key: 'expired',              label: 'Expired',              color: '#C26E00', colorLight: '#F5A623' },  // Orange 700 / 500
+  { key: 'returned_to_vendor',   label: 'Returned to Vendor',   color: '#296475', colorLight: '#409CB7' },  // UA 700 / 500 (Bodrum)
+  { key: 'shrinkage',            label: 'Shrinkage',            color: '#B53228', colorLight: '#F24335' },  // Danger 700 / 500
+  { key: 'contaminated',         label: 'Contaminated',         color: '#4C577D', colorLight: '#6C7BB1' },  // UD 700 / 500 (Charleston)
+  { key: 'ndc_change',           label: 'NDC Change',           color: '#357F96', colorLight: '#52C7EA' },  // UE 700 / 500 (Malibu)
+  { key: 'other',                label: 'Other',                color: '#555555', colorLight: '#757575' },  // Gray 700 / 500
+];
+const TYPE_BY_KEY = Object.fromEntries(ADJ_TYPES.map(t => [t.key, t]));
+
+/* Pharmacies (fictional) */
+const PHARMACIES = [
+  'Steel City Pharmacy',
+  'Riverside Outpatient',
+  'Lakeview Pharmacy',
+  'Brookline Specialty Pharmacy',
+  'Highland Park Pharmacy',
+  'Anacostia Pharmacy',
+  'Capitol Hill Pharmacy',
+  'Foggy Bottom Pharmacy',
+];
+
+/* Top 10 drugs (matches the customer's "Drug — 10" pillter) */
+const DRUGS = [
+  { name: 'Buprenorphine/naloxone',          schedule: 'C-III' },
+  { name: 'Alprazolam',                       schedule: 'C-IV' },
+  { name: 'Acetaminophen-Hydrocodone',        schedule: 'C-II' },
+  { name: 'Lorazepam',                        schedule: 'C-IV' },
+  { name: 'Phentermine',                      schedule: 'C-IV' },
+  { name: 'Clonazepam',                       schedule: 'C-IV' },
+  { name: 'Oxycodone',                        schedule: 'C-II' },
+  { name: 'Amphetamine/dextroamphetamine',    schedule: 'C-II' },
+  { name: 'Diazepam',                         schedule: 'C-IV' },
+  { name: 'Methylphenidate',                  schedule: 'C-II' },
+];
+
+/* Heat-map cell totals — preserved from the existing screenshot
+   for continuity. Each cell may carry a review state:
+     r: 'active'    → an open/in-progress review on this drug+pharmacy
+     r: 'completed' → all reviews in the date range are completed
+     (omitted)     → no reviews opened for this date range */
+const HEATMAP = [
+  /* row order matches PHARMACIES */
+  /* values per drug column (0..9 like DRUGS) */
+  /* shape: { v: number, r?: 'active' | 'completed' } */
+  [ {v:9,r:'active'},    {v:3},                 {v:0},                 {v:0},  {v:0},  {v:1},                 {v:1},                 {v:3},                 {v:1},  {v:1}  ],
+  [ {v:4},               {v:9,r:'completed'},   {v:2},                 {v:0},  {v:0},  {v:4},                 {v:3},                 {v:0},                 {v:0},  {v:5}  ],
+  [ {v:1},               {v:1},                 {v:9},                 {v:0},  {v:0},  {v:1},                 {v:8,r:'active'},      {v:2},                 {v:0},  {v:2}  ],
+  [ {v:3},               {v:2},                 {v:5,r:'completed'},   {v:8,r:'active'},  {v:0},  {v:3},     {v:6,r:'completed'},   {v:1},                 {v:2},  {v:2}  ],
+  [ {v:0},               {v:2},                 {v:4},                 {v:2},  {v:8,r:'active'},  {v:2},     {v:4},                 {v:7,r:'completed'},   {v:0},  {v:0}  ],
+  [ {v:3},               {v:4},                 {v:4},                 {v:1},  {v:0},  {v:8,r:'completed'},  {v:4},                 {v:0},                 {v:1},  {v:2}  ],
+  [ {v:2},               {v:4},                 {v:4},                 {v:2},  {v:0},  {v:1},                 {v:4},                 {v:7,r:'active'},      {v:5},  {v:3}  ],
+  [ {v:0},               {v:0},                 {v:0},                 {v:0},  {v:0},  {v:0},                 {v:0},                 {v:0},                 {v:0},  {v:0}  ],
+];
+
+/* Heat-map adjustment-type filter state.
+   Empty set = no filter (cells show full totals). Otherwise cells show
+   the sum across only the selected types. */
+const HEATMAP_FILTER = { activeTypes: new Set() };
+
+/* Per-cell type breakdown.
+   Each cell carries a hand-authored `v` total. To make the type filter
+   work, we synthesize a per-type distribution that sums to `v`,
+   deterministically seeded by (i, j) so the same breakdown comes back
+   on every re-render. Weights mirror pickWeightedType() so the broad
+   shape ("count corrections and cycle counts dominate, contaminated /
+   ndc-change are rare") matches the rest of the prototype. */
+const _cellBreakdownCache = new Map();
+function getCellBreakdown(i, j) {
+  const key = i * 100 + j;
+  if (_cellBreakdownCache.has(key)) return _cellBreakdownCache.get(key);
+  const total = HEATMAP[i][j].v || 0;
+  const breakdown = {};
+  ADJ_TYPES.forEach(t => { breakdown[t.key] = 0; });
+  if (total > 0) {
+    let seed = (i * 31 + j * 7 + 1) >>> 0;
+    const rand = () => {
+      // Mulberry32
+      seed = (seed + 0x6D2B79F5) >>> 0;
+      let t = seed;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+    const pickType = () => {
+      const r = rand();
+      if (r < 0.30) return 'count_correction';
+      if (r < 0.50) return 'cycle_count';
+      if (r < 0.62) return 'return_to_stock';
+      if (r < 0.72) return 'expired';
+      if (r < 0.80) return 'waste';
+      if (r < 0.86) return 'returned_to_vendor';
+      if (r < 0.92) return 'shrinkage';
+      if (r < 0.96) return 'contaminated';
+      if (r < 0.99) return 'ndc_change';
+      return 'other';
+    };
+    for (let k = 0; k < total; k++) breakdown[pickType()] += 1;
+  }
+  _cellBreakdownCache.set(key, breakdown);
+  return breakdown;
+}
+
+/* Cell value visible in the heat-map after the type filter is applied. */
+function getFilteredCellValue(i, j) {
+  const v = HEATMAP[i][j].v || 0;
+  if (HEATMAP_FILTER.activeTypes.size === 0) return v;
+  if (v === 0) return 0;
+  const breakdown = getCellBreakdown(i, j);
+  let sum = 0;
+  HEATMAP_FILTER.activeTypes.forEach(k => { sum += breakdown[k] || 0; });
+  return sum;
+}
+
+/* Column totals — recomputed each render so they reflect the filter. */
+function getColTotals() {
+  const t = new Array(DRUGS.length).fill(0);
+  for (let i = 0; i < HEATMAP.length; i++) {
+    for (let j = 0; j < DRUGS.length; j++) {
+      t[j] += getFilteredCellValue(i, j);
+    }
+  }
+  return t;
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function severityClass(n) {
+  if (n <= 0) return 'zero';
+  if (n <= 2) return 'lvl-low';
+  if (n <= 5) return 'lvl-mid';
+  if (n <= 7) return 'lvl-orange';
+  return 'lvl-red';
+}
+
+/* ─── Sort state ───────────────────────────────────────────
+   key: null (original order) | 'pharmacy' | drug-column index (number)
+   dir: 'asc' | 'desc'
+   Click a header to sort. Click again to flip direction.
+   Click a third time to clear (return to original order). */
+const SORT = { key: null, dir: 'desc' };
+
+function setSort(key) {
+  if (SORT.key === key) {
+    if (SORT.dir === 'desc') {
+      SORT.dir = 'asc';
+    } else {
+      // third click — clear
+      SORT.key = null;
+      SORT.dir = 'desc';
+    }
+  } else {
+    SORT.key = key;
+    SORT.dir = (key === 'pharmacy') ? 'asc' : 'desc';
+  }
+  renderHeatmap();
+}
+
+function getSortedIndices() {
+  const idx = PHARMACIES.map((_, i) => i);
+  if (SORT.key === null) return idx;
+  if (SORT.key === 'pharmacy') {
+    idx.sort((a, b) => PHARMACIES[a].localeCompare(PHARMACIES[b]));
+  } else {
+    const col = Number(SORT.key);
+    idx.sort((a, b) => getFilteredCellValue(a, col) - getFilteredCellValue(b, col));
+  }
+  if (SORT.dir === 'desc') idx.reverse();
+  return idx;
+}
+
+function sortIcon(key) {
+  if (SORT.key === key) {
+    return SORT.dir === 'asc'
+      ? '<span class="material-icons sort-icon">arrow_upward</span>'
+      : '<span class="material-icons sort-icon">arrow_downward</span>';
+  }
+  return '<span class="material-icons sort-icon">unfold_more</span>';
+}
+
+/* ============================================================
+   RENDER HEAT MAP
+   ============================================================ */
+
+function renderHeatmap() {
+  const head = document.getElementById('heatmap-head');
+  const body = document.getElementById('heatmap-body');
+
+  // Header — pharmacy column + drug columns. Each th is a sort trigger.
+  const isSorted = (k) => SORT.key === k ? ' sorted' : '';
+  head.innerHTML =
+    `<th class="sortable${isSorted('pharmacy')}" onclick="setSort('pharmacy')" aria-sort="${SORT.key === 'pharmacy' ? (SORT.dir === 'asc' ? 'ascending' : 'descending') : 'none'}">
+       <span class="th-label">Retail Pharmacy ${sortIcon('pharmacy')}</span>
+     </th>` +
+    DRUGS.map((d, j) => `<th class="sortable${isSorted(j)}" onclick="setSort(${j})" title="${d.schedule}" aria-sort="${SORT.key === j ? (SORT.dir === 'asc' ? 'ascending' : 'descending') : 'none'}">
+       <span class="th-label">${d.name} ${sortIcon(j)}</span>
+     </th>`).join('');
+
+  // Totals row (always at top, not sorted) — derived from active filter
+  const colTotals = getColTotals();
+  let html = '<tr class="totals-row"><td>Totals</td>' +
+    colTotals.map(t => `<td>${t}</td>`).join('') + '</tr>';
+
+  // Pharmacy rows — render in sorted index order
+  const order = getSortedIndices();
+  order.forEach(i => {
+    const row = HEATMAP[i];
+    html += `<tr class="pharmacy-row"><td><span class="pharmacy-name">${PHARMACIES[i]}</span></td>`;
+    row.forEach((cell, j) => {
+      const v = getFilteredCellValue(i, j);
+      const sev = severityClass(v);
+      if (v === 0) {
+        html += `<td><span class="hm-zero">0</span></td>`;
+      } else {
+        let marker = '';
+        let extraLabel = '';
+        if (cell.r === 'active') {
+          marker = `<span class="review-marker active" aria-hidden="true"></span>`;
+          extraLabel = ', active review';
+        } else if (cell.r === 'completed') {
+          marker = `<span class="review-marker completed" aria-hidden="true">
+            <svg viewBox="0 0 10 10"><path d="M2 5.2 L4.2 7.4 L8 3.2"/></svg>
+          </span>`;
+          extraLabel = ', reviews completed';
+        }
+        html += `<td>
+          <button class="hm-cell ${sev}" type="button"
+            onclick="openPanel(${i},${j})"
+            aria-label="${PHARMACIES[i]} — ${DRUGS[j].name}: ${v} adjustments${extraLabel}"
+          >${v}${marker}</button>
+        </td>`;
+      }
+    });
+    html += '</tr>';
+  });
+
+  body.innerHTML = html;
+}
+
+
+/* ============================================================
+   PILLTER MENUS
+   ============================================================ */
+
+function toggleMenu(id, event) {
+  event && event.stopPropagation();
+  document.querySelectorAll('.menu-wrapper.open').forEach(w => {
+    if (w.id !== id) w.classList.remove('open');
+  });
+  document.querySelectorAll('.menu-wrapper .chip.active').forEach(c => {
+    if (c.closest('.menu-wrapper').id !== id) c.classList.remove('active');
+  });
+  const w = document.getElementById(id);
+  if (!w) return;
+  const open = w.classList.toggle('open');
+  const chip = w.querySelector('.chip');
+  if (chip) chip.classList.toggle('active', open);
+}
+
+function closeAllMenus() {
+  document.querySelectorAll('.menu-wrapper.open').forEach(w => w.classList.remove('open'));
+  document.querySelectorAll('.menu-wrapper .chip.active').forEach(c => c.classList.remove('active'));
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.menu-wrapper')) closeAllMenus();
+});
+
+/* Date preset selection */
+function setDate(label) {
+  document.getElementById('date-label').textContent = label;
+  document.querySelectorAll('.date-preset-item').forEach(el => el.classList.remove('selected-item'));
+  event && event.target.closest('.date-preset-item') && event.target.closest('.date-preset-item').classList.add('selected-item');
+  closeAllMenus();
+}
+
+/* Pharmacy options (multi-select) */
+function renderPharmacyOptions() {
+  document.getElementById('pharm-options').innerHTML = PHARMACIES.map((p, i) => `
+    <label class="menu-option">
+      <input type="checkbox" data-pharm="${i}"> ${p}
+    </label>
+  `).join('');
+}
+
+/* Drug options (multi-select, all selected by default == "10") */
+function renderDrugOptions() {
+  document.getElementById('drug-options').innerHTML = DRUGS.map((d, i) => `
+    <label class="menu-option">
+      <input type="checkbox" data-drug="${i}" checked> ${d.name}
+    </label>
+  `).join('');
+}
+
+/* Adjustment Type options */
+function renderTypeOptions() {
+  document.getElementById('type-options').innerHTML = ADJ_TYPES.map(t => `
+    <label class="menu-option">
+      <input type="checkbox" data-type="${t.key}">
+      ${t.label}
+    </label>
+  `).join('');
+}
+
+function selectAllTypes(state) {
+  document.querySelectorAll('#type-options input[type="checkbox"]').forEach(cb => cb.checked = state);
+}
+
+/* Sync the menu's checkboxes to match the currently-active filter,
+   so reopening the menu shows the live state (and Cancel can revert
+   any pending edits). */
+function syncTypeMenuFromFilter() {
+  document.querySelectorAll('#type-options input[type="checkbox"]').forEach(cb => {
+    cb.checked = HEATMAP_FILTER.activeTypes.has(cb.dataset.type);
+  });
+}
+
+/* Read the menu's checked types into the filter state, re-render the
+   heat-map with the new filter, refresh the chip badge, and close. */
+function applyTypeFilter() {
+  HEATMAP_FILTER.activeTypes.clear();
+  document.querySelectorAll('#type-options input[type="checkbox"]:checked').forEach(cb => {
+    HEATMAP_FILTER.activeTypes.add(cb.dataset.type);
+  });
+  updateTypeChipLabel();
+  renderHeatmap();
+  closeAllMenus();
+}
+
+/* Reflect filter state on the chip:
+   no filter   → "Adjustment Type"
+   one type    → "Adjustment Type · <Label>" (with a small badge dot)
+   N > 1 types → "Adjustment Type" with badge "N" */
+function updateTypeChipLabel() {
+  const chip = document.getElementById('mw-type-chip');
+  if (!chip) return;
+  const n = HEATMAP_FILTER.activeTypes.size;
+  if (n === 0) {
+    chip.classList.remove('selected');
+    chip.innerHTML = 'Adjustment Type';
+  } else if (n === 1) {
+    chip.classList.add('selected');
+    const key = [...HEATMAP_FILTER.activeTypes][0];
+    chip.innerHTML = `<span class="chip-badge">1</span>Adjustment Type · ${TYPE_BY_KEY[key].label}`;
+  } else {
+    chip.classList.add('selected');
+    chip.innerHTML = `<span class="chip-badge">${n}</span>Adjustment Type`;
+  }
+}
+
+function clearAllFilters() {
+  document.getElementById('date-label').textContent = 'Last 30 days';
+  document.querySelectorAll('.date-preset-item').forEach(el => el.classList.remove('selected-item'));
+  document.querySelector('.date-preset-item:nth-child(2)').classList.add('selected-item');
+  document.querySelectorAll('#pharm-options input').forEach(cb => cb.checked = false);
+  document.querySelectorAll('#drug-options input').forEach(cb => cb.checked = true);
+  document.querySelectorAll('#type-options input').forEach(cb => cb.checked = false);
+  document.getElementById('qty-min').value = 1;
+  document.getElementById('qty-max').value = 10;
+  // Reset the heat-map type filter as well
+  HEATMAP_FILTER.activeTypes.clear();
+  updateTypeChipLabel();
+  renderHeatmap();
+  closeAllMenus();
+}
+
+/* ============================================================
+   PANEL OPEN / CLOSE + DETAIL CONTENT
+   ============================================================ */
+
+const PANEL_STATE = { pharm: 0, drug: 0, total: 0 };
+
+function openPanel(pharmIdx, drugIdx) {
+  PANEL_STATE.pharm = pharmIdx;
+  PANEL_STATE.drug  = drugIdx;
+  PANEL_STATE.total = HEATMAP[pharmIdx][drugIdx].v || 0;
+
+  // Reset type filter for the new panel
+  PANEL_FILTER.activeTypes.clear();
+  PANEL_FILTER.rolledUp = [];
+
+  const drug   = DRUGS[drugIdx].name;
+  const pharm  = PHARMACIES[pharmIdx];
+  const reviewState = HEATMAP[pharmIdx][drugIdx].r;
+
+  document.getElementById('panel-title').textContent = drug;
+  document.getElementById('panel-subtitle').textContent = pharm;
+  document.getElementById('med-table-title').textContent = `Adjustments by Medication from Apr 04, 2026 to May 04, 2026`;
+
+  // Reviews-tab counter — reflects cell-level review state so the
+  // heat-map indicator and the panel agree.
+  const reviewCountEl = document.getElementById('panel-review-count');
+  if (reviewCountEl) {
+    if (reviewState === 'active') {
+      reviewCountEl.textContent = '(1 Active)';
+    } else if (reviewState === 'completed') {
+      reviewCountEl.textContent = '(0 Active, completed)';
+    } else {
+      reviewCountEl.textContent = '(0 Active)';
+    }
+  }
+
+  renderPanelContent(pharmIdx, drugIdx);
+
+  document.getElementById('panel-scrim').classList.add('open');
+  document.getElementById('detail-panel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePanel() {
+  document.getElementById('panel-scrim').classList.remove('open');
+  document.getElementById('detail-panel').classList.remove('open');
+  document.body.style.overflow = '';
+  // collapse any expanded med rows
+  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => r.classList.remove('expanded'));
+  document.querySelectorAll('#med-table-body tr.expansion-row').forEach(r => r.remove());
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closePanel();
+});
+
+function switchPanelTab(name, btn) {
+  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ============================================================
+   PANEL CONTENT — synthesized mock series + table
+   ============================================================ */
+
+function renderPanelContent(pharmIdx, drugIdx) {
+  // Build a 6-month synthetic series, with most weight in the
+  // most recent month (matches the "May spike" pattern in the
+  // existing screenshot for Buprenorphine/naloxone @ Seattle Grace East).
+  const total = HEATMAP[pharmIdx][drugIdx].v || 0;
+
+  // Series shape: per-month, per-type counts.
+  // Use a deterministic "scatter" based on (pharm, drug) so the
+  // panel always shows the same data when you reopen the same cell.
+  const months = ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
+
+  // PRNG (mulberry32) seeded by the cell coords
+  function mulberry32(a) {
+    return function() {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(pharmIdx * 31 + drugIdx * 7 + 1);
+
+  // Decide which types are active for this drug (between 3 and 6)
+  const numTypes = 3 + Math.floor(rand() * 4);
+  const shuffled = ADJ_TYPES.slice().sort(() => rand() - 0.5);
+  const activeTypes = shuffled.slice(0, numTypes);
+
+  // Per-month, per-type matrix.
+  // Each cell carries BOTH increase counts (`pos`) and decrease
+  // counts (`neg`) so the chart can stack adjustments by direction:
+  // positives go above the zero line, negatives go below.
+  // Some adjustment types skew toward one direction in the real
+  // world — e.g. Waste / Expired / Shrinkage are almost always
+  // decreases, Return to Stock is almost always an increase.
+  const DECREASE_HEAVY = new Set(['waste','expired','returned_to_vendor','shrinkage','contaminated']);
+  const INCREASE_HEAVY = new Set(['return_to_stock']);
+  const matrix = months.map((m, mi) => {
+    const row = {};
+    const monthWeight = mi === 5 ? 8 : (mi === 4 ? 1.4 : (mi === 3 ? 0.9 : 0.5 + rand()*0.4));
+    activeTypes.forEach(t => {
+      const total = Math.max(0, Math.round(rand() * 30 * monthWeight));
+      let posRatio;
+      if (DECREASE_HEAVY.has(t.key))      posRatio = 0.05 + rand() * 0.15;
+      else if (INCREASE_HEAVY.has(t.key)) posRatio = 0.70 + rand() * 0.25;
+      else                                posRatio = 0.30 + rand() * 0.40;  // mixed
+      const pos = Math.round(total * posRatio);
+      const neg = Math.max(0, total - pos);
+      row[t.key] = { pos, neg };
+    });
+    return row;
+  });
+
+  drawTimeSeries(matrix, months, activeTypes);
+  // Build the medication-variant byType breakdown FIRST.
+  // The Type Breakdown cards then sum across variants — that way the
+  // card counts and the table counts are guaranteed to agree.
+  renderMedTable(pharmIdx, drugIdx, rand, activeTypes);
+  // Stash so filter toggles can re-render type-stats without re-synthesizing data
+  PANEL_STATE.lastRender = { activeTypes, total };
+  renderTypeStats(activeTypes, total);
+}
+
+/* SVG stacked-bar chart.
+   For each month, a single column with:
+     - positive (increase) segments stacking up from y=0
+     - negative (decrease) segments stacking down from y=0
+   Each segment is colored by adjustment type (Bluesight Palette). */
+function drawTimeSeries(matrix, months, activeTypes) {
+  const svg = document.getElementById('ts-chart');
+  svg.innerHTML = '';
+  const W = 980, H = 260;
+  // Reserve the top 36px for the Cycle Count track when cycle_count is active
+  const CC_KEY  = 'cycle_count';
+  const NDC_KEY = 'ndc_change';
+  const ccActive = activeTypes.some(t => t.key === CC_KEY);
+  const trackH  = ccActive ? 36 : 0;     // strip height incl. label
+  const trackGap = ccActive ? 6  : 0;    // gap between strip and main chart
+  const pad = { l: 40, r: 12, t: 14 + trackH + trackGap, b: 28 };
+  const innerW = W - pad.l - pad.r;
+  const innerH = H - pad.t - pad.b;
+
+  // Two types are excluded from the main chart's bar render:
+  //   cycle_count — rendered in its own track above (count, not inventory change)
+  //   ndc_change  — paired source/destination decrement+increment per event,
+  //                 so it's net-zero at the drug level. Showing it as an
+  //                 inventory change would be misleading. Still available
+  //                 in the type-stats cards, table filter, and tx history.
+  const mainTypes = activeTypes.filter(t => t.key !== CC_KEY && t.key !== NDC_KEY);
+
+  // Per-month max bar magnitude across MAIN TYPES only
+  const monthPos = matrix.map(row => Math.max(0, ...mainTypes.map(t => row[t.key]?.pos || 0)));
+  const monthNeg = matrix.map(row => Math.max(0, ...mainTypes.map(t => row[t.key]?.neg || 0)));
+  const maxPos = Math.max(...monthPos, 0);
+  const maxNeg = Math.max(...monthNeg, 0);
+
+  // Pick a nice tick step so we end up with ~4 ticks on the larger side.
+  // Steps lock onto 1, 2, 5, 10, 20, 25, 50, 100, 200, 250 … so labels are readable.
+  function niceStep(rawStep) {
+    if (rawStep <= 0) return 1;
+    const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const norm = rawStep / mag;
+    let n;
+    if (norm <= 1)      n = 1;
+    else if (norm <= 2) n = 2;
+    else if (norm <= 5) n = 5;
+    else                n = 10;
+    return n * mag;
+  }
+  const targetTicks = 4;
+  const step  = niceStep(Math.max(maxPos, maxNeg) / targetTicks);
+  const yMax  = Math.max(step, Math.ceil(maxPos / step) * step);
+  const yMin  = Math.max(step, Math.ceil(maxNeg / step) * step);
+  const range = yMax + yMin;
+  const yScale = innerH / range;
+  const zeroY  = pad.t + yMax * yScale;
+
+  // Gridlines + y-axis labels
+  for (let v = -yMin; v <= yMax; v += step) {
+    const y = zeroY - v * yScale;
+    if (v !== 0) {
+      svg.insertAdjacentHTML('beforeend',
+        `<line class="grid" x1="${pad.l}" x2="${W - pad.r}" y1="${y}" y2="${y}"/>`);
+    }
+    svg.insertAdjacentHTML('beforeend',
+      `<text class="axis-text" x="${pad.l - 6}" y="${y + 3}" text-anchor="end">${v}</text>`);
+  }
+  // x-axis month labels — centered under each bar
+  const monthW = innerW / months.length;
+  months.forEach((m, i) => {
+    const x = pad.l + (i + 0.5) * monthW;
+    svg.insertAdjacentHTML('beforeend',
+      `<text class="axis-text" x="${x}" y="${H - pad.b + 16}" text-anchor="middle">${m}</text>`);
+  });
+
+  // ─── Cycle Count track ─────────────────────────────────────────
+  // Cycle counts are activity events, not inventory changes — they
+  // occupy a separate strip above the main chart so the y-axis stays
+  // honest about what's a "real" inventory adjustment.
+  if (ccActive) {
+    const cc = TYPE_BY_KEY[CC_KEY];
+    const cycleCountByMonth = matrix.map(row => {
+      const c = row[CC_KEY] || { pos: 0, neg: 0 };
+      return c.pos + c.neg;                 // count of count events
+    });
+    const maxCC = Math.max(...cycleCountByMonth, 0);
+    const trackTopY    = 14;                // strip starts here
+    const trackBaseY   = trackTopY + trackH; // baseline of bars
+    const trackBarMaxH = 22;                // max bar height in the strip
+
+    // Strip label sits inside the strip area, top-left, so it doesn't
+    // collide with or get clipped by the y-axis number labels.
+    svg.insertAdjacentHTML('beforeend',
+      `<text x="${pad.l + 4}" y="${trackTopY + 10}" text-anchor="start"
+             style="font-family: var(--font); font-size: 10.5px; font-weight: 700;
+                    letter-spacing: .04em; text-transform: uppercase; fill: ${cc.color};">CYCLE COUNT</text>`);
+
+    // Faint divider just below the strip to visually separate it from
+    // the main chart body
+    svg.insertAdjacentHTML('beforeend',
+      `<line x1="${pad.l}" x2="${W - pad.r}" y1="${trackBaseY + 2}" y2="${trackBaseY + 2}"
+             stroke="#E5E5E5" stroke-width="1" stroke-dasharray="0"/>`);
+
+    // One mini-bar per month, plus numeric label above it
+    const stripBarW = Math.min(36, monthW * 0.45);
+    cycleCountByMonth.forEach((count, mi) => {
+      const cx = pad.l + (mi + 0.5) * monthW;
+      const x  = cx - stripBarW / 2;
+
+      // Hover area for this month's cycle count cell — full strip column,
+      // so the tooltip works even on zero months
+      svg.insertAdjacentHTML('beforeend',
+        `<rect class="ts-cc-hover-area"
+               data-month-idx="${mi}" data-type-key="${CC_KEY}"
+               x="${pad.l + mi * monthW}" y="${trackTopY}"
+               width="${monthW}" height="${trackH}"
+               fill="transparent" style="cursor:default"/>`);
+
+      if (count <= 0 || maxCC === 0) return;
+
+      const h = (count / maxCC) * trackBarMaxH;
+      const y = trackBaseY - h;
+      svg.insertAdjacentHTML('beforeend',
+        `<rect data-type="${CC_KEY}"
+               x="${x}" y="${y}" width="${stripBarW}" height="${h}"
+               fill="${cc.colorLight}"
+               style="pointer-events:none"/>`);
+      svg.insertAdjacentHTML('beforeend',
+        `<text data-type="${CC_KEY}" class="ts-cc-label"
+               x="${cx}" y="${y - 3}" text-anchor="middle"
+               style="font-size:10px; fill: ${cc.color}; font-weight:600; pointer-events:none;">${count}</text>`);
+    });
+  }
+
+  // Zero baseline — rendered last on top of bars (stronger weight)
+  // We'll insert it after bars so it overlays them.
+
+  // Grouped bars — within each month, draw one bar per MAIN active type
+  // (cycle_count is rendered in its own track above; see further down).
+  // Each bar is colored by its type, with the increase magnitude
+  // sitting above zero and the decrease magnitude below zero.
+  const groupGap = monthW * 0.12;          // padding on each side of group
+  const groupW   = monthW - groupGap * 2;
+  const n        = Math.max(1, mainTypes.length);
+  const barGap   = n > 4 ? 1 : 2;
+  const barW     = Math.max(2, (groupW - (n - 1) * barGap) / n);
+
+  matrix.forEach((row, mi) => {
+    const groupX = pad.l + mi * monthW + groupGap;
+    mainTypes.forEach((t, ti) => {
+      const cell = row[t.key] || { pos: 0, neg: 0 };
+      const x = groupX + ti * (barW + barGap);
+
+      // Generous transparent hover target — full chart height — so the
+      // tooltip works even when a bar's pos or neg side is zero.
+      svg.insertAdjacentHTML('beforeend',
+        `<rect class="ts-hover-area"
+               data-month-idx="${mi}" data-type-key="${t.key}"
+               x="${x}" y="${pad.t}" width="${barW}" height="${innerH}"
+               fill="transparent" style="cursor:default"/>`);
+
+      // Positive (increase) portion above zero
+      if (cell.pos > 0) {
+        const h = cell.pos * yScale;
+        svg.insertAdjacentHTML('beforeend',
+          `<rect data-type="${t.key}" data-month-idx="${mi}" data-type-key="${t.key}"
+                 x="${x}" y="${zeroY - h}"
+                 width="${barW}" height="${h}" fill="${t.colorLight}"
+                 style="pointer-events:none"/>`);
+      }
+      // Negative (decrease) portion below zero
+      if (cell.neg > 0) {
+        const h = cell.neg * yScale;
+        svg.insertAdjacentHTML('beforeend',
+          `<rect data-type="${t.key}" data-month-idx="${mi}" data-type-key="${t.key}"
+                 x="${x}" y="${zeroY}"
+                 width="${barW}" height="${h}" fill="${t.colorLight}"
+                 style="pointer-events:none"/>`);
+      }
+    });
+  });
+
+  // Zero baseline last so it sits on top of the bars
+  svg.insertAdjacentHTML('beforeend',
+    `<line class="axis-line" x1="${pad.l}" x2="${W - pad.r}"
+           y1="${zeroY}" y2="${zeroY}" stroke-width="1.5"/>`);
+
+  // Legend — one item per type that appears in the chart. Cycle Count
+  // stays (rendered in its own track above), but ndc_change is excluded
+  // since it isn't visualized at all.
+  const legendTypes = activeTypes.filter(t => t.key !== NDC_KEY);
+  const legend = document.getElementById('ts-legend');
+  legend.innerHTML = legendTypes.map(t => `
+    <span class="ts-legend-item" data-type="${t.key}" onclick="toggleTypeLine('${t.key}', this)">
+      <span class="ts-swatch" style="background:${t.colorLight}"></span>${t.label}
+    </span>
+  `).join('');
+
+  // ─── Hover tooltip wiring ───────────────────────────────────
+  // Stash data needed by handlers on the SVG node itself
+  CHART_HOVER.matrix       = matrix;
+  CHART_HOVER.months       = months;
+  CHART_HOVER.activeTypes  = activeTypes;
+
+  svg.onmousemove = handleChartHover;
+  svg.onmouseleave = hideChartTooltip;
+}
+
+/* Stashed chart state read by hover handlers. Refreshed on each render. */
+const CHART_HOVER = { matrix: null, months: null, activeTypes: null };
+
+/* Map "Dec, Jan, Feb, Mar, Apr, May" — relative to the page-level date
+   range (current year is 2026 in this prototype). Used in tooltip title. */
+const MONTH_YEAR = {
+  'Dec': '2025', 'Jan': '2026', 'Feb': '2026',
+  'Mar': '2026', 'Apr': '2026', 'May': '2026',
+};
+
+function handleChartHover(ev) {
+  const target = ev.target;
+  if (!target || !target.classList) { hideChartTooltip(); return; }
+  const isCC  = target.classList.contains('ts-cc-hover-area');
+  const isBar = target.classList.contains('ts-hover-area');
+  if (!isCC && !isBar) { hideChartTooltip(); return; }
+
+  const mi    = +target.getAttribute('data-month-idx');
+  const key   = target.getAttribute('data-type-key');
+  const cell  = (CHART_HOVER.matrix?.[mi]?.[key]) || { pos: 0, neg: 0 };
+  const t     = TYPE_BY_KEY[key];
+  if (!t) return;
+
+  const totalCount = (cell.pos || 0) + (cell.neg || 0);
+  // Skip empty cells — tooltip would be useless
+  if (totalCount === 0) { hideChartTooltip(); return; }
+
+  const monthName = CHART_HOVER.months[mi];
+  const yr = MONTH_YEAR[monthName] || '';
+  const tip = document.getElementById('ts-tooltip');
+
+  if (isCC) {
+    // Cycle Count is a count of events, not a directional balance change —
+    // show "Counts performed" instead of an Increase / Decrease split.
+    tip.innerHTML = `
+      <div class="ts-tooltip-title">${monthName} ${yr}</div>
+      <div class="ts-tooltip-type">
+        <span class="ts-tooltip-swatch" style="background:${t.colorLight}"></span>
+        ${t.label}
+      </div>
+      <div class="ts-tooltip-row">
+        <span class="label"><span class="dot" style="background:${t.colorLight}"></span>Counts performed</span>
+        <span class="value" style="color: ${t.color};">${totalCount}</span>
+      </div>
+    `;
+  } else {
+    tip.innerHTML = `
+      <div class="ts-tooltip-title">${monthName} ${yr}</div>
+      <div class="ts-tooltip-type">
+        <span class="ts-tooltip-swatch" style="background:${t.colorLight}"></span>
+        ${t.label}
+      </div>
+      <div class="ts-tooltip-row pos">
+        <span class="label"><span class="dot" style="background:${t.colorLight}"></span>Increase</span>
+        <span class="value">${cell.pos}</span>
+      </div>
+      <div class="ts-tooltip-row neg">
+        <span class="label"><span class="dot" style="background:${t.colorLight}"></span>Decrease</span>
+        <span class="value">${cell.neg}</span>
+      </div>
+    `;
+  }
+  tip.classList.add('visible');
+
+  // Position relative to the .ts-wrap container
+  const wrap = tip.parentElement;
+  const wrapRect = wrap.getBoundingClientRect();
+  const x = ev.clientX - wrapRect.left;
+  const y = ev.clientY - wrapRect.top;
+  // Clamp horizontally so the centered tooltip doesn't clip
+  const tipRect = tip.getBoundingClientRect();
+  const tipW = tipRect.width || 180;
+  const minX = tipW / 2 + 6;
+  const maxX = wrapRect.width - tipW / 2 - 6;
+  const clampedX = Math.max(minX, Math.min(maxX, x));
+  tip.style.left = clampedX + 'px';
+  tip.style.top  = y + 'px';
+}
+
+function hideChartTooltip() {
+  const tip = document.getElementById('ts-tooltip');
+  if (tip) tip.classList.remove('visible');
+}
+
+function toggleTypeLine(key, el) {
+  const off = el.classList.toggle('disabled');
+  document.querySelectorAll(`#ts-chart [data-type="${key}"]`).forEach(node => {
+    node.style.display = off ? 'none' : '';
+  });
+}
+
+/* Type filter state — set of active type keys.
+   Empty set = no filter (show all). Reset on each panel open. */
+const PANEL_FILTER = { activeTypes: new Set(), rolledUp: [] };
+
+/* Per-variant byType breakdown saved on render, used by:
+   - filtered med table re-renders
+   - the transactions expansion (so tx types match displayed counts) */
+let MED_STATE = null;
+
+/* Type breakdown stat cards
+   Each card is now a CLICKABLE FILTER for the medication table below.
+   Counts are SUMMED FROM THE PER-VARIANT BREAKDOWN (MED_STATE) — the
+   same data the table reads — so the two views always agree. If the
+   table can't show any rows for a type, the card for that type won't
+   appear either. */
+function renderTypeStats(activeTypes, total) {
+  // Sum each type's count across all variants
+  const typeTotals = {};
+  activeTypes.forEach(t => { typeTotals[t.key] = 0; });
+  if (MED_STATE) {
+    MED_STATE.variantState.forEach(v => {
+      activeTypes.forEach(t => { typeTotals[t.key] += (v.byType[t.key] || 0); });
+    });
+  }
+
+  const scaled = activeTypes
+    .map(t => ({ type: t, total: typeTotals[t.key] || 0 }))
+    .filter(r => r.total > 0);
+  scaled.sort((a, b) => b.total - a.total);
+
+  // Limit to top 4 + "Other" rollup so the row stays readable
+  const top  = scaled.slice(0, 4);
+  const rest = scaled.slice(4);
+  const restSum  = rest.reduce((s, r) => s + r.total, 0);
+  const restKeys = rest.map(r => r.type.key);
+  PANEL_FILTER.rolledUp = restKeys; // remember for the rollup-button toggle
+  const grand = total || 1;
+
+  const filterActive = PANEL_FILTER.activeTypes.size > 0;
+  const isOn = (k) => PANEL_FILTER.activeTypes.has(k);
+  const cardClass = (keys) => {
+    const anyOn = keys.some(isOn);
+    if (anyOn)        return 'active';
+    if (filterActive) return 'dimmed';
+    return '';
+  };
+
+  const html = top.map(({ type, total: n }) => `
+    <button class="type-stat ${cardClass([type.key])}"
+            type="button"
+            onclick="toggleTypeFilter('${type.key}')"
+            aria-pressed="${isOn(type.key)}">
+      <div class="type-stat-name">
+        <span class="swatch" style="background:${type.color}"></span>${type.label}
+      </div>
+      <div class="type-stat-value">${n}</div>
+      <div class="type-stat-meta">${Math.round(n / grand * 100)}% of total</div>
+    </button>
+  `).join('') + (restSum > 0 ? `
+    <button class="type-stat ${cardClass(restKeys)}"
+            type="button"
+            onclick="toggleRolledUpFilter()"
+            aria-pressed="${restKeys.some(isOn)}">
+      <div class="type-stat-name">
+        <span class="swatch" style="background:var(--gray-500)"></span>Other types (${rest.length})
+      </div>
+      <div class="type-stat-value">${restSum}</div>
+      <div class="type-stat-meta">${Math.round(restSum / grand * 100)}% of total</div>
+    </button>
+  ` : '') + (top.length === 0 ? `
+    <div class="type-stat" style="grid-column: 1 / -1; text-align: center; color: var(--gray-600);">
+      No adjustments in selected date range.
+    </div>
+  ` : '');
+
+  document.getElementById('type-stats').innerHTML = html;
+
+  // Status row — show "Filtered to: …" + Clear button when filter active
+  const statusLabel = document.getElementById('type-stats-status-label');
+  const clearBtn    = document.getElementById('clear-type-filter');
+  if (filterActive) {
+    const labels = [...PANEL_FILTER.activeTypes].map(k => TYPE_BY_KEY[k].label);
+    statusLabel.innerHTML = `<strong style="color:var(--gray-700);">Filtered to:</strong> ${labels.join(', ')}`;
+    clearBtn.style.display = '';
+  } else {
+    statusLabel.textContent = 'Click a type to filter the table below';
+    clearBtn.style.display = 'none';
+  }
+}
+
+/* Toggle a single type filter — re-renders type-stats + med-table */
+function toggleTypeFilter(key) {
+  if (PANEL_FILTER.activeTypes.has(key)) {
+    PANEL_FILTER.activeTypes.delete(key);
+  } else {
+    PANEL_FILTER.activeTypes.add(key);
+  }
+  reRenderAfterFilterChange();
+}
+
+/* "Other types" rollup button toggles all rolled-up keys at once */
+function toggleRolledUpFilter() {
+  const keys = PANEL_FILTER.rolledUp;
+  const anyOn = keys.some(k => PANEL_FILTER.activeTypes.has(k));
+  if (anyOn) {
+    keys.forEach(k => PANEL_FILTER.activeTypes.delete(k));
+  } else {
+    keys.forEach(k => PANEL_FILTER.activeTypes.add(k));
+  }
+  reRenderAfterFilterChange();
+}
+
+function clearTypeFilter() {
+  PANEL_FILTER.activeTypes.clear();
+  reRenderAfterFilterChange();
+}
+
+function reRenderAfterFilterChange() {
+  // Collapse any expanded med rows so the tx tables don't go stale
+  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => r.classList.remove('expanded'));
+  document.querySelectorAll('#med-table-body tr.expansion-row').forEach(r => r.remove());
+
+  // Re-render the panel sections that depend on filter state
+  if (PANEL_STATE.lastRender) {
+    const { activeTypes, total } = PANEL_STATE.lastRender;
+    renderTypeStats(activeTypes, total);
+  }
+  renderFilteredMedTable();
+}
+
+/* ============================================================
+   MED TABLE  (Adjustments by Medication, with Comments column)
+   ============================================================ */
+
+const MED_VARIANTS = [
+  /* Buprenorphine/naloxone forms */
+  [{ name: 'buprenorphine-naloxone 4-1 MG', strength: '1 unit' },
+   { name: 'buprenorphine-naloxone 8-2 MG', strength: '1 unit' }],
+  [{ name: 'alprazolam 0.5 MG',  strength: '1 unit' },
+   { name: 'alprazolam 1 MG',    strength: '1 unit' },
+   { name: 'alprazolam 2 MG',    strength: '1 unit' }],
+  [{ name: 'acetaminophen-hydrocodone 325-5 MG',  strength: '1 unit' },
+   { name: 'acetaminophen-hydrocodone 325-7.5 MG', strength: '1 unit' },
+   { name: 'acetaminophen-hydrocodone 325-10 MG',  strength: '1 unit' }],
+  [{ name: 'lorazepam 0.5 MG', strength: '1 unit' },
+   { name: 'lorazepam 1 MG',   strength: '1 unit' },
+   { name: 'lorazepam 2 MG',   strength: '1 unit' }],
+  [{ name: 'phentermine 37.5 MG', strength: '1 unit' }],
+  [{ name: 'clonazepam 0.5 MG', strength: '1 unit' },
+   { name: 'clonazepam 1 MG',   strength: '1 unit' }],
+  [{ name: 'oxycodone 5 MG',  strength: '1 unit' },
+   { name: 'oxycodone 10 MG', strength: '1 unit' },
+   { name: 'oxycodone 15 MG', strength: '1 unit' }],
+  [{ name: 'amphetamine-dextroamphetamine 10 MG', strength: '1 unit' },
+   { name: 'amphetamine-dextroamphetamine 20 MG', strength: '1 unit' },
+   { name: 'amphetamine-dextroamphetamine 30 MG', strength: '1 unit' }],
+  [{ name: 'diazepam 5 MG',  strength: '1 unit' },
+   { name: 'diazepam 10 MG', strength: '1 unit' }],
+  [{ name: 'methylphenidate 5 MG',  strength: '1 unit' },
+   { name: 'methylphenidate 10 MG', strength: '1 unit' },
+   { name: 'methylphenidate 20 MG', strength: '1 unit' }],
+];
+
+/* Fictional users (rotated per row) */
+const USERS = [
+  'Jordan Reeves', 'Casey Whitman', 'Riley Foster', 'Morgan Avery',
+  'Taylor Bennett', 'Sage Holloway', 'Devon Marsh', 'Quinn Delgado',
+  'Avery Dunbar', 'Sloan Kavanaugh',
+];
+
+/* Realistic comment patterns sourced from the customer session */
+const COMMENT_TEMPLATES = {
+  count_correction: [
+    'Stock verified after audit',
+    'Balance off by 2 tablets — recount confirmed',
+    'Back count short — see incident #41620',
+    'Vault count reconciled to perpetual inventory',
+    '',  // sometimes missing
+    'Reconciled with second tech sign-off',
+  ],
+  cycle_count: [
+    '',
+    'Quarterly cycle count — no discrepancy',
+    'Daily cycle count, off by 1, recount matched',
+  ],
+  return_to_stock: [
+    'Patient cancelled prescription — RX #4108273',
+    'Returned, unopened, original lot intact',
+    'Returned by patient; expiration verified',
+  ],
+  waste: [
+    'Two broken tablets — discarded per policy',
+    'Tablet broken on dispense, witnessed waste',
+    'Spilled during compounding — witnessed by S. Holloway',
+  ],
+  expired: [
+    'Expired 04/2026, pulled from active inventory',
+    'Removed expired stock per monthly review',
+    'Expired lot returned to vendor',
+  ],
+  returned_to_vendor: [
+    'Returned to vendor via INMAR — confirmation #88421',
+    'Vendor return, 222 form #A01234567',
+    'Manufacturer recall — vendor return processed',
+  ],
+  shrinkage: [
+    'Unaccounted shrinkage during inventory audit',
+    '',
+    'Loss identified during cycle count — investigation pending',
+  ],
+  contaminated: [
+    'Contamination found during inspection',
+    'Compromised packaging — destroyed per policy',
+  ],
+  ndc_change: [
+    'Source balance: NDC change to new lot',
+    'Destination balance: NDC change',
+  ],
+  other: [
+    'See attached note',
+    '',
+  ],
+};
+
+function pickComment(typeKey, rand) {
+  const list = COMMENT_TEMPLATES[typeKey] || [''];
+  return list[Math.floor(rand() * list.length)];
+}
+
+function renderMedTable(pharmIdx, drugIdx, rand, activeTypes) {
+  const variants = MED_VARIANTS[drugIdx];
+  const total = HEATMAP[pharmIdx][drugIdx].v || 0;
+
+  // Distribute the total across variants (preserved from prior version)
+  const counts = variants.map(() => 0);
+  for (let i = 0; i < total; i++) {
+    counts[Math.floor(rand() * variants.length)] += 1;
+  }
+
+  // For each variant, split its count across the active types so
+  // filter buttons map cleanly to row-level counts.
+  const variantState = variants.map((v, i) => {
+    const variantTotal = counts[i];
+    const byType = {};
+    const totalByType = {};
+    activeTypes.forEach(t => { byType[t.key] = 0; totalByType[t.key] = 0; });
+
+    // Bias toward count_correction / cycle_count if those are active
+    function pickType() {
+      const r = rand();
+      // Weighted preference within activeTypes
+      const ordered = activeTypes.slice().sort((a, b) => {
+        const w = { count_correction: 4, cycle_count: 3, return_to_stock: 2 };
+        return (w[b.key] || 1) - (w[a.key] || 1);
+      });
+      // Cumulative thresholds
+      let cum = 0;
+      const weights = ordered.map(t => (({count_correction:4,cycle_count:3,return_to_stock:2})[t.key] || 1));
+      const sum = weights.reduce((s,x)=>s+x,0);
+      for (let k = 0; k < ordered.length; k++) {
+        cum += weights[k]/sum;
+        if (r <= cum) return ordered[k].key;
+      }
+      return ordered[ordered.length - 1].key;
+    }
+    for (let j = 0; j < variantTotal; j++) {
+      byType[pickType()] += 1;
+    }
+    // Per-unit "Total Adjusted" amount factor for each type (deterministic)
+    activeTypes.forEach(t => {
+      const perUnit = 30 + Math.floor(rand() * 70);
+      totalByType[t.key] = byType[t.key] * perUnit;
+    });
+
+    return { name: v.name, strength: v.strength, byType, totalByType };
+  });
+
+  MED_STATE = { variantState, activeTypes };
+  renderFilteredMedTable();
+}
+
+/* Render (or re-render) the med table rows based on PANEL_FILTER + MED_STATE */
+function renderFilteredMedTable() {
+  if (!MED_STATE) return;
+  const { variantState, activeTypes } = MED_STATE;
+  const filterActive = PANEL_FILTER.activeTypes.size > 0;
+  const keysToSum = filterActive
+    ? activeTypes.filter(t => PANEL_FILTER.activeTypes.has(t.key)).map(t => t.key)
+    : activeTypes.map(t => t.key);
+
+  let visibleRows = 0;
+  const html = variantState.map((row, i) => {
+    const count    = keysToSum.reduce((s, k) => s + (row.byType[k] || 0), 0);
+    const totalAdj = keysToSum.reduce((s, k) => s + (row.totalByType[k] || 0), 0);
+    if (count === 0) return ''; // hide rows with 0 of selected types
+    visibleRows += 1;
+    return `
+      <tr data-row="${i}" onclick="toggleMedRow(${PANEL_STATE.pharm},${PANEL_STATE.drug},${i}, this)">
+        <td class="med-name">${row.name}</td>
+        <td>${row.strength}</td>
+        <td class="num">${count}</td>
+        <td class="num">${totalAdj.toLocaleString()}</td>
+        <td class="num"><span class="material-icons chev">expand_more</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  const body = document.getElementById('med-table-body');
+  body.innerHTML = html || `
+    <tr><td colspan="5" style="text-align:center; padding: 24px; color: var(--gray-600);">
+      No medications match the current type filter.
+    </td></tr>
+  `;
+}
+
+function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
+  // close any other expanded
+  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => {
+    if (r !== tr) {
+      r.classList.remove('expanded');
+      const next = r.nextElementSibling;
+      if (next && next.classList.contains('expansion-row')) next.remove();
+    }
+  });
+
+  const isOpen = tr.classList.toggle('expanded');
+  const next = tr.nextElementSibling;
+  if (!isOpen) {
+    if (next && next.classList.contains('expansion-row')) next.remove();
+    return;
+  }
+
+  // Build expansion row (transactions table, with Comments column)
+  function mulberry32(a) {
+    return function() {
+      let t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  const rand = mulberry32(pharmIdx * 91 + drugIdx * 13 + rowIdx + 1);
+
+  // Pull row's adjustments count from the previous render's third column
+  const adjustments = parseInt(tr.children[2].textContent, 10) || 0;
+  const ndc         = '4359' + (8000000 + Math.floor(rand() * 999999));
+  const drug        = MED_VARIANTS[drugIdx][rowIdx].name;
+
+  // Distribute transactions across the date range (last 30 days),
+  // favoring more recent dates (matches the chart shape).
+  function txDate(i, n) {
+    // bias toward the last week
+    const r = rand();
+    const daysAgo = r < 0.55 ? Math.floor(r * 12) : Math.floor(12 + r * 18);
+    const d = new Date(2026, 4, 4); // May 04, 2026
+    d.setDate(d.getDate() - daysAgo);
+    return d;
+  }
+
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmt(d) {
+    const mm = months[d.getMonth()];
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${mm} ${dd}, ${d.getFullYear()}`;
+  }
+
+  // When a type filter is active, transactions in this expansion
+  // should only be of the filtered types so the count matches the
+  // displayed (filtered) Adjustments value.
+  const filterKeys = [...PANEL_FILTER.activeTypes];
+  function pickTxType() {
+    if (filterKeys.length > 0) {
+      return filterKeys[Math.floor(rand() * filterKeys.length)];
+    }
+    return pickWeightedType(rand);
+  }
+
+  // synthesize tx rows: manual adjustments + dispense events.
+  // Dispenses are always decreases, small amounts (1–3 units),
+  // and outnumber manual adjustments in real pharmacy data.
+  const txs = [];
+  let bal = 2000 + Math.floor(rand() * 400);
+
+  // Manual adjustments — these get colored Type chips
+  for (let i = 0; i < Math.max(adjustments, 1); i++) {
+    const typeKey = pickTxType();
+    const isInc   = rand() > 0.45;
+    const amt     = (isInc ? 1 : -1) * (1 + Math.floor(rand() * 90));
+    bal += amt;
+    const d = txDate(i, adjustments);
+    const hh = String(8 + Math.floor(rand() * 11)).padStart(2, '0');
+    const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
+    txs.push({
+      date: fmt(d),
+      time: `${hh}:${mn}`,
+      ndc, type: typeKey, amount: amt, balance: bal,
+      user: USERS[Math.floor(rand() * USERS.length)],
+      comment: pickComment(typeKey, rand),
+    });
+  }
+
+  // Dispense events — non-adjustment, no chip, no comment.
+  // Generate ~1.5–3× the adjustment count for realism.
+  const dispenseCount = Math.max(2, Math.floor(adjustments * 1.5 + rand() * 5));
+  for (let i = 0; i < dispenseCount; i++) {
+    const amt = -(1 + Math.floor(rand() * 3));   // dispenses are always decreases
+    bal += amt;
+    const d  = txDate(i, dispenseCount);
+    const hh = String(7 + Math.floor(rand() * 13)).padStart(2, '0');
+    const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
+    txs.push({
+      date: fmt(d),
+      time: `${hh}:${mn}`,
+      ndc, type: 'dispense', amount: amt, balance: bal,
+      user: USERS[Math.floor(rand() * USERS.length)],
+      comment: '',                                // dispenses don't get analyst comments
+    });
+  }
+
+  // Sort by most recent first
+  txs.sort((a, b) => (a.date < b.date ? 1 : -1));
+
+  const adjCount  = txs.filter(t => t.type !== 'dispense').length;
+  const dispCount = txs.filter(t => t.type === 'dispense').length;
+
+  const txHtml = `
+    <tr class="expansion-row"><td colspan="5">
+      <div class="tx-wrap">
+        <div class="tx-wrap-header">
+          <span class="material-icons" style="font-size:16px;color:var(--teal);">history</span>
+          Transactions
+          <span style="font-weight:500; color:var(--gray-600); margin-left: 8px; text-transform: none; letter-spacing:0;">${adjCount} adjustment${adjCount===1?'':'s'} · ${dispCount} dispense${dispCount===1?'':'s'} in selected range</span>
+        </div>
+        <table class="tx-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>NDC</th>
+              <th>User</th>
+              <th>Type</th>
+              <th class="num">Amount</th>
+              <th class="num">Balance</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${txs.map(tx => {
+              const t   = TYPE_BY_KEY[tx.type];                  // undefined if non-adjustment
+              const isAdj = !!t;
+              const amt = tx.amount;
+              const cls = amt < 0 ? 'neg' : 'pos';
+              const sign = amt > 0 ? '+' : '';
+
+              // Type cell: chip only for manual adjustments;
+              // non-adjustment events render as plain text.
+              const typeCell = isAdj
+                ? `<td><span class="type-chip" style="background:${t.color}; color: #fff;">${t.label}</span></td>`
+                : `<td><span class="type-plain">${tx.type === 'dispense' ? 'Dispense' : tx.type}</span></td>`;
+
+              // Comment cell: dispenses don't get the "no comment provided"
+              // placeholder — that placeholder is meaningful only for analyst-
+              // entered manual adjustments.
+              const commentCell = tx.comment
+                ? `<td class="comment-cell">"${tx.comment}"</td>`
+                : (isAdj
+                    ? `<td class="comment-cell empty">— No comment provided —</td>`
+                    : `<td class="comment-cell"></td>`);
+
+              return `
+                <tr>
+                  <td>${tx.date} at ${tx.time}</td>
+                  <td>${tx.ndc}</td>
+                  <td><div class="user-cell">${tx.user}</div></td>
+                  ${typeCell}
+                  <td class="num ${cls}">${sign}${amt}</td>
+                  <td class="num">${tx.balance.toLocaleString()}</td>
+                  ${commentCell}
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </td></tr>
+  `;
+  tr.insertAdjacentHTML('afterend', txHtml);
+}
+
+function pickWeightedType(rand) {
+  // Bias toward count_correction & cycle_count since those are
+  // the most common in the source data.
+  const r = rand();
+  if (r < 0.30) return 'count_correction';
+  if (r < 0.50) return 'cycle_count';
+  if (r < 0.62) return 'return_to_stock';
+  if (r < 0.72) return 'expired';
+  if (r < 0.80) return 'waste';
+  if (r < 0.86) return 'returned_to_vendor';
+  if (r < 0.92) return 'shrinkage';
+  if (r < 0.96) return 'contaminated';
+  if (r < 0.99) return 'ndc_change';
+  return 'other';
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+
+renderHeatmap();
+renderPharmacyOptions();
+renderDrugOptions();
+renderTypeOptions();
+</script>
+
+</body>
+</html>
