@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Med Trends – ControlCheck</title>
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --red:         #f24335;
+      --green:       #16b434;
+      --yellow:      #f5dd67;
+      --orange:      #f5a623;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #727272;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* ── Custom element display ─────────────────── */
+    app-component, navigation, nav-menu, user-menu,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-card, mat-drawer-container,
+    mat-drawer-content, mat-drawer, router-outlet { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex;
+      align-items: center;
+      border-radius: var(--radius);
+      flex-direction: row;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    /* ── nav-menu .navigation ───────────────────────────── */
+    .navigation {
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin-left: 1rem;
+      padding-top: 0;
+    }
+    .mdc-button.mat-mdc-button {
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--blue-dark);
+      cursor: pointer;
+      padding: 0 12px;
+      height: 48px;
+      border-radius: var(--radius);
+      transition: background .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+      white-space: nowrap;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    .mdc-button__label { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-chevron { font-size: 18px; opacity: .65; }
+
+    /* badge */
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 14px; height: 14px;
+      text-align: center;
+      line-height: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+
+    /* ── user-menu ──────────────────────────────────────── */
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center;
+      background-color: transparent;
+      border: none;
+      border-radius: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      transition: background-color .2s ease-in-out;
+      padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark);
+      font-size: .813rem;
+      letter-spacing: .01rem;
+      line-height: 1.25rem;
+      min-height: 40px;
+      padding-left: 1rem;
+      white-space: normal;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .header-customer-fullName  { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark);
+      color: #fff;
+      border-radius: 50%;
+      width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s;
+      padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    /* inline icon button (user avatar wrapper) */
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    /* ══════════════════════════════════════════════
+       MATERIAL TABS  (Tabular / Visualized Data)
+    ══════════════════════════════════════════════ */
+    .view-tab-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+      margin: 1rem 0;
+    }
+    .tab-bar-tabs { display: flex; gap: 1rem; }
+    .tab-bar-download { flex-shrink: 0; }
+    .view-tab-bar .mdc-tab {
+      min-width: 90px;
+      padding: 0;
+      margin: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      border: none;
+      background: none;
+      outline: none;
+      white-space: nowrap;
+      cursor: pointer;
+      height: 48px;
+      font-family: var(--font);
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-54);
+      position: relative;
+      transition: color .15s;
+    }
+    .view-tab-bar .mdc-tab:hover { color: var(--text-87); }
+    .view-tab-bar .mdc-tab.mdc-tab--active { color: var(--blue-dark); }
+    .view-tab-bar .mdc-tab__content {
+      display: flex; align-items: center;
+      justify-content: center; height: 100%;
+      gap: 8px; pointer-events: none;
+    }
+    .view-tab-bar .mdc-tab .mat-icon {
+      font-size: 18px; width: 18px; height: 18px;
+    }
+    .view-tab-bar .mdc-tab-indicator {
+      display: flex; position: absolute;
+      top: 0; left: 0;
+      justify-content: center;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .view-tab-bar .mdc-tab-indicator__content--underline {
+      align-self: flex-end;
+      width: 100%;
+      border-top-style: solid;
+      border-top-width: 2px;
+      border-color: var(--blue-dark);
+      transform: scaleX(0);
+      transition: transform 250ms cubic-bezier(.4,0,.2,1);
+      opacity: 0;
+    }
+    .view-tab-bar .mdc-tab-indicator--active .mdc-tab-indicator__content--underline {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+
+
+
+    /* ── Users table: horizontal scroll + sticky columns ── */
+    #users-table-view .data-table-wrap {
+      overflow-x: auto;
+    }
+    #users-table-view .data-table {
+      width: max-content;
+      min-width: 100%;
+    }
+    /* Sticky columns 1-3: Metric Score, Comparison Score, User */
+    #users-table-view .data-table th:nth-child(1),
+    #users-table-view .data-table td:nth-child(1) {
+      position: sticky; left: 0; z-index: 2;
+      background: #fff;
+      box-shadow: 1px 0 0 var(--gray-300);
+    }
+    #users-table-view .data-table th:nth-child(2),
+    #users-table-view .data-table td:nth-child(2) {
+      position: sticky; left: 80px; z-index: 2;
+      background: #fff;
+      box-shadow: 1px 0 0 var(--gray-300);
+    }
+    #users-table-view .data-table th:nth-child(3),
+    #users-table-view .data-table td:nth-child(3) {
+      position: sticky; left: 175px; z-index: 2;
+      background: #fff;
+      box-shadow: 2px 0 4px rgba(0,0,0,.06);
+    }
+    /* Sticky last column: Investigate */
+    #users-table-view .data-table th:last-child,
+    #users-table-view .data-table td:last-child {
+      position: sticky; right: 0; z-index: 2;
+      background: #fff;
+      box-shadow: -2px 0 4px rgba(0,0,0,.06);
+    }
+    #users-table-view .data-table thead th:nth-child(1),
+    #users-table-view .data-table thead th:nth-child(2),
+    #users-table-view .data-table thead th:nth-child(3),
+    #users-table-view .data-table thead th:last-child {
+      z-index: 3;
+    }
+    #users-table-view .data-table tbody tr:hover td:nth-child(1),
+    #users-table-view .data-table tbody tr:hover td:nth-child(2),
+    #users-table-view .data-table tbody tr:hover td:nth-child(3),
+    #users-table-view .data-table tbody tr:hover td:last-child {
+      background: #e7f4f8;
+    }
+
+    /* ── Comparison Score filter bar ──────────── */
+    .pill-filters-row {
+      display: flex; align-items: center; gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .comp-score-filter {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: var(--font); font-size: .813rem; font-weight: 600;
+      color: var(--teal); background: none; border: none;
+      cursor: pointer; padding: 0; white-space: nowrap;
+    }
+    .comp-score-filter .cs-label { color: var(--text-54); font-weight: 500; }
+    .comp-score-filter .mat-icon  { font-size: 18px; }
+    .cs-menu {
+      position: absolute; top: calc(100% + 4px); left: 0;
+      background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      z-index: 50; min-width: 200px; padding: 4px 0;
+    }
+    .cs-option {
+      padding: 8px 16px;
+      font-size: .875rem; font-weight: 500; color: var(--text-87);
+      cursor: pointer; transition: background .1s;
+    }
+    .cs-option:hover { background: var(--gray-100); }
+    .cs-option.selected { color: var(--teal); font-weight: 600; }
+
+    /* ── Comparison Score cell ──────────────────── */
+    .comp-score {
+      font-size: .875rem; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .comp-score.score-critical { color: #b53228; }
+    .comp-score.score-high     { color: #b53228; }
+    .comp-score.score-elevated { color: #a4902d; }
+    .comp-score.score-moderate { color: #a4902d; }
+    .comp-score.score-normal   { color: #0e7221; }
+
+
+    /* ── Table meta row (count + search) ────────── */
+    .table-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .table-count {
+      font-size: .813rem; font-weight: 500; color: var(--text-54);
+    }
+    .table-count strong { color: var(--text-87); font-weight: 600; }
+    .table-search {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 32px; padding: 0 10px;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff; transition: border-color .15s;
+    }
+    .table-search:focus-within { border-color: var(--teal); }
+    .table-search .mat-icon { font-size: 16px; color: var(--gray-400); flex-shrink: 0; }
+    .table-search input {
+      border: none; outline: none; background: transparent;
+      font-family: var(--font); font-size: .813rem; color: var(--text-87);
+      width: 180px;
+    }
+    .table-search input::placeholder { color: var(--gray-400); }
+
+    /* ══════════════════════════════════════════════
+       ECHARTS CONTAINERS
+    ══════════════════════════════════════════════ */
+    .chart-wrap {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 24px 16px 16px;
+    }
+    .chart-container {
+      width: 100%;
+      height: 480px;
+    }
+    .chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      padding: 12px 8px 0;
+      border-top: 1px solid var(--gray-200);
+      margin-top: 8px;
+    }
+    .chart-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .813rem;
+      color: var(--text-54);
+    }
+    .chart-legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════════
+       DRAWER LAYOUT
+    ══════════════════════════════════════════════ */
+    mat-drawer-container {
+      display: flex; flex-direction: row;
+      flex: 1 1 auto; overflow: hidden; position: relative;
+    }
+    mat-drawer-content {
+      display: flex; flex-direction: column;
+      flex: 1 1 auto; overflow: auto; position: relative;
+      max-width: 1440px;
+    }
+    mat-drawer {
+      display: block; position: relative; overflow: visible;
+      background: #fff; border-right: 1px solid var(--gray-300);
+      width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%; height: 100%; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    .mdc-fab.mat-mdc-mini-fab {
+      width: 24px; height: 24px; min-height: 24px;
+      border-radius: 50%; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--teal); color: #fff;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+      transition: background .15s, transform .3s cubic-bezier(.4,0,.2,1);
+      position: absolute; right: -12px; top: 10px; z-index: 99; padding: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background: var(--teal-dark); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; transition: transform .3s; }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    /* ── accordion ── */
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    .navigation-accordion mat-expansion-panel {
+      background: #fff; border-radius: 0; box-shadow: none;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .navigation-accordion mat-expansion-panel-header {
+      height: 45px !important; padding: 0 16px;
+      cursor: pointer; display: flex; align-items: center;
+      transition: background .15s;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .mat-content { display: flex; flex: 1; align-items: center; }
+    .navigation-accordion mat-panel-title {
+      font-size: .875rem; font-weight: 600; color: var(--blue-dark); flex-grow: 1;
+    }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg { width: 24px; height: 24px; fill: var(--gray-600); transition: transform 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px;
+      text-decoration: none; cursor: pointer; position: relative;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active { background: rgba(4,74,130,.08); border-left-color: var(--blue-dark); }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon {
+      font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600);
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span { display: none; }
+    mat-drawer.collapsed .mdc-list-item__primary-text .mat-icon { margin: 0; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-expansion-panel-header { justify-content: center; padding: 0; }
+
+    /* ══════════════════════════════════════════════
+       PAGE SHELL
+    ══════════════════════════════════════════════ */
+    #app-view {
+      display: flex; flex-direction: column;
+      flex: 1 1 auto; overflow: hidden;
+    }
+    footer {
+      padding: 12px 32px; font-size: .75rem; color: var(--gray-400);
+      background: #fff; border-top: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+
+    /* ══════════════════════════════════════════════
+       PAGE HEADER  (title + global filters)
+    ══════════════════════════════════════════════ */
+    .page-header {
+      display: flex; align-items: center;
+      padding: 0 40px;
+      height: 72px;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .page-title {
+      font-size: 1.375rem; font-weight: 700;
+      color: var(--blue-dark);
+      margin-right: auto;
+      white-space: nowrap;
+    }
+    /* breadcrumb state */
+    .page-title.breadcrumb { font-size: .813rem; font-weight: 500; display: flex; align-items: center; gap: 6px; color: var(--text-54); }
+    .page-title.breadcrumb .bc-parent { color: var(--teal); font-weight: 600; cursor: pointer; text-decoration: none; background: none; border: none; font-family: var(--font); font-size: .813rem; padding: 0; }
+    .page-title.breadcrumb .bc-parent:hover { text-decoration: underline; }
+    .page-title.breadcrumb .bc-sep { color: var(--gray-400); }
+    .page-title.breadcrumb .bc-current { color: var(--text-54); font-weight: 500; }
+
+    /* ── Global filter chips ── */
+    .filter-chip-group {
+      display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;
+    }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 36px; padding: 0 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 18px;
+      background: #fff;
+      font-family: var(--font); font-size: .813rem; font-weight: 500;
+      color: var(--text-87); cursor: pointer; white-space: nowrap;
+      transition: border-color .15s, background .15s;
+    }
+    .filter-chip:hover { border-color: var(--gray-400); background: var(--gray-50); }
+    .filter-chip.active {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+    .filter-chip .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    .filter-chip.active .mat-icon { color: #fff; }
+
+    .clear-all-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .813rem; font-weight: 600;
+      color: var(--teal); padding: 4px 8px; border-radius: var(--radius);
+      white-space: nowrap; transition: background .15s;
+    }
+    .clear-all-btn:hover { background: rgba(0,150,184,.08); }
+
+    /* ══════════════════════════════════════════════
+       CONTENT AREA
+    ══════════════════════════════════════════════ */
+    .content-area {
+      flex: 1 1 auto; overflow: auto;
+      padding: 0 40px 40px;
+    }
+
+    /* ── Toolbar ── */
+    .content-toolbar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .toolbar-left { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .pill-filters { gap: 24px; }
+    .pill-filter-wrap { position: relative; }
+    .toolbar-right { display: flex; align-items: center; gap: 0; }
+
+    /* Dropdown */
+    .bcs-dropdown {
+      display: inline-flex; flex-direction: column; gap: 2px;
+      position: relative;
+    }
+    .bcs-dropdown label {
+      font-size: .688rem; font-weight: 600; color: var(--text-54);
+      letter-spacing: .04em; text-transform: uppercase; padding-left: 2px;
+    }
+    .bcs-dropdown select {
+      height: 36px; padding: 0 32px 0 12px;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='%23727272' d='M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z'/%3E%3C/svg%3E") no-repeat right 8px center / 18px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-87); cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      transition: border-color .15s;
+    }
+    .bcs-dropdown select:hover { border-color: var(--gray-400); }
+    .bcs-dropdown select:focus { outline: none; border-color: var(--blue-dark); }
+
+    /* .view-toggle removed — replaced by .view-tab-bar */
+
+    .download-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; margin-left: 8px;
+      background: none; border: none;
+      border-radius: var(--radius); cursor: pointer; color: var(--gray-600);
+      transition: background .15s;
+    }
+    .download-btn:hover { background: var(--gray-100); border-color: var(--gray-400); }
+    .download-btn .mat-icon { font-size: 20px; }
+
+    /* ══════════════════════════════════════════════
+       DATA TABLE
+    ══════════════════════════════════════════════ */
+    .data-table-wrap {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-family: var(--font); font-size: .875rem;
+    }
+    .data-table thead { background: #fff; }
+    .data-table th {
+      padding: 0 16px; height: 48px; text-align: left;
+      font-size: .75rem; font-weight: 600;
+      color: var(--text-54); white-space: nowrap;
+      border-bottom: 2px solid var(--gray-300);
+      user-select: none;
+    }
+    .data-table th.sortable { cursor: pointer; }
+    .data-table th.sortable:hover { color: var(--blue-dark); }
+    .data-table th .th-inner {
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .data-table th .sort-icon { font-size: 16px; opacity: .4; }
+    .data-table th.sort-asc .sort-icon,
+    .data-table th.sort-desc .sort-icon { opacity: 1; color: var(--blue-dark); }
+    .data-table th.sort-desc .sort-icon { transform: rotate(180deg); }
+    .data-table th.right, .data-table td.right { text-align: right; }
+    .data-table th.center, .data-table td.center { text-align: center; }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: background .1s;
+      cursor: pointer;
+    }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody tr:hover { background: #e7f4f8; }
+    .data-table tbody tr.selected { background: rgba(4,74,130,.06); }
+
+    .data-table td {
+      padding: 0 16px; height: 56px; vertical-align: middle;
+      color: var(--text-87);
+    }
+    .data-table td.td-priority { width: 48px; text-align: center; padding: 0 8px; }
+
+    /* Priority dot */
+    .priority-dot {
+      display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .priority-dot.high { background: var(--red); }
+    .priority-dot.medium { background: var(--orange); }
+    .priority-dot.low { background: var(--green); }
+
+    /* Drug name cell */
+    .drug-name { font-weight: 600; color: var(--text-87); }
+    .drug-subtext { font-size: .75rem; color: var(--text-54); font-weight: 400; }
+
+    /* User name+role cell */
+    .user-name { font-weight: 600; color: var(--text-87); line-height: 1.3; }
+    .user-name a { color: #0096b8; text-decoration: none; }
+    .user-name a:hover { color: #00718a; text-decoration: none; }
+    .user-role-dept {
+      font-size: .75rem; color: var(--text-54);
+      font-weight: 400; line-height: 1.3;
+    }
+
+    /* IRIS score chip */
+    .iris-score {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 36px; height: 28px; padding: 0 8px;
+      border-radius: 4px; font-size: .875rem; font-weight: 700;
+      color: #fff;
+    }
+    .iris-score.score-critical { background: #c62828; }
+    .iris-score.score-high { background: #e53935; }
+    .iris-score.score-elevated { background: #f5dd67; color: #555555; }
+    .iris-score.score-moderate { background: #f5dd67; color: #555555; }
+    .iris-score.score-normal { background: #16b434; }
+
+    /* Investigate link */
+    .investigate-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: #0096b8; font-weight: 600; font-size: .875rem;
+      text-decoration: none; white-space: nowrap;
+      transition: color .15s;
+    }
+    .investigate-link:hover { color: var(--teal-dark); text-decoration: underline; }
+    .investigate-link .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Chevron cell */
+    .td-chevron {
+      width: 40px; text-align: right; padding-right: 12px;
+      color: var(--teal);
+    }
+    .td-chevron .mat-icon { font-size: 20px; vertical-align: middle; }
+
+    /* Numeric cells */
+    .data-table td.num { text-align: center; font-variant-numeric: tabular-nums; }
+
+    /* Event type pills in drug table header */
+    .event-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 22px; padding: 0 8px; border-radius: 11px;
+      font-size: .75rem; font-weight: 600; white-space: nowrap;
+      border: 1px solid;
+    }
+    .event-pill.dispense { color: var(--blue-dark); border-color: rgba(4,74,130,.3); background: rgba(4,74,130,.05); }
+    .event-pill.admin    { color: var(--teal-dark); border-color: rgba(0,150,184,.3); background: rgba(0,150,184,.05); }
+    .event-pill.waste    { color: #7b1fa2; border-color: rgba(123,31,162,.3); background: rgba(123,31,162,.05); }
+    .event-pill.return   { color: var(--green); border-color: rgba(22,180,52,.3); background: rgba(22,180,52,.05); }
+    .event-pill.cancel   { color: var(--gray-600); border-color: var(--gray-300); background: var(--gray-100); }
+
+    /* ══════════════════════════════════════════════
+       DRILLDOWN VIEW — breadcrumb + back
+    ══════════════════════════════════════════════ */
+    .drilldown-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: -7px;
+      margin-bottom: 1rem;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .875rem; font-weight: 600;
+      color: var(--teal); padding: 4px 8px 4px 4px;
+      border-radius: var(--radius);
+      transition: background .15s, color .15s;
+    }
+    .back-btn:hover { background: rgba(0,150,184,.08); }
+    .back-btn .mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+    .drilldown-title {
+      font-size: 1.375rem; font-weight: 700; color: #0a3861;
+    }
+
+    /* ══════════════════════════════════════════════
+       SUMMARY STATS BAR  (drilldown view)
+    ══════════════════════════════════════════════ */
+    .summary-stats {
+      display: flex; gap: 0; margin-bottom: 16px;
+      flex-wrap: wrap;
+      background: #fff;
+      box-shadow: 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12), 0 1px 3px 0 rgba(0,0,0,.20);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════════════
+       VIEW STATES
+    ══════════════════════════════════════════════ */
+    .view { display: none; }
+    .view.visible { display: block; }
+
+    /* ══════════════════════════════════════════════
+       GRAPH PLACEHOLDER
+    ══════════════════════════════════════════════ */
+    .graph-placeholder {
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px;
+      height: 480px; background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      color: var(--text-54);
+    }
+    .graph-placeholder .mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: .3; }
+    .graph-placeholder p { font-size: .875rem; font-weight: 500; }
+
+
+    /* ── All Drugs summary row ─────────────────────── */
+    .all-drugs-row { border-bottom: 2px solid var(--gray-300) !important; }
+    .all-drugs-label { font-weight: 700; color: var(--blue-dark); }
+
+    /* ── All Drugs summary row ──────────────────── */
+    .all-drugs-row { background: #fff !important; }
+    .all-drugs-row td { border-bottom: 2px solid var(--gray-300) !important; }
+    .all-drugs-label { font-weight: 700; color: var(--blue-dark); letter-spacing: -.01em; }
+
+        /* ══════════════════════════════════════════════
+       RESPONSIVE tweaks
+    ══════════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .data-table td.td-hide, .data-table th.td-hide { display: none; }
+    }
+
+    /* ══════════════════════════════════════════════
+       TOOLTIP hover
+    ══════════════════════════════════════════════ */
+    #tt {
+      position: fixed; z-index: 9999;
+      background: rgba(0,0,0,.82); color: #fff;
+      font-size: .75rem; font-family: var(--font);
+      padding: 5px 10px; border-radius: 4px;
+      max-width: 140px; text-align: center;
+      white-space: normal; line-height: 1.35;
+      pointer-events: none;
+      opacity: 0; transition: opacity .1s;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<script data-cfasync="false" defer>
+  /* ══════════════════════════════════════════════
+     CHART STATE
+  ══════════════════════════════════════════════ */
+  let drugsChart = null;
+  let usersChart = null;
+  let currentDrugName = 'fentaNYL Inj';
+  const userSortState = { col: 'score', asc: false }; // default: highest score first
+
+  function priorityColor(p) {
+    return p === 'high' ? '#f24335' : p === 'medium' ? '#f5a623' : '#16b434';
+  }
+  function scoreColor(score) {
+    if (score >= 8.0) return '#c62828';
+    if (score >= 7.0) return '#e53935';
+    if (score >= 6.0) return '#f5a623';
+    if (score >= 5.0) return '#f9a825';
+    return '#044a82';
+  }
+
+  function initDrugsChart() {
+    const el = document.getElementById('drugs-chart');
+    if (!el) return;
+    if (!drugsChart) drugsChart = echarts.init(el);
+
+    const data = DRUGS.map(d => ({
+      name: d.name,
+      value: [d.users, d.events],
+      priority: d.priority,
+      dispense: d.dispense,
+      waste: d.waste
+    }));
+
+    drugsChart.setOption({
+      backgroundColor: 'transparent',
+      grid: { top: 40, right: 40, bottom: 60, left: 70 },
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: 'rgba(10,56,97,.92)',
+        borderColor: 'transparent',
+        textStyle: { color: '#fff', fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 13 },
+        formatter: p => {
+          const d = p.data;
+          return `<strong>${d.name}</strong><br/>
+            Total Users: ${d.value[0]}<br/>
+            Total Events: ${d.value[1].toLocaleString()}<br/>
+            Dispense: ${d.dispense.toLocaleString()} &nbsp; Waste: ${d.waste}`;
+        }
+      },
+      xAxis: {
+        type: 'value',
+        name: 'Total Users',
+        nameLocation: 'middle',
+        nameGap: 36,
+        nameTextStyle: { fontSize: 12, color: '#727272', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
+        axisLine: { lineStyle: { color: '#e5e5e5' } },
+        splitLine: { lineStyle: { color: '#f0f0f0' } },
+        axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#727272' }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Total Events',
+        nameLocation: 'middle',
+        nameGap: 52,
+        nameTextStyle: { fontSize: 12, color: '#727272', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
+        axisLine: { lineStyle: { color: '#e5e5e5' } },
+        splitLine: { lineStyle: { color: '#f0f0f0' } },
+        axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#727272' }
+      },
+      series: [{
+        type: 'scatter',
+        symbolSize: 14,
+        data: data.map(d => ({
+          ...d,
+          itemStyle: { color: priorityColor(d.priority), opacity: 0.88 },
+          emphasis: { itemStyle: { opacity: 1, shadowBlur: 8, shadowColor: 'rgba(0,0,0,.25)' } }
+        })),
+        label: {
+          show: true,
+          position: 'right',
+          formatter: p => p.data.name.length > 22 ? p.data.name.slice(0,20)+'…' : p.data.name,
+          fontSize: 11,
+          color: '#555',
+          fontFamily: 'proxima-nova, Helvetica, sans-serif'
+        }
+      }]
+    });
+
+    window.addEventListener('resize', () => drugsChart && drugsChart.resize());
+  }
+
+  function initUsersChart(drugName) {
+    const el = document.getElementById('users-chart');
+    if (!el) return;
+    if (!usersChart) usersChart = echarts.init(el);
+
+    const users = getUsersForDrug(drugName);
+    const maxShifts = Math.max(...users.map(u => u.shifts));
+
+    usersChart.setOption({
+      backgroundColor: 'transparent',
+      grid: { top: 40, right: 40, bottom: 60, left: 70 },
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: 'rgba(10,56,97,.92)',
+        borderColor: 'transparent',
+        textStyle: { color: '#fff', fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 13 },
+        formatter: p => {
+          const u = p.data;
+          return `<strong>${u.userName}</strong><br/>
+            IRIS Score: <strong>${u.score}</strong><br/>
+            Total Events: ${u.value[0]}<br/>
+            Total Mass: ${u.value[1]} mg<br/>
+            Avg Mass / Event: ${u.massPerEvent} mg<br/>
+            Shifts: ${u.shifts}`;
+        }
+      },
+      xAxis: {
+        type: 'value',
+        name: 'Total Events',
+        nameLocation: 'middle',
+        nameGap: 36,
+        nameTextStyle: { fontSize: 12, color: '#727272', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
+        axisLine: { lineStyle: { color: '#e5e5e5' } },
+        splitLine: { lineStyle: { color: '#f0f0f0' } },
+        axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#727272' }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Mass Dispensed (mg)',
+        nameLocation: 'middle',
+        nameGap: 52,
+        nameTextStyle: { fontSize: 12, color: '#727272', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
+        axisLine: { lineStyle: { color: '#e5e5e5' } },
+        splitLine: { lineStyle: { color: '#f0f0f0' } },
+        axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#727272' }
+      },
+      series: [{
+        type: 'scatter',
+        data: users.map(u => ({
+          value: [u.events, u.massDispense ?? u.mass],
+          userName: u.name,
+          score: u.score,
+          shifts: u.shifts,
+          massPerEvent: u.massPerEvent,
+          symbolSize: Math.max(10, Math.round(8 + (u.shifts / maxShifts) * 22)),
+          itemStyle: { color: scoreColor(u.score), opacity: 0.88 },
+          emphasis: { itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } }
+        })),
+        label: {
+          show: true,
+          position: 'right',
+          formatter: p => {
+            const parts = p.data.userName.split(' ');
+            return parts[0] + ' ' + (parts[1] ? parts[1][0]+'.' : '');
+          },
+          fontSize: 11,
+          color: '#555',
+          fontFamily: 'proxima-nova, Helvetica, sans-serif'
+        }
+      }]
+    });
+
+    window.addEventListener('resize', () => usersChart && usersChart.resize());
+  }
+
+  /* ══════════════════════════════════════════════
+     DATA
+  ══════════════════════════════════════════════ */
+  const DRUGS = [
+    { priority:'high',   name:'fentaNYL Inj',                     users:52, events:1204, dispense:890, admin:187, waste:102, ret:18, cancel:7  },
+    { priority:'high',   name:'HYDROmorphone Inj',                 users:48, events:987,  dispense:740, admin:162, waste:68,  ret:12, cancel:5  },
+    { priority:'high',   name:'morphine Sulfate Inj',              users:44, events:876,  dispense:654, admin:143, waste:61,  ret:14, cancel:4  },
+    { priority:'high',   name:'OXYcodone Oral',                    users:39, events:743,  dispense:601, admin:97,  waste:32,  ret:9,  cancel:4  },
+    { priority:'medium', name:'HYDROcodone-Acetaminophen Oral',    users:37, events:698,  dispense:566, admin:89,  waste:29,  ret:11, cancel:3  },
+    { priority:'medium', name:'LORazepam Inj',                     users:35, events:612,  dispense:490, admin:78,  waste:34,  ret:7,  cancel:3  },
+    { priority:'medium', name:'midazolam Inj',                     users:33, events:588,  dispense:461, admin:74,  waste:42,  ret:8,  cancel:3  },
+    { priority:'medium', name:'methadone Oral',                    users:29, events:502,  dispense:401, admin:61,  waste:29,  ret:8,  cancel:3  },
+    { priority:'medium', name:'ALPRAZolam Oral',                   users:27, events:477,  dispense:381, admin:58,  waste:27,  ret:7,  cancel:4  },
+    { priority:'low',    name:'traMADol Oral',                     users:24, events:421,  dispense:339, admin:48,  waste:22,  ret:9,  cancel:3  },
+    { priority:'low',    name:'codeine Oral',                      users:21, events:388,  dispense:311, admin:44,  waste:19,  ret:10, cancel:4  },
+    { priority:'low',    name:'buprenorphine Sublingual',          users:18, events:342,  dispense:274, admin:41,  waste:17,  ret:7,  cancel:3  },
+  ];
+
+  const USERS_BY_DRUG = {
+    'fentaNYL Inj': [
+      { score:9.1, scoreClass:'score-critical', name:'Francis Overby',   role:'RN',                 dept:'Med North', shifts:29, patients:145, mass:53.0, events:29, massPerEvent:1.83, dispense:18, admin:5, waste:4, ret:2, cancel:0, compScore:8.2, massDispense:21.3, massAdmin:4.6, massWaste:6.6, massReturn:2.2 },
+      { score:8.7, scoreClass:'score-critical', name:'Evan Westcott',    role:'Travel Nurse',        dept:'Med North', shifts:24, patients:120, mass:38.0, events:24, massPerEvent:1.58, dispense:15, admin:4, waste:3, ret:2, cancel:0, compScore:7.9, massDispense:16.1, massAdmin:3.5, massWaste:5.5, massReturn:2.1 },
+      { score:8.2, scoreClass:'score-high',     name:'Destiny Bloss',    role:'Pharmacist',          dept:'Med South', shifts:22, patients:396, mass:32.0, events:22, massPerEvent:1.45, dispense:14, admin:3, waste:3, ret:2, cancel:0, compScore:7.4, massDispense:14.5, massAdmin:3.1, massWaste:5.1, massReturn:1.7 },
+      { score:7.9, scoreClass:'score-high',     name:'Kristel Dorsey',   role:'CRNA',                dept:'ICU',       shifts:20, patients:80, mass:32.0, events:21, massPerEvent:1.52, dispense:13, admin:4, waste:3, ret:1, cancel:0, compScore:7.1, massDispense:13.3, massAdmin:3.7, massWaste:4.9, massReturn:1.6 },
+      { score:7.4, scoreClass:'score-elevated', name:'Shila Layne',      role:'Float Nurse',         dept:'Med North', shifts:18, patients:90,  mass:30.5, events:18, massPerEvent:1.69, dispense:11, admin:3, waste:3, ret:1, cancel:0, compScore:6.9, massDispense:12.1, massAdmin:3.0, massWaste:5.4, massReturn:1.9 },
+      { score:6.8, scoreClass:'score-elevated', name:'Bulah Vahle',      role:'RN',                  dept:'Oncology',  shifts:17, patients:85,  mass:29.0, events:17, massPerEvent:1.71, dispense:10, admin:3, waste:3, ret:1, cancel:0, compScore:6.5, massDispense:11.7, massAdmin:3.3, massWaste:5.3, massReturn:1.5 },
+      { score:6.3, scoreClass:'score-elevated', name:'Violeta Colmenero',role:'Nursing Student',     dept:'ICU',       shifts:16, patients:32,  mass:28.0, events:16, massPerEvent:1.75, dispense:10, admin:2, waste:2, ret:2, cancel:0, compScore:6.2, massDispense:10.8, massAdmin:2.4, massWaste:4.1, massReturn:1.8 },
+      { score:6.3, scoreClass:'score-elevated', name:'Magda Bonelli',    role:'RN',                  dept:'Med South', shifts:15, patients:75,  mass:28.0, events:16, massPerEvent:1.75, dispense:10, admin:3, waste:2, ret:1, cancel:0, compScore:6.0, massDispense:11.1, massAdmin:2.9, massWaste:4.5, massReturn:1.6 },
+      { score:5.9, scoreClass:'score-moderate', name:'Norene Turcotte',  role:'Anesthesiologist',    dept:'OR',        shifts:14, patients:70, mass:26.0, events:15, massPerEvent:1.73, dispense:9,  admin:2, waste:2, ret:2, cancel:0, compScore:5.7, massDispense:9.8, massAdmin:2.3, massWaste:4.5, massReturn:1.8 },
+      { score:5.4, scoreClass:'score-moderate', name:'Pamala Linke',     role:'Pharmacy Technician', dept:'Pharmacy',  shifts:12, patients:240, mass:24.0, events:12, massPerEvent:2.00, dispense:7,  admin:2, waste:2, ret:1, cancel:0, compScore:5.3, massDispense:9.0, massAdmin:2.5, massWaste:3.8, massReturn:1.5 },
+      { score:4.9, scoreClass:'score-normal',   name:'Rhoda Klemm',      role:'RN',                  dept:'Med North', shifts:11, patients:55, mass:20.0, events:11, massPerEvent:1.82, dispense:7,  admin:2, waste:1, ret:1, cancel:0, compScore:4.8, massDispense:7.9, massAdmin:2.3, massWaste:3.1, massReturn:1.4 },
+      { score:4.4, scoreClass:'score-normal',   name:'Ann Perkins',      role:'CRNA',                dept:'OR',        shifts:9, patients:36,  mass:17.5, events:9,  massPerEvent:1.94, dispense:5,  admin:2, waste:1, ret:1, cancel:0, compScore:4.3, massDispense:6.4, massAdmin:2.1, massWaste:2.7, massReturn:1.3 },
+    ]
+  };
+
+  function getUsersForDrug(drugName) {
+    if (USERS_BY_DRUG[drugName]) return USERS_BY_DRUG[drugName];
+    // Fallback: generate generic data
+    return Array.from({length: 9}, (_, i) => ({
+      score: +(8.5 - i * 0.5 + Math.random() * 0.3).toFixed(1),
+      scoreClass: i < 2 ? 'score-critical' : i < 4 ? 'score-high' : i < 6 ? 'score-elevated' : 'score-normal',
+      name: ['Claire Fraser','Evelyn Frazer','Samantha Taggart','Rina Harper','Jennifer Marlowe','Betsy Duvall','Margaret Houlihan','Sue Barton','Ann Perkins'][i],
+      role: ['RN','Travel Nurse','Pharmacy Tech','Float Nurse','Nursing Student','CRNA','RN','Pharmacist','Anesthesiologist'][i],
+      dept: ['Med North','Med North','Med North','Med North','ICU','OR','Med South','Pharmacy','OR'][i],
+      shifts:   [102, 65, 81, 102, 55, 14, 11, 7, 5][i],
+      patients: [510, 325, 1620, 510, 110, 56, 55, 126, 25][i],
+      mass: +(52 - i * 4 + Math.random() * 2).toFixed(1),
+      events: [29, 24, 20, 18, 15, 11, 8, 6, 2][i],
+      massPerEvent: +(1.5 + Math.random() * 0.5).toFixed(2),
+      dispense: [18, 15, 13, 11, 9, 7, 5, 4, 1][i],
+      admin:    [5,  4,  3,  3,  2, 2, 1, 1, 0][i],
+      waste:    [4,  3,  3,  2,  2, 1, 1, 0, 0][i],
+      ret:      [2,  2,  1,  1,  1, 0, 0, 0, 0][i],
+      cancel:   [0,  0,  0,  1,  1, 1, 1, 1, 1][i],
+      compScore:    +(7.8 - i * 0.5 + Math.random() * 0.2).toFixed(1),
+      massDispense: +(18 - i * 1.8 + Math.random()).toFixed(1),
+      massAdmin:    +(4.5 - i * 0.3 + Math.random() * 0.4).toFixed(1),
+      massWaste:    +(5.8 - i * 0.5 + Math.random() * 0.5).toFixed(1),
+      massReturn:   +(2.1 - i * 0.15 + Math.random() * 0.3).toFixed(1),
+    }));
+  }
+
+  /* ══════════════════════════════════════════════
+     RENDER DRUGS TABLE
+  ══════════════════════════════════════════════ */
+  function renderDrugsTable(data) {
+    const tbody = document.getElementById('drugsTableBody');
+
+    // Aggregate row across all drugs
+    const agg = data.reduce((acc, d) => ({
+      users:    Math.max(acc.users, d.users),
+      events:   acc.events   + d.events,
+      dispense: acc.dispense + d.dispense,
+      admin:    acc.admin    + d.admin,
+      waste:    acc.waste    + d.waste,
+      ret:      acc.ret      + d.ret,
+      cancel:   acc.cancel   + d.cancel,
+    }), { users:0, events:0, dispense:0, admin:0, waste:0, ret:0, cancel:0 });
+
+    const allRow = `
+      <tr class="all-drugs-row" onclick="drillDown('All Drugs')">
+        <td class="td-priority center"></td>
+        <td><span class="drug-name all-drugs-label">All Drugs</span></td>
+        <td class="num">${agg.users}</td>
+        <td class="num">${agg.events.toLocaleString()}</td>
+        <td class="num">${agg.dispense.toLocaleString()}</td>
+        <td class="num td-hide">${agg.admin.toLocaleString()}</td>
+        <td class="num td-hide">${agg.waste.toLocaleString()}</td>
+        <td class="num td-hide">${agg.ret}</td>
+        <td class="num td-hide">${agg.cancel}</td>
+        <td class="td-chevron"><span class="material-icons">chevron_right</span></td>
+      </tr>`;
+
+    const drugRows = data.map(d => `
+      <tr onclick="drillDown('${d.name.replace(/'/g, "\\'")}')">
+        <td class="td-priority center">
+          <span class="priority-dot ${d.priority}" data-tooltip="${d.priority.charAt(0).toUpperCase()+d.priority.slice(1)} priority"></span>
+        </td>
+        <td><span class="drug-name">${d.name}</span></td>
+        <td class="num">${d.users}</td>
+        <td class="num">${d.events.toLocaleString()}</td>
+        <td class="num">${d.dispense.toLocaleString()}</td>
+        <td class="num td-hide">${d.admin.toLocaleString()}</td>
+        <td class="num td-hide">${d.waste.toLocaleString()}</td>
+        <td class="num td-hide">${d.ret}</td>
+        <td class="num td-hide">${d.cancel}</td>
+        <td class="td-chevron"><span class="material-icons">chevron_right</span></td>
+      </tr>`).join('');
+
+    tbody.innerHTML = allRow + drugRows;
+    const countEl = document.getElementById('drugs-count');
+    if (countEl) countEl.textContent = data.length;
+  }
+  document.addEventListener('DOMContentLoaded', () => renderDrugsTable(DRUGS));
+
+  /* ══════════════════════════════════════════════
+     RENDER USERS TABLE
+  ══════════════════════════════════════════════ */
+  function getContext() {
+    const lbl = document.getElementById('context-label')?.textContent.trim();
+    return lbl === 'Events' ? 'event_types' : 'mass_per_event';
+  }
+
+  function renderUsersHead(context) {
+    const head = document.getElementById('usersTableHead');
+    if (!head) return;
+    const compLabel = document.getElementById('comp-score-label')?.textContent || 'Overall IRIS';
+    const s = userSortState;
+    const arrow = col => {
+      const active = s.col === col;
+      const icon   = active ? (s.asc ? 'arrow_upward' : 'arrow_downward') : 'arrow_upward';
+      const style  = active ? 'color:var(--blue-dark);opacity:1' : 'opacity:.3';
+      return `<span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;${style}">${icon}</span>`;
+    };
+    const th = (key, label, cls, style) =>
+      `<th class="sortable ${cls}" style="${style}" onclick="sortUsersTable('${key}')">`+
+      `<span class="th-inner">${label} ${arrow(key)}</span></th>`;
+
+    const contextCols = context === 'event_types'
+      ? th('dispense','Dispense','right','width:85px;') +
+        th('admin',   'Admin',   'right','width:70px;') +
+        th('waste',   'Waste',   'right','width:70px;') +
+        th('ret',     'Return',  'right','width:70px;') +
+        th('cancel',  'Cancel',  'right','width:70px;')
+      : th('events',       'Total Events',   'right','width:90px;') +
+        th('massDispense', 'Mass Dispensed', 'right','width:110px;') +
+        th('massAdmin',    'Mass Admin',     'right','width:90px;') +
+        th('massWaste',    'Mass Wasted',    'right','width:90px;') +
+        th('massReturn',   'Mass Returned',  'right','width:100px;');
+
+    head.innerHTML = `<tr>
+      ${th('score',    'Metric Score', 'center','width:80px;data-tooltip="Med Trends score for selected date range"')}
+      <th class="sortable right" style="width:95px;" id="th-comp-score" onclick="sortUsersTable('compScore')">
+        <span class="th-inner">${compLabel} ${arrow('compScore')}</span>
+      </th>
+      <th class="sortable" onclick="sortUsersTable('name')">
+        <span class="th-inner">User ${arrow('name')}</span>
+      </th>
+      ${th('shifts','Shifts','right','width:70px;')}
+      ${th('patients','Patients','right','width:75px;')}
+      ${contextCols}
+      <th style="width:120px;"></th>
+    </tr>`;
+  }
+
+  function renderUsersRows(users) {
+    const context = getContext();
+    const tbody   = document.getElementById('usersTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = users.map(u => {
+      const badge = '';
+      const fixed = `
+        <td class="center">
+          <span class="iris-score ${u.scoreClass}" data-tooltip="Med Trends score for selected date range">${u.score}</span>
+        </td>
+        <td class="num"><span class="comp-score ${u.scoreClass}">${u.compScore ?? '—'}</span></td>
+        <td>
+          <div class="user-name"><a href="#" onclick="return false;" data-tooltip="User Details">${u.name}</a>${badge}</div>
+          <div class="user-role-dept">${u.role} &bull; ${u.dept}</div>
+        </td>
+        <td class="num">${u.shifts}</td>
+        <td class="num">${u.patients ?? '—'}</td>`;
+      const data = context === 'event_types'
+        ? `<td class="num">${u.dispense ?? '—'}</td>
+           <td class="num">${u.admin    ?? '—'}</td>
+           <td class="num">${u.waste    ?? '—'}</td>
+           <td class="num">${u.ret      ?? '—'}</td>
+           <td class="num">${u.cancel   ?? '—'}</td>`
+        : `<td class="num">${u.events}</td>
+           <td class="num">${u.massDispense ?? '—'} mg</td>
+           <td class="num">${u.massAdmin    ?? '—'} mg</td>
+           <td class="num">${u.massWaste    ?? '—'} mg</td>
+           <td class="num">${u.massReturn   ?? '—'} mg</td>`;
+      const action = `
+        <td style="text-align:right;padding-right:16px;">
+          <a class="investigate-link" href="#" onclick="return false;">
+            Investigate <span class="material-icons">open_in_new</span>
+          </a>
+        </td>`;
+      return `<tr>${fixed}${data}${action}</tr>`;
+    }).join('');
+  }
+
+  function renderUsersTable(drugName) {
+    const context = getContext();
+    const raw     = getUsersForDrug(drugName);
+    const { col, asc } = userSortState;
+    const users = [...raw].sort((a, b) => {
+      let av = a[col], bv = b[col];
+      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+      av = av ?? 0; bv = bv ?? 0;
+      return asc ? (av > bv ? 1 : av < bv ? -1 : 0)
+                 : (av < bv ? 1 : av > bv ? -1 : 0);
+    });
+    currentUsersData = users;
+    // Reset search input
+    const si = document.getElementById('users-search');
+    if (si) si.value = '';
+    const tbody   = document.getElementById('usersTableBody');
+    renderUsersHead(context);
+
+    tbody.innerHTML = users.map(u => {
+      const badge = '';
+      const fixed = `
+        <td class="center">
+          <span class="iris-score ${u.scoreClass}" data-tooltip="Med Trends score for selected date range">${u.score}</span>
+        </td>
+        <td class="num"><span class="comp-score ${u.scoreClass}">${u.compScore ?? '—'}</span></td>
+        <td>
+          <div class="user-name"><a href="#" onclick="return false;" data-tooltip="User Details">${u.name}</a>${badge}</div>
+          <div class="user-role-dept">${u.role} &bull; ${u.dept}</div>
+        </td>
+
+        <td class="num">${u.shifts}</td>
+        <td class="num">${u.patients ?? '—'}</td>`;
+      const data = context === 'event_types'
+        ? `<td class="num">${u.dispense ?? '—'}</td>
+           <td class="num">${u.admin    ?? '—'}</td>
+           <td class="num">${u.waste    ?? '—'}</td>
+           <td class="num">${u.ret      ?? '—'}</td>
+           <td class="num">${u.cancel   ?? '—'}</td>`
+        : `<td class="num">${u.events}</td>
+           <td class="num">${u.massDispense ?? '—'} mg</td>
+           <td class="num">${u.massAdmin    ?? '—'} mg</td>
+           <td class="num">${u.massWaste    ?? '—'} mg</td>
+           <td class="num">${u.massReturn   ?? '—'} mg</td>`;
+      const action = `
+        <td style="text-align:right">
+          <a class="investigate-link" href="#" onclick="return false;">
+            Investigate <span class="material-icons">open_in_new</span>
+          </a>
+        </td>`;
+      return `<tr>${fixed}${data}${action}</tr>`;
+    }).join('');
+
+  }
+
+  /* ══════════════════════════════════════════════
+     NAVIGATION
+  ══════════════════════════════════════════════ */
+  function drillDown(drugName) {
+    currentDrugName = drugName;
+    document.getElementById('drilldown-drug-name').textContent = drugName;
+    renderUsersTable(drugName);
+    document.getElementById('view-drugs').classList.remove('visible');
+    document.getElementById('view-users').classList.add('visible');
+    // Swap page title to breadcrumb
+    const pt = document.querySelector('.page-title');
+    pt.classList.add('breadcrumb');
+    pt.innerHTML = `<button class="bc-parent" onclick="goBack()">Med Trends</button>
+      <span class="bc-sep">&rsaquo;</span>
+      <span class="bc-current">${drugName}</span>`;
+    // Reset to table view; dispose chart so it re-renders with fresh data
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+    switchUserView('table');
+  }
+
+  function goBack() {
+    document.getElementById('view-users').classList.remove('visible');
+    document.getElementById('view-drugs').classList.add('visible');
+    // Restore plain page title
+    const pt = document.querySelector('.page-title');
+    pt.classList.remove('breadcrumb');
+    pt.innerHTML = 'Med Trends';
+    switchDrugView('table');
+  }
+
+  function handleViewBy(value) {
+    if (value === 'user') {
+      // Show a generic user-first view (same drilldown shell but without a drug pre-selected)
+      document.getElementById('drilldown-drug-name').textContent = 'All Drugs';
+      renderUsersTable('fentaNYL Inj');
+      document.getElementById('view-drugs').classList.remove('visible');
+      document.getElementById('view-users').classList.add('visible');
+    } else {
+      goBack();
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     VIEW TOGGLES
+  ══════════════════════════════════════════════ */
+  function switchDrugView(mode) {
+    document.getElementById('drugs-table-view').style.display = mode==='table' ? '' : 'none';
+    document.getElementById('drugs-graph-view').style.display = mode==='graph' ? '' : 'none';
+    const tabular = document.getElementById('drugs-tabular-tab');
+    const visual  = document.getElementById('drugs-visual-tab');
+    tabular.classList.toggle('mdc-tab--active', mode==='table');
+    visual.classList.toggle('mdc-tab--active',  mode==='graph');
+    tabular.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode==='table');
+    visual.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active',  mode==='graph');
+    if (mode === 'graph') {
+      if (drugsChart) { drugsChart.dispose(); drugsChart = null; }
+      setTimeout(() => initDrugsChart(), 0);
+    } else {
+      if (drugsChart) { drugsChart.dispose(); drugsChart = null; }
+    }
+  }
+
+  function updateContext() {
+    renderUsersTable(currentDrugName);
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+  }
+
+  function switchUserView(mode) {
+    document.getElementById('users-table-view').style.display = mode==='table' ? '' : 'none';
+    document.getElementById('users-graph-view').style.display = mode==='graph' ? '' : 'none';
+    const tabular = document.getElementById('users-tabular-tab');
+    const visual  = document.getElementById('users-visual-tab');
+    tabular.classList.toggle('mdc-tab--active', mode==='table');
+    visual.classList.toggle('mdc-tab--active',  mode==='graph');
+    tabular.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode==='table');
+    visual.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active',  mode==='graph');
+    const etf = document.getElementById('event-type-filter');
+    if (etf) etf.style.display = mode === 'table' ? 'none' : 'flex';
+    if (mode === 'graph') {
+      // Always dispose so the chart re-initializes with correct container dimensions
+      if (usersChart) { usersChart.dispose(); usersChart = null; }
+      setTimeout(() => initUsersChart(currentDrugName), 0);
+    } else {
+      if (usersChart) { usersChart.dispose(); usersChart = null; }
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     SIDEBAR
+  ══════════════════════════════════════════════ */
+  function toggleDrawer() {
+    document.getElementById('analyze-drawer').classList.toggle('collapsed');
+  }
+  function togglePanel(header) {
+    const panel = header.closest('mat-expansion-panel');
+    const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+    const isOpen = panel.classList.contains('mat-expanded');
+    panel.classList.toggle('mat-expanded', !isOpen);
+    header.classList.toggle('mat-expanded', !isOpen);
+    header.setAttribute('aria-expanded', !isOpen);
+    isOpen ? wrapper.setAttribute('inert','') : wrapper.removeAttribute('inert');
+  }
+
+  /* ══════════════════════════════════════════════
+     FILTER CHIP TOGGLE (demo only)
+  ══════════════════════════════════════════════ */
+  function togglePillMenu(menuId) {
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    // Close all other open menus first
+    document.querySelectorAll('.cs-menu').forEach(m => { if (m.id !== menuId) m.style.display = 'none'; });
+    menu.style.display = menu.style.display === 'none' ? '' : 'none';
+  }
+  function setPillFilter(btnId, labelId, menuId, el) {
+    document.getElementById(labelId).textContent = el.textContent;
+    document.getElementById(menuId).style.display = 'none';
+    el.closest('.cs-menu').querySelectorAll('.cs-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleCompScoreMenu() { togglePillMenu('comp-score-menu'); }
+  function setCompScore(el) {
+    document.getElementById('comp-score-label').textContent = el.textContent;
+    document.getElementById('comp-score-menu').style.display = 'none';
+    document.querySelectorAll('.cs-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    // Update the th label live
+    const th = document.getElementById('th-comp-score');
+    if (th) th.textContent = el.textContent;
+  }
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.comp-score-filter') && !e.target.closest('.cs-menu')) {
+      document.querySelectorAll('.cs-menu').forEach(m => m.style.display = 'none');
+    }
+  });
+
+  function toggleFilter(el) {
+    el.classList.toggle('active');
+  }
+
+
+  function filterDrugsTable(query) {
+    const q = query.trim().toLowerCase();
+    const filtered = q ? DRUGS.filter(d => d.name.toLowerCase().includes(q)) : DRUGS;
+    renderDrugsTable(filtered);
+    const countEl = document.getElementById('drugs-count');
+    if (countEl) countEl.textContent = filtered.length;
+  }
+
+
+  let currentUsersData = [];
+
+  function filterUsersTable(query) {
+    const q = query.trim().toLowerCase();
+    const filtered = q
+      ? currentUsersData.filter(u =>
+          u.name.toLowerCase().includes(q) ||
+          u.role.toLowerCase().includes(q) ||
+          u.dept.toLowerCase().includes(q))
+      : currentUsersData;
+    renderUsersRows(filtered);
+    const countEl = document.getElementById('users-count');
+    if (countEl) countEl.textContent = filtered.length;
+  }
+
+  /* ══════════════════════════════════════════════
+     SORT — USERS TABLE
+  ══════════════════════════════════════════════ */
+  function sortUsersTable(col) {
+    if (userSortState.col === col) {
+      userSortState.asc = !userSortState.asc;
+    } else {
+      userSortState.col = col;
+      userSortState.asc = col === 'name'; // default asc for name, desc for numerics
+    }
+    renderUsersTable(currentDrugName);
+  }
+
+  /* ══════════════════════════════════════════════
+     SORT (basic demo)
+  ══════════════════════════════════════════════ */
+  let drugSortCol = 1, drugSortAsc = true;
+  function sortDrugsTable(col) {
+    if (drugSortCol === col) { drugSortAsc = !drugSortAsc; }
+    else { drugSortCol = col; drugSortAsc = true; }
+
+    const keys = ['priority','name','users','events','dispense','admin','waste','ret','cancel'];
+    const key = keys[col - 1] || 'name';
+    const sorted = [...DRUGS].sort((a,b) => {
+      let av = a[key], bv = b[key];
+      if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
+      return drugSortAsc ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+    });
+    renderDrugsTable(sorted);
+
+    // Update header classes
+    document.querySelectorAll('#drugsTable th').forEach((th, i) => {
+      th.classList.remove('sort-asc','sort-desc');
+      if (i === col) th.classList.add(drugSortAsc ? 'sort-asc' : 'sort-desc');
+    });
+  }
+  // ── Tooltip ──────────────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    const tt = document.getElementById('tt');
+    document.addEventListener('mouseover', e => {
+      const el = e.target.closest('[data-tooltip]');
+      if (!el) return;
+      tt.textContent = el.getAttribute('data-tooltip');
+      tt.style.opacity = '1';
+      positionTT(el);
+    });
+    document.addEventListener('mouseout', e => {
+      if (!e.target.closest('[data-tooltip]')) return;
+      tt.style.opacity = '0';
+    });
+    document.addEventListener('mousemove', e => {
+      if (tt.style.opacity === '0') return;
+      const el = e.target.closest('[data-tooltip]');
+      if (el) positionTT(el);
+    });
+    function positionTT(el) {
+      const r  = el.getBoundingClientRect();
+      const tw = tt.offsetWidth;
+      let left = r.left + r.width / 2 - tw / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      tt.style.left = left + 'px';
+      tt.style.top  = (r.top - tt.offsetHeight - 8) + 'px';
+    }
+  });
+
+
+</script>
+</head>
+
+<body>
+<div id="tt"></div>
+<app-component class="flex-col-100">
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
+  <navigation>
+    <header>
+
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+
+        <!-- Logo -->
+        <a class="nav-link" href="/dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
+            <g><g><g id="ControlCheck_Logo_Color">
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+            </g></g></g>
+          </svg>
+        </a>
+
+        <!-- nav-menu -->
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Audit<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Analyze<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Cases<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
+                  Report
+                </span>
+              </span>
+            </a>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Upload<span class="material-icons nav-chevron">arrow_drop_down</span></span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
+                  Manage&nbsp;<span id="mat-badge-content-0" aria-hidden="true" class="mat-badge-content mat-badge-active">!</span>
+                </span>
+              </span>
+            </a>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/labs">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
+                  Labs
+                </span>
+              </span>
+            </a>
+          </div>
+        </nav-menu>
+
+        <!-- user-menu -->
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Alex Morrow</div>
+                  <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
+                </div>
+
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">AM</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ══ APP VIEW ════════════════════════════════════════════════════ -->
+  <div id="app-view" class="flex-col-100">
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── ANALYZE SIDEBAR ── -->
+      <mat-drawer mode="side" opened="" class="mat-drawer mat-drawer-opened mat-drawer-side" id="analyze-drawer">
+        <div class="mat-drawer-inner-container">
+          <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <span class="mat-icon material-icons">chevron_left</span>
+          </button>
+          <mat-accordion class="mat-accordion navigation-accordion mat-accordion-multi">
+
+            <!-- Health System -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span>Active IRIS Reviews</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span>Multi-Hospital Users</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+            <!-- Nursing -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
+                    <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span>User Mobility</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span>Waste Networks</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span>Full Package Waste</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span>Shift Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+            <!-- OR -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">OR</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <!-- ── MAIN CONTENT ── -->
+      <mat-drawer-content class="mat-drawer-content">
+
+        <!-- ═══════════════════════════════════════
+             PAGE HEADER (shared across both views)
+        ═══════════════════════════════════════ -->
+        <div class="page-header">
+          <span class="page-title">Med Trends</span>
+          <div class="filter-chip-group">
+            <button class="filter-chip active" onclick="toggleFilter(this)">
+              <span class="material-icons mat-icon">calendar_today</span>
+              03/07/2026 – 04/06/2026
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="filter-chip" onclick="toggleFilter(this)">
+              Department
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="filter-chip" onclick="toggleFilter(this)">
+              User
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="filter-chip" onclick="toggleFilter(this)">
+              Role
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <button class="clear-all-btn">Clear All</button>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             VIEW 1 — DRUGS TABLE
+        ═══════════════════════════════════════ -->
+        <div id="view-drugs" class="view visible">
+
+          <div class="content-area">
+
+
+          <!-- ── Tab bar ── -->
+          <div class="view-tab-bar">
+            <div class="tab-bar-tabs">
+            <button class="mdc-tab mdc-tab--active" id="drugs-tabular-tab" onclick="switchDrugView('table')">
+              <span class="mdc-tab__content">
+                <span class="material-icons mat-icon">table_chart</span>
+                <span class="mdc-tab__text-label">Tabular Data</span>
+              </span>
+              <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+            </button>
+            <button class="mdc-tab" id="drugs-visual-tab" onclick="switchDrugView('graph')">
+              <span class="mdc-tab__content">
+                <span class="material-icons mat-icon">bar_chart</span>
+                <span class="mdc-tab__text-label">Visualized Data</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+            </button>
+            </div>
+            <button class="download-btn tab-bar-download" title="Download data" data-tooltip="Download CSV">
+              <span class="material-icons">download</span>
+            </button>
+          </div>
+
+            <!-- Drugs Table -->
+            <div class="table-meta" id="drugs-table-meta">
+              <span class="table-count"><strong id="drugs-count">12</strong> drugs</span>
+              <div class="table-search">
+                <span class="material-icons">search</span>
+                <input type="text" id="drugs-search" placeholder="Search drugs…" oninput="filterDrugsTable(this.value)">
+              </div>
+            </div>
+            <div id="drugs-table-view">
+              <div class="data-table-wrap">
+                <table class="data-table" id="drugsTable">
+                  <thead>
+                    <tr>
+                      <th class="td-priority center" data-tooltip="IRIS Priority Score">Priority</th>
+                      <th class="sortable sort-asc" onclick="sortDrugsTable(1)">
+                        <span class="th-inner">Drug <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th class="sortable right" onclick="sortDrugsTable(2)">
+                        <span class="th-inner">Total Users <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th class="sortable right" onclick="sortDrugsTable(3)">
+                        <span class="th-inner">Total Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th class="sortable right" onclick="sortDrugsTable(4)">
+                        <span class="th-inner">Dispense <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th class="sortable right td-hide" onclick="sortDrugsTable(5)">
+                        <span class="th-inner">Admin <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th class="sortable right td-hide" onclick="sortDrugsTable(6)">
+                        <span class="th-inner">Waste <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th class="sortable right td-hide" onclick="sortDrugsTable(7)">
+                        <span class="th-inner">Return <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th class="sortable right td-hide" onclick="sortDrugsTable(8)">
+                        <span class="th-inner">Cancel <span class="material-icons sort-icon">arrow_upward</span></span>
+                      </th>
+                      <th style="width:40px"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="drugsTableBody">
+                    <!-- Rows injected by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Drugs Scatter Chart -->
+            <div id="drugs-graph-view" style="display:none;">
+              <div class="chart-wrap">
+                <div id="drugs-chart" class="chart-container"></div>
+                <div class="chart-legend">
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f24335"></span>High Priority</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5a623"></span>Medium Priority</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#16b434"></span>Low Priority</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /.content-area -->
+        </div><!-- /#view-drugs -->
+
+        <!-- ═══════════════════════════════════════
+             VIEW 2 — USER DRILLDOWN
+        ═══════════════════════════════════════ -->
+        <div id="view-users" class="view">
+
+          <div class="content-area">
+
+            <!-- Drilldown header -->
+            <div class="drilldown-header">
+              <button class="back-btn" onclick="goBack()" title="Back to Med Trends" aria-label="Back to Med Trends">
+                <span class="material-icons mat-icon">arrow_back</span>
+              </button>
+              <span class="drilldown-title" id="drilldown-drug-name">fentaNYL Inj</span>
+            </div>
+
+          <!-- ── Tab bar ── -->
+          <div class="view-tab-bar">
+            <div class="tab-bar-tabs">
+            <button class="mdc-tab mdc-tab--active" id="users-tabular-tab" onclick="switchUserView('table')">
+              <span class="mdc-tab__content">
+                <span class="material-icons mat-icon">table_chart</span>
+                <span class="mdc-tab__text-label">Tabular Data</span>
+              </span>
+              <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+            </button>
+            <button class="mdc-tab" id="users-visual-tab" onclick="switchUserView('graph')">
+              <span class="mdc-tab__content">
+                <span class="material-icons mat-icon">scatter_plot</span>
+                <span class="mdc-tab__text-label">Visualized Data</span>
+              </span>
+              <span class="mdc-tab-indicator">
+                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+              </span>
+            </button>
+            </div>
+            <button class="download-btn tab-bar-download" title="Download data" data-tooltip="Download CSV">
+              <span class="material-icons">download</span>
+            </button>
+          </div>
+
+            <!-- Filters row -->
+            <div class="pill-filters-row">
+
+              <!-- Comparison Score -->
+              <div class="pill-filter-wrap">
+                <button class="comp-score-filter" id="comp-score-btn" onclick="toggleCompScoreMenu()">
+                  <span class="cs-label">Comparison Score:</span>
+                  <span id="comp-score-label">Overall IRIS</span>
+                  <span class="material-icons mat-icon">expand_more</span>
+                </button>
+                <div class="cs-menu" id="comp-score-menu" style="display:none;">
+                  <div class="cs-option selected" onclick="setCompScore(this)">Overall IRIS</div>
+                  <div class="cs-option" onclick="setCompScore(this)">Action Times</div>
+                  <div class="cs-option" onclick="setCompScore(this)">Variance Trends</div>
+                  <div class="cs-option" onclick="setCompScore(this)">Dispense Patterns</div>
+                  <div class="cs-option" onclick="setCompScore(this)">Med Trends</div>
+                  <div class="cs-option" onclick="setCompScore(this)">Full Package Waste</div>
+                  <div class="cs-option" onclick="setCompScore(this)">Shift Analysis</div>
+                </div>
+              </div>
+
+              <!-- Context -->
+              <div class="pill-filter-wrap">
+                <button class="comp-score-filter" id="context-btn" onclick="togglePillMenu('context-menu')">
+                  <span class="cs-label">Context:</span>
+                  <span id="context-label">Mass</span>
+                  <span class="material-icons mat-icon">expand_more</span>
+                </button>
+                <div class="cs-menu" id="context-menu" style="display:none;">
+                  <div class="cs-option selected" onclick="setPillFilter('context-btn','context-label','context-menu',this);updateContext()">Mass</div>
+                  <div class="cs-option" onclick="setPillFilter('context-btn','context-label','context-menu',this);updateContext()">Events</div>
+                </div>
+              </div>
+
+              <!-- Event Type (hidden on Tabular Data) -->
+              <div class="pill-filter-wrap" id="event-type-filter">
+                <button class="comp-score-filter" id="event-type-btn" onclick="togglePillMenu('event-type-menu')">
+                  <span class="cs-label">Event Type:</span>
+                  <span id="event-type-label">Dispense</span>
+                  <span class="material-icons mat-icon">expand_more</span>
+                </button>
+                <div class="cs-menu" id="event-type-menu" style="display:none;">
+                  <div class="cs-option selected" onclick="setPillFilter('event-type-btn','event-type-label','event-type-menu',this)">All Event Types</div>
+                  <div class="cs-option" onclick="setPillFilter('event-type-btn','event-type-label','event-type-menu',this)" class="cs-option selected">Dispense</div>
+                  <div class="cs-option" onclick="setPillFilter('event-type-btn','event-type-label','event-type-menu',this)">Admin</div>
+                  <div class="cs-option" onclick="setPillFilter('event-type-btn','event-type-label','event-type-menu',this)">Waste</div>
+                  <div class="cs-option" onclick="setPillFilter('event-type-btn','event-type-label','event-type-menu',this)">Return</div>
+                </div>
+              </div>
+
+              <!-- Std. Deviation -->
+              <div class="pill-filter-wrap">
+                <button class="comp-score-filter" id="std-dev-btn" onclick="togglePillMenu('std-dev-menu')">
+                  <span class="cs-label">Std. Deviation:</span>
+                  <span id="std-dev-label">None</span>
+                  <span class="material-icons mat-icon">expand_more</span>
+                </button>
+                <div class="cs-menu" id="std-dev-menu" style="display:none;">
+                  <div class="cs-option selected" onclick="setPillFilter('std-dev-btn','std-dev-label','std-dev-menu',this)">None</div>
+                  <div class="cs-option" onclick="setPillFilter('std-dev-btn','std-dev-label','std-dev-menu',this)">+1σ</div>
+                  <div class="cs-option" onclick="setPillFilter('std-dev-btn','std-dev-label','std-dev-menu',this)">+2σ</div>
+                  <div class="cs-option" onclick="setPillFilter('std-dev-btn','std-dev-label','std-dev-menu',this)">+3σ</div>
+                  <div class="cs-option" onclick="setPillFilter('std-dev-btn','std-dev-label','std-dev-menu',this)">+4σ</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Users Table -->
+            <div class="table-meta" id="users-table-meta">
+              <span class="table-count"><strong id="users-count">–</strong> users</span>
+              <div class="table-search">
+                <span class="material-icons">search</span>
+                <input type="text" id="users-search" placeholder="Search users…" oninput="filterUsersTable(this.value)">
+              </div>
+            </div>
+            <div id="users-table-view">
+              <div class="data-table-wrap">
+                <table class="data-table">
+                  <thead id="usersTableHead"></thead>
+                  <tbody id="usersTableBody">
+                    <!-- Rows injected by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Users Scatter Chart -->
+            <div id="users-graph-view" style="display:none;">
+              <div class="chart-wrap">
+                <div id="users-chart" class="chart-container"></div>
+                <div class="chart-legend">
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#c62828"></span>Critical (8.0+)</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#e53935"></span>High (7.0–7.9)</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5a623"></span>Elevated (6.0–6.9)</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f9a825"></span>Moderate (5.0–5.9)</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#044a82"></span>Normal (&lt;5.0)</span>
+                  <span class="chart-legend-item" style="margin-left:12px;color:var(--text-54);font-style:italic;">Dot size = shifts worked</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /.content-area -->
+        </div><!-- /#view-users -->
+
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div><!-- /#app-view -->
+
+  <footer>
+    Copyright &copy; 2011&ndash;2026 by Bluesight, Inc. &bull; 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help&#64;bluesight.com">help&#64;bluesight.com</a>
+    &bull; All Rights Reserved |
+    <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+  </footer>
+
+</app-component>
+</body>
+</html>
