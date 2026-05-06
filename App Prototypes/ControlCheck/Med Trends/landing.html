@@ -1835,14 +1835,15 @@
 
   function applyPanelCompareBy() {
     if (!l3PanelOpen) return;
+    // Rebuild user multi-select FIRST so it matches the new Compare By peer set;
+    // the table/chart that follows reads the fresh uuUserFilterSelected.
+    uuRebuildUserFilter(currentDrugName);
     if (panelMode === 'table') {
       renderUsersTable(currentDrugName);
     } else {
       if (usersChart) { usersChart.dispose(); usersChart = null; }
       initUsersChart(currentDrugName);
     }
-    // Rebuild user multi-select to reflect the new visible set
-    uuRebuildUserFilter(currentDrugName);
   }
 
   // Reset Compare By to default each time the panel opens
