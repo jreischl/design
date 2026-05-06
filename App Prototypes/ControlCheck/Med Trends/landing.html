@@ -1075,8 +1075,15 @@
     /* Title on the far left, count adjacent, search pushed to the right */
     .count-search-row .drilldown-title { flex-shrink: 0; }
     .count-search-row .row-count { flex: 1 1 auto; margin-left: 1rem; }
-    /* Back button and drilldown-title sit flush */
-    .count-search-row .back-btn + .drilldown-title { margin-left: 0; }
+
+    /* Drilldown row (back button + user title) — sits above count-search-row on L2 */
+    .drilldown-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 8px;
+    }
+    .drilldown-row .back-btn + .drilldown-title { margin-left: 0; }
     .row-count {
       font-size: .813rem; font-weight: 600; color: var(--text-54);
     }
@@ -1573,6 +1580,36 @@
       cursor: pointer;
     }
 
+
+    /* Level 2 context block — drilldown row + Med Trends card.
+       Lives above the shared tab bar; gets the same 40px horizontal padding
+       that the per-view content-area has, so it lines up with everything else.
+       Uses grid-template-rows + opacity for a smooth open/close transition
+       without a 'display: none' jump. */
+    .l2-context-block {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .28s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .l2-context-block-inner {
+      overflow: hidden;
+      min-height: 0;
+      padding: 0 40px;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity .22s ease, transform .28s cubic-bezier(0.4, 0, 0.2, 1), padding .28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .l2-context-block.open {
+      grid-template-rows: 1fr;
+    }
+    .l2-context-block.open .l2-context-block-inner {
+      opacity: 1;
+      transform: translateY(0);
+      padding: 16px 40px 0;
+    }
+    body.legacy-mode .l2-context-block { display: none !important; }
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
 <script data-cfasync="false" defer>
@@ -1999,8 +2036,23 @@
         xAxis: { type: 'value', name: useMass ? 'Total Mass (mg)' : 'Total Events',
                  nameLocation: 'middle', nameGap: 26, ...axis },
         yAxis: { type: 'category',
-          data: sorted.map(u => u.name),
-          axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#333' },
+          data: sorted.map(u => u.userId === currentUserId ? `{focus|${u.name}}` : u.name),
+          axisLabel: {
+            fontFamily: 'proxima-nova, Helvetica, sans-serif',
+            fontSize: 12,
+            color: '#333',
+            rich: {
+              focus: {
+                fontFamily: 'proxima-nova, Helvetica, sans-serif',
+                fontSize: 12,
+                fontWeight: 700,
+                color: '#0a3861',
+                backgroundColor: '#e7f4fb',
+                padding: [4, 8, 4, 8],
+                borderRadius: 4
+              }
+            }
+          },
           axisLine: { lineStyle: { color: '#e5e5e5' } },
           axisTick: { show: false }
         },
@@ -2024,14 +2076,24 @@
         yAxis: { type: 'value', name: 'Mass Dispensed (mg)', nameLocation: 'middle', nameGap: 52, ...axis },
         series: [{
           type: 'scatter',
-          data: users.map(u => ({
-            value: [u.events, u.massDispense ?? u.mass],
-            userName: u.name, score: u.score, shifts: u.shifts,
-            massPerEvent: u.massPerEvent,
-            symbolSize: Math.max(10, Math.round(8 + (u.shifts / maxShifts) * 22)),
-            itemStyle: { color: scoreColor(u.score), opacity: 0.88 },
-            emphasis: { itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } }
-          })),
+          data: users.map(u => {
+            const isFocus = u.userId === currentUserId;
+            const baseSize = Math.max(10, Math.round(8 + (u.shifts / maxShifts) * 22));
+            return {
+              value: [u.events, u.massDispense ?? u.mass],
+              userName: u.name, score: u.score, shifts: u.shifts,
+              massPerEvent: u.massPerEvent,
+              isFocus,
+              symbolSize: isFocus ? baseSize + 6 : baseSize,
+              itemStyle: isFocus
+                ? { color: scoreColor(u.score), opacity: 1,
+                    borderColor: '#0096b8', borderWidth: 3,
+                    shadowBlur: 8, shadowColor: 'rgba(0,150,184,0.45)' }
+                : { color: scoreColor(u.score), opacity: 0.88 },
+              emphasis: { itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } },
+              z: isFocus ? 10 : 1
+            };
+          }),
           label: {
             show: true,
             position: 'right',
@@ -2045,6 +2107,23 @@
           }
         }]
       };
+      // Per-data label override for the focus user — bigger, bolder, navy
+      option.series[0].data.forEach(d => {
+        if (d.isFocus) {
+          d.label = {
+            show: true,
+            position: 'right',
+            fontSize: 12,
+            fontWeight: 700,
+            color: '#0a3861',
+            fontFamily: 'proxima-nova, Helvetica, sans-serif',
+            formatter: () => {
+              const parts = d.userName.split(' ');
+              return parts[0] + ' ' + (parts[1] ? parts[1][0]+'.' : '');
+            }
+          };
+        }
+      });
     }
 
     usersChart.setOption(option, true);
@@ -2958,15 +3037,14 @@
     ['view-all-users', 'view-user-drugs'].forEach(id => {
       document.getElementById(id).classList.toggle('visible', id === viewId);
     });
-    // Relocate the shared filter bar to its anchor in the visible view.
-    // L2 has a Med Trends card between count-search-row and the filter bar;
-    // L1 has no card, so the bar sits directly after count-search-row.
+    // L2 context block (drilldown row + Med Trends card) only on Level 2
+    const ctx = document.getElementById('l2-context-block');
+    if (ctx) ctx.classList.toggle('open', viewId === 'view-user-drugs');
+    // Relocate the shared filter bar to sit directly after count-search-row in the visible view.
     const filterBar = document.querySelector('.shared-filter-bar');
-    const card      = document.querySelector(`#${viewId} #med-trends-card`);
     const countRow  = document.querySelector(`#${viewId} .count-search-row`);
-    const anchor    = card || countRow;
-    if (filterBar && anchor && anchor.nextElementSibling !== filterBar) {
-      anchor.after(filterBar);
+    if (filterBar && countRow && countRow.nextElementSibling !== filterBar) {
+      countRow.after(filterBar);
     }
     updateFilterVisibility();
   }
@@ -3238,20 +3316,11 @@
     _toggleTab('user-drugs-table-view','user-drugs-graph-view', mode);
     updateFilterVisibility();
     updateChartLegend('userDrugs', userDrugsChartType);
+    // Hide the entire count-search-row on visualized; drilldown-row (back + title) stays
     const csr = document.querySelector('#view-user-drugs .count-search-row');
-    if (csr) _toggleCsrForGraph(csr, mode);
+    if (csr) csr.style.display = mode === 'graph' ? 'none' : '';
     if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
     if (mode === 'graph') setTimeout(() => initUserDrugsChart(currentUserId), 0);
-  }
-
-  /* L2 count-search-row contains back+title (must stay) plus row-count+search (hide on graph).
-     Toggle only the children that are count/search-related. */
-  function _toggleCsrForGraph(csr, mode) {
-    const hide = mode === 'graph';
-    const rowCount = csr.querySelector('.row-count');
-    const searchWrap = csr.querySelector('.search-wrap');
-    if (rowCount)   rowCount.style.display   = hide ? 'none' : '';
-    if (searchWrap) searchWrap.style.display = hide ? 'none' : '';
   }
 
   function updateContext() {
@@ -3852,6 +3921,31 @@
 
 
         <!-- ═══════════════════════════════════════
+             LEVEL 2 CONTEXT BLOCK (drilldown header + Med Trends card)
+             — only visible on L2 (toggled in setVisibleView)
+        ═══════════════════════════════════════ -->
+        <div id="l2-context-block" class="l2-context-block">
+          <div class="l2-context-block-inner">
+            <!-- Drilldown header: back button + user title -->
+            <div class="drilldown-row">
+              <button class="back-btn" onclick="goBackFromUserDrugs()" title="Back to All Users" aria-label="Back to All Users">
+                <span class="material-icons mat-icon">arrow_back</span>
+              </button>
+              <div class="drilldown-title" id="user-drugs-drilldown-title"></div>
+            </div>
+
+            <!-- Med Trends summary card -->
+            <div class="med-trends-card" id="med-trends-card">
+              <div class="med-trends-card-header">
+                <span class="iris-score" id="med-trends-card-score">—</span>
+                <span class="med-trends-card-title">Med Trends</span>
+              </div>
+              <div class="med-trends-card-body" id="med-trends-card-body"><!-- populated dynamically --></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
              SHARED TAB BAR (Tabular / Visualized, dispatches to current level)
         ═══════════════════════════════════════ -->
         <div class="shared-tab-bar-wrap">
@@ -4008,26 +4102,13 @@
         <div id="view-user-drugs" class="view">
           <div class="content-area">
 
-            <!-- Count + search (with back button + title inline) -->
+            <!-- Count + search -->
             <div class="count-search-row">
-              <button class="back-btn" onclick="goBackFromUserDrugs()" title="Back to All Users" aria-label="Back to All Users">
-                <span class="material-icons mat-icon">arrow_back</span>
-              </button>
-              <div class="drilldown-title" id="user-drugs-drilldown-title"></div>
               <div class="row-count"><span id="userDrugsCount">0</span> drugs</div>
               <div class="search-wrap">
                 <span class="material-icons search-icon">search</span>
                 <input type="text" class="search-input" placeholder="Search drugs…" oninput="filterUserDrugsTable(this.value)">
               </div>
-            </div>
-
-            <!-- Med Trends summary card -->
-            <div class="med-trends-card" id="med-trends-card">
-              <div class="med-trends-card-header">
-                <span class="iris-score" id="med-trends-card-score">—</span>
-                <span class="med-trends-card-title">Med Trends</span>
-              </div>
-              <div class="med-trends-card-body" id="med-trends-card-body"><!-- populated dynamically --></div>
             </div>
 
             <!-- Table -->
