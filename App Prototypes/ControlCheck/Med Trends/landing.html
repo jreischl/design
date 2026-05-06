@@ -274,16 +274,24 @@
       box-shadow: 2px 0 4px rgba(0,0,0,.06);
     }
     #users-table-view .data-table thead th:nth-child(1) { z-index: 3; }
+    /* L3 rows are non-interactive (compare-only view) — default cursor, very light gray hover */
+    #users-table-view .data-table tbody tr { cursor: default; }
+    #users-table-view .data-table tbody tr:hover,
+    #users-table-view .data-table tbody tr:hover td {
+      background: var(--gray-100);
+    }
     #users-table-view .data-table tbody tr:hover td:nth-child(1) {
-      background: #e7f4fb;
+      background: var(--gray-100);
     }
 
     /* Focus user row (Level 3 — the user we drilled in from) */
-    #users-table-view .data-table tbody tr.focus-user td {
+    #users-table-view .data-table tbody tr.focus-user td,
+    #users-table-view .data-table tbody tr.focus-user:hover td {
       background: #e7f4fb;
       font-weight: 600;
     }
-    #users-table-view .data-table tbody tr.focus-user td:nth-child(1) {
+    #users-table-view .data-table tbody tr.focus-user td:nth-child(1),
+    #users-table-view .data-table tbody tr.focus-user:hover td:nth-child(1) {
       background: #e7f4fb;
       box-shadow: inset 3px 0 0 #0096b8, 2px 0 4px rgba(0,0,0,.06);
     }
@@ -813,6 +821,9 @@
     .user-name { font-weight: 600; color: var(--text-87); line-height: 1.3; }
     .user-name a { color: #0096b8; text-decoration: none; }
     .user-name a:hover { color: #00718a; text-decoration: none; }
+    /* Level 1 user-name links use Navy 500 (rest of app uses teal) */
+    #all-users-table-view .user-name a { color: #044A82; }
+    #all-users-table-view .user-name a:hover { color: #0a3861; }
     .user-role-dept {
       font-size: .75rem; color: var(--text-54);
       font-weight: 400; line-height: 1.3;
@@ -1423,6 +1434,141 @@
       cursor: pointer;
     }
 
+    /* Search input inside drug/user filter menus */
+    .drug-filter-search {
+      position: relative;
+      padding: 10px 14px 8px;
+      border-bottom: 1px solid var(--gray-200, #eee);
+    }
+    .drug-filter-search-icon {
+      position: absolute;
+      left: 22px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--text-54, #757575);
+      pointer-events: none;
+    }
+    .drug-filter-search input {
+      width: 100%;
+      height: 30px;
+      padding: 0 8px 0 28px;
+      border: 1px solid var(--gray-300, #e0e0e0);
+      border-radius: 4px;
+      background: #fff;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-87, #333);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .drug-filter-search input::placeholder {
+      color: var(--text-54, #757575);
+    }
+    .drug-filter-search input:focus {
+      border-color: var(--blue-500, #0096b8);
+      box-shadow: 0 0 0 3px rgba(0,150,184,.12);
+    }
+    /* Empty state when no options match the search query */
+    .drug-filter-empty {
+      padding: 16px 14px;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-54, #757575);
+      text-align: center;
+      font-style: italic;
+    }
+
+
+
+    /* Med Trends summary card (Level 2) */
+    .med-trends-card {
+      background: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 16px;
+      font-family: var(--font);
+      box-shadow:
+        0px 1px 3px 0px rgba(0,0,0,0.20),
+        0px 2px 1px -1px rgba(0,0,0,0.12),
+        0px 1px 1px 0px rgba(0,0,0,0.14);
+    }
+    .med-trends-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .med-trends-card-header .iris-score {
+      /* shrink the chip slightly to feel inline with the title */
+      font-size: 14px;
+      padding: 4px 10px;
+    }
+    .med-trends-card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0a3861;
+      letter-spacing: .2px;
+    }
+    .med-trends-card-body {
+      font-size: 14px;
+      color: var(--text-54, #757575);
+      line-height: 1.5;
+    }
+    .med-trends-card-body p { margin: 0; }
+    .med-trends-card-body ul {
+      margin: 8px 0 0;
+      padding-left: 22px;
+    }
+    .med-trends-card-body ul li {
+      margin: 2px 0;
+    }
+    .med-trends-card-body ul li a,
+    .med-trends-card-link {
+      color: #0096b8;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .med-trends-card-body ul li a:hover,
+    .med-trends-card-link:hover {
+      color: #00718a;
+      text-decoration: none;
+    }
+
+
+    /* Department/Role chip filter dropdown */
+    .chip-filter-wrap { position: relative; display: inline-flex; }
+    .chip-filter-menu {
+      position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 220px;
+      max-height: 320px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      z-index: 50;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .chip-filter-list {
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+    .chip-filter-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      font-family: var(--font); font-size: 13px;
+      color: var(--text-87, #333);
+      cursor: pointer;
+      transition: background-color .1s;
+    }
+    .chip-filter-option:hover { background-color: #fafafa; }
+    .chip-filter-option input[type="checkbox"] {
+      margin: 0;
+      accent-color: var(--blue-500, #0096b8);
+      cursor: pointer;
+    }
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
 <script data-cfasync="false" defer>
@@ -1493,7 +1639,10 @@
     document.getElementById('users-table-view').style.display = '';
     document.getElementById('users-graph-view').style.display = 'none';
     updatePanelFilterVisibility();
+    // Compare By defaults to Department on each open
+    resetCompareByToDefault();
     renderUsersTable(drugName);
+    uuRebuildUserFilter(drugName);
     if (usersChart) { usersChart.dispose(); usersChart = null; }
 
     panel.classList.add('open');
@@ -1612,13 +1761,173 @@
   }
 
 
+  /* ══════════════════════════════════════════════
+     L3 PANEL — Compare By filter (Department / Role / All)
+     Defaults to Department on each panel open.
+     'Department' / 'Role' compare against the focus user's value.
+  ══════════════════════════════════════════════ */
+  let panelCompareBy = 'Department'; // 'Department' | 'Role' | 'All'
+
+  function setCompareBy(value, el) {
+    panelCompareBy = value;
+    document.getElementById('l3-panel-compareby-label').textContent = value;
+    if (el && el.parentElement) {
+      el.parentElement.querySelectorAll('.cs-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    // Close menu + open-state cleanup (matches setPillFilter behavior)
+    const menu = document.getElementById('l3-panel-compareby-menu');
+    if (menu) menu.style.display = 'none';
+    document.getElementById('l3-panel-compareby-wrap')?.classList.remove('open');
+
+    if (l3PanelOpen) applyPanelCompareBy();
+  }
+
+  function getUsersForDrugFiltered(drugName) {
+    const all = getUsersForDrug(drugName);
+    if (panelCompareBy === 'All' || !currentUserId) return all;
+    const focus = getUserById(currentUserId);
+    if (!focus) return all;
+    const field = panelCompareBy === 'Department' ? 'dept' : 'role';
+    return all.filter(u => u[field] === focus[field]);
+  }
+
+  function applyPanelCompareBy() {
+    if (!l3PanelOpen) return;
+    if (panelMode === 'table') {
+      renderUsersTable(currentDrugName);
+    } else {
+      if (usersChart) { usersChart.dispose(); usersChart = null; }
+      initUsersChart(currentDrugName);
+    }
+    // Rebuild user multi-select to reflect the new visible set
+    uuRebuildUserFilter(currentDrugName);
+  }
+
+  // Reset Compare By to default each time the panel opens
+  function resetCompareByToDefault() {
+    panelCompareBy = 'Department';
+    document.getElementById('l3-panel-compareby-label').textContent = 'Department';
+    const menu = document.getElementById('l3-panel-compareby-menu');
+    if (menu) {
+      menu.querySelectorAll('.cs-option').forEach(o => o.classList.remove('selected'));
+      const first = menu.querySelector('.cs-option');
+      if (first) first.classList.add('selected');
+    }
+  }
+
+  /* ══════════════════════════════════════════════
+     L3 PANEL Visualized — User multi-select filter
+  ══════════════════════════════════════════════ */
+  // Set of selected userIds. null = everything selected (default).
+  let uuUserFilterSelected = null;
+
+  function uuGetFilteredUsers(drugName) {
+    const all = getUsersForDrugFiltered(drugName);
+    if (!uuUserFilterSelected || uuUserFilterSelected.size === 0) return all;
+    return all.filter(u => uuUserFilterSelected.has(u.userId));
+  }
+
+  function uuRebuildUserFilter(drugName) {
+    const list = document.getElementById('uu-user-filter-list');
+    if (!list) return;
+    const users = getUsersForDrugFiltered(drugName);
+    // Reset selection to all dept/role-filtered users
+    uuUserFilterSelected = new Set(users.map(u => u.userId));
+    list.innerHTML = users.map(u => {
+      return `<label class="drug-filter-option" data-name="${u.name.toLowerCase()}" data-userid="${u.userId}">
+        <input type="checkbox" checked onchange="uuUserFilterToggle('${u.userId}', this.checked)">
+        <span>${u.name}</span>
+      </label>`;
+    }).join('');
+    // Clear any prior search query
+    const search = document.getElementById('uu-user-filter-search');
+    if (search) search.value = '';
+    const empty = document.getElementById('uu-user-filter-empty');
+    if (empty) empty.style.display = 'none';
+    uuUpdateUserFilterLabel();
+  }
+
+  function uuUserFilterSearch(query) {
+    const q = (query || '').trim().toLowerCase();
+    const list = document.getElementById('uu-user-filter-list');
+    const empty = document.getElementById('uu-user-filter-empty');
+    if (!list) return;
+    let visible = 0;
+    list.querySelectorAll('.drug-filter-option').forEach(opt => {
+      const name = opt.dataset.name || '';
+      const match = !q || name.includes(q);
+      opt.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    if (empty) empty.style.display = visible === 0 ? 'block' : 'none';
+  }
+
+  function uuUpdateUserFilterLabel() {
+    const label = document.getElementById('uu-user-filter-label');
+    if (!label) return;
+    const all = currentDrugName ? getUsersForDrug(currentDrugName) : [];
+    const n = uuUserFilterSelected ? uuUserFilterSelected.size : all.length;
+    if (!uuUserFilterSelected || n === all.length) {
+      label.textContent = 'All users';
+    } else if (n === 0) {
+      label.textContent = 'No users';
+    } else if (n === 1) {
+      label.textContent = '1 user';
+    } else {
+      label.textContent = n + ' users';
+    }
+  }
+
+  function uuUserFilterToggle(userId, checked) {
+    if (!uuUserFilterSelected) uuUserFilterSelected = new Set();
+    if (checked) uuUserFilterSelected.add(userId);
+    else uuUserFilterSelected.delete(userId);
+    uuUpdateUserFilterLabel();
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+    initUsersChart(currentDrugName);
+  }
+
+  function uuUserFilterSelectAll(selectAll) {
+    if (!uuUserFilterSelected) uuUserFilterSelected = new Set();
+    // Operate on currently-visible rows only — respects active search filter
+    document.querySelectorAll('#uu-user-filter-list .drug-filter-option').forEach(opt => {
+      if (opt.style.display === 'none') return;
+      const cb = opt.querySelector('input[type="checkbox"]');
+      const userId = opt.dataset.userid;
+      if (!cb || !userId) return;
+      cb.checked = selectAll;
+      if (selectAll) uuUserFilterSelected.add(userId);
+      else uuUserFilterSelected.delete(userId);
+    });
+    uuUpdateUserFilterLabel();
+    if (usersChart) { usersChart.dispose(); usersChart = null; }
+    initUsersChart(currentDrugName);
+  }
+
+  function toggleUuUserFilter(ev) {
+    if (ev) ev.stopPropagation();
+    const menu = document.getElementById('uu-user-filter-menu');
+    if (!menu) return;
+    menu.style.display = menu.style.display === 'none' ? 'flex' : 'none';
+  }
+
+  // Close menu on outside click
+  document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('uu-user-filter-wrap');
+    const menu = document.getElementById('uu-user-filter-menu');
+    if (!wrap || !menu) return;
+    if (menu.style.display === 'none') return;
+    if (!wrap.contains(e.target)) menu.style.display = 'none';
+  });
+
   function initUsersChart(drugName) {
     const el = document.getElementById('users-chart');
     if (!el) return;
     if (!usersChart) usersChart = echarts.init(el);
     updateChartLegend('users', usersChartType);
 
-    const users = getUsersForDrug(drugName);
+    const users = uuGetFilteredUsers(drugName);
     const axis = {
       nameTextStyle: { fontSize: 12, color: '#757575', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
       axisLine: { lineStyle: { color: '#e5e5e5' } },
@@ -2044,7 +2353,7 @@
   }
 
   function renderAllUsersTable() {
-    const raw = getAggregatedUsers();
+    const raw = getFilteredAggregatedUsers();
     const { col, asc } = allUsersSortState;
     const users = [...raw].sort((a, b) => {
       let av = a[col], bv = b[col];
@@ -2187,7 +2496,7 @@
     if (!allUsersChart) allUsersChart = echarts.init(el);
     updateChartLegend('allUsers', allUsersChartType);
 
-    const users = getAggregatedUsers();
+    const users = getFilteredAggregatedUsers();
     const ctxKey = allUsersVizContext; // 'drugs' | 'shifts' | 'patients' | 'events'
     const ctxField = ctxKey === 'drugs' ? 'drugCount' : ctxKey;
     const ctxLabel = {
@@ -2310,12 +2619,32 @@
     udDrugFilterSelected = new Set(drugs.map(d => d.drug));
     list.innerHTML = drugs.map(d => {
       const safe = d.drug.replace(/"/g, '&quot;');
-      return `<label class="drug-filter-option">
+      return `<label class="drug-filter-option" data-name="${d.drug.toLowerCase()}">
         <input type="checkbox" checked onchange="udDrugFilterToggle(&quot;${safe}&quot;, this.checked)">
         <span>${d.drug}</span>
       </label>`;
     }).join('');
+    // Clear any prior search query when rebuilding
+    const search = document.getElementById('ud-drug-filter-search');
+    if (search) search.value = '';
+    const empty = document.getElementById('ud-drug-filter-empty');
+    if (empty) empty.style.display = 'none';
     udUpdateDrugFilterLabel();
+  }
+
+  function udDrugFilterSearch(query) {
+    const q = (query || '').trim().toLowerCase();
+    const list = document.getElementById('ud-drug-filter-list');
+    const empty = document.getElementById('ud-drug-filter-empty');
+    if (!list) return;
+    let visible = 0;
+    list.querySelectorAll('.drug-filter-option').forEach(opt => {
+      const name = opt.dataset.name || '';
+      const match = !q || name.includes(q);
+      opt.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    if (empty) empty.style.display = visible === 0 ? 'block' : 'none';
   }
 
   function udUpdateDrugFilterLabel() {
@@ -2345,11 +2674,17 @@
   }
 
   function udDrugFilterSelectAll(selectAll) {
-    const all = currentUserId ? getDrugsForUser(currentUserId) : [];
-    udDrugFilterSelected = selectAll ? new Set(all.map(d => d.drug)) : new Set();
-    // Sync checkboxes
-    document.querySelectorAll('#ud-drug-filter-list input[type="checkbox"]').forEach(cb => {
+    if (!udDrugFilterSelected) udDrugFilterSelected = new Set();
+    // Operate on currently-visible rows only — respects active search filter
+    document.querySelectorAll('#ud-drug-filter-list .drug-filter-option').forEach(opt => {
+      if (opt.style.display === 'none') return;
+      const cb = opt.querySelector('input[type="checkbox"]');
+      const span = opt.querySelector('span');
+      if (!cb || !span) return;
+      const name = span.textContent;
       cb.checked = selectAll;
+      if (selectAll) udDrugFilterSelected.add(name);
+      else udDrugFilterSelected.delete(name);
     });
     udUpdateDrugFilterLabel();
     if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
@@ -2558,7 +2893,7 @@
 
   function renderUsersTable(drugName) {
     const context = getContext();
-    const raw     = getUsersForDrug(drugName);
+    const raw     = getUsersForDrugFiltered(drugName);
     const { col, asc } = userSortState;
     const users = [...raw].sort((a, b) => {
       let av = a[col], bv = b[col];
@@ -2619,11 +2954,15 @@
     ['view-all-users', 'view-user-drugs'].forEach(id => {
       document.getElementById(id).classList.toggle('visible', id === viewId);
     });
-    // Relocate the shared filter bar below the current view's count-search-row
+    // Relocate the shared filter bar to its anchor in the visible view.
+    // L2 has a Med Trends card between count-search-row and the filter bar;
+    // L1 has no card, so the bar sits directly after count-search-row.
     const filterBar = document.querySelector('.shared-filter-bar');
+    const card      = document.querySelector(`#${viewId} #med-trends-card`);
     const countRow  = document.querySelector(`#${viewId} .count-search-row`);
-    if (filterBar && countRow && countRow.nextElementSibling !== filterBar) {
-      countRow.after(filterBar);
+    const anchor    = card || countRow;
+    if (filterBar && anchor && anchor.nextElementSibling !== filterBar) {
+      anchor.after(filterBar);
     }
     updateFilterVisibility();
   }
@@ -2708,6 +3047,48 @@
     initAllUsersChart();
   }
 
+  /* ══════════════════════════════════════════════
+     L2 Med Trends Summary Card
+  ══════════════════════════════════════════════ */
+  function renderMedTrendsCard(userId) {
+    const user = getUserById(userId);
+    if (!user) return;
+    const agg = aggregateUser(user);
+    const score = agg.score;
+    const tier = scoreClassFor(score); // 'score-normal' | 'score-moderate' | 'score-critical'
+
+    const chip = document.getElementById('med-trends-card-score');
+    const body = document.getElementById('med-trends-card-body');
+    if (!chip || !body) return;
+
+    chip.className = 'iris-score ' + tier;
+    chip.textContent = score.toFixed(1);
+
+    if (tier === 'score-normal') {
+      body.innerHTML = `<p>${user.name} has no unusual medication activity patterns.</p>`;
+    } else if (tier === 'score-moderate') {
+      body.innerHTML = `<p>${user.name} has slightly unusual medication activity patterns.</p>`;
+    } else {
+      // Critical — pick the top contributing drug-action combinations.
+      // Take the 2-3 drugs with highest individual score.
+      const drugs = [...user.drugs].sort((a, b) => b.score - a.score).slice(0, 3);
+      const items = drugs.map(d => {
+        // Pick the action with the highest event count for this drug
+        const counts = {
+          'Administering':  d.admin    || 0,
+          'Dispensing':     d.dispense || 0,
+          'Wasting':        d.waste    || 0,
+          'Returning':      d.ret      || 0,
+          'Cancelling':     d.cancel   || 0,
+        };
+        const action = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+        return `<li><a href="#" onclick="return false;">${action} ${d.drug}.</a></li>`;
+      }).join('');
+      body.innerHTML = `<p>${user.name} exhibits highly unusual medication activity patterns when:</p>
+        <ul>${items}</ul>`;
+    }
+  }
+
   function drillToUser(userId) {
     const user = getUserById(userId);
     if (!user) return;
@@ -2717,6 +3098,7 @@
     setVisibleView('view-user-drugs');
     setDrilldownHeader('user-drugs', user.name,
       `${user.role} · ${user.dept} · ${user.shifts} shifts · ${user.patients || 0} patients`);
+    renderMedTrendsCard(userId);
     renderUserDrugsTable(userId);
     udRebuildDrugFilter(userId);
     setBreadcrumb();
@@ -2891,6 +3273,110 @@
     header.classList.toggle('mat-expanded', !isOpen);
     header.setAttribute('aria-expanded', !isOpen);
     isOpen ? wrapper.setAttribute('inert','') : wrapper.removeAttribute('inert');
+  }
+
+  /* ══════════════════════════════════════════════
+     LEVEL 1 CHIP FILTERS — Department + Role
+  ══════════════════════════════════════════════ */
+  // Each entry is a Set of selected values. Empty Set = "no filter".
+  const chipFilters = {
+    dept: new Set(),
+    role: new Set(),
+  };
+
+  function getFilteredAggregatedUsers() {
+    const all = getAggregatedUsers();
+    return all.filter(u => {
+      if (chipFilters.dept.size > 0 && !chipFilters.dept.has(u.dept)) return false;
+      if (chipFilters.role.size > 0 && !chipFilters.role.has(u.role)) return false;
+      return true;
+    });
+  }
+
+  function buildChipFilterMenu(kind) {
+    const list = document.getElementById(`${kind}-chip-list`);
+    if (!list) return;
+    // Distinct values from the raw user data
+    const field = kind; // 'dept' | 'role'
+    const values = [...new Set(USERS.map(u => u[field]))].sort();
+    list.innerHTML = values.map(v => {
+      const checked = chipFilters[kind].has(v) ? 'checked' : '';
+      const safe = v.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      return `<label class="chip-filter-option">
+        <input type="checkbox" ${checked} onchange="onChipFilterChange('${kind}', '${safe}', this.checked)">
+        <span>${v}</span>
+      </label>`;
+    }).join('');
+  }
+
+  function onChipFilterChange(kind, value, checked) {
+    if (checked) chipFilters[kind].add(value);
+    else chipFilters[kind].delete(value);
+    updateChipFilterLabel(kind);
+    applyChipFilters();
+  }
+
+  function updateChipFilterLabel(kind) {
+    const labelEl = document.getElementById(`${kind}-chip-label`);
+    const btn = document.getElementById(`${kind}-chip-btn`);
+    if (!labelEl || !btn) return;
+    const base = kind === 'dept' ? 'Department' : 'Role';
+    const n = chipFilters[kind].size;
+    if (n === 0) {
+      labelEl.textContent = base;
+      btn.classList.remove('selected');
+    } else {
+      labelEl.textContent = `${base} (${n})`;
+      btn.classList.add('selected');
+    }
+  }
+
+  function applyChipFilters() {
+    // Re-render whatever's currently visible at L1
+    if (currentLevel === 0) {
+      renderAllUsersTable();
+      if (currentMode === 'graph') {
+        if (allUsersChart) { allUsersChart.dispose(); allUsersChart = null; }
+        initAllUsersChart();
+      }
+    }
+  }
+
+  function toggleChipFilter(kind, ev) {
+    if (ev) ev.stopPropagation();
+    const menu = document.getElementById(`${kind}-chip-menu`);
+    const btn  = document.getElementById(`${kind}-chip-btn`);
+    if (!menu) return;
+    // Close any other chip menu that might be open
+    document.querySelectorAll('.chip-filter-menu').forEach(m => {
+      if (m !== menu) {
+        m.style.display = 'none';
+        m.closest('.chip-filter-wrap')?.querySelector('.filter-chip')?.classList.remove('active');
+      }
+    });
+    const showing = menu.style.display === 'none';
+    if (showing) buildChipFilterMenu(kind);
+    menu.style.display = showing ? 'flex' : 'none';
+    btn.classList.toggle('active', showing);
+  }
+
+  // Outside-click closes any open chip menu
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.chip-filter-wrap')) return;
+    document.querySelectorAll('.chip-filter-menu').forEach(m => {
+      if (m.style.display !== 'none') {
+        m.style.display = 'none';
+        m.closest('.chip-filter-wrap')?.querySelector('.filter-chip')?.classList.remove('active');
+      }
+    });
+  });
+
+  function clearAllChipFilters() {
+    chipFilters.dept.clear();
+    chipFilters.role.clear();
+    updateChipFilterLabel('dept');
+    updateChipFilterLabel('role');
+    applyChipFilters();
   }
 
   /* ══════════════════════════════════════════════
@@ -3332,19 +3818,29 @@
               03/07/2026 – 04/06/2026
               <span class="material-icons mat-icon">arrow_drop_down</span>
             </button>
-            <button class="filter-chip" onclick="toggleFilter(this)">
-              Department
-              <span class="material-icons mat-icon">arrow_drop_down</span>
-            </button>
+            <div class="chip-filter-wrap" id="dept-chip-wrap">
+              <button class="filter-chip" id="dept-chip-btn" onclick="toggleChipFilter('dept', event)">
+                <span id="dept-chip-label">Department</span>
+                <span class="material-icons mat-icon">arrow_drop_down</span>
+              </button>
+              <div class="chip-filter-menu" id="dept-chip-menu" style="display:none;">
+                <div class="chip-filter-list" id="dept-chip-list"></div>
+              </div>
+            </div>
             <button class="filter-chip" onclick="toggleFilter(this)">
               User
               <span class="material-icons mat-icon">arrow_drop_down</span>
             </button>
-            <button class="filter-chip" onclick="toggleFilter(this)">
-              Role
-              <span class="material-icons mat-icon">arrow_drop_down</span>
-            </button>
-            <button class="clear-all-btn">Clear All</button>
+            <div class="chip-filter-wrap" id="role-chip-wrap">
+              <button class="filter-chip" id="role-chip-btn" onclick="toggleChipFilter('role', event)">
+                <span id="role-chip-label">Role</span>
+                <span class="material-icons mat-icon">arrow_drop_down</span>
+              </button>
+              <div class="chip-filter-menu" id="role-chip-menu" style="display:none;">
+                <div class="chip-filter-list" id="role-chip-list"></div>
+              </div>
+            </div>
+            <button class="clear-all-btn" onclick="clearAllChipFilters()">Clear All</button>
           </div>
         </div>
 
@@ -3521,6 +4017,15 @@
               </div>
             </div>
 
+            <!-- Med Trends summary card -->
+            <div class="med-trends-card" id="med-trends-card">
+              <div class="med-trends-card-header">
+                <span class="iris-score" id="med-trends-card-score">—</span>
+                <span class="med-trends-card-title">Med Trends</span>
+              </div>
+              <div class="med-trends-card-body" id="med-trends-card-body"><!-- populated dynamically --></div>
+            </div>
+
             <!-- Table -->
             <div id="user-drugs-table-view">
               <div class="data-table-wrap user-drugs-table-wrap">
@@ -3543,11 +4048,16 @@
                       <span class="material-icons mat-icon">expand_more</span>
                     </button>
                     <div class="drug-filter-menu" id="ud-drug-filter-menu" style="display:none;">
+                      <div class="drug-filter-search">
+                        <span class="material-icons drug-filter-search-icon">search</span>
+                        <input type="text" id="ud-drug-filter-search" placeholder="Search drugs…" oninput="udDrugFilterSearch(this.value)" autocomplete="off">
+                      </div>
                       <div class="drug-filter-actions">
                         <button class="drug-filter-link" onclick="udDrugFilterSelectAll(true)">Select all</button>
                         <button class="drug-filter-link" onclick="udDrugFilterSelectAll(false)">Clear</button>
                       </div>
                       <div class="drug-filter-list" id="ud-drug-filter-list"><!-- populated on drill --></div>
+                      <div class="drug-filter-empty" id="ud-drug-filter-empty" style="display:none;">No drugs match</div>
                     </div>
                   </div>
                   <div class="chart-type-selector">
@@ -3646,9 +4156,21 @@
         </div>
       </div>
 
-      <!-- Panel-scoped filter bar (Context / Event Type / Std Dev) -->
+      <!-- Panel-scoped filter bar (Department / Role / Context / Event Type / Std Dev) -->
       <div class="l3-panel-filter-bar">
         <div class="pill-filters-row">
+          <div class="pill-filter-wrap selected" id="l3-panel-compareby-wrap">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-compareby-menu')">
+              <span class="cs-label">Compare By:</span>
+              <span id="l3-panel-compareby-label">Department</span>
+              <span class="material-icons mat-icon">expand_more</span>
+            </button>
+            <div class="cs-menu" id="l3-panel-compareby-menu" style="display:none;">
+              <div class="cs-option selected" onclick="setCompareBy('Department', this)">Department</div>
+              <div class="cs-option" onclick="setCompareBy('Role', this)">Role</div>
+              <div class="cs-option" onclick="setCompareBy('All', this)">All</div>
+            </div>
+          </div>
           <div class="pill-filter-wrap">
             <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-context-menu')">
               <span class="cs-label">Context:</span>
@@ -3703,13 +4225,35 @@
       <!-- Visualized view -->
       <div id="users-graph-view" style="display:none;">
         <div class="chart-wrap">
-          <div class="chart-type-selector">
-            <button class="ct-btn active" data-type="bar" onclick="setChartType('users','bar')">
-              <span class="material-icons mat-icon">bar_chart</span> Bar
-            </button>
-            <button class="ct-btn" data-type="scatter" onclick="setChartType('users','scatter')">
-              <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
-            </button>
+          <div class="chart-controls-row">
+            <!-- User multi-select filter -->
+            <div class="drug-filter-wrap" id="uu-user-filter-wrap">
+              <button class="drug-filter-btn" id="uu-user-filter-btn" onclick="toggleUuUserFilter(event)">
+                <span class="material-icons mat-icon">filter_alt</span>
+                <span id="uu-user-filter-label">All users</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="drug-filter-menu" id="uu-user-filter-menu" style="display:none;">
+                <div class="drug-filter-search">
+                  <span class="material-icons drug-filter-search-icon">search</span>
+                  <input type="text" id="uu-user-filter-search" placeholder="Search users…" oninput="uuUserFilterSearch(this.value)" autocomplete="off">
+                </div>
+                <div class="drug-filter-actions">
+                  <button class="drug-filter-link" onclick="uuUserFilterSelectAll(true)">Select all</button>
+                  <button class="drug-filter-link" onclick="uuUserFilterSelectAll(false)">Clear</button>
+                </div>
+                <div class="drug-filter-list" id="uu-user-filter-list"><!-- populated on panel open --></div>
+                <div class="drug-filter-empty" id="uu-user-filter-empty" style="display:none;">No users match</div>
+              </div>
+            </div>
+            <div class="chart-type-selector">
+              <button class="ct-btn active" data-type="bar" onclick="setChartType('users','bar')">
+                <span class="material-icons mat-icon">bar_chart</span> Bar
+              </button>
+              <button class="ct-btn" data-type="scatter" onclick="setChartType('users','scatter')">
+                <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
+              </button>
+            </div>
           </div>
           <div id="users-chart" class="chart-container"></div>
           <div class="chart-legend">
