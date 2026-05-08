@@ -469,6 +469,12 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     font-size: 13px;
   }
 
+  .readme-row {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border);
+  }
   .readme {
     padding: 14px 18px;
     border-bottom: 1px solid var(--border);
@@ -595,11 +601,10 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
       </div>
     </header>
 
-    __README_BLOCK__
-
     <ul class="filelist" id="search-results" hidden></ul>
     <ul class="filelist" id="filelist">
       __PARENT_ROW__
+      __README_BLOCK__
       __ENTRY_ROWS__
       __EMPTY_NOTE__
     </ul>
@@ -910,7 +915,7 @@ def build_index_for_dir(repo_root: Path, dir_path: Path):
                 content = (dir_path / entry_name).read_text(encoding="utf-8", errors="ignore")
                 if content.strip():
                     rendered = render_markdown(content, "")  # links resolve relative to this dir
-                    readme_html = f'<div class="readme">{rendered}</div>'
+                    readme_html = f'<li class="readme-row"><div class="readme">{rendered}</div></li>'
             except Exception:
                 pass
             break
