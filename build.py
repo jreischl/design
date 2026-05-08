@@ -366,6 +366,9 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .icon-btn:hover { background: var(--hover); color: var(--text); }
 
   .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     font-size: 12px;
     color: var(--text-muted);
     word-break: break-all;
@@ -397,6 +400,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   #search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   #search::placeholder { color: var(--text-muted); opacity: 0.7; }
   #sort {
+    display: none;
     padding: 7px 8px;
     border: 1px solid var(--border-strong);
     border-radius: 6px;
