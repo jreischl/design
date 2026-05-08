@@ -1,0 +1,3323 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Variance Trends – ControlCheck</title>
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --red:         #f24335;
+      --green:       #16b434;
+      --yellow:      #f5dd67;
+      --orange:      #f5a623;
+      --purple:      #7b1fa2;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #757575;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* Custom element display */
+    app-component, navigation, nav-menu, user-menu,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-card, mat-drawer-container,
+    mat-drawer-content, mat-drawer, router-outlet { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* Navbar */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex; align-items: center; border-radius: var(--radius);
+      flex-direction: row; text-decoration: none; flex-shrink: 0;
+    }
+
+    .navigation { display: inline-flex; flex-direction: row; flex-wrap: nowrap; margin-left: 1rem; padding-top: 0; }
+    .mdc-button.mat-mdc-button {
+      background: none; border: none;
+      font-family: var(--font); font-size: 1rem; font-weight: 500;
+      color: var(--blue-dark); cursor: pointer;
+      padding: 0 12px; height: 48px;
+      border-radius: var(--radius);
+      transition: background .15s;
+      display: inline-flex; align-items: center; gap: 2px;
+      text-decoration: none; white-space: nowrap;
+      letter-spacing: normal; text-transform: none;
+    }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    .nav-link.active { color: var(--blue-dark); }
+    .nav-link.active .mdc-button__label {
+      color: inherit; box-shadow: 0 2px;
+      align-items: center; display: inline-flex;
+      line-height: 32px; justify-content: center;
+    }
+    .mdc-button__label { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-svg-icon { display: flex; }
+
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red); color: #fff;
+      font-size: 9px; font-weight: 700;
+      border-radius: 50%; width: 14px; height: 14px;
+      text-align: center; line-height: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center; background-color: transparent;
+      border: none; border-radius: 1.5rem; cursor: pointer;
+      display: flex; flex-direction: row;
+      transition: background-color .2s ease-in-out;
+      padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark); font-size: .813rem;
+      letter-spacing: .01rem; line-height: 1.25rem;
+      min-height: 40px; padding-left: 1rem;
+      white-space: normal; text-align: right;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .header-customer-fullName  { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark); color: #fff;
+      border-radius: 50%; width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700;
+      margin-left: 8px; flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%; background: none; border: none; cursor: pointer;
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s; padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    /* Tabs */
+    .view-tab-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+      margin: 1rem 0;
+    }
+    .tab-bar-tabs { display: flex; gap: 1rem; }
+    .tab-bar-download { flex-shrink: 0; }
+    .view-tab-bar .mdc-tab {
+      min-width: 90px; padding: 0; margin: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex: 0 0 auto; border: none; background: none; outline: none;
+      white-space: nowrap; cursor: pointer;
+      height: 48px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-54); position: relative;
+      transition: color .15s;
+    }
+    .view-tab-bar .mdc-tab:hover { color: var(--text-87); }
+    .view-tab-bar .mdc-tab.mdc-tab--active { color: var(--blue-dark); }
+    .view-tab-bar .mdc-tab__content {
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; gap: 8px; pointer-events: none;
+    }
+    .view-tab-bar .mdc-tab .mat-icon { font-size: 18px; width: 18px; height: 18px; }
+    .view-tab-bar .mdc-tab-indicator {
+      display: flex; position: absolute; top: 0; left: 0;
+      justify-content: center; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .view-tab-bar .mdc-tab-indicator__content--underline {
+      align-self: flex-end; width: 100%;
+      border-top-style: solid; border-top-width: 2px;
+      border-color: var(--blue-dark);
+      transform: scaleX(0);
+      transition: transform 250ms cubic-bezier(.4,0,.2,1);
+      opacity: 0;
+    }
+    .view-tab-bar .mdc-tab-indicator--active .mdc-tab-indicator__content--underline {
+      transform: scaleX(1); opacity: 1;
+    }
+
+    /* Sub-tabs (segmented control inside L2 view) */
+    .sub-tab-bar {
+      display: inline-flex;
+      gap: 0;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .sub-tab {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px;
+      background: transparent; border: none;
+      border-right: 1px solid var(--gray-300);
+      color: var(--text-54);
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .sub-tab:last-child { border-right: none; }
+    .sub-tab:hover { background: #f5f9fb; color: var(--blue-dark); }
+    .sub-tab.active {
+      background: var(--teal); color: #fff;
+    }
+    .sub-tab.active:hover { background: var(--teal-dark); color: #fff; }
+    .sub-tab .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Pillters secondary */
+    .pill-filters-row {
+      display: flex; align-items: center; gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .comp-score-filter {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 32px; padding: 0 12px;
+      border: 1px solid transparent;
+      border-radius: 24px;
+      background: transparent;
+      font-family: var(--font); font-size: 14px; font-weight: 600;
+      color: #00718a; cursor: pointer; white-space: nowrap;
+      transition: background-color .15s, border-color .15s, color .15s;
+    }
+    .comp-score-filter:hover { background: #e7f4f8; }
+    .comp-score-filter .cs-label { color: #00718a; font-weight: 500; opacity: .85; }
+    .comp-score-filter .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #00718a; }
+    .pill-filter-wrap.selected > .comp-score-filter { color: #0096b8; background: transparent; }
+    .pill-filter-wrap.selected > .comp-score-filter .cs-label { color: #0096b8; opacity: 1; }
+    .pill-filter-wrap.selected > .comp-score-filter .mat-icon { color: #0096b8; }
+    .pill-filter-wrap.selected > .comp-score-filter:hover { background: #e7f4f8; }
+    .pill-filter-wrap.open > .comp-score-filter {
+      background: #0096b8; border-color: transparent; color: #fff;
+    }
+    .pill-filter-wrap.open > .comp-score-filter .cs-label { color: #fff; opacity: .9; }
+    .pill-filter-wrap.open > .comp-score-filter .mat-icon { color: #fff; }
+    .cs-menu {
+      position: absolute; top: calc(100% + 4px); left: 0;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      z-index: 50; min-width: 240px; padding: 4px 0;
+      border: none;
+    }
+    .cs-option {
+      display: flex; align-items: center; gap: 8px;
+      height: 36px; padding: 0 16px;
+      font-family: var(--font); font-size: 13px; font-weight: 400;
+      color: #555; cursor: pointer;
+      transition: background .1s;
+    }
+    .cs-option:hover { background: #fafafa; }
+    .cs-option.selected { color: #00718a; font-weight: 500; }
+    .cs-option.selected::before {
+      content: 'check'; font-family: 'Material Icons';
+      font-size: 16px; color: #0096b8;
+    }
+    .cs-option:not(.selected)::before { content: ''; width: 16px; flex-shrink: 0; }
+    /* Multi-select option (no auto check icon) */
+    .cs-option.multi { padding: 8px 14px; height: auto; }
+    .cs-option.multi::before { display: none; }
+    .cs-option.multi input[type="checkbox"] {
+      margin: 0; accent-color: #0096b8; cursor: pointer;
+    }
+    .cs-menu-footer {
+      display: flex; justify-content: space-between;
+      padding: 6px 12px;
+      border-top: 1px solid var(--gray-200);
+    }
+    .cs-menu-footer button {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      color: var(--teal); padding: 4px 8px; border-radius: 4px;
+    }
+    .cs-menu-footer button:hover { background: rgba(0,150,184,.08); }
+
+    /* Score chip / cells */
+    .comp-score {
+      font-size: .875rem; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .comp-score.score-critical { color: #b53228; }
+    .comp-score.score-moderate { color: #a49020; }
+    .comp-score.score-normal   { color: #0e7221; }
+
+    /* Charts */
+    .chart-wrap {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 24px 16px 16px;
+    }
+    .chart-container { width: 100%; height: 520px; }
+    .chart-legend {
+      display: flex; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+      padding: 12px 8px 0;
+      border-top: 1px solid var(--gray-200);
+      margin-top: 8px;
+    }
+    .chart-legend-item {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .813rem; color: var(--text-54);
+    }
+    .chart-legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px; flex-shrink: 0;
+    }
+    .chart-controls-row {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; margin: 4px 0 12px; flex-wrap: wrap;
+    }
+
+    /* Chart entity filter (searchable multi-select) */
+    .chart-filter-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .chart-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid var(--gray-300, #e0e0e0);
+      border-radius: 6px;
+      color: var(--text-87, #333);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color .15s, border-color .15s;
+    }
+    .chart-filter-btn:hover {
+      background-color: #f5f9fb;
+      border-color: #0096B8;
+    }
+    .chart-filter-btn .mat-icon { font-size: 16px; width: 16px; height: 16px; color: var(--text-54, #757575); }
+    .chart-filter-btn .mat-icon:first-child { color: #0096B8; }
+    .chart-filter-menu {
+      position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 280px;
+      max-height: 380px;
+      background: #fff;
+      border: 1px solid var(--gray-300, #e0e0e0);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      z-index: 50;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .chart-filter-search {
+      position: relative;
+      padding: 10px 14px 8px;
+      border-bottom: 1px solid var(--gray-200, #eee);
+    }
+    .chart-filter-search-icon {
+      position: absolute;
+      left: 22px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--text-54, #757575);
+      pointer-events: none;
+    }
+    .chart-filter-search input {
+      width: 100%;
+      height: 30px;
+      padding: 0 8px 0 28px;
+      border: 1px solid var(--gray-300, #e0e0e0);
+      border-radius: 4px;
+      background: #fff;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-87, #333);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .chart-filter-search input::placeholder { color: var(--text-54, #757575); }
+    .chart-filter-search input:focus {
+      border-color: #0096B8;
+      box-shadow: 0 0 0 3px rgba(0,150,184,.12);
+    }
+    .chart-filter-actions {
+      display: flex; gap: 16px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--gray-200, #eee);
+    }
+    .chart-filter-link {
+      background: transparent; border: none; padding: 0;
+      color: #0096B8;
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: color .15s;
+    }
+    .chart-filter-link:hover { color: #00718A; }
+    .chart-filter-list {
+      overflow-y: auto;
+      padding: 4px 0;
+      flex: 1;
+    }
+    .chart-filter-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      font-family: var(--font); font-size: 13px;
+      color: var(--text-87, #333);
+      cursor: pointer;
+      transition: background-color .1s;
+    }
+    .chart-filter-option:hover { background-color: #e7f4fb; }
+    .chart-filter-option input[type="checkbox"] {
+      margin: 0;
+      accent-color: #0096B8;
+      cursor: pointer;
+    }
+    .chart-filter-empty {
+      padding: 16px 14px;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-54, #757575);
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Drawer layout */
+    mat-drawer-container {
+      display: flex; flex-direction: row;
+      flex: 1 1 auto; overflow: hidden; position: relative;
+    }
+    mat-drawer-content {
+      display: flex; flex-direction: column;
+      flex: 1 1 auto; overflow: auto; position: relative;
+    }
+    mat-drawer {
+      display: block; position: relative; overflow: visible;
+      background: #fff; border-right: 1px solid var(--gray-300);
+      width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%; height: 100%; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    .mdc-fab.mat-mdc-mini-fab {
+      width: 24px; height: 24px; min-height: 24px;
+      border-radius: 50%; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--teal); color: #fff;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+      transition: background .15s, transform .3s cubic-bezier(.4,0,.2,1);
+      position: absolute; right: -12px; top: 10px; z-index: 99; padding: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background: var(--teal-dark); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; transition: transform .3s; }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    /* Sidebar accordion */
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    .navigation-accordion mat-expansion-panel {
+      background: #fff; border-radius: 0; box-shadow: none;
+      border-bottom: none;
+    }
+    .navigation-accordion mat-expansion-panel-header {
+      height: 45px !important; padding: 0 16px;
+      cursor: pointer; display: flex; align-items: center;
+      transition: background .15s;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .mat-content { display: flex; flex: 1; align-items: center; }
+    .navigation-accordion mat-panel-title {
+      font-size: .75rem; font-weight: 600;
+      color: var(--gray-600); flex-grow: 1;
+      text-transform: uppercase;
+    }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg { width: 24px; height: 24px; fill: var(--gray-600); transition: transform 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px;
+      text-decoration: none; cursor: pointer; position: relative;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active { background: rgba(4,74,130,.08); border-left-color: var(--blue-dark); }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon {
+      font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600);
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span { display: none; }
+    mat-drawer.collapsed .mdc-list-item__primary-text .mat-icon { margin: 0; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-expansion-panel-header { justify-content: center; padding: 0; }
+
+    /* Page shell */
+    #app-view { display: flex; flex-direction: column; flex: 1 1 auto; overflow: hidden; }
+    footer {
+      padding: 12px 32px; font-size: .75rem; color: var(--gray-400);
+      background: #fff; border-top: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    footer a { color: var(--teal); text-decoration: none; }
+
+    /* Page header */
+    .page-header {
+      display: flex; align-items: center;
+      padding: 0 40px;
+      height: 72px;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .page-title {
+      font-size: 24px; font-weight: 700;
+      color: var(--blue-dark); white-space: nowrap;
+    }
+    .page-title-group {
+      display: flex; align-items: center; gap: 10px;
+      margin-right: auto;
+    }
+
+    /* Version selector */
+    .version-selector { position: relative; display: inline-flex; }
+    .version-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 8px 4px 10px;
+      background: transparent;
+      border: 1px solid var(--gray-300);
+      border-radius: 14px;
+      color: var(--gray-600);
+      font-family: var(--font); font-size: .8125rem; font-weight: 400;
+      cursor: pointer;
+      transition: background-color .15s, border-color .15s;
+    }
+    .version-btn:hover {
+      background-color: #f5f9fb;
+      border-color: var(--teal);
+    }
+    .version-btn .mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--text-54); }
+    .version-menu {
+      position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 240px;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      z-index: 50;
+      padding: 4px 0;
+    }
+    .version-option {
+      padding: 10px 14px; cursor: pointer;
+      font-family: var(--font);
+      transition: background-color .1s;
+    }
+    .version-option:hover { background-color: #e7f4fb; }
+    .version-option.selected .version-option-main { color: var(--teal); }
+    .version-option-main {
+      font-size: .875rem; font-weight: 400;
+      color: var(--text-87);
+      line-height: 1.3;
+    }
+    .version-option-sub {
+      font-size: .75rem; font-weight: 400;
+      color: var(--text-54);
+      margin-top: 2px;
+    }
+
+    /* Global pillters */
+    .filter-chip-group { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+    .filter-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 32px; padding: 0 12px;
+      border: 1px solid rgba(0,113,138,.5);
+      border-radius: 24px;
+      background: transparent;
+      font-family: var(--font); font-size: 14px; font-weight: 600;
+      color: #00718a; cursor: pointer; white-space: nowrap;
+      transition: background-color .15s, border-color .15s, color .15s;
+    }
+    .filter-chip:hover { background: #e7f4f8; }
+    .filter-chip.selected {
+      background: #e7f4f8; color: #00718a;
+      border-color: rgba(0,113,138,.5);
+    }
+    .filter-chip.selected:hover { background: #d3ecf3; }
+    .filter-chip.active,
+    .filter-chip.active.selected {
+      background: #0096b8; border-color: #0096b8; color: #fff;
+    }
+    .filter-chip .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    .filter-chip.active .mat-icon { color: #fff; }
+    .filter-chip-count {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 18px; height: 18px;
+      padding: 0 5px;
+      background: rgba(0,150,184,.2);
+      color: #00718a;
+      border-radius: 9px;
+      font-size: 11px; font-weight: 700;
+      margin-left: 4px;
+    }
+    .filter-chip.active .filter-chip-count {
+      background: rgba(255,255,255,.3); color: #fff;
+    }
+
+    .clear-all-btn {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .813rem; font-weight: 600;
+      color: var(--teal); padding: 4px 8px; border-radius: var(--radius);
+      white-space: nowrap; transition: background .15s;
+    }
+    .clear-all-btn:hover { background: rgba(0,150,184,.08); }
+
+    /* Chip filter dropdown menus (multi-select) */
+    .chip-filter-wrap { position: relative; display: inline-flex; }
+    .chip-filter-menu {
+      position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 240px;
+      max-height: 360px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      z-index: 50;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .chip-filter-search {
+      position: relative;
+      padding: 8px 8px 6px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .chip-filter-search input {
+      width: 100%; height: 32px; padding: 0 12px 0 32px;
+      border: 1px solid var(--gray-300); border-radius: 4px;
+      font-family: var(--font); font-size: 13px;
+    }
+    .chip-filter-search input:focus { outline: none; border-color: var(--teal); }
+    .chip-filter-search .material-icons {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-30%);
+      font-size: 16px; color: var(--gray-600); pointer-events: none;
+    }
+    .chip-filter-actions {
+      display: flex; justify-content: space-between;
+      padding: 4px 8px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .chip-filter-link {
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      color: var(--teal); padding: 4px 8px; border-radius: 4px;
+    }
+    .chip-filter-link:hover { background: rgba(0,150,184,.08); }
+    .chip-filter-list { overflow-y: auto; padding: 4px 0; flex: 1; }
+    .chip-filter-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      font-family: var(--font); font-size: 13px;
+      color: var(--text-87, #333);
+      cursor: pointer;
+      transition: background-color .1s;
+    }
+    .chip-filter-option:hover { background-color: #fafafa; }
+    .chip-filter-option input[type="checkbox"] {
+      margin: 0; accent-color: var(--teal); cursor: pointer;
+    }
+
+    /* Content area */
+    .content-area { flex: 1 1 auto; overflow: auto; padding: 0 40px 40px; }
+
+    /* Toolbar */
+    .pill-filter-wrap { position: relative; }
+
+    /* Download */
+    .download-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; margin-left: 8px;
+      background: none; border: none;
+      border-radius: var(--radius); cursor: pointer; color: var(--gray-600);
+      transition: background .15s;
+    }
+    .download-btn:hover { background: var(--gray-100); border-color: var(--gray-400); }
+    .download-btn .mat-icon { font-size: 20px; }
+    .download-menu-wrap { position: relative; display: inline-block; }
+    .download-menu-wrap > .download-btn { margin-left: 0; }
+    .download-menu {
+      position: absolute;
+      top: calc(100% + 4px); right: 0;
+      min-width: 300px;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.22);
+      z-index: 100;
+      padding: 8px 0;
+    }
+    .download-menu-item {
+      display: flex; align-items: flex-start; gap: 16px;
+      width: 100%;
+      padding: 12px 20px;
+      background: transparent; border: none;
+      text-align: left; cursor: pointer;
+      font-family: var(--font); color: var(--text-87);
+      transition: background .1s;
+    }
+    .download-menu-item:hover { background: #fafafa; }
+    .download-menu-item .material-icons {
+      font-size: 20px; color: #0096b8; flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .download-menu-label { font-size: 14px; font-weight: 500; color: var(--text-87); line-height: 1.3; }
+    .download-menu-label-group { display: flex; flex-direction: column; gap: 4px; }
+    .download-menu-help { font-size: 12px; color: var(--gray-600); line-height: 1.35; }
+
+    /* Data tables */
+    .data-table-wrap {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .data-table {
+      width: 100%; border-collapse: collapse;
+      font-family: var(--font); font-size: .875rem;
+    }
+    .data-table thead { background: #fff; }
+    .data-table th {
+      padding: 0 16px; height: 48px; text-align: left;
+      font-size: .75rem; font-weight: 600;
+      color: var(--text-54); white-space: nowrap;
+      border-bottom: 2px solid var(--gray-300);
+      user-select: none;
+    }
+    .data-table th.sortable { cursor: pointer; }
+    .data-table th.sortable:hover { color: var(--blue-dark); }
+    .data-table th .th-inner { display: inline-flex; align-items: center; gap: 4px; }
+    .data-table th .sort-icon { font-size: 16px; opacity: .4; }
+    .data-table th.sort-asc .sort-icon,
+    .data-table th.sort-desc .sort-icon { opacity: 1; color: var(--blue-dark); }
+    .data-table th.right, .data-table td.right { text-align: right; }
+    .data-table th.center, .data-table td.center { text-align: center; }
+
+    /* Allow th labels to wrap in the entity table (some labels are long: "Dispensed from Central Pharmacy", etc.) */
+    #entity-table-view .data-table th {
+      white-space: normal;
+      vertical-align: middle;
+      line-height: 1.3;
+      padding-top: 6px; padding-bottom: 6px;
+    }
+    #entity-table-view .data-table th .th-inner {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    #entity-table-view .data-table th.right .th-inner  { justify-content: flex-end; text-align: right; }
+    #entity-table-view .data-table th.center .th-inner { justify-content: center;   text-align: center; }
+
+    .data-table tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: background .1s;
+      cursor: pointer;
+    }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody tr:hover { background: #e7f4fb; }
+    .data-table tbody tr.selected { background: rgba(4,74,130,.06); }
+    .data-table td { padding: 0 16px; height: 56px; vertical-align: middle; color: var(--text-87); }
+    .data-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .data-table td.num.center { text-align: center; }
+    .data-table td.td-priority { width: 48px; text-align: center; padding: 0 8px; }
+
+    /* Priority dots */
+    .priority-dot {
+      display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .priority-dot.high { background: var(--red); }
+    .priority-dot.medium { background: var(--yellow); }
+    .priority-dot.low { background: var(--green); }
+
+    /* IRIS score chip */
+    .iris-score {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 36px; height: 28px; padding: 0 8px;
+      border-radius: 4px; font-size: .875rem; font-weight: 700;
+      color: #fff;
+    }
+    .iris-score.score-critical { background: #f24335; }
+    .iris-score.score-moderate { background: #f5dd67; color: #555555; }
+    .iris-score.score-normal   { background: #16b434; }
+
+    /* Department/Drug/User name */
+    .name-primary { font-weight: 600; color: var(--text-87); line-height: 1.3; }
+    .name-primary a { color: #044A82; text-decoration: none; cursor: pointer; }
+    .name-primary a:hover { color: #0a3861; text-decoration: none; }
+    .name-secondary { font-size: .75rem; color: var(--text-54); font-weight: 400; line-height: 1.3; }
+
+    /* Variance rate cell - shows percentage with color */
+    .variance-rate {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .variance-rate-bar {
+      display: inline-block;
+      width: 60px; height: 6px;
+      background: var(--gray-200);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .variance-rate-bar-fill {
+      position: absolute; left: 0; top: 0; height: 100%;
+      border-radius: 3px;
+    }
+    .variance-rate-bar-fill.high   { background: var(--red); }
+    .variance-rate-bar-fill.medium { background: var(--yellow); }
+    .variance-rate-bar-fill.low    { background: var(--green); }
+
+    /* Status mini-pills (in tables) */
+    .status-cluster {
+      display: inline-flex; align-items: center; gap: 6px;
+      flex-wrap: nowrap;
+    }
+    .status-mini {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-54);
+      cursor: help;
+    }
+    .status-mini .status-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-mini .status-dot.unreconciled { background: var(--red); }
+    .status-mini .status-dot.reconciled { background: var(--green); }
+    .status-mini .status-dot.open3 { background: var(--orange); }
+    .status-mini .status-dot.openhist { background: var(--gray-400); }
+    .status-mini.muted { opacity: .35; }
+
+    /* Investigate link */
+    .investigate-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      color: #0096b8; font-weight: 600; font-size: .875rem;
+      text-decoration: none; white-space: nowrap;
+      transition: color .15s;
+    }
+    .investigate-link:hover { color: var(--teal-dark); text-decoration: underline; }
+    .investigate-link .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Row action button */
+    .row-action-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      color: #0096b8;
+      font-family: var(--font); font-size: .8125rem; font-weight: 600;
+      text-decoration: none; white-space: nowrap;
+      border-radius: 4px;
+      background: none; border: none; cursor: pointer;
+      transition: background-color .15s, color .15s;
+    }
+    .row-action-btn:hover {
+      background-color: #e7f4fb;
+      color: var(--blue-dark);
+    }
+    .row-action-btn .material-icons { font-size: 16px; width: 16px; height: 16px; }
+
+    /* Drilldown header */
+    .drilldown-row {
+      display: flex; align-items: center; gap: 0;
+      margin-bottom: 8px;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer;
+      font-family: var(--font); font-size: .875rem; font-weight: 600;
+      color: var(--teal); padding: 4px 8px 4px 4px;
+      border-radius: var(--radius);
+      transition: background .15s, color .15s;
+    }
+    .back-btn:hover { background: rgba(0,150,184,.08); }
+    .back-btn .mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    .drilldown-title {
+      font-size: 16px; font-weight: 700; color: #0a3861;
+    }
+
+    /* Department summary card (L2 context) */
+    .dept-summary-card {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin: 8px 0 16px;
+      display: block;
+      box-shadow:
+        0px 1px 3px 0px rgba(0,0,0,0.10),
+        0px 1px 1px 0px rgba(0,0,0,0.08);
+    }
+    .dept-summary-card-body {
+      display: grid;
+      grid-template-columns: repeat(5, auto);
+      gap: 32px;
+      align-items: center;
+    }
+    .dept-summary-stat {
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .dept-summary-stat-label {
+      font-size: .688rem; font-weight: 600;
+      letter-spacing: .04em; text-transform: uppercase;
+      color: var(--text-54);
+    }
+    .dept-summary-stat-value {
+      font-size: 1.125rem; font-weight: 600;
+      color: var(--text-87);
+      font-variant-numeric: tabular-nums;
+    }
+    .dept-summary-stat-value.danger { color: var(--red); }
+    .dept-summary-stat-value.dept-name {
+      font-size: 1.25rem;
+      color: var(--blue-darker);
+    }
+
+    /* L2 context block (animated container) */
+    .l2-context-block {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .28s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .l2-context-block-inner {
+      overflow: hidden;
+      min-height: 0;
+      padding: 0 40px;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity .22s ease, transform .28s cubic-bezier(0.4, 0, 0.2, 1), padding .28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .l2-context-block.open { grid-template-rows: 1fr; }
+    .l2-context-block.open .l2-context-block-inner {
+      opacity: 1; transform: translateY(0);
+      padding: 16px 40px 0;
+    }
+    body.legacy-mode .l2-context-block { display: none !important; }
+
+    /* Shared filter bar */
+    .shared-tab-bar-wrap, .shared-filter-bar-wrap {
+      padding: 0 40px;
+      flex-shrink: 0;
+    }
+    .shared-filter-bar { margin-bottom: 8px; }
+    .shared-filter-bar .pill-filters-row { margin-bottom: 0; }
+
+    /* View states */
+    .view { display: none; }
+    .view.visible { display: block; }
+
+    /* Count + search row */
+    .count-search-row {
+      display: flex; align-items: center;
+      gap: 0; margin-bottom: 8px;
+    }
+    .count-search-row .row-count { flex: 1 1 auto; margin-left: 0; }
+    .row-count { font-size: .813rem; font-weight: 600; color: var(--text-54); }
+    .row-count span { color: var(--text-87); }
+    .search-wrap { position: relative; display: inline-flex; align-items: center; }
+    .search-wrap .search-icon {
+      position: absolute; left: 10px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px; color: var(--text-54); pointer-events: none;
+    }
+    .search-input {
+      height: 34px; padding: 0 12px 0 36px; width: 260px;
+      border: 1px solid var(--gray-300); border-radius: 17px;
+      font-family: var(--font); font-size: .813rem; font-weight: 500;
+      color: var(--text-87); background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-input:focus {
+      outline: none; border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0,150,184,.12);
+    }
+
+    /* Sub-tab + sub-section header (within L2) */
+    .l2-section {
+      margin-top: 24px;
+    }
+    .l2-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .l2-section-title {
+      font-size: 15px; font-weight: 700;
+      color: var(--blue-darker);
+    }
+    .l2-section-title-group {
+      display: flex; align-items: baseline; gap: 12px;
+    }
+    .l2-section-count {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-54);
+    }
+
+    /* Chart-type selector (bar/scatter toggle) */
+    .chart-type-selector {
+      display: inline-flex;
+      gap: 0;
+      align-self: flex-end;
+      margin: 4px 0 12px;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .ct-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px;
+      background: transparent;
+      border: none;
+      border-right: 1px solid var(--gray-300);
+      color: var(--text-54);
+      font-family: var(--font); font-size: 13px;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .ct-btn:last-child { border-right: none; }
+    .ct-btn:hover { background: #f5f9fb; color: var(--blue-dark); }
+    .ct-btn.active { background: var(--teal); color: #fff; }
+    .ct-btn.active:hover { background: var(--teal-dark); color: #fff; }
+    .ct-btn .mat-icon { font-size: 16px; height: 16px; width: 16px; line-height: 16px; }
+
+    /* Legacy placeholder */
+    .legacy-placeholder {
+      display: none;
+      align-items: center; justify-content: center;
+      min-height: calc(100vh - 180px);
+      padding: 40px;
+      font-size: 2rem; font-weight: 600;
+      color: var(--text-54);
+      font-family: var(--font);
+      letter-spacing: .3px;
+    }
+    body.legacy-mode .shared-tab-bar-wrap,
+    body.legacy-mode .shared-filter-bar-wrap,
+    body.legacy-mode #view-departments,
+    body.legacy-mode #view-department-detail {
+      display: none !important;
+    }
+    body.legacy-mode .legacy-placeholder { display: flex; }
+
+    /* IRIS DETAIL PANEL (matches med-trends/action-times/waste-networks pattern) */
+    .iris-panel-scrim {
+      position: fixed; inset: 0;
+      background: rgba(10, 56, 97, 0.30);
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 998;
+    }
+    .iris-panel-scrim.open { opacity: 1; pointer-events: auto; }
+    .iris-panel {
+      position: fixed; top: 0; right: 0;
+      height: 100vh;
+      width: 1140px; max-width: 90vw;
+      background: #fff;
+      box-shadow: none;
+      transform: translateX(100%);
+      transition: transform .24s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .24s ease;
+      z-index: 999;
+      display: flex; flex-direction: column;
+    }
+    .iris-panel.open {
+      transform: translateX(0);
+      box-shadow: -8px 0 24px rgba(0, 0, 0, 0.12);
+    }
+    .iris-panel-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .iris-panel-heading { min-width: 0; flex: 1; }
+    .iris-panel-title {
+      font-family: var(--font);
+      font-size: 1.125rem; font-weight: 700;
+      color: var(--blue-darker, #0a3861);
+      line-height: 1.3;
+    }
+    .iris-panel-subtitle {
+      font-family: var(--font);
+      font-size: 0.8125rem;
+      color: var(--text-54);
+      margin-top: 2px;
+    }
+    .iris-panel-subtitle:empty { display: none; }
+    .iris-panel-close {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
+      padding: 0;
+      background: transparent; border: none; border-radius: 50%;
+      cursor: pointer;
+      color: var(--text-54);
+      transition: background .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .iris-panel-close:hover { background: rgba(0, 150, 184, 0.08); color: var(--blue-dark); }
+    .iris-panel-close .material-icons { font-size: 20px; }
+    .iris-panel-body {
+      flex: 1; overflow-y: auto;
+      padding: 24px;
+    }
+    .iris-panel-placeholder {
+      color: var(--text-54);
+      font-style: italic;
+      font-family: var(--font);
+      font-size: 0.9375rem;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    /* Tooltip */
+    #tt {
+      position: fixed; z-index: 9999;
+      background: rgba(0,0,0,.82); color: #fff;
+      font-size: .75rem; font-family: var(--font);
+      padding: 6px 10px; border-radius: 4px;
+      max-width: 220px; text-align: center;
+      white-space: normal; line-height: 1.35;
+      pointer-events: none;
+      opacity: 0; transition: opacity .1s;
+    }
+
+    /* User name link in the L1 entity table — opens IRIS panel */
+    .entity-name a,
+    .entity-name a:link,
+    .entity-name a:visited {
+      color: #044A82;          /* Bluesight Navy 500 */
+      font-weight: 600;
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .entity-name a:hover {
+      color: #021E35;          /* Navy 900 on hover */
+      text-decoration: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       UNIFIED ENTITY TABLE  — sticky cols differ by Show entity
+    ═══════════════════════════════════════════════════════════════ */
+    #entity-table-view .data-table-wrap { overflow-x: auto; }
+    #entity-table-view .data-table { width: max-content; min-width: 100%; }
+
+    /* Default (departments / drugs): name in col 1, sticky left + Investigate sticky right */
+    #entity-table-view .data-table th:nth-child(1),
+    #entity-table-view .data-table td:nth-child(1) {
+      position: sticky; left: 0; z-index: 2;
+      background: #fff;
+      box-shadow: 2px 0 4px rgba(0,0,0,.06);
+    }
+    #entity-table-view .data-table th:last-child,
+    #entity-table-view .data-table td:last-child {
+      position: sticky; right: 0; z-index: 2;
+      background: #fff;
+      box-shadow: -2px 0 4px rgba(0,0,0,.06);
+    }
+    #entity-table-view .data-table thead th:nth-child(1),
+    #entity-table-view .data-table thead th:last-child { z-index: 3; }
+    /* Default state for non-clickable rows (User table) — default cursor + very light gray hover */
+    #entity-table-view .data-table tbody tr { cursor: default; }
+    #entity-table-view .data-table tbody tr:hover { background: var(--gray-50); }
+    #entity-table-view .data-table tbody tr:hover td:nth-child(1),
+    #entity-table-view .data-table tbody tr:hover td:last-child {
+      background: var(--gray-50);
+    }
+    /* Users: 2-col fixed left (Score chip + User name) — also extend the gray hover to the sticky 2nd col */
+    #entity-table-view .data-table[data-show="users"] tbody tr:hover td:nth-child(2) {
+      background: var(--gray-50);
+    }
+    /* Department / Drug rows are clickable as a whole (drill into Users) — pointer cursor + light-blue hover */
+    #entity-table-view .data-table tbody tr.row-clickable { cursor: pointer; }
+    #entity-table-view .data-table tbody tr.row-clickable:hover { background: #e7f4fb; }
+    #entity-table-view .data-table tbody tr.row-clickable:hover td:nth-child(1),
+    #entity-table-view .data-table tbody tr.row-clickable:hover td:last-child {
+      background: #e7f4fb;
+    }
+    #entity-table-view .data-table[data-show="users"] th:nth-child(1),
+    #entity-table-view .data-table[data-show="users"] td:nth-child(1) {
+      box-shadow: 1px 0 0 var(--gray-300);
+    }
+    #entity-table-view .data-table[data-show="users"] th:nth-child(2),
+    #entity-table-view .data-table[data-show="users"] td:nth-child(2) {
+      position: sticky; left: 110px; z-index: 2;
+      background: #fff;
+      box-shadow: 2px 0 4px rgba(0,0,0,.06);
+    }
+    #entity-table-view .data-table[data-show="users"] thead th:nth-child(2) { z-index: 3; }
+
+    /* Per-Figma 72px row height + entity name treatment */
+    #entity-table-view .data-table td { height: 72px; }
+    .entity-cell { display: flex; flex-direction: column; gap: 2px; justify-content: center; }
+    .entity-name { font-size: 14px; font-weight: 500; color: var(--text-87); line-height: 21px; }
+    /* Department and Drug names — Navy 500, weight 600 (matches User name link styling) */
+    #entity-table-view .data-table[data-show="departments"] .entity-name,
+    #entity-table-view .data-table[data-show="drugs"]       .entity-name {
+      color: #044A82;     /* Bluesight Navy 500 */
+      font-weight: 600;
+    }
+    .entity-sub  { font-size: 12px; font-weight: 600; color: var(--text-54); line-height: 16px; }
+
+    /* IRIS Score chip — sized per Figma "Medium" variant */
+    #entity-table-view .iris-score {
+      min-width: 45px; padding: 8px;
+      font-family: 'Proxima Nova', system-ui, sans-serif;
+      font-weight: 700; font-size: 14px; line-height: 16px;
+      border-radius: 4px;
+    }
+
+    /* Action cell — right-aligned row of quaternary buttons (uses .row-action-btn from template) */
+    #entity-table-view .action-cell {
+      text-align: right;
+      white-space: nowrap;
+    }
+    /* Inner flex wrapper so the buttons (which have icons of different sizes) align on a shared horizontal axis */
+    #entity-table-view .action-cell {
+      vertical-align: middle;
+    }
+    #entity-table-view .action-cell > .row-action-btn {
+      vertical-align: middle;
+    }
+    #entity-table-view .action-cell .row-action-btn {
+      align-items: center;     /* center icon + label inside each button */
+      line-height: 1;
+    }
+    #entity-table-view .action-cell .row-action-btn + .row-action-btn {
+      margin-left: 4px;
+    }
+    /* View Users variant — trailing chevron, slightly larger icon for "drill into" affordance */
+    #entity-table-view .view-users-btn .material-icons {
+      font-size: 18px; width: 18px; height: 18px;
+      line-height: 1;
+      transition: transform .15s;
+    }
+    #entity-table-view .view-users-btn:hover .material-icons {
+      transform: translateX(2px);
+    }
+
+    /* Page subtitle row above the table (per Figma "Variance Trends by ...") */
+    .page-subtitle-row {
+      display: flex; align-items: center; gap: 24px;
+      margin: 12px 0 12px;
+    }
+    .page-subtitle {
+      font-family: 'Proxima Nova', system-ui, sans-serif;
+      font-weight: 700; font-size: 18px; line-height: 23px;
+      color: var(--text-87);
+      margin: 0;
+    }
+    .row-count-and-search {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 16px;
+    }
+
+    /* Drilldown context block — back arrow + scope name + summary card
+       (med-trends pattern; sits above the tab bar when drilling into a Dept or Drug) */
+    /* Drilldown context block — uses grid-template-rows + opacity for a smooth open/close
+       transition without a 'display: none' jump (matches med-trends-redesign.html pattern). */
+    .drilldown-context-block {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .28s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .drilldown-context-block-inner {
+      overflow: hidden;
+      min-height: 0;
+      padding: 0 40px;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity .22s ease, transform .28s cubic-bezier(0.4, 0, 0.2, 1), padding .28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .drilldown-context-block.open {
+      grid-template-rows: 1fr;
+    }
+    .drilldown-context-block.open .drilldown-context-block-inner {
+      opacity: 1;
+      transform: translateY(0);
+      padding: 16px 40px;
+    }
+    .drilldown-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+      background: none; border: none; cursor: pointer;
+      padding: 4px 8px 4px 4px;
+      color: var(--blue-dark);
+      border-radius: 4px;
+      transition: background .15s;
+    }
+    .back-btn:hover { background: rgba(0, 150, 184, 0.08); }
+    .back-btn .mat-icon { font-size: 20px; width: 20px; height: 20px; }
+    /* Drilldown back button — Bluesight Blue 500 (matches Investigate/View Users action buttons) */
+    #drilldown-back-btn { color: #0096B8; }
+    #drilldown-back-btn:hover { color: #00718A; }
+    .drilldown-title {
+      font-family: var(--font);
+      font-size: 16px; font-weight: 700;
+      color: var(--blue-darker, #0a3861);
+    }
+    .drilldown-summary-card {
+      background: #fff;
+      border: 1px solid var(--gray-200, #e0e0e0);
+      border-radius: 4px;
+      padding: 16px 20px;
+      box-shadow: 0 1px 1px rgba(0,0,0,.06);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .drilldown-summary-card-body {
+      flex: 1 1 auto;
+      font-family: var(--font);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .drilldown-summary-card-body:empty::before {
+      content: '';
+      display: block; height: 36px;
+    }
+    /* Context heading above the stat row — communicates which Context the stats belong to */
+    .dd-summary-heading {
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-54, #757575);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    /* Inner stat row — same horizontal column layout the body had previously */
+    .dd-stat-row {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+    }
+    /* Right-edge actions on the summary card (Investigate) */
+    .drilldown-summary-card-actions {
+      flex-shrink: 0;
+      display: flex; align-items: center;
+      padding-left: 16px;
+      border-left: 1px solid var(--gray-200, #e0e0e0);
+    }
+    .dd-stat {
+      flex: 1 1 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 6px;
+      padding: 4px 8px;
+      text-align: center;
+      min-width: 0;
+    }
+    .dd-stat + .dd-stat {
+      border-left: 1px solid var(--gray-100, #f0f0f0);
+    }
+    .dd-stat-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-54);
+      line-height: 1.3;
+    }
+    .dd-stat-value {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-87);
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Departments-with-Activity chip list (User table column) */
+    .dept-chip-list {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      max-width: 240px;
+    }
+    .dept-chip {
+      display: inline-flex; align-items: center;
+      padding: 2px 8px;
+      background: var(--gray-100, #f5f5f5);
+      border-radius: 10px;
+      font-size: 11px; font-weight: 500;
+      color: var(--text-87);
+      white-space: nowrap;
+    }
+    .dept-chip.home {
+      background: rgba(0, 150, 184, 0.10);
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+
+    /* Entity pagination (per Figma 478px wide, right-aligned) */
+    .entity-pagination {
+      display: flex; justify-content: flex-end;
+      padding: 16px 0 8px;
+      border-top: 1px solid var(--gray-100);
+      margin-top: 0;
+    }
+    .pagination-wrap {
+      display: flex; align-items: center; gap: 16px;
+      font-size: 12px; color: var(--text-54);
+    }
+    .pagination-rows-select {
+      height: 32px; padding: 0 8px;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      font-size: 13px;
+      background: #fff;
+    }
+    .pagination-arrow {
+      width: 32px; height: 32px;
+      border: none; background: transparent;
+      cursor: pointer; border-radius: 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--text-54);
+    }
+    .pagination-arrow:hover:not(:disabled) { background: var(--gray-100); color: var(--text-87); }
+    .pagination-arrow:disabled { cursor: default; opacity: .35; }
+
+    /* a11y */
+    :focus-visible { outline: var(--teal) auto 1px; }
+
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+</head>
+<body class="mat-typography">
+<div id="tt"></div>
+
+<app-component class="flex-col-100">
+<div class="app-container flex-col-100">
+
+  <!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
+  <navigation>
+    <header>
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+        <a class="nav-link" href="/dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
+            <g><g><g id="ControlCheck_Logo_Color">
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+            </g></g></g>
+          </svg>
+        </a>
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Audit</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active">
+              <span class="mdc-button__label">Analyze</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Cases</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
+              <span class="mdc-button__label">Report</span>
+            </a>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Upload</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
+                  Manage&nbsp;<span class="mat-badge-content mat-badge-active">!</span>
+                </span>
+              </span>
+            </a>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/labs">
+              <span class="mdc-button__label">
+                <span class="nav-svg-icon"><svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg></span><strong>Prism Assistant</strong>
+              </span>
+            </a>
+          </div>
+        </nav-menu>
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Alex Morrow</div>
+                  <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
+                </div>
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">AM</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ══ APP VIEW ════════════════════════════════════════════════════ -->
+  <div id="app-view" class="flex-col-100">
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── ANALYZE SIDEBAR ── -->
+      <mat-drawer mode="side" opened="" class="mat-drawer mat-drawer-opened mat-drawer-side" id="analyze-drawer">
+        <div class="mat-drawer-inner-container">
+          <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <span class="mat-icon material-icons">chevron_left</span>
+          </button>
+          <mat-accordion class="mat-accordion navigation-accordion mat-accordion-multi">
+
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span>Active IRIS Reviews</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span>Multi-Hospital Users</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-expanded" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span>User Mobility</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span>Waste Networks</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span>Full Package Waste</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span>Shift Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">OR</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert="">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <!-- ── MAIN CONTENT ── -->
+      <mat-drawer-content class="mat-drawer-content">
+
+        <!-- ═══════════════════════════════════════
+             PAGE HEADER (shared across both views)
+        ═══════════════════════════════════════ -->
+        <div class="page-header">
+          <div class="page-title-group">
+            <span class="page-title">Variance Trends</span>
+            <div class="version-selector" id="version-selector">
+              <button class="version-btn" onclick="toggleVersionMenu(event)" aria-haspopup="listbox" aria-expanded="false">
+                <span id="version-label">New Experience</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="version-menu" id="version-menu" role="listbox" style="display:none;">
+                <div class="version-option selected" role="option" onclick="selectVersion('New Experience', this)">
+                  <div class="version-option-main">New Experience</div>
+                </div>
+                <div class="version-option" role="option" onclick="selectVersion('Legacy Experience', this)">
+                  <div class="version-option-main">Legacy Experience</div>
+                  <div class="version-option-sub">Available until end of 2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="filter-chip-group">
+            <button class="filter-chip selected" onclick="toggleFilter(this)">
+              04/07/2026 – 05/07/2026
+              <span class="material-icons mat-icon">arrow_drop_down</span>
+            </button>
+            <div class="chip-filter-wrap" id="dept-chip-wrap">
+              <button class="filter-chip" id="dept-chip-btn" onclick="toggleChipFilter('dept', event)">
+                <span id="dept-chip-label">Department</span>
+                <span class="material-icons mat-icon">arrow_drop_down</span>
+              </button>
+              <div class="chip-filter-menu" id="dept-chip-menu" style="display:none;">
+                <div class="chip-filter-search">
+                  <span class="material-icons">search</span>
+                  <input type="text" placeholder="Search departments…" oninput="filterChipMenu('dept-chip-menu', this.value)">
+                </div>
+                <div class="chip-filter-actions">
+                  <button class="chip-filter-link" onclick="chipSelectAll('dept', true)">Select all</button>
+                  <button class="chip-filter-link" onclick="chipSelectAll('dept', false)">Clear</button>
+                </div>
+                <div class="chip-filter-list" id="dept-chip-list"></div>
+              </div>
+            </div>
+            <div class="chip-filter-wrap" id="user-chip-wrap">
+              <button class="filter-chip" id="user-chip-btn" onclick="toggleChipFilter('user', event)">
+                <span id="user-chip-label">User</span>
+                <span class="material-icons mat-icon">arrow_drop_down</span>
+              </button>
+              <div class="chip-filter-menu" id="user-chip-menu" style="display:none;">
+                <div class="chip-filter-search">
+                  <span class="material-icons">search</span>
+                  <input type="text" placeholder="Search users…" oninput="filterChipMenu('user-chip-menu', this.value)">
+                </div>
+                <div class="chip-filter-actions">
+                  <button class="chip-filter-link" onclick="chipSelectAll('user', true)">Select all</button>
+                  <button class="chip-filter-link" onclick="chipSelectAll('user', false)">Clear</button>
+                </div>
+                <div class="chip-filter-list" id="user-chip-list"></div>
+              </div>
+            </div>
+            <div class="chip-filter-wrap" id="role-chip-wrap">
+              <button class="filter-chip" id="role-chip-btn" onclick="toggleChipFilter('role', event)">
+                <span id="role-chip-label">Role</span>
+                <span class="material-icons mat-icon">arrow_drop_down</span>
+              </button>
+              <div class="chip-filter-menu" id="role-chip-menu" style="display:none;">
+                <div class="chip-filter-search">
+                  <span class="material-icons">search</span>
+                  <input type="text" placeholder="Search roles…" oninput="filterChipMenu('role-chip-menu', this.value)">
+                </div>
+                <div class="chip-filter-actions">
+                  <button class="chip-filter-link" onclick="chipSelectAll('role', true)">Select all</button>
+                  <button class="chip-filter-link" onclick="chipSelectAll('role', false)">Clear</button>
+                </div>
+                <div class="chip-filter-list" id="role-chip-list"></div>
+              </div>
+            </div>
+            <button class="clear-all-btn" onclick="clearAllChipFilters()">Clear All</button>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             DRILLDOWN CONTEXT BLOCK  (visible only when drilling into a Department or Drug)
+             Pattern matches med-trends-redesign.html — back arrow + scope name + summary card
+        ═══════════════════════════════════════ -->
+        <div id="drilldown-context-block" class="drilldown-context-block">
+          <div class="drilldown-context-block-inner">
+            <div class="drilldown-row">
+              <button class="back-btn" id="drilldown-back-btn" onclick="exitDrilldown()" title="Back" aria-label="Back">
+                <span class="material-icons mat-icon">arrow_back</span>
+              </button>
+              <div class="drilldown-title" id="drilldown-title"></div>
+            </div>
+            <div class="drilldown-summary-card">
+              <div class="drilldown-summary-card-body" id="drilldown-summary-body"></div>
+              <div class="drilldown-summary-card-actions">
+                <a class="row-action-btn" href="#" id="drilldown-investigate-btn" onclick="event.preventDefault();openDrilldownInvestigate();return false;"><span class="material-icons">open_in_new</span> Investigate</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             SHARED TAB BAR (Tabular / Visualized)
+        ═══════════════════════════════════════ -->
+        <div class="shared-tab-bar-wrap">
+          <div class="view-tab-bar">
+            <div class="tab-bar-tabs">
+              <button class="mdc-tab mdc-tab--active" id="shared-tabular-tab" onclick="switchCurrentView('table')" aria-label="Tabular data">
+                <span class="mdc-tab__content">
+                  <span class="material-icons mat-icon">table_chart</span>
+                  <span class="mdc-tab__text-label">Tabular Data</span>
+                </span>
+                <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+              </button>
+              <button class="mdc-tab" id="shared-visual-tab" onclick="switchCurrentView('graph')" aria-label="Visualized data">
+                <span class="mdc-tab__content">
+                  <span class="material-icons mat-icon">bar_chart</span>
+                  <span class="mdc-tab__text-label">Visualized Data</span>
+                </span>
+                <span class="mdc-tab-indicator">
+                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                </span>
+              </button>
+            </div>
+            <div class="download-menu-wrap">
+              <button class="download-btn tab-bar-download" title="Download" onclick="toggleDownloadMenu(this, event)">
+                <span class="material-icons">download</span>
+              </button>
+              <div class="download-menu" style="display:none;">
+                <button class="download-menu-item" onclick="closeDownloadMenus()">
+                  <span class="material-icons">download</span>
+                  <span class="download-menu-label">Download CSV</span>
+                </button>
+                <button class="download-menu-item" onclick="closeDownloadMenus()">
+                  <span class="material-icons">print</span>
+                  <span class="download-menu-label-group">
+                    <span class="download-menu-label">Save as PDF or Print</span>
+                    <span class="download-menu-help">Set the Destination to Save as PDF in the Print window</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             SHARED FILTER BAR  (Show, Context, Status — per Figma "Show:" / "Context:" pillters)
+        ═══════════════════════════════════════ -->
+        <div class="shared-filter-bar-wrap">
+          <div class="shared-filter-bar">
+            <div class="pill-filters-row">
+              <div class="pill-filter-wrap selected" id="show-filter-wrap">
+                <button class="comp-score-filter" onclick="togglePillMenu('show-menu')">
+                  <span class="cs-label">Show:</span>
+                  <span id="show-label">Users</span>
+                  <span class="material-icons mat-icon">expand_more</span>
+                </button>
+                <div class="cs-menu" id="show-menu" style="display:none; min-width:200px;">
+                  <div class="cs-option show-option selected" onclick="setShow('users', this)">Users</div>
+                  <div class="cs-option show-option" onclick="setShow('departments', this)">Departments</div>
+                  <div class="cs-option show-option" onclick="setShow('drugs', this)">Drugs</div>
+                </div>
+              </div>
+              <div class="pill-filter-wrap selected" id="vt-context-filter-wrap">
+                <button class="comp-score-filter" onclick="togglePillMenu('vt-context-menu')">
+                  <span class="cs-label">Context:</span>
+                  <span id="vt-context-label">Variance Rate</span>
+                  <span class="material-icons mat-icon">expand_more</span>
+                </button>
+                <div class="cs-menu" id="vt-context-menu" style="display:none; min-width:280px;">
+                  <div class="cs-option ctx-option selected" onclick="setVtContext('variance-rate', this)">Variance Rate</div>
+                  <div class="cs-option ctx-option" onclick="setVtContext('doc-timing', this)">Documentation Timing Issues</div>
+                  <div class="cs-option ctx-option" onclick="setVtContext('incorrect-doc', this)">Incorrect Documentation</div>
+                  <div class="cs-option ctx-option" onclick="setVtContext('missing-doc', this)">Missing Documentation</div>
+                  <div class="cs-option ctx-option" onclick="setVtContext('system-limit', this)">System Limitation</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+             UNIFIED ENTITY VIEW  (Users / Departments / Drugs — switched via Show pillter)
+        ═══════════════════════════════════════ -->
+        <div id="view-data" class="view visible">
+          <div class="content-area">
+            <div class="page-subtitle-row">
+              <h2 id="page-subtitle" class="page-subtitle">Variance Trends by Users</h2>
+              <div class="row-count-and-search">
+                <div class="row-count"><span id="entityCount">0</span> rows</div>
+                <div class="search-wrap">
+                  <span class="material-icons search-icon">search</span>
+                  <input type="text" class="search-input" placeholder="Search…" oninput="filterEntityTable(this.value)">
+                </div>
+              </div>
+            </div>
+
+            <div id="entity-table-view">
+              <div class="data-table-wrap">
+                <table class="data-table" id="entityTable" data-show="users" data-context="variance-rate">
+                  <thead id="entityTableHead"></thead>
+                  <tbody id="entityTableBody"></tbody>
+                </table>
+              </div>
+              <div class="entity-pagination">
+                <div class="pagination-wrap">
+                  <span class="pagination-rows-label">Rows per page:</span>
+                  <select class="pagination-rows-select"><option>10</option><option>25</option><option selected>50</option><option>100</option></select>
+                  <span class="pagination-range">1&ndash;<span id="entityCountB">0</span> of <span id="entityCountC">0</span></span>
+                  <button class="pagination-arrow" disabled><span class="material-icons">chevron_left</span></button>
+                  <button class="pagination-arrow"><span class="material-icons">chevron_right</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div id="entity-graph-view" style="display:none;">
+              <div class="chart-wrap">
+                <div class="chart-controls-row">
+                  <!-- Searchable multi-select filter for the chart's entities -->
+                  <div class="chart-filter-wrap">
+                    <button class="chart-filter-btn" id="chart-filter-btn" onclick="toggleChartFilter(event)">
+                      <span class="material-icons mat-icon">filter_alt</span>
+                      <span id="chart-filter-label">All users</span>
+                      <span class="material-icons mat-icon">expand_more</span>
+                    </button>
+                    <div class="chart-filter-menu" id="chart-filter-menu" style="display:none;">
+                      <div class="chart-filter-search">
+                        <span class="material-icons chart-filter-search-icon">search</span>
+                        <input type="text" id="chart-filter-search" placeholder="Search…" oninput="chartFilterSearch(this.value)" autocomplete="off">
+                      </div>
+                      <div class="chart-filter-actions">
+                        <button class="chart-filter-link" onclick="chartFilterSelectAll(true)">Select all</button>
+                        <button class="chart-filter-link" onclick="chartFilterSelectAll(false)">Clear</button>
+                      </div>
+                      <div class="chart-filter-list" id="chart-filter-list"></div>
+                      <div class="chart-filter-empty" id="chart-filter-empty" style="display:none;">No matches</div>
+                    </div>
+                  </div>
+                </div>
+                <div id="entityChartEl" class="chart-container" style="height:720px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legacy Experience placeholder -->
+        <div id="legacy-placeholder" class="legacy-placeholder">Legacy Variance Trends</div>
+
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div><!-- /#app-view -->
+
+  <footer>
+    Copyright &copy; 2011&ndash;2026 by Bluesight, Inc. &bull; 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help&#64;bluesight.com">help&#64;bluesight.com</a>
+    &bull; All Rights Reserved |
+    <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+  </footer>
+
+</div>
+</app-component>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     IRIS DETAIL PANEL (right-side overlay — opens from User name click)
+═══════════════════════════════════════════════════════════════ -->
+<div id="iris-panel-scrim" class="iris-panel-scrim" onclick="closeIrisPanel()" aria-hidden="true"></div>
+<aside id="iris-panel" class="iris-panel" role="dialog" aria-modal="true" aria-labelledby="iris-panel-title" aria-hidden="true">
+  <header class="iris-panel-header">
+    <div class="iris-panel-heading">
+      <div class="iris-panel-title" id="iris-panel-title">IRIS Detail Panel</div>
+      <div class="iris-panel-subtitle" id="iris-panel-subtitle"></div>
+    </div>
+    <button class="iris-panel-close" onclick="closeIrisPanel()" aria-label="Close IRIS Detail Panel" title="Close">
+      <span class="material-icons">close</span>
+    </button>
+  </header>
+  <div class="iris-panel-body">
+    <p class="iris-panel-placeholder">IRIS Detail Panel</p>
+  </div>
+</aside>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   MOCK DATA — Variance Trends, Nursing
+═══════════════════════════════════════════════════════════════ */
+
+// Departments — VT score, comparison scores, event counts, status breakdown
+const DEPARTMENTS = [
+  { id:'emergency',  name:'Emergency',         vtScore:6.8, compScores:{'Overall IRIS':5.4,'Variance Trends':6.8,'Med Trends':4.9,'Action Times':3.1,'Dispense Patterns':2.8,'Full Package Waste':1.2,'Shift Analysis':2.4}, totalEvents:3326, variances:184, unreconciled:50, reconciled:68, open3:66, openhist:0 },
+  { id:'recovery',   name:'Recovery',          vtScore:5.2, compScores:{'Overall IRIS':4.4,'Variance Trends':5.2,'Med Trends':3.8,'Action Times':2.5,'Dispense Patterns':2.1,'Full Package Waste':0.9,'Shift Analysis':1.8}, totalEvents:412,  variances:66,  unreconciled:18, reconciled:32, open3:16, openhist:0 },
+  { id:'pacu',       name:'PACU',              vtScore:5.7, compScores:{'Overall IRIS':4.6,'Variance Trends':5.7,'Med Trends':4.0,'Action Times':2.3,'Dispense Patterns':2.4,'Full Package Waste':0.7,'Shift Analysis':2.0}, totalEvents:298,  variances:62,  unreconciled:24, reconciled:30, open3:8,  openhist:0 },
+  { id:'lnd',        name:'L&D',               vtScore:1.2, compScores:{'Overall IRIS':1.8,'Variance Trends':1.2,'Med Trends':2.1,'Action Times':1.6,'Dispense Patterns':1.5,'Full Package Waste':0.4,'Shift Analysis':1.1}, totalEvents:248,  variances:32,  unreconciled:4,  reconciled:24, open3:4,  openhist:0 },
+  { id:'medsouth',   name:'Med South',         vtScore:1.0, compScores:{'Overall IRIS':2.1,'Variance Trends':1.0,'Med Trends':2.6,'Action Times':2.4,'Dispense Patterns':1.8,'Full Package Waste':0.6,'Shift Analysis':1.4}, totalEvents:1287, variances:51,  unreconciled:8,  reconciled:38, open3:5,  openhist:0 },
+  { id:'mednorth',   name:'Med North',         vtScore:0.9, compScores:{'Overall IRIS':1.9,'Variance Trends':0.9,'Med Trends':2.4,'Action Times':2.1,'Dispense Patterns':1.7,'Full Package Waste':0.5,'Shift Analysis':1.3}, totalEvents:1023, variances:41,  unreconciled:5,  reconciled:32, open3:4,  openhist:0 },
+  { id:'or',         name:'OR',                vtScore:2.2, compScores:{'Overall IRIS':3.4,'Variance Trends':2.2,'Med Trends':3.9,'Action Times':4.5,'Dispense Patterns':2.8,'Full Package Waste':2.1,'Shift Analysis':2.6}, totalEvents:524,  variances:47,  unreconciled:12, reconciled:30, open3:5,  openhist:0 },
+  { id:'medsurg',    name:'MedSurg',           vtScore:0.7, compScores:{'Overall IRIS':1.6,'Variance Trends':0.7,'Med Trends':2.1,'Action Times':1.8,'Dispense Patterns':1.4,'Full Package Waste':0.4,'Shift Analysis':1.2}, totalEvents:998,  variances:30,  unreconciled:3,  reconciled:24, open3:3,  openhist:0 },
+  { id:'samedaysurg',name:'Same Day Surg',     vtScore:1.7, compScores:{'Overall IRIS':2.3,'Variance Trends':1.7,'Med Trends':2.6,'Action Times':2.0,'Dispense Patterns':1.9,'Full Package Waste':0.7,'Shift Analysis':1.5}, totalEvents:382,  variances:27,  unreconciled:7,  reconciled:18, open3:2,  openhist:0 },
+  { id:'icu',        name:'ICU',               vtScore:1.7, compScores:{'Overall IRIS':2.7,'Variance Trends':1.7,'Med Trends':3.2,'Action Times':2.9,'Dispense Patterns':2.0,'Full Package Waste':1.0,'Shift Analysis':2.1}, totalEvents:686,  variances:48,  unreconciled:11, reconciled:32, open3:5,  openhist:0 },
+  { id:'postpartum', name:'Post Partum',       vtScore:0.5, compScores:{'Overall IRIS':1.4,'Variance Trends':0.5,'Med Trends':1.9,'Action Times':1.5,'Dispense Patterns':1.2,'Full Package Waste':0.3,'Shift Analysis':1.0}, totalEvents:712,  variances:14,  unreconciled:2,  reconciled:11, open3:1,  openhist:0 },
+  { id:'surgnorth',  name:'Surg North',        vtScore:0.3, compScores:{'Overall IRIS':1.3,'Variance Trends':0.3,'Med Trends':1.8,'Action Times':1.4,'Dispense Patterns':1.1,'Full Package Waste':0.4,'Shift Analysis':0.9}, totalEvents:1234, variances:12,  unreconciled:1,  reconciled:10, open3:1,  openhist:0 },
+  { id:'surgsouth',  name:'Surg South',        vtScore:0.2, compScores:{'Overall IRIS':1.2,'Variance Trends':0.2,'Med Trends':1.7,'Action Times':1.3,'Dispense Patterns':1.0,'Full Package Waste':0.3,'Shift Analysis':0.8}, totalEvents:1298, variances:6,   unreconciled:0,  reconciled:5,  open3:1,  openhist:0 },
+  { id:'triage',     name:'Triage',            vtScore:1.1, compScores:{'Overall IRIS':2.0,'Variance Trends':1.1,'Med Trends':2.4,'Action Times':1.9,'Dispense Patterns':1.6,'Full Package Waste':0.5,'Shift Analysis':1.3}, totalEvents:189,  variances:8,   unreconciled:2,  reconciled:5,  open3:1,  openhist:0 },
+  { id:'cathlab',    name:'Cath Lab',          vtScore:0.0, compScores:{'Overall IRIS':1.0,'Variance Trends':0.0,'Med Trends':1.5,'Action Times':1.2,'Dispense Patterns':0.9,'Full Package Waste':0.3,'Shift Analysis':0.7}, totalEvents:142,  variances:0,   unreconciled:0,  reconciled:0,  open3:0,  openhist:0 },
+  { id:'telemetry',  name:'Telemetry',         vtScore:0.8, compScores:{'Overall IRIS':1.7,'Variance Trends':0.8,'Med Trends':2.2,'Action Times':1.7,'Dispense Patterns':1.4,'Full Package Waste':0.5,'Shift Analysis':1.2}, totalEvents:678,  variances:24,  unreconciled:4,  reconciled:18, open3:2,  openhist:0 },
+  { id:'nursery',    name:'Nursery',           vtScore:0.4, compScores:{'Overall IRIS':1.3,'Variance Trends':0.4,'Med Trends':1.8,'Action Times':1.4,'Dispense Patterns':1.1,'Full Package Waste':0.3,'Shift Analysis':0.9}, totalEvents:421,  variances:9,   unreconciled:1,  reconciled:7,  open3:1,  openhist:0 },
+  { id:'behavioral', name:'Behavioral Health', vtScore:1.4, compScores:{'Overall IRIS':2.1,'Variance Trends':1.4,'Med Trends':2.5,'Action Times':1.8,'Dispense Patterns':1.7,'Full Package Waste':0.6,'Shift Analysis':1.5}, totalEvents:524,  variances:36,  unreconciled:9,  reconciled:24, open3:3,  openhist:0 }
+];
+
+// Drugs (per department) — for L2 view
+const DRUGS_BY_DEPT = {
+  emergency: [
+    { drug:'LORazepam 2 mg/mL Inj', vtScore:6.4, totalEvents:267, variances:96, unreconciled:19, reconciled:48, open3:29, openhist:0 },
+    { drug:'Morphine 4 mg/mL Inj',  vtScore:3.1, totalEvents:854, variances:27, unreconciled:8,  reconciled:14, open3:5,  openhist:0 },
+    { drug:'Midazolam 1 mg/mL Inj', vtScore:5.2, totalEvents:152, variances:31, unreconciled:11, reconciled:14, open3:6,  openhist:0 },
+    { drug:'Morphine 15 mg Oral',   vtScore:3.8, totalEvents:124, variances:22, unreconciled:6,  reconciled:13, open3:3,  openhist:0 },
+    { drug:'Ketamine 50 mg/mL Inj', vtScore:7.2, totalEvents:42,  variances:28, unreconciled:9,  reconciled:13, open3:6,  openhist:0 },
+    { drug:'LORazepam 1 mg Oral',   vtScore:1.8, totalEvents:98,  variances:5,  unreconciled:1,  reconciled:3,  open3:1,  openhist:0 },
+    { drug:'HYDROmorphone 1 mg/mL Inj', vtScore:2.4, totalEvents:432, variances:14, unreconciled:4,  reconciled:8,  open3:2,  openhist:0 },
+    { drug:'Morphine PF 2 mg/mL Inj',   vtScore:4.1, totalEvents:88,  variances:8,  unreconciled:3,  reconciled:3,  open3:2,  openhist:0 },
+    { drug:'fentaNYL 50 mcg/mL Inj',    vtScore:1.6, totalEvents:218, variances:9,  unreconciled:1,  reconciled:7,  open3:1,  openhist:0 },
+    { drug:'Meperidine 50 mg/mL Inj',   vtScore:2.9, totalEvents:24,  variances:8,  unreconciled:2,  reconciled:5,  open3:1,  openhist:0 },
+    { drug:'Acetaminophen-Codeine Liquid', vtScore:0.9, totalEvents:64, variances:3, unreconciled:0, reconciled:3,  open3:0,  openhist:0 },
+    { drug:'Codeine-Promethazine Liquid',  vtScore:0.7, totalEvents:78, variances:2, unreconciled:0, reconciled:2,  open3:0,  openhist:0 },
+    { drug:'Acetaminophen-oxyCODONE Oral', vtScore:0.5, totalEvents:142, variances:1, unreconciled:0, reconciled:1, open3:0,  openhist:0 },
+    { drug:'diazePAM 5 mg Oral',        vtScore:0.3, totalEvents:54,  variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 },
+    { drug:'HYDROmorphone 4 mg Oral',   vtScore:0.4, totalEvents:38,  variances:1,  unreconciled:0,  reconciled:1,  open3:0,  openhist:0 },
+    { drug:'oxyCODONE 5 mg Oral',       vtScore:0.2, totalEvents:122, variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 },
+    { drug:'alprazolam 0.5 mg Oral',    vtScore:0.6, totalEvents:34,  variances:1,  unreconciled:0,  reconciled:1,  open3:0,  openhist:0 },
+    { drug:'phenobarbital 30 mg Oral',  vtScore:0.0, totalEvents:8,   variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 }
+  ],
+  recovery: [
+    { drug:'fentaNYL 50 mcg/mL Inj', vtScore:5.4, totalEvents:128, variances:24, unreconciled:7, reconciled:13, open3:4, openhist:0 },
+    { drug:'Morphine 4 mg/mL Inj',   vtScore:4.2, totalEvents:96,  variances:18, unreconciled:5, reconciled:10, open3:3, openhist:0 },
+    { drug:'HYDROmorphone 1 mg/mL Inj', vtScore:3.1, totalEvents:84, variances:11, unreconciled:3, reconciled:6,  open3:2, openhist:0 },
+    { drug:'Ketorolac 30 mg/mL Inj', vtScore:1.8, totalEvents:54,  variances:5,  unreconciled:1, reconciled:3,  open3:1, openhist:0 },
+    { drug:'Ondansetron 4 mg/2 mL Inj', vtScore:0.6, totalEvents:36, variances:2, unreconciled:1, reconciled:1,  open3:0, openhist:0 },
+    { drug:'Acetaminophen 1000 mg IV',  vtScore:1.2, totalEvents:14, variances:6,  unreconciled:1, reconciled:5,  open3:0, openhist:0 }
+  ],
+  pacu: [
+    { drug:'fentaNYL 100 mcg/2 mL Inj', vtScore:6.1, totalEvents:114, variances:28, unreconciled:11, reconciled:13, open3:4, openhist:0 },
+    { drug:'Midazolam 5 mg/mL Inj', vtScore:5.4, totalEvents:78,  variances:18, unreconciled:8, reconciled:8, open3:2, openhist:0 },
+    { drug:'Morphine 4 mg/mL Inj',  vtScore:3.2, totalEvents:62,  variances:9,  unreconciled:3, reconciled:5, open3:1, openhist:0 },
+    { drug:'HYDROmorphone 1 mg/mL Inj', vtScore:2.4, totalEvents:34, variances:5, unreconciled:2, reconciled:3, open3:0, openhist:0 },
+    { drug:'Ondansetron 4 mg/2 mL Inj', vtScore:0.4, totalEvents:10, variances:2, unreconciled:0, reconciled:1, open3:1, openhist:0 }
+  ],
+  or: [
+    { drug:'fentaNYL 100 mcg/2 mL Inj', vtScore:3.4, totalEvents:178, variances:18, unreconciled:5, reconciled:11, open3:2, openhist:0 },
+    { drug:'Midazolam 5 mg/mL Inj', vtScore:3.1, totalEvents:122, variances:14, unreconciled:4, reconciled:8, open3:2, openhist:0 },
+    { drug:'Propofol 200 mg/20 mL Inj', vtScore:2.1, totalEvents:96, variances:8,  unreconciled:2, reconciled:5, open3:1, openhist:0 },
+    { drug:'Morphine 4 mg/mL Inj',  vtScore:1.8, totalEvents:64, variances:5, unreconciled:1, reconciled:3, open3:1, openhist:0 },
+    { drug:'Sufentanil 50 mcg/mL Inj', vtScore:1.2, totalEvents:24, variances:2, unreconciled:0, reconciled:2, open3:0, openhist:0 }
+  ]
+};
+
+function drugsForDept(deptId) {
+  if (DRUGS_BY_DEPT[deptId]) return DRUGS_BY_DEPT[deptId];
+  const dept = DEPARTMENTS.find(d => d.id === deptId);
+  if (!dept || dept.variances === 0) return [];
+  const baseDrugs = [
+    'Morphine 4 mg/mL Inj',
+    'HYDROmorphone 1 mg/mL Inj',
+    'fentaNYL 50 mcg/mL Inj',
+    'LORazepam 2 mg/mL Inj',
+    'Ondansetron 4 mg/2 mL Inj',
+    'Acetaminophen 1000 mg IV'
+  ];
+  const out = [];
+  let remVar = dept.variances, remEvt = dept.totalEvents;
+  let remUR = dept.unreconciled, remR = dept.reconciled, remO3 = dept.open3;
+  for (let i = 0; i < baseDrugs.length; i++) {
+    const isLast = i === baseDrugs.length - 1;
+    const factor = isLast ? 1 : Math.max(.18, .42 - i*.06);
+    const v  = isLast ? remVar : Math.floor(remVar * factor);
+    const e  = isLast ? remEvt : Math.floor(remEvt * factor);
+    let ur = isLast ? remUR  : Math.min(remUR, Math.floor(v * (dept.unreconciled/Math.max(1,dept.variances))));
+    let r  = isLast ? remR   : Math.min(remR,  Math.floor(v * (dept.reconciled  /Math.max(1,dept.variances))));
+    // Cap ur + r to v so open3 can never be negative (same fix as usersForDept)
+    if (ur + r > v) {
+      const overflow = (ur + r) - v;
+      const rTrim = Math.min(r, overflow);
+      r -= rTrim;
+      const remainingOverflow = overflow - rTrim;
+      if (remainingOverflow > 0) ur -= remainingOverflow;
+    }
+    const o3 = Math.max(0, v - ur - r);
+    out.push({
+      drug: baseDrugs[i],
+      vtScore: Math.max(0, dept.vtScore - i*0.6 + (Math.random()-.5)*0.4),
+      totalEvents: Math.max(8, e),
+      variances: Math.max(0, v),
+      unreconciled: ur, reconciled: r, open3: o3, openhist: 0
+    });
+    remVar -= v; remEvt -= e; remUR -= ur; remR -= r; remO3 -= o3;
+  }
+  return out;
+}
+// Users (per department) — for L2 view
+const USERS_BY_DEPT = {
+  emergency: [
+    { id:'u101', name:'Rhona Haddock', role:'RN',        vtScore:7.8, compScores:{'Overall IRIS':6.4,'Variance Trends':7.8,'Med Trends':5.2,'Action Times':3.6,'Dispense Patterns':3.0,'Full Package Waste':1.5,'Shift Analysis':2.8}, totalEvents:128, variances:64, unreconciled:24, reconciled:30, open3:10, openhist:0 },
+    { id:'u102', name:'Gwen Hewey',     role:'RN',       vtScore:5.4, compScores:{'Overall IRIS':4.8,'Variance Trends':5.4,'Med Trends':4.2,'Action Times':3.0,'Dispense Patterns':2.6,'Full Package Waste':1.1,'Shift Analysis':2.4}, totalEvents:212, variances:40, unreconciled:14, reconciled:20, open3:6, openhist:0 },
+    { id:'u103', name:'Marlys Watkin', role:'RN',        vtScore:4.6, compScores:{'Overall IRIS':4.0,'Variance Trends':4.6,'Med Trends':3.4,'Action Times':2.2,'Dispense Patterns':2.0,'Full Package Waste':0.9,'Shift Analysis':1.9}, totalEvents:184, variances:31, unreconciled:9,  reconciled:18, open3:4, openhist:0 },
+    { id:'u104', name:'Grover Kral',   role:'RN',        vtScore:4.1, compScores:{'Overall IRIS':3.8,'Variance Trends':4.1,'Med Trends':3.2,'Action Times':2.6,'Dispense Patterns':2.2,'Full Package Waste':1.0,'Shift Analysis':2.0}, totalEvents:248, variances:30, unreconciled:8,  reconciled:18, open3:4, openhist:0 },
+    { id:'u105', name:'Madonna Trimmer', role:'RN',      vtScore:3.8, compScores:{'Overall IRIS':3.4,'Variance Trends':3.8,'Med Trends':2.9,'Action Times':1.9,'Dispense Patterns':1.8,'Full Package Waste':0.8,'Shift Analysis':1.7}, totalEvents:142, variances:23, unreconciled:5,  reconciled:14, open3:4, openhist:0 },
+    { id:'u106', name:'Stephania Poulsen', role:'RN',    vtScore:3.4, compScores:{'Overall IRIS':3.0,'Variance Trends':3.4,'Med Trends':2.6,'Action Times':1.7,'Dispense Patterns':1.5,'Full Package Waste':0.7,'Shift Analysis':1.4}, totalEvents:128, variances:18, unreconciled:4,  reconciled:11, open3:3, openhist:0 },
+    { id:'u107', name:'Marleen Mullikin', role:'RN',     vtScore:5.0, compScores:{'Overall IRIS':4.2,'Variance Trends':5.0,'Med Trends':3.8,'Action Times':2.4,'Dispense Patterns':2.1,'Full Package Waste':0.9,'Shift Analysis':1.8}, totalEvents:84,  variances:34, unreconciled:11, reconciled:18, open3:5, openhist:0 },
+    { id:'u108', name:'Dephia Leeper',  role:'RN',       vtScore:4.8, compScores:{'Overall IRIS':4.1,'Variance Trends':4.8,'Med Trends':3.6,'Action Times':2.3,'Dispense Patterns':2.0,'Full Package Waste':0.9,'Shift Analysis':1.7}, totalEvents:96,  variances:38, unreconciled:13, reconciled:20, open3:5, openhist:0 },
+    { id:'u109', name:'Melia Buchner',  role:'RN',       vtScore:2.6, compScores:{'Overall IRIS':2.4,'Variance Trends':2.6,'Med Trends':2.1,'Action Times':1.4,'Dispense Patterns':1.2,'Full Package Waste':0.5,'Shift Analysis':1.1}, totalEvents:212, variances:28, unreconciled:5,  reconciled:21, open3:2, openhist:0 },
+    { id:'u110', name:'Esteban Whitis', role:'PharmTech',vtScore:3.0, compScores:{'Overall IRIS':2.8,'Variance Trends':3.0,'Med Trends':2.4,'Action Times':1.6,'Dispense Patterns':1.5,'Full Package Waste':0.6,'Shift Analysis':1.3}, totalEvents:142, variances:17, unreconciled:4,  reconciled:11, open3:2, openhist:0 },
+    { id:'u111', name:'Louanne Davidson', role:'RN',     vtScore:6.2, compScores:{'Overall IRIS':5.0,'Variance Trends':6.2,'Med Trends':4.5,'Action Times':2.8,'Dispense Patterns':2.4,'Full Package Waste':1.2,'Shift Analysis':2.2}, totalEvents:24,  variances:24, unreconciled:8,  reconciled:14, open3:2, openhist:0 },
+    { id:'u112', name:'Mica Hudspeth',  role:'RN',       vtScore:5.8, compScores:{'Overall IRIS':4.8,'Variance Trends':5.8,'Med Trends':4.2,'Action Times':2.6,'Dispense Patterns':2.2,'Full Package Waste':1.0,'Shift Analysis':2.0}, totalEvents:18,  variances:18, unreconciled:6,  reconciled:10, open3:2, openhist:0 },
+    { id:'u113', name:'Dann Libby',     role:'RN',       vtScore:5.6, compScores:{'Overall IRIS':4.7,'Variance Trends':5.6,'Med Trends':4.0,'Action Times':2.5,'Dispense Patterns':2.1,'Full Package Waste':0.9,'Shift Analysis':1.9}, totalEvents:14,  variances:14, unreconciled:5,  reconciled:8,  open3:1, openhist:0 },
+    { id:'u114', name:'Evelynn Biros',  role:'RN',       vtScore:5.4, compScores:{'Overall IRIS':4.5,'Variance Trends':5.4,'Med Trends':3.9,'Action Times':2.4,'Dispense Patterns':2.0,'Full Package Waste':0.9,'Shift Analysis':1.8}, totalEvents:12,  variances:12, unreconciled:4,  reconciled:7,  open3:1, openhist:0 },
+    { id:'u115', name:'Hai Lent',       role:'RN',       vtScore:2.4, compScores:{'Overall IRIS':2.4,'Variance Trends':2.4,'Med Trends':2.0,'Action Times':1.3,'Dispense Patterns':1.2,'Full Package Waste':0.5,'Shift Analysis':1.1}, totalEvents:122, variances:22, unreconciled:4,  reconciled:16, open3:2, openhist:0 },
+    { id:'u116', name:'Brendan Durrant',role:'RN',       vtScore:2.0, compScores:{'Overall IRIS':2.1,'Variance Trends':2.0,'Med Trends':1.8,'Action Times':1.2,'Dispense Patterns':1.1,'Full Package Waste':0.5,'Shift Analysis':1.0}, totalEvents:198, variances:16, unreconciled:3,  reconciled:11, open3:2, openhist:0 },
+    { id:'u117', name:'Alonzo Gouveia', role:'RN',       vtScore:1.8, compScores:{'Overall IRIS':2.0,'Variance Trends':1.8,'Med Trends':1.7,'Action Times':1.1,'Dispense Patterns':1.0,'Full Package Waste':0.4,'Shift Analysis':0.9}, totalEvents:218, variances:17, unreconciled:3,  reconciled:12, open3:2, openhist:0 },
+    { id:'u118', name:'Denese Montenegro', role:'RN',    vtScore:2.2, compScores:{'Overall IRIS':2.2,'Variance Trends':2.2,'Med Trends':1.9,'Action Times':1.2,'Dispense Patterns':1.1,'Full Package Waste':0.5,'Shift Analysis':1.0}, totalEvents:120, variances:12, unreconciled:3,  reconciled:8,  open3:1, openhist:0 },
+    { id:'u119', name:'Kate Heilig',    role:'RN',       vtScore:1.6, compScores:{'Overall IRIS':1.9,'Variance Trends':1.6,'Med Trends':1.6,'Action Times':1.0,'Dispense Patterns':0.9,'Full Package Waste':0.4,'Shift Analysis':0.8}, totalEvents:202, variances:16, unreconciled:2,  reconciled:12, open3:2, openhist:0 },
+    { id:'u120', name:'Marvel Lan',     role:'RN',       vtScore:4.4, compScores:{'Overall IRIS':3.8,'Variance Trends':4.4,'Med Trends':3.2,'Action Times':2.0,'Dispense Patterns':1.8,'Full Package Waste':0.8,'Shift Analysis':1.6}, totalEvents:88,  variances:19, unreconciled:5,  reconciled:12, open3:2, openhist:0 }
+  ]
+};
+
+// Synthetic user generation pool — large enough for 17 non-emergency depts × 12 users = 204 names
+// Names are sliced uniquely per department so no name appears in more than one synthetic dept.
+const NURSE_FIRST_NAMES = [
+  'Avery','Jordan','Riley','Casey','Quinn','Drew','Sage','Reese','Logan','Harper',
+  'Ellis','Skyler','Maren','Cody','Talia','Nico','Priya','Ezra','Maya','Devon',
+  'Aiden','Naomi','Theo','Iris','Rowan','Elena','Mateo','Olive','Zane','Sasha'
+];
+const NURSE_LAST_NAMES = [
+  'Carlson','Mehta','Okonkwo','Bautista','Volkov','Akinwale','Brennan','Tatum','Pham','Khalil',
+  'Vargas','Park','Hollis','Nakamura','Shah','Becker','Soto','Kowalski','Chen','Rivera',
+  'Petrov','Singh','Mendez','Goh','Esposito','Adler','Larsen','Owens','Thomson','Aguilar'
+];
+const SYNTH_ROLES = ['RN','RN','RN','RN','RN','RN','PharmTech','RN','RN','RN','RN','RN'];
+
+function _synthName(idx) {
+  // Deterministic: interleave first × last so names appear varied as idx increases
+  return NURSE_FIRST_NAMES[idx % NURSE_FIRST_NAMES.length] + ' ' +
+         NURSE_LAST_NAMES[Math.floor(idx / NURSE_FIRST_NAMES.length) % NURSE_LAST_NAMES.length];
+}
+function _seededRand(seedStr, salt) {
+  // Deterministic 0..1 from a string seed — replaces Math.random for synthetic user scores
+  let h = 0;
+  const s = seedStr + ':' + salt;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return Math.abs(Math.sin(h)) % 1;
+}
+
+// Deterministically pick `n` unique items from an array using a seed
+function _pickN(seedStr, salt, options, n) {
+  const pool = options.slice();
+  const out = [];
+  for (let i = 0; i < n && pool.length; i++) {
+    const idx = Math.floor(_seededRand(seedStr, salt + ':' + i) * pool.length) % pool.length;
+    out.push(pool.splice(idx, 1)[0]);
+  }
+  return out;
+}
+
+// Distribute a record's numeric fields across N buckets per `weights`. Sum of slices == original.
+function _allocateStats(rec, weights) {
+  const wsum = weights.reduce((a, b) => a + b, 0);
+  const norm = weights.map(w => w / wsum);
+  const fields = [
+    'totalEvents','variances','unreconciled','reconciled','open','open3','openhist',
+    'adminLate','backcharting','lateReturn','lateWaste',
+    'wrongPtDispense','wrongPtChart','adminQtyWrong','wasteQtyWrong','returnQtyWrong',
+    'missDispense','missReturn','undocAdmin','undocWaste',
+    'bolusFromBag','centralPharm','patientOwnMed'
+  ];
+  const slices = norm.map(() => ({}));
+  fields.forEach(f => {
+    const total = rec[f] || 0;
+    let assigned = 0;
+    for (let i = 0; i < norm.length; i++) {
+      if (i === norm.length - 1) {
+        slices[i][f] = Math.max(0, total - assigned);
+      } else {
+        const v = Math.round(total * norm[i]);
+        slices[i][f] = v;
+        assigned += v;
+      }
+    }
+  });
+  return slices;
+}
+
+function usersForDept(deptId) {
+  if (USERS_BY_DEPT[deptId]) return USERS_BY_DEPT[deptId];
+  const dept = DEPARTMENTS.find(d => d.id === deptId);
+  if (!dept || dept.variances === 0) return [];
+  // Offset name pool by dept's position so each dept gets a unique 12-name slice
+  const deptIdx = DEPARTMENTS.findIndex(d => d.id === deptId);
+  const baseOffset = deptIdx * 12;
+  const out = [];
+  let remVar = dept.variances, remEvt = dept.totalEvents;
+  let remUR = dept.unreconciled, remR = dept.reconciled, remO3 = dept.open3;
+  for (let i = 0; i < 12; i++) {
+    const isLast = i === 11;
+    const factor = isLast ? 1 : Math.max(.06, .25 - i*.018);
+    const v = isLast ? remVar : Math.floor(remVar * factor);
+    const e = isLast ? remEvt : Math.floor(remEvt * factor);
+    // Allocate ur and r proportionally, but never let either exceed what's left for this user
+    let ur = isLast ? remUR : Math.min(remUR, Math.floor(v * (dept.unreconciled / Math.max(1, dept.variances))));
+    let r  = isLast ? remR  : Math.min(remR,  Math.floor(v * (dept.reconciled   / Math.max(1, dept.variances))));
+    // Cap ur + r so they can't exceed this slice's variances (otherwise open3 would be negative)
+    if (ur + r > v) {
+      // Trim r first, then ur, to keep them consistent
+      const overflow = (ur + r) - v;
+      const rTrim = Math.min(r, overflow);
+      r -= rTrim;
+      const remainingOverflow = overflow - rTrim;
+      if (remainingOverflow > 0) ur -= remainingOverflow;
+    }
+    // open3 is whatever's left of variances after ur + r — never negative
+    const o3 = Math.max(0, v - ur - r);
+    const name = _synthName(baseOffset + i);
+    // Deterministic per-user score variance so re-renders don't change the data
+    const score = Math.max(0, dept.vtScore + (_seededRand(name, 'score') - 0.4) * 1.6);
+    out.push({
+      id: deptId + '-u' + (i+1),
+      name: name, role: SYNTH_ROLES[i],
+      vtScore: score,
+      compScores: {
+        'Overall IRIS': score*0.85,
+        'Variance Trends': score,
+        'Med Trends': score*0.72,
+        'Action Times': score*0.55,
+        'Dispense Patterns': score*0.45,
+        'Full Package Waste': score*0.22,
+        'Shift Analysis': score*0.42
+      },
+      totalEvents: Math.max(8, e), variances: Math.max(0, v),
+      unreconciled: ur, reconciled: r, open3: o3, openhist: 0
+    });
+    remVar -= v; remEvt -= e; remUR -= ur; remR -= r; remO3 -= o3;
+  }
+  return out;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FLAT ENTITY POOLS (single combined list per entity)
+═══════════════════════════════════════════════════════════════ */
+let _allUsers = null, _allDrugs = null, _allDepartments = null;
+
+function getAllDepartments() {
+  if (_allDepartments) return _allDepartments;
+  _allDepartments = DEPARTMENTS.map(d => fillContextColumns(Object.assign({}, d, { entity: 'departments' })));
+  // Annotate each dept with the count of unique users that have activity there.
+  // (Done lazily on first access since getAllUsers() builds activeDepts.)
+  const users = getAllUsers();
+  _allDepartments.forEach(d => {
+    d.totalUsers = users.filter(u => (u.activeDepts || []).includes(d.name)).length;
+  });
+  return _allDepartments;
+}
+
+function getAllUsers() {
+  if (_allUsers) return _allUsers;
+  const out = [];
+  const seenIds = new Set();
+  const seenNames = new Set();
+  // Build supporting pools first
+  const allDeptNames = DEPARTMENTS.map(d => d.name);
+  const allDrugNames = getAllDrugs().map(d => d.name);
+
+  DEPARTMENTS.forEach(d => {
+    usersForDept(d.id).forEach(u => {
+      if (seenIds.has(u.id) || seenNames.has(u.name)) return;
+      seenIds.add(u.id);
+      seenNames.add(u.name);
+      const rec = Object.assign({}, u, { entity: 'users', dept: d.name, deptId: d.id });
+      const filled = fillContextColumns(rec);
+
+      // Home dept = the dept this user is associated with by their record
+      filled.homeDept = filled.dept;
+
+      // Pick 0–2 additional "cross-coverage" depts (deterministic per user name)
+      const numExtra = Math.floor(_seededRand(filled.name, 'numdepts') * 2.6);  // 0,1,2
+      const otherDeptOptions = allDeptNames.filter(dn => dn !== filled.homeDept);
+      const extraDepts = _pickN(filled.name, 'extradepts', otherDeptOptions, numExtra);
+      filled.activeDepts = [filled.homeDept].concat(extraDepts);
+
+      // Allocate stats across active depts: home gets ~60–70%, extras share the rest
+      const deptWeights = filled.activeDepts.map((_, i) => i === 0 ? 0.65 : (0.35 / Math.max(1, numExtra)));
+      const deptSlices = _allocateStats(filled, deptWeights);
+      filled.deptStats = {};
+      filled.activeDepts.forEach((dn, i) => { filled.deptStats[dn] = deptSlices[i]; });
+
+      // Pick 3–7 drugs the user has touched
+      const numDrugs = 3 + Math.floor(_seededRand(filled.name, 'numdrugs') * 5);
+      filled.activeDrugs = _pickN(filled.name, 'drugs', allDrugNames, Math.min(numDrugs, allDrugNames.length));
+
+      // Allocate stats across drugs with seeded weights so each drug's slice is unique
+      const drugWeights = filled.activeDrugs.map((_, i) => 1 + _seededRand(filled.name, 'drugw' + i) * 2.5);
+      const drugSlices = _allocateStats(filled, drugWeights);
+      filled.drugStats = {};
+      filled.activeDrugs.forEach((dn, i) => { filled.drugStats[dn] = drugSlices[i]; });
+
+      out.push(filled);
+    });
+  });
+  _allUsers = out;
+  return _allUsers;
+}
+
+function getAllDrugs() {
+  if (_allDrugs) return _allDrugs;
+  // Aggregate same drug across departments by summing
+  const map = new Map();
+  DEPARTMENTS.forEach(d => {
+    drugsForDept(d.id).forEach(dr => {
+      const key = dr.drug;
+      const existing = map.get(key);
+      if (existing) {
+        existing.totalEvents  += dr.totalEvents;
+        existing.variances    += dr.variances;
+        existing.unreconciled += dr.unreconciled;
+        existing.reconciled   += dr.reconciled;
+        existing.open3        += dr.open3 || 0;
+        existing.openhist     += dr.openhist || 0;
+      } else {
+        map.set(key, Object.assign({ name: dr.drug, entity: 'drugs', open3: dr.open3 || 0, openhist: dr.openhist || 0 }, dr));
+      }
+    });
+  });
+  _allDrugs = Array.from(map.values()).map(fillContextColumns);
+  return _allDrugs;
+}
+
+// Lazily annotate drugs with totalUsers counts — has to come AFTER getAllUsers() runs
+// (which itself depends on getAllDrugs() to build the drug-name pool, so this can't
+// happen inside getAllDrugs()).
+function annotateDrugsWithUserCounts() {
+  const drugs = getAllDrugs();
+  if (drugs.length === 0 || drugs[0].totalUsers !== undefined) return drugs;
+  const users = getAllUsers();
+  drugs.forEach(dr => {
+    dr.totalUsers = users.filter(u => (u.activeDrugs || []).includes(dr.name)).length;
+  });
+  return drugs;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   STATE & HELPERS
+═══════════════════════════════════════════════════════════════ */
+// Show: which entity to view (per Figma "Show" pillter — Users / Departments / Drugs)
+let showEntity = 'users';     // 'users' | 'departments' | 'drugs'
+// Context: which lens to view (per Figma "Context" pillter)
+let vtContext = 'variance-rate';  // 'variance-rate' | 'doc-timing' | 'incorrect-doc' | 'missing-doc' | 'system-limit'
+// Drilldown — when set, the table shows users scoped to a specific dept or drug
+let drilldownState = { type: null, scope: null };  // type: 'dept' | 'drug' | null, scope: name string
+let currentMode = 'table';    // 'table' | 'graph'
+let activeStatuses = new Set(['unreconciled', 'reconciled', 'open']);  // 3-status model from Figma chart legend
+let entityChart = null;
+let entitySortStates = {
+  // per-entity sort state — defaults to score for users (only entity with scores), variances for others
+  users:       { col: 'vtScore',   asc: false },
+  departments: { col: 'variances', asc: false },
+  drugs:       { col: 'variances', asc: false }
+};
+const chipFilterState = { dept: new Set(), user: new Set(), role: new Set() };
+
+// Per-entity chart filter selections. Map keyed by effective Show entity ('users' | 'departments' | 'drugs').
+// Value is either null (= no filter, show all) or a Set of selected entity names.
+const chartFilterState = { users: null, departments: null, drugs: null };
+let chartFilterSearchQuery = '';
+
+// "Effective" show entity — when drilling into a dept/drug we render the user table regardless of pillter
+function effectiveShow() { return drilldownState.type ? 'users' : showEntity; }
+
+// Variance Trends Contexts (per Figma "Context" dropdown)
+const VT_CONTEXTS = [
+  { id: 'variance-rate',  name: 'Variance Rate' },
+  { id: 'doc-timing',     name: 'Documentation Timing Issues' },
+  { id: 'incorrect-doc',  name: 'Incorrect Documentation' },
+  { id: 'missing-doc',    name: 'Missing Documentation' },
+  { id: 'system-limit',   name: 'System Limitation' }
+];
+
+// Show options (per Figma "Show" dropdown)
+const SHOW_OPTIONS = [
+  { id: 'users',       name: 'Users',       singular: 'User'       },
+  { id: 'departments', name: 'Departments', singular: 'Department' },
+  { id: 'drugs',       name: 'Drugs',       singular: 'Drug'       }
+];
+
+// Column definitions per Context (used for the table H Scroll columns + chart)
+const CONTEXT_COLUMNS = {
+  'variance-rate': [
+    { key: 'rate',         label: 'Variance Rate', isPct: true },
+    { key: 'totalEvents',  label: 'Total Events' },
+    { key: 'variances',    label: 'Total Variances' },
+    { key: 'unreconciled', label: 'Unable to Reconcile' },
+    { key: 'reconciled',   label: 'Reconciled' },
+    { key: 'open',         label: 'Open > 3 Days' }
+  ],
+  'doc-timing': [
+    { key: 'adminLate',    label: 'Admin Documented Late' },
+    { key: 'backcharting', label: 'Backcharting' },
+    { key: 'lateReturn',   label: 'Late Return' },
+    { key: 'lateWaste',    label: 'Late Waste' }
+  ],
+  'incorrect-doc': [
+    { key: 'wrongPtDispense', label: 'Dispensed on Wrong Patient' },
+    { key: 'wrongPtChart',    label: 'Charted on Wrong Patient' },
+    { key: 'adminQtyWrong',   label: 'Admin Quantity Incorrect' },
+    { key: 'wasteQtyWrong',   label: 'Waste Quantity Incorrect' },
+    { key: 'returnQtyWrong',  label: 'Return Quantity Incorrect' }
+  ],
+  'missing-doc': [
+    { key: 'missDispense',  label: 'Missing Dispense' },
+    { key: 'missReturn',    label: 'Missing Return' },
+    { key: 'undocAdmin',    label: 'Undocumented Administration' },
+    { key: 'undocWaste',    label: 'Undocumented Waste' }
+  ],
+  'system-limit': [
+    { key: 'bolusFromBag',  label: 'Bolus From Bag' },
+    { key: 'centralPharm',  label: 'Dispensed from Central Pharmacy' },
+    { key: 'patientOwnMed', label: 'Patient Own Med' }
+  ]
+};
+
+// Generate context-specific column data deterministically based on an entity's variances + a key salt
+function fillContextColumns(record) {
+  // Use a simple hash from entity name to seed pseudo-random distribution
+  const seed = (record.name || record.drug || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  const baseVar = record.variances || 0;
+  function pseudo(n) {
+    // returns 0..1 deterministic based on seed + n
+    return ((Math.sin(seed * 9.317 + n * 13.7) + 1) / 2);
+  }
+  // Re-derive Open total from open + open-historical for the 3-status model
+  if (record.open === undefined) record.open = (record.open3 || 0) + (record.openhist || 0);
+  // Doc timing
+  record.adminLate    = Math.round(baseVar * pseudo(1) * 0.55);
+  record.backcharting = Math.round(baseVar * pseudo(2) * 0.35);
+  record.lateReturn   = Math.round(baseVar * pseudo(3) * 0.18);
+  record.lateWaste    = Math.round(baseVar * pseudo(4) * 0.22);
+  // Incorrect doc
+  record.wrongPtDispense = Math.round(baseVar * pseudo(5) * 0.08);
+  record.wrongPtChart    = Math.round(baseVar * pseudo(6) * 0.10);
+  record.adminQtyWrong   = Math.round(baseVar * pseudo(7) * 0.18);
+  record.wasteQtyWrong   = Math.round(baseVar * pseudo(8) * 0.14);
+  record.returnQtyWrong  = Math.round(baseVar * pseudo(9) * 0.06);
+  // Missing doc
+  record.missDispense = Math.round(baseVar * pseudo(10) * 0.20);
+  record.missReturn   = Math.round(baseVar * pseudo(11) * 0.22);
+  record.undocAdmin   = Math.round(baseVar * pseudo(12) * 0.15);
+  record.undocWaste   = Math.round(baseVar * pseudo(13) * 0.30);
+  // System limitation
+  record.bolusFromBag  = Math.round(baseVar * pseudo(14) * 0.07);
+  record.centralPharm  = Math.round(baseVar * pseudo(15) * 0.05);
+  record.patientOwnMed = Math.round(baseVar * pseudo(16) * 0.04);
+  return record;
+}
+
+function scoreClassFor(s) {
+  if (s >= 4.6) return 'score-critical';
+  if (s >= 1.4) return 'score-moderate';
+  return 'score-normal';
+}
+function fmtScore(s) { return (Math.round(s * 10) / 10).toFixed(1); }
+function fmtNum(n) { return n.toLocaleString('en-US'); }
+function variancePct(variances, totalEvents) {
+  if (!totalEvents) return 0;
+  return Math.round((variances / totalEvents) * 100);
+}
+function rateClass(pct) {
+  if (pct >= 10) return 'high';
+  if (pct >= 4) return 'medium';
+  return 'low';
+}
+/* ════════════════════════════════════════════════════════════════
+   SIDEBAR / DRAWER
+═══════════════════════════════════════════════════════════════ */
+function togglePanel(headerEl) {
+  const panel = headerEl.closest('mat-expansion-panel');
+  const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+  const expanded = panel.classList.toggle('mat-expanded');
+  headerEl.classList.toggle('mat-expanded', expanded);
+  headerEl.setAttribute('aria-expanded', expanded);
+  if (expanded) wrapper.removeAttribute('inert');
+  else wrapper.setAttribute('inert', '');
+}
+
+function toggleDrawer() {
+  document.getElementById('analyze-drawer').classList.toggle('collapsed');
+  setTimeout(() => {
+    if (entityChart) entityChart.resize();
+  }, 320);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   VERSION SELECTOR
+═══════════════════════════════════════════════════════════════ */
+function toggleVersionMenu(ev) {
+  ev.stopPropagation();
+  const menu = document.getElementById('version-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+function selectVersion(label, el) {
+  document.getElementById('version-label').textContent = label;
+  document.querySelectorAll('.version-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('version-menu').style.display = 'none';
+  document.body.classList.toggle('legacy-mode', label === 'Legacy Experience');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FILTER CHIPS
+═══════════════════════════════════════════════════════════════ */
+function toggleFilter(btn) {
+  closeAllChipMenus();
+  closeAllPillMenus();
+  closeDownloadMenus();
+}
+
+function closeAllChipMenus() {
+  document.querySelectorAll('.chip-filter-menu').forEach(m => m.style.display = 'none');
+  document.querySelectorAll('.filter-chip-group .filter-chip.active').forEach(c => c.classList.remove('active'));
+}
+
+function toggleChipFilter(kind, ev) {
+  ev.stopPropagation();
+  const menu = document.getElementById(kind + '-chip-menu');
+  const btn  = document.getElementById(kind + '-chip-btn');
+  const isOpen = menu.style.display !== 'none';
+  closeAllChipMenus();
+  closeAllPillMenus();
+  closeDownloadMenus();
+  if (!isOpen) {
+    menu.style.display = 'flex';
+    btn.classList.add('active');
+  }
+}
+
+function filterChipMenu(menuId, query) {
+  const list = document.getElementById(menuId).querySelector('.chip-filter-list');
+  const q = query.toLowerCase();
+  Array.from(list.children).forEach(opt => {
+    opt.style.display = opt.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+
+function chipSelectAll(kind, select) {
+  document.querySelectorAll('#' + kind + '-chip-list input[type="checkbox"]').forEach(cb => {
+    cb.checked = select;
+    if (select) chipFilterState[kind].add(cb.dataset.value);
+    else chipFilterState[kind].delete(cb.dataset.value);
+  });
+  updateChipLabel(kind);
+  rerenderAfterChipChange(kind);
+}
+
+function updateChipLabel(kind) {
+  const label = document.getElementById(kind + '-chip-label');
+  const btn = document.getElementById(kind + '-chip-btn');
+  const labelText = { dept: 'Department', user: 'User', role: 'Role', vc: 'Variance Category' }[kind];
+  const count = chipFilterState[kind].size;
+  label.textContent = labelText;
+  if (count === 0) {
+    btn.classList.remove('selected');
+    const oldCount = btn.querySelector('.filter-chip-count');
+    if (oldCount) oldCount.remove();
+  } else {
+    btn.classList.add('selected');
+    let countEl = btn.querySelector('.filter-chip-count');
+    if (!countEl) {
+      countEl = document.createElement('span');
+      countEl.className = 'filter-chip-count';
+      btn.insertBefore(countEl, btn.querySelector('.material-icons'));
+    }
+    countEl.textContent = count;
+  }
+}
+
+function clearAllChipFilters() {
+  ['dept','user','role'].forEach(kind => {
+    chipFilterState[kind].clear();
+    document.querySelectorAll('#' + kind + '-chip-list input[type="checkbox"]').forEach(cb => cb.checked = false);
+    updateChipLabel(kind);
+  });
+  rerenderAfterChipChange();
+}
+
+// Re-render the table + chart after a chip-filter change. Only dept/role chips drive filtering;
+// user chip is wired but the User table already supports search by name, so we treat user chip
+// as a no-op for now (kept as scaffolding).
+function rerenderAfterChipChange(kind) {
+  if (kind === 'user') return;
+  renderEntityTable();
+  if (currentMode === 'graph') initEntityChart();
+}
+
+function buildChipFilterList(kind, items) {
+  const list = document.getElementById(kind + '-chip-list');
+  list.innerHTML = '';
+  items.forEach(it => {
+    const opt = document.createElement('label');
+    opt.className = 'chip-filter-option';
+    const escVal = it.value.replace(/'/g, "\\'");
+    opt.innerHTML = '<input type="checkbox" data-value="' + it.value + '" onchange="chipFilterToggle(\'' + kind + '\', \'' + escVal + '\', this.checked)"> ' + it.label;
+    list.appendChild(opt);
+  });
+}
+
+function chipFilterToggle(kind, value, checked) {
+  if (checked) chipFilterState[kind].add(value);
+  else chipFilterState[kind].delete(value);
+  updateChipLabel(kind);
+  rerenderAfterChipChange(kind);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SECONDARY PILLTERS
+═══════════════════════════════════════════════════════════════ */
+function closeAllPillMenus() {
+  document.querySelectorAll('.cs-menu').forEach(m => m.style.display = 'none');
+  document.querySelectorAll('.pill-filter-wrap.open').forEach(p => p.classList.remove('open'));
+}
+
+function togglePillMenu(menuId) {
+  const menu = document.getElementById(menuId);
+  const wrap = menu.closest('.pill-filter-wrap');
+  const isOpen = menu.style.display !== 'none';
+  closeAllPillMenus();
+  closeAllChipMenus();
+  closeDownloadMenus();
+  if (!isOpen) {
+    menu.style.display = 'block';
+    wrap.classList.add('open');
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DOWNLOAD MENU
+═══════════════════════════════════════════════════════════════ */
+function toggleDownloadMenu(btn, ev) {
+  ev.stopPropagation();
+  const menu = btn.parentElement.querySelector('.download-menu');
+  const isOpen = menu.style.display !== 'none';
+  closeDownloadMenus();
+  if (!isOpen) menu.style.display = 'block';
+}
+function closeDownloadMenus() {
+  document.querySelectorAll('.download-menu').forEach(m => m.style.display = 'none');
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SHOW + CONTEXT PILLTERS  (per Figma "Show:" and "Context:" pillters)
+═══════════════════════════════════════════════════════════════ */
+function setShow(entity, el) {
+  showEntity = entity;
+  drilldownState = { type: null, scope: null };  // changing Show clears any active drilldown
+  chartFilterSearchQuery = '';                   // reset search input when switching entity
+  const searchInput = document.getElementById('chart-filter-search');
+  if (searchInput) searchInput.value = '';
+  const opt = SHOW_OPTIONS.find(o => o.id === entity);
+  document.getElementById('show-label').textContent = opt.name;
+  el.parentElement.querySelectorAll('.show-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('show-menu').style.display = 'none';
+  document.querySelector('#show-filter-wrap').classList.remove('open');
+  updatePageTitle();
+  updateBreadcrumb();
+  renderEntityTable();
+  if (currentMode === 'graph') renderCurrentChart();
+}
+
+function setVtContext(ctxId, el) {
+  vtContext = ctxId;
+  const ctx = VT_CONTEXTS.find(c => c.id === ctxId);
+  document.getElementById('vt-context-label').textContent = ctx.name;
+  el.parentElement.querySelectorAll('.ctx-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('vt-context-menu').style.display = 'none';
+  document.querySelector('#vt-context-filter-wrap').classList.remove('open');
+  renderEntityTable();
+  if (currentMode === 'graph') renderCurrentChart();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DRILLDOWN  (Department → Users in dept,  Drug → Users on drug)
+═══════════════════════════════════════════════════════════════ */
+function drillIntoDept(deptName) {
+  drilldownState = { type: 'dept', scope: deptName };
+  updatePageTitle();
+  updateBreadcrumb();
+  renderEntityTable();
+  if (currentMode === 'graph') renderCurrentChart();
+  const drawer = document.querySelector('.mat-drawer-content');
+  if (drawer) drawer.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function drillIntoDrug(drugName) {
+  drilldownState = { type: 'drug', scope: drugName };
+  updatePageTitle();
+  updateBreadcrumb();
+  renderEntityTable();
+  if (currentMode === 'graph') renderCurrentChart();
+  const drawer = document.querySelector('.mat-drawer-content');
+  if (drawer) drawer.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function exitDrilldown() {
+  drilldownState = { type: null, scope: null };
+  updatePageTitle();
+  updateBreadcrumb();
+  renderEntityTable();
+  if (currentMode === 'graph') renderCurrentChart();
+}
+
+function updateBreadcrumb() {
+  const block = document.getElementById('drilldown-context-block');
+  const sharedFilterBar = document.querySelector('.shared-filter-bar-wrap');
+  const subtitleRow = document.querySelector('.page-subtitle-row');
+  const subtitleEl = document.getElementById('page-subtitle');
+  if (!block) return;
+  if (!drilldownState.type) {
+    block.classList.remove('open');
+    if (sharedFilterBar) sharedFilterBar.style.display = '';
+    if (subtitleRow) subtitleRow.style.display = '';
+    if (subtitleEl) subtitleEl.style.display = '';
+    return;
+  }
+  const parentLabel = drilldownState.type === 'dept' ? 'Departments' : 'Drugs';
+  block.classList.add('open');
+  document.getElementById('drilldown-back-btn').setAttribute('aria-label', 'Back to ' + parentLabel);
+  document.getElementById('drilldown-back-btn').setAttribute('title', 'Back to ' + parentLabel);
+  document.getElementById('drilldown-title').textContent = drilldownState.scope;
+  // Hide Show/Context/Status pillters during drilldown.
+  if (sharedFilterBar) sharedFilterBar.style.display = 'none';
+  // Keep the count + search row visible, but hide the title text inside it
+  // (the drilldown header above provides the title context). The row itself
+  // pushes the count + search to the right via margin-left:auto on .row-count-and-search.
+  if (subtitleRow) subtitleRow.style.display = '';
+  if (subtitleEl) subtitleEl.style.display = 'none';
+  // Populate the summary card with the parent record's stats — columns reflect
+  // whichever Context was active on the L1 table when the user drilled in.
+  renderDrilldownSummary();
+}
+
+function renderDrilldownSummary() {
+  const body = document.getElementById('drilldown-summary-body');
+  if (!body) return;
+  // Find the L1 record this drilldown was launched from
+  const parentList = drilldownState.type === 'dept' ? getAllDepartments() : getAllDrugs();
+  const parent = parentList.find(r => r.name === drilldownState.scope);
+  if (!parent) {
+    body.textContent = '';
+    return;
+  }
+  const cols = CONTEXT_COLUMNS[vtContext];
+  const ctx = VT_CONTEXTS.find(c => c.id === vtContext);
+  const ctxName = ctx ? ctx.name : '';
+  // Render as a heading + column-style stat row matching the L1 table's column layout
+  const statsHtml = cols.map(col => {
+    const v = getColValue(parent, col.key);
+    const display = col.isPct ? (v + '%') : fmtNum(v);
+    return '<div class="dd-stat">'
+      + '<div class="dd-stat-label">' + col.label + '</div>'
+      + '<div class="dd-stat-value">' + display + '</div>'
+    + '</div>';
+  }).join('');
+  body.innerHTML =
+      '<div class="dd-summary-heading">' + ctxName + '</div>'
+    + '<div class="dd-stat-row">' + statsHtml + '</div>';
+}
+
+function updatePageTitle() {
+  const eff = effectiveShow();
+  const opt = SHOW_OPTIONS.find(o => o.id === eff);
+  const titleEl = document.getElementById('page-subtitle');
+  if (!titleEl) return;
+  if (drilldownState.type) {
+    titleEl.textContent = 'Variance Trends · Users with activity in ' + drilldownState.scope;
+  } else {
+    titleEl.textContent = 'Variance Trends by ' + opt.name;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   SHARED VIEW TOGGLE  (Tabular / Visualized)
+═══════════════════════════════════════════════════════════════ */
+function switchCurrentView(mode) {
+  currentMode = mode;
+  document.getElementById('shared-tabular-tab').classList.toggle('mdc-tab--active', mode === 'table');
+  document.getElementById('shared-visual-tab').classList.toggle('mdc-tab--active', mode === 'graph');
+  document.getElementById('shared-tabular-tab').querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'table');
+  document.getElementById('shared-visual-tab').querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'graph');
+  document.getElementById('entity-table-view').style.display = mode === 'table' ? '' : 'none';
+  document.getElementById('entity-graph-view').style.display = mode === 'graph' ? '' : 'none';
+  // Row count + search only apply to the table view
+  const countSearch = document.querySelector('.row-count-and-search');
+  if (countSearch) countSearch.style.display = mode === 'table' ? '' : 'none';
+  if (mode === 'graph') setTimeout(() => initEntityChart(), 0);
+  else if (entityChart) { entityChart.dispose(); entityChart = null; }
+}
+
+function renderCurrentChart() {
+  if (currentMode !== 'graph') return;
+  initEntityChart();
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ENTITY TABLE  (unified Users / Departments / Drugs)
+═══════════════════════════════════════════════════════════════ */
+
+// Combine a user's identity with their stats sliced for a specific dept or drug
+function makeScopedUser(user, type, scope) {
+  const stats = (type === 'dept' ? user.deptStats[scope] : user.drugStats[scope]) || {};
+  // Identity fields stay; numeric fields come from the slice
+  return Object.assign({}, user, stats);
+}
+
+function getEntityList() {
+  let list;
+  if (drilldownState.type === 'dept') {
+    list = getAllUsers()
+      .filter(u => u.activeDepts.includes(drilldownState.scope))
+      .map(u => makeScopedUser(u, 'dept', drilldownState.scope));
+  } else if (drilldownState.type === 'drug') {
+    list = getAllUsers()
+      .filter(u => u.activeDrugs.includes(drilldownState.scope))
+      .map(u => makeScopedUser(u, 'drug', drilldownState.scope));
+  } else if (showEntity === 'users') {
+    list = getAllUsers();
+  } else if (showEntity === 'departments') {
+    list = getAllDepartments();
+  } else if (showEntity === 'drugs') {
+    list = annotateDrugsWithUserCounts();
+  }
+  // ── Department + Role chip filters from the page header ──────────────
+  // chipFilterState.dept holds dept *IDs*, chipFilterState.role holds role names.
+  const eff = effectiveShow();
+  const deptSel = chipFilterState.dept;          // Set of dept IDs
+  const roleSel = chipFilterState.role;          // Set of role names
+  const hasDept = deptSel && deptSel.size > 0;
+  const hasRole = roleSel && roleSel.size > 0;
+  if (hasDept || hasRole) {
+    // Map selected dept IDs to their names so we can match against user.activeDepts (names) + drug.deptStats keys (names)
+    const allDepts = getAllDepartments();
+    const selectedDeptNames = new Set(
+      allDepts.filter(d => deptSel.has(d.id)).map(d => d.name)
+    );
+    list = list.filter(rec => {
+      // Department filter
+      if (hasDept) {
+        if (eff === 'departments') {
+          // The row IS a department — keep it if its id (or name) is selected
+          if (!deptSel.has(rec.id) && !selectedDeptNames.has(rec.name)) return false;
+        } else if (eff === 'users') {
+          // User — keep if any of their active depts is selected
+          const userDepts = rec.activeDepts || [rec.homeDept || rec.dept].filter(Boolean);
+          if (!userDepts.some(dn => selectedDeptNames.has(dn))) return false;
+        } else if (eff === 'drugs') {
+          // Drug — keep if it has activity in any selected dept
+          const drugDepts = rec.deptStats ? Object.keys(rec.deptStats) : [];
+          if (!drugDepts.some(dn => selectedDeptNames.has(dn))) return false;
+        }
+      }
+      // Role filter — only meaningful for users (or drilled-down user lists)
+      if (hasRole && eff === 'users') {
+        if (!rec.role || !roleSel.has(rec.role)) return false;
+      }
+      // For Department/Drug L1 views, role filter has no direct meaning (records are not roles).
+      // We skip role filtering on those views rather than emptying the list.
+      return true;
+    });
+  }
+  // Status filter only affects Variance Rate context
+  return list.filter(rec => {
+    if (vtContext !== 'variance-rate') return true;
+    if (activeStatuses.size === 0) return true;
+    return Array.from(activeStatuses).some(s => (rec[s] || 0) > 0)
+        || (rec.unreconciled === 0 && rec.reconciled === 0 && rec.open === 0);
+  });
+}
+
+function getEntityEffective(rec) {
+  if (vtContext !== 'variance-rate' || activeStatuses.size === 0) return rec.variances || 0;
+  return Array.from(activeStatuses).reduce((sum, s) => sum + (rec[s] || 0), 0);
+}
+
+function getColValue(rec, key) {
+  if (key === 'variances') return getEntityEffective(rec);
+  if (key === 'rate') return variancePct(getEntityEffective(rec), rec.totalEvents || 1);
+  return rec[key] || 0;
+}
+
+function renderEntityHead() {
+  const head = document.getElementById('entityTableHead');
+  const tableEl = document.getElementById('entityTable');
+  const eff = effectiveShow();
+  if (tableEl) {
+    tableEl.setAttribute('data-show', eff);
+    tableEl.setAttribute('data-context', vtContext);
+    tableEl.setAttribute('data-drilldown', drilldownState.type || '');
+  }
+  const sortState = entitySortStates[eff];
+  const cols = CONTEXT_COLUMNS[vtContext];
+  let html = '<tr>';
+  if (eff === 'users') {
+    html += '<th class="sortable center" style="width:110px; min-width:110px; max-width:110px;" onclick="sortEntityTable(\'vtScore\')"><span class="th-inner">Metric<br>Score <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+    html += '<th class="sortable" style="min-width:240px;" onclick="sortEntityTable(\'name\')"><span class="th-inner">User <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+    // "Departments with Activity" — always present for the User table regardless of Context
+    html += '<th style="min-width:200px;"><span class="th-inner">Departments&nbsp;with&nbsp;Activity</span></th>';
+  } else if (eff === 'departments') {
+    html += '<th class="sortable" style="min-width:280px;" onclick="sortEntityTable(\'name\')"><span class="th-inner">Department <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+    html += '<th class="sortable center" style="width:120px; min-width:120px; max-width:120px;" onclick="sortEntityTable(\'totalUsers\')"><span class="th-inner">Total Users <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+  } else {
+    html += '<th class="sortable" style="min-width:280px;" onclick="sortEntityTable(\'name\')"><span class="th-inner">Drug <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+    html += '<th class="sortable center" style="width:120px; min-width:120px; max-width:120px;" onclick="sortEntityTable(\'totalUsers\')"><span class="th-inner">Total Users <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+  }
+  cols.forEach(col => {
+    // Consistent 160px width across context columns — supports 2-line label wrapping
+    // with extra room for the sort toggle icon (16px + gap) on the right.
+    html += '<th class="sortable center" style="width:160px; min-width:160px; max-width:160px;" onclick="sortEntityTable(\'' + col.key + '\')"><span class="th-inner">' + col.label + ' <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+  });
+  // Action column needs more room on dept/drug views for the View Users button
+  // Action column holds a single button on every entity view now (Investigate on Users, View Users on Dept/Drug)
+  const actionColWidth = 160;
+  html += '<th class="right" style="width:' + actionColWidth + 'px;">&nbsp;</th>';
+  html += '</tr>';
+  head.innerHTML = html;
+  // Mark active sort + swap the sort-icon glyph to arrow_upward / arrow_downward based on direction
+  const headerCells = head.querySelectorAll('th');
+  const sortKeys = [];
+  if (eff === 'users') sortKeys.push('vtScore', 'name', null);  // 3rd col (Departments) is non-sortable
+  else sortKeys.push('name', 'totalUsers');                     // dept/drug: name + Total Users
+  cols.forEach(col => sortKeys.push(col.key));
+  sortKeys.push(null);
+  headerCells.forEach((th, i) => {
+    const key = sortKeys[i];
+    if (!key) return;
+    const iconEl = th.querySelector('.sort-icon');
+    if (sortState.col === key) {
+      th.classList.add(sortState.asc ? 'sort-asc' : 'sort-desc');
+      if (iconEl) iconEl.textContent = sortState.asc ? 'arrow_upward' : 'arrow_downward';
+    } else {
+      // Inactive sort columns show a faint downward arrow as the default direction hint
+      if (iconEl) iconEl.textContent = 'arrow_downward';
+    }
+  });
+}
+
+function sortEntityTable(key) {
+  const sortState = entitySortStates[effectiveShow()];
+  if (sortState.col === key) sortState.asc = !sortState.asc;
+  else { sortState.col = key; sortState.asc = (key === 'name'); }
+  renderEntityTable();
+}
+
+function renderEntityTable() {
+  const list = getEntityList().slice();
+  const eff = effectiveShow();
+  const sortState = entitySortStates[eff];
+  list.sort((a, b) => {
+    let av, bv;
+    if (sortState.col === 'name') { av = a.name; bv = b.name; }
+    else if (sortState.col === 'vtScore') { av = a.vtScore || 0; bv = b.vtScore || 0; }
+    else { av = getColValue(a, sortState.col); bv = getColValue(b, sortState.col); }
+    if (av < bv) return sortState.asc ? -1 : 1;
+    if (av > bv) return sortState.asc ? 1 : -1;
+    return 0;
+  });
+
+  renderEntityHead();
+  document.getElementById('entityCount').textContent = list.length;
+
+  const cols = CONTEXT_COLUMNS[vtContext];
+  const tbody = document.getElementById('entityTableBody');
+  tbody.innerHTML = list.map(rec => {
+    const recId = rec.id || rec.name;
+    const escId = String(recId).replace(/'/g, "\\'");
+    const escName = String(rec.name || '').replace(/'/g, "\\'");
+    // Dept/drug rows are clickable as a whole (drill into Users); user rows are not
+    // (their explicit interactive elements are the user-name link and Investigate button).
+    let row;
+    if (eff === 'departments') {
+      row = '<tr class="row-clickable" onclick="drillIntoDept(\'' + escName + '\')">';
+    } else if (eff === 'drugs') {
+      row = '<tr class="row-clickable" onclick="drillIntoDrug(\'' + escName + '\')">';
+    } else {
+      row = '<tr>';
+    }
+    if (eff === 'users') {
+      // Score chip + User name (clickable → opens IRIS Detail Panel, matches med-trends pattern)
+      row += '<td class="center"><span class="iris-score ' + scoreClassFor(rec.vtScore) + '">' + fmtScore(rec.vtScore) + '</span></td>';
+      row += '<td><div class="entity-cell">'
+          +    '<div class="entity-name"><a href="#" onclick="event.stopPropagation();openIrisPanel(\'' + escId + '\');return false;">' + rec.name + '</a></div>'
+          +    '<div class="entity-sub">' + (rec.role || '') + ' · ' + (rec.homeDept || rec.dept || '') + '</div>'
+          +  '</div></td>';
+      // Departments with Activity — list of all depts the user touches (home highlighted)
+      const depts = rec.activeDepts || [rec.homeDept || rec.dept].filter(Boolean);
+      const deptChips = depts.map(dn => {
+        const isHome = dn === (rec.homeDept || rec.dept);
+        return '<span class="dept-chip' + (isHome ? ' home' : '') + '" title="' + dn + (isHome ? ' (home)' : '') + '">' + dn + '</span>';
+      }).join('');
+      row += '<td><div class="dept-chip-list">' + deptChips + '</div></td>';
+    } else if (eff === 'departments') {
+      // Department name (plain text — drilldown happens via the View Users button)
+      row += '<td><div class="entity-cell"><div class="entity-name">' + rec.name + '</div></div></td>';
+      row += '<td class="num center">' + fmtNum(rec.totalUsers || 0) + '</td>';
+    } else {
+      // Drug name (plain text — drilldown happens via the View Users button)
+      row += '<td><div class="entity-cell"><div class="entity-name">' + rec.name + '</div></div></td>';
+      row += '<td class="num center">' + fmtNum(rec.totalUsers || 0) + '</td>';
+    }
+    cols.forEach(col => {
+      const v = getColValue(rec, col.key);
+      const display = col.isPct ? (v + '%') : fmtNum(v);
+      row += '<td class="num center">' + display + '</td>';
+    });
+    // Action cell content depends on entity:
+    // - Users: Investigate (the row's specific record)
+    // - Dept/Drug: View Users › (drill into the user table scoped to this entity).
+    //   Investigate for the dept/drug itself lives in the drilldown summary card to the right.
+    let actionsHtml;
+    if (eff === 'users') {
+      actionsHtml = '<a class="row-action-btn" href="#" onclick="event.stopPropagation();openInvestigate({entity:\'' + eff + '\', entityId:\'' + escId + '\', entityName:\'' + escName + '\'});return false;"><span class="material-icons">open_in_new</span> Investigate</a>';
+    } else if (eff === 'departments') {
+      actionsHtml = '<a class="row-action-btn view-users-btn" href="#" onclick="event.stopPropagation();drillIntoDept(\'' + escName + '\');return false;">View Users <span class="material-icons">chevron_right</span></a>';
+    } else {
+      actionsHtml = '<a class="row-action-btn view-users-btn" href="#" onclick="event.stopPropagation();drillIntoDrug(\'' + escName + '\');return false;">View Users <span class="material-icons">chevron_right</span></a>';
+    }
+    row += '<td class="right action-cell">' + actionsHtml + '</td>';
+    row += '</tr>';
+    return row;
+  }).join('');
+}
+
+function filterEntityTable(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('#entityTableBody tr').forEach(row => {
+    const nameEl = row.querySelector('.entity-name');
+    const name = nameEl ? nameEl.textContent.toLowerCase() : '';
+    row.style.display = name.includes(q) ? '' : 'none';
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ENTITY CHART  (periwinkle palette per Figma)
+═══════════════════════════════════════════════════════════════ */
+function initEntityChart() {
+  const el = document.getElementById('entityChartEl');
+  if (!el) return;
+  if (entityChart) entityChart.dispose();
+  entityChart = echarts.init(el);
+
+  const eff = effectiveShow();
+  // Source list before any filtering
+  const sourceList = getEntityList().slice().sort((a, b) => (b.variances || 0) - (a.variances || 0));
+  // Apply chart filter — null = no filter (all rows); non-null Set = filter (possibly empty = nothing)
+  const sel = chartFilterState[eff];
+  const fullList = (sel === null) ? sourceList : sourceList.filter(r => sel.has(r.name));
+  // Refresh the filter UI to reflect the current entity's options + selection
+  refreshChartFilterUI(sourceList);
+  // Sort by variance count (most relevant signal) and cap to top 25 so bars are readable.
+  // Without the cap, 200+ users compress the chart to where bars overlap.
+  const TOP_N = 25;
+  const list = fullList.slice(0, TOP_N);
+  // ECharts renders categorical y-axis bottom→top, so reverse for "highest variance at top"
+  const orderedList = list.slice().reverse();
+  const names = orderedList.map(r => r.name);
+  const truncated = fullList.length > TOP_N;
+  const entityLabel = (SHOW_OPTIONS.find(o => o.id === eff) || {}).name || '';
+  // For Variance Rate context, chart shows status distribution (% of variances).
+  // For other contexts, chart shows raw counts of subtype columns.
+  const subjectText = vtContext === 'variance-rate'
+    ? entityLabel + ' — variance status distribution (% of total variances)'
+    : entityLabel + ' by variance count';
+  // Indicate filtered state in the title when a filter is active
+  const filterNote = (sel !== null)
+    ? ' · filtered to ' + sel.size + ' of ' + fmtNum(sourceList.length)
+    : '';
+  const titleText = truncated
+    ? 'Top ' + TOP_N + ' ' + subjectText + ' · sorted by variance count' + filterNote + (sel !== null ? '' : ' (of ' + fmtNum(sourceList.length) + ')')
+    : subjectText + filterNote;
+
+  let series, legendData;
+  if (vtContext === 'variance-rate') {
+    // 3-status periwinkle stacks expressed as % of total variances per row.
+    // Each row's bar sums to 100% so the visualization compares the *distribution*
+    // of statuses across entities — large vs small rows are equally legible.
+    const statuses = [
+      { key:'open',         name:'Open',                color:'#c3c9f7' },
+      { key:'reconciled',   name:'Reconciled',          color:'#9ca6f1' },
+      { key:'unreconciled', name:'Unable to Reconcile', color:'#646a9a' }
+    ].filter(s => activeStatuses.size === 0 || activeStatuses.has(s.key));
+    series = statuses.map(s => ({
+      type: 'bar', stack: 'events', name: s.name,
+      data: orderedList.map(r => {
+        const v = r.variances || 0;
+        if (!v) return 0;
+        return Math.round(((r[s.key] || 0) / v) * 1000) / 10;  // 1 decimal place
+      }),
+      itemStyle: { color: s.color },
+      barWidth: 14
+    }));
+    legendData = statuses.map(s => s.name);
+  } else {
+    const cols = CONTEXT_COLUMNS[vtContext];
+    const palette = ['#c3c9f7', '#9ca6f1', '#646a9a', '#454a72', '#bfc4e8'];
+    series = cols.map((col, i) => ({
+      type: 'bar', stack: 'ctx', name: col.label,
+      data: orderedList.map(r => r[col.key] || 0),
+      itemStyle: { color: palette[i % palette.length] },
+      barWidth: 14
+    }));
+    legendData = cols.map(c => c.label);
+  }
+
+  const isPctChart = vtContext === 'variance-rate';
+
+  entityChart.setOption({
+    title: {
+      text: titleText,
+      left: 0, top: 0,
+      textStyle: { fontSize: 13, fontWeight: 600, color: '#555' }
+    },
+    grid: { left: 200, right: 80, top: 60, bottom: 40 },
+    legend: { data: legendData, top: 4, right: 16, itemWidth: 24, itemHeight: 14, itemGap: 8, textStyle: { fontSize: 11, color: '#555' } },
+    xAxis: {
+      type: 'value',
+      max: isPctChart ? 100 : null,
+      axisLabel: { formatter: isPctChart ? '{value}%' : ((v) => fmtNum(v)) }
+    },
+    yAxis: { type: 'category', data: names, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { fontSize: 12 } },
+    tooltip: {
+      trigger: 'axis', axisPointer: { type: 'shadow' },
+      formatter: (params) => {
+        const r = orderedList[params[0].dataIndex];
+        const lines = [];
+        const eff = effectiveShow();
+        if (eff === 'users') lines.push('<b>' + r.name + '</b><br/>' + (r.role || '') + ' · ' + (r.homeDept || r.dept || ''));
+        else lines.push('<b>' + r.name + '</b>');
+        if (vtContext === 'variance-rate') {
+          // Show the absolute counts in the tooltip — chart bars are %
+          lines.push('Total Events: ' + fmtNum(r.totalEvents || 0));
+          lines.push('Variances: ' + (r.variances || 0));
+          const v = r.variances || 0;
+          ['open', 'reconciled', 'unreconciled'].forEach(k => {
+            if (activeStatuses.size === 0 || activeStatuses.has(k)) {
+              const cnt = r[k] || 0;
+              const pct = v ? Math.round((cnt / v) * 1000) / 10 : 0;
+              const lbl = k === 'open' ? 'Open' : k === 'reconciled' ? 'Reconciled' : 'Unable to Reconcile';
+              lines.push(lbl + ': ' + cnt + ' (' + pct + '%)');
+            }
+          });
+        } else {
+          CONTEXT_COLUMNS[vtContext].forEach(col => {
+            lines.push(col.label + ': ' + (r[col.key] || 0));
+          });
+        }
+        if (eff === 'users') lines.push('VT Score: ' + fmtScore(r.vtScore));
+        return lines.join('<br/>');
+      }
+    },
+    series: series
+  });
+  entityChart.off('click');
+  entityChart.on('click', (p) => {
+    const r = orderedList[p.dataIndex];
+    if (!r) return;
+    const eff = effectiveShow();
+    if (eff === 'users') {
+      openIrisPanel(String(r.id || r.name));
+    } else if (eff === 'departments') {
+      drillIntoDept(r.name);
+    } else if (eff === 'drugs') {
+      drillIntoDrug(r.name);
+    }
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CHART FILTER  (searchable multi-select that scopes the chart's data)
+═══════════════════════════════════════════════════════════════ */
+function refreshChartFilterUI(sourceList) {
+  const eff = effectiveShow();
+  const entityLabel = (SHOW_OPTIONS.find(o => o.id === eff) || {}).name || '';
+  const labelEl = document.getElementById('chart-filter-label');
+  if (!labelEl) return;
+  const sel = chartFilterState[eff];
+  if (sel === null) {
+    labelEl.textContent = 'All ' + entityLabel.toLowerCase();
+  } else if (sel.size === 0) {
+    labelEl.textContent = 'No ' + entityLabel.toLowerCase();
+  } else if (sel.size === 1) {
+    labelEl.textContent = '1 ' + (SHOW_OPTIONS.find(o => o.id === eff) || {}).singular;
+  } else {
+    labelEl.textContent = sel.size + ' ' + entityLabel.toLowerCase();
+  }
+  // Build the options list from the current entity's full source
+  const listEl = document.getElementById('chart-filter-list');
+  const emptyEl = document.getElementById('chart-filter-empty');
+  if (!listEl) return;
+  const q = (chartFilterSearchQuery || '').toLowerCase();
+  const filtered = sourceList
+    .map(r => r.name)
+    .filter(n => !q || n.toLowerCase().includes(q));
+  if (filtered.length === 0) {
+    listEl.innerHTML = '';
+    emptyEl.style.display = '';
+    return;
+  }
+  emptyEl.style.display = 'none';
+  // null = no filter (all checked); Set with entries = subset; empty Set = explicit "none selected"
+  listEl.innerHTML = filtered.map(name => {
+    const checked = (sel === null) ? true : sel.has(name);
+    const escName = name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return '<label class="chart-filter-option" data-name="' + escName + '">'
+      +    '<input type="checkbox"' + (checked ? ' checked' : '') + ' onchange="chartFilterToggle(this, \'' + escName + '\')">'
+      +    '<span>' + name + '</span>'
+      + '</label>';
+  }).join('');
+}
+
+function toggleChartFilter(ev) {
+  ev.stopPropagation();
+  const menu = document.getElementById('chart-filter-menu');
+  const isOpen = menu.style.display !== 'none';
+  // Close any other open menus first
+  document.querySelectorAll('.cs-menu, .chip-filter-menu, .chart-filter-menu, .download-menu').forEach(m => m.style.display = 'none');
+  if (!isOpen) {
+    menu.style.display = '';
+    setTimeout(() => {
+      const search = document.getElementById('chart-filter-search');
+      if (search) search.focus();
+    }, 0);
+  }
+}
+
+function chartFilterSearch(query) {
+  chartFilterSearchQuery = query || '';
+  const eff = effectiveShow();
+  const sourceList = getEntityList().slice().sort((a, b) => (b.variances || 0) - (a.variances || 0));
+  refreshChartFilterUI(sourceList);
+}
+
+function chartFilterToggle(checkbox, name) {
+  const eff = effectiveShow();
+  const sourceList = getEntityList().slice().sort((a, b) => (b.variances || 0) - (a.variances || 0));
+  // Initialize the Set lazily ONLY from null (no-filter) state — start from "all selected"
+  // so toggling a single checkbox off creates a meaningful filter. An empty Set is a distinct
+  // "user explicitly cleared everything" state and must NOT be re-filled here.
+  if (chartFilterState[eff] === null) {
+    chartFilterState[eff] = new Set(sourceList.map(r => r.name));
+  }
+  if (checkbox.checked) chartFilterState[eff].add(name);
+  else chartFilterState[eff].delete(name);
+  // If the user has selected everything again, reset to null (no filter)
+  if (chartFilterState[eff].size === sourceList.length) {
+    chartFilterState[eff] = null;
+  }
+  if (currentMode === 'graph') initEntityChart();
+  else refreshChartFilterUI(sourceList);
+}
+
+function chartFilterSelectAll(selectAll) {
+  const eff = effectiveShow();
+  if (selectAll) {
+    chartFilterState[eff] = null;  // no filter
+  } else {
+    chartFilterState[eff] = new Set();  // empty — no entities selected
+  }
+  if (currentMode === 'graph') initEntityChart();
+  else {
+    const sourceList = getEntityList().slice().sort((a, b) => (b.variances || 0) - (a.variances || 0));
+    refreshChartFilterUI(sourceList);
+  }
+}
+
+// Close the chart filter menu when clicking outside
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('chart-filter-menu');
+  const wrap = document.querySelector('.chart-filter-wrap');
+  if (menu && wrap && menu.style.display !== 'none' && !wrap.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════
+   INVESTIGATE  (opens Investigate Data view in a new tab — placeholder)
+═══════════════════════════════════════════════════════════════ */
+function openInvestigate(ctx) {
+  // In production this would open /analyze/.../investigate?entity=...&id=... in a new tab.
+  // For prototype purposes, surface a placeholder alert describing the action.
+  const entity = (SHOW_OPTIONS.find(o => o.id === ctx.entity) || {}).singular || 'entity';
+  const name = ctx.entityName || '(unknown)';
+  window.alert('Opens Investigate Data view in a new tab.\n\nScope: ' + entity + ' — ' + name);
+}
+
+// Investigate button on the drilldown summary card — scopes to the parent dept/drug
+function openDrilldownInvestigate() {
+  if (!drilldownState.type) return;
+  const entity = drilldownState.type === 'dept' ? 'departments' : 'drugs';
+  openInvestigate({ entity: entity, entityId: drilldownState.scope, entityName: drilldownState.scope });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   IRIS DETAIL PANEL  (opens from User name click — matches med-trends pattern)
+═══════════════════════════════════════════════════════════════ */
+function openIrisPanel(userId) {
+  const user = getAllUsers().find(u => u.id === userId);
+  const panel = document.getElementById('iris-panel');
+  const scrim = document.getElementById('iris-panel-scrim');
+  const titleEl = document.getElementById('iris-panel-title');
+  const subEl = document.getElementById('iris-panel-subtitle');
+  if (user) {
+    titleEl.textContent = user.name;
+    subEl.textContent = (user.role || '') + ' · ' + (user.dept || '');
+  } else {
+    titleEl.textContent = 'IRIS Detail Panel';
+    subEl.textContent = '';
+  }
+  panel.classList.add('open');
+  panel.setAttribute('aria-hidden', 'false');
+  scrim.classList.add('open');
+  scrim.setAttribute('aria-hidden', 'false');
+}
+
+function closeIrisPanel() {
+  const panel = document.getElementById('iris-panel');
+  const scrim = document.getElementById('iris-panel-scrim');
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  scrim.classList.remove('open');
+  scrim.setAttribute('aria-hidden', 'true');
+}
+
+// ESC closes the IRIS panel
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const panel = document.getElementById('iris-panel');
+    if (panel && panel.classList.contains('open')) closeIrisPanel();
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════
+   GLOBAL CLICK HANDLER — close menus on outside click
+═══════════════════════════════════════════════════════════════ */
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#version-selector')) {
+    document.getElementById('version-menu').style.display = 'none';
+  }
+  if (!e.target.closest('.chip-filter-wrap')) {
+    closeAllChipMenus();
+  }
+  if (!e.target.closest('.pill-filter-wrap')) {
+    closeAllPillMenus();
+  }
+  if (!e.target.closest('.download-menu-wrap')) {
+    closeDownloadMenus();
+  }
+});
+
+/* ════════════════════════════════════════════════════════════════
+   INITIALIZATION
+═══════════════════════════════════════════════════════════════ */
+function init() {
+  // Build chip filter menus  (Variance Category is no longer a chip — it became the Context pillter)
+  buildChipFilterList('dept', DEPARTMENTS.map(d => ({ value: d.id, label: d.name })));
+
+  const allUsers = [];
+  const allRoles = new Set();
+  DEPARTMENTS.forEach(d => {
+    usersForDept(d.id).forEach(u => {
+      allUsers.push({ value: u.id, label: u.name + ' (' + u.role + ')' });
+      if (u.role) allRoles.add(u.role);
+    });
+  });
+  const seen = new Set();
+  const uniqueUsers = allUsers.filter(u => seen.has(u.value) ? false : (seen.add(u.value), true));
+  buildChipFilterList('user', uniqueUsers.sort((a, b) => a.label.localeCompare(b.label)));
+  buildChipFilterList('role', Array.from(allRoles).sort().map(r => ({ value: r, label: r })));
+
+  updatePageTitle();
+  renderEntityTable();
+
+  window.addEventListener('resize', () => {
+    if (entityChart) entityChart.resize();
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+</script>
+
+</body>
+</html>
