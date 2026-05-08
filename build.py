@@ -321,7 +321,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     --text-muted: #9ca3af;
     --accent: #60a5fa;
     --accent-soft: rgba(96, 165, 250, 0.18);
-    --hover: #2c2c2c;
+    --hover: #0A3861;
 
     position: fixed;
     top: 0; left: 0; bottom: 0;
