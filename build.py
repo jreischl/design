@@ -337,7 +337,6 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   }
   .sidebar header {
     padding: 14px 18px 10px;
-    border-bottom: 1px solid var(--border);
   }
   .header-row {
     display: flex;
