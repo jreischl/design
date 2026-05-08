@@ -313,7 +313,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .layout { position: relative; height: 100vh; }
 
   .sidebar {
-    --surface: #222222;
+    --surface: #021E35;
     --surface-2: #2a2a2a;
     --border: #2e2e2e;
     --border-strong: #404040;
@@ -329,7 +329,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     background: var(--surface);
     color: var(--text);
     color-scheme: dark;
-    border-right: 1px solid #000;
+    border-right: 8px solid #7097BB;
     display: flex;
     flex-direction: column;
     z-index: 50;
