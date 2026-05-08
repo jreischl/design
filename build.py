@@ -315,8 +315,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .sidebar {
     --surface: #021E35;
     --surface-2: #2a2a2a;
-    --border: #2e2e2e;
-    --border-strong: #404040;
+    --border: #044A82;
+    --border-strong: #7097BB;
     --text: #e5e7eb;
     --text-muted: #9ca3af;
     --accent: #60a5fa;
