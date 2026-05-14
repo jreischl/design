@@ -1134,6 +1134,44 @@
       color: var(--gray-600);
     }
     
+    /* Segmented chart-type selector (Bar / Scatter), aligned with med-trends. */
+    .chart-type-selector {
+      display: inline-flex;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .chart-type-selector .ct-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: #fff;
+      border: none;
+      border-right: 1px solid var(--gray-300);
+      color: var(--text-87);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .chart-type-selector .ct-btn:last-child { border-right: none; }
+    .chart-type-selector .ct-btn:hover { background: var(--gray-50); }
+    .chart-type-selector .ct-btn.active {
+      background: #e7f4f8;
+      color: var(--teal);
+    }
+    .chart-type-selector .ct-btn .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    
+    /* Metric-score toggle is hidden in scatter mode — the overlay doesn't
+       translate to a category y-axis. */
+    .toggle-switch.disabled {
+      opacity: .4;
+      pointer-events: none;
+    }
+    
     .toggle-switch {
       display: inline-flex;
       align-items: center;
@@ -3482,6 +3520,7 @@
     let selectedComparisonScore = 'overall'; // Current comparison score metric
     let timeThreshold = 240; // Current time threshold in minutes
     let showMetricScoreLine = false; // toggle for outlier-score overlay on chart
+    let chartType = 'bar'; // 'bar' | 'scatter' — toggles between aggregated-avg-time bars and record-distribution scatter
     let tempTimeThreshold = 240; // Temporary value while adjusting
     let filteredUsers = [...ACTION_TIMES_USERS]; // Users visible based on time threshold
 
@@ -3663,6 +3702,30 @@
         actionChart = initActionChart();
       }
     }
+    
+    // Toggle between Bar (average time) and Scatter (record distribution) views.
+    function setChartType(type) {
+      if (type !== 'bar' && type !== 'scatter') return;
+      if (type === chartType) return;
+      chartType = type;
+      
+      // Update segmented-control visual state
+      document.querySelectorAll('.chart-type-selector .ct-btn').forEach(btn => {
+        const active = btn.dataset.type === type;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active);
+      });
+      
+      // Metric-score overlay only makes sense for the Bar chart (user on x-axis).
+      const toggleWrap = document.getElementById('metric-score-toggle-wrap');
+      if (toggleWrap) toggleWrap.classList.toggle('disabled', type === 'scatter');
+      
+      // Re-init the chart with the new layout
+      if (currentView === 'graph') {
+        if (actionChart) { actionChart.dispose(); actionChart = null; }
+        actionChart = initActionChart();
+      }
+    }
 
     function initActionChart() {
       const container = document.getElementById('action-times-graph-view');
@@ -3711,8 +3774,51 @@
       });
       if (showMetricScoreLine) legendSelected['Metric score'] = true;
       
-      const yAxes = [
-        {
+      // ── Axis + zoom config branches by chart type ───────────────
+      // Bar mode: x = users (category), y = avg time (value), zoom horizontal.
+      // Scatter mode: x = minutes (value), y = users (category), zoom vertical.
+      
+      const isScatter = chartType === 'scatter';
+      
+      // Compute initial zoom window so categories render with enough space.
+      let initialStart = 0, initialEnd;
+      if (isScatter) {
+        // Need ~24px per user row to stay legible
+        const MIN_ROW_PX = 24;
+        const availableHeight = 600 - 160; // chart height minus title/legend/x-axis padding
+        const usersFittable = Math.max(5, Math.floor(availableHeight / MIN_ROW_PX));
+        initialEnd = userCount <= usersFittable ? 100 : (usersFittable / userCount) * 100;
+      } else {
+        initialEnd = initialEndPct;
+      }
+      
+      const yAxisCommon = {
+        axisLabel: { color: '#666' },
+        splitLine: { lineStyle: { color: '#e5e5e5', type: 'dashed' } }
+      };
+      
+      let xAxis, yAxis;
+      if (isScatter) {
+        xAxis = [{
+          type: 'value',
+          name: 'Minutes between events',
+          nameLocation: 'middle',
+          nameGap: 32,
+          nameTextStyle: { color: '#555', fontSize: 12 },
+          min: 0,
+          axisLabel: { color: '#666' },
+          splitLine: { lineStyle: { color: '#e5e5e5', type: 'dashed' } }
+        }];
+        yAxis = [{
+          type: 'category',
+          data: chartData.users,
+          inverse: true,    // first user at the top
+          axisLabel: { color: '#444', fontSize: 12 },
+          axisTick: { show: false }
+        }];
+      } else {
+        // Bar mode — primary y for avg time, optional secondary for metric score.
+        const yAxes = [{
           type: 'value',
           name: 'Avg time (min)',
           nameLocation: 'middle',
@@ -3720,25 +3826,137 @@
           nameTextStyle: { color: '#555', fontSize: 12 },
           axisLabel: { color: '#666' },
           splitLine: { lineStyle: { color: '#e5e5e5', type: 'dashed' } }
+        }];
+        if (showMetricScoreLine) {
+          yAxes.push({
+            type: 'value',
+            name: 'Metric score',
+            position: 'right',
+            min: 0,
+            max: 8,
+            axisLabel: { color: '#F24335' },
+            axisLine: { show: true, lineStyle: { color: '#F24335' } },
+            splitLine: { show: false }
+          });
+        }
+        xAxis = [{
+          type: 'category',
+          data: chartData.users,
+          axisPointer: { type: 'shadow' },
+          axisLabel: { rotate: 45, fontSize: 11, color: '#666' }
+        }];
+        yAxis = yAxes;
+      }
+      
+      // DataZoom rotates: vertical in scatter (over users on y), horizontal in bar.
+      const dataZoom = isScatter ? [
+        {
+          type: 'slider',
+          yAxisIndex: 0,
+          start: initialStart,
+          end: initialEnd,
+          right: 8,
+          width: 16,
+          borderColor: 'transparent',
+          backgroundColor: '#f5f5f5',
+          fillerColor: 'rgba(0, 150, 184, 0.15)',
+          handleStyle: { color: '#0096b8', borderColor: '#0096b8' },
+          moveHandleStyle: { color: '#0096b8' },
+          textStyle: { color: '#727272', fontSize: 11 },
+          brushSelect: false
+        },
+        {
+          type: 'inside',
+          yAxisIndex: 0,
+          start: initialStart,
+          end: initialEnd,
+          zoomOnMouseWheel: true,
+          moveOnMouseMove: false,
+          moveOnMouseWheel: false
+        }
+      ] : [
+        {
+          type: 'slider',
+          xAxisIndex: 0,
+          start: initialStart,
+          end: initialEnd,
+          bottom: 16,
+          height: 20,
+          borderColor: 'transparent',
+          backgroundColor: '#f5f5f5',
+          fillerColor: 'rgba(0, 150, 184, 0.15)',
+          handleStyle: { color: '#0096b8', borderColor: '#0096b8' },
+          moveHandleStyle: { color: '#0096b8' },
+          selectedDataBackground: {
+            lineStyle: { color: '#0096b8', width: 1 },
+            areaStyle: { color: 'rgba(0, 150, 184, 0.2)' }
+          },
+          dataBackground: {
+            lineStyle: { color: '#c0c0c0', width: 1 },
+            areaStyle: { color: 'rgba(192, 192, 192, 0.3)' }
+          },
+          textStyle: { color: '#727272', fontSize: 11 },
+          brushSelect: false
+        },
+        {
+          type: 'inside',
+          xAxisIndex: 0,
+          start: initialStart,
+          end: initialEnd,
+          zoomOnMouseWheel: true,
+          moveOnMouseMove: false,
+          moveOnMouseWheel: false
         }
       ];
-      if (showMetricScoreLine) {
-        yAxes.push({
-          type: 'value',
-          name: 'Metric score',
-          position: 'right',
-          min: 0,
-          max: 8,
-          axisLabel: { color: '#F24335' },
-          axisLine: { show: true, lineStyle: { color: '#F24335' } },
-          splitLine: { show: false }
-        });
-      }
+      
+      // Tooltip differs by chart type — scatter is per-point, bar is per-category-with-all-series.
+      const tooltip = isScatter ? {
+        trigger: 'item',
+        formatter: function (p) {
+          const tier = p.data.score >= 4.6 ? 'High' : p.data.score >= 1.4 ? 'Elevated' : 'Normal';
+          const tierColor = p.data.score >= 4.6 ? '#B53228' : p.data.score >= 1.4 ? '#A49020' : '#0E7221';
+          return `<strong>${p.data.userName}</strong><br/>
+                  ${p.marker}${p.seriesName}<br/>
+                  <strong>${p.data.events}</strong> records at ~<strong>${p.value[0]} min</strong><br/>
+                  <span style="color:#999">Metric score:</span> <strong style="color:${tierColor}">${p.data.score.toFixed(1)} (${tier})</strong>`;
+        }
+      } : {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        formatter: function (params) {
+          const i = params[0].dataIndex;
+          const name = chartData.fullNames[i];
+          const score = chartData.metricScores[i];
+          const tier = score >= 4.6 ? 'High' : score >= 1.4 ? 'Elevated' : 'Normal';
+          const tierColor = score >= 4.6 ? '#B53228' : score >= 1.4 ? '#A49020' : '#0E7221';
+          
+          let lines = [`<strong>${name}</strong>`];
+          params.forEach(p => {
+            if (p.seriesName === 'Metric score') return;
+            const v = p.value;
+            const ruleKey = Object.keys(ruleNames).find(k => ruleNames[k] === p.seriesName);
+            const events = ruleKey ? chartData.byRule[ruleKey].events[i] : null;
+            if (v == null) {
+              lines.push(`${p.marker}${p.seriesName}: <span style="color:#999">no events</span>`);
+            } else {
+              lines.push(`${p.marker}${p.seriesName}: <strong>${v} min</strong> \u00b7 ${events} ev`);
+            }
+          });
+          lines.push(`<span style="color:#999">Metric score:</span> <strong style="color:${tierColor}">${score.toFixed(1)} (${tier})</strong>`);
+          return lines.join('<br/>');
+        }
+      };
+      
+      const grid = isScatter
+        ? { left: 24, right: 56, bottom: 60, top: 100, containLabel: true }
+        : { left: 24, right: showMetricScoreLine ? 48 : 24, bottom: 80, top: 100, containLabel: true };
+      
+      const titleText = isScatter ? 'Action Time Distribution by User' : 'Action Times by User';
       
       const option = {
         title: [
           {
-            text: 'Action Times by User',
+            text: titleText,
             left: 'left',
             top: 16,
             textStyle: { fontSize: 18, fontWeight: 600, color: '#044a82' }
@@ -3760,86 +3978,11 @@
           textStyle: { fontSize: 12, color: '#444' },
           selected: legendSelected
         },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-          formatter: function (params) {
-            // params may include multiple bar series + the optional score line
-            const i = params[0].dataIndex;
-            const name = chartData.fullNames[i];
-            const score = chartData.metricScores[i];
-            const tier = score >= 4.6 ? 'High' : score >= 1.4 ? 'Elevated' : 'Normal';
-            // Tier text colors use the Bluesight 700 tier — matches the
-            // comp-score column styling in the table (Danger 700 / Warning 700 /
-            // Success 700) so the same tier reads identically across the page.
-            const tierColor = score >= 4.6 ? '#B53228' : score >= 1.4 ? '#A49020' : '#0E7221';
-            
-            let lines = [`<strong>${name}</strong>`];
-            params.forEach(p => {
-              if (p.seriesName === 'Metric score') return; // shown separately below
-              const v = p.value;
-              const ruleKey = Object.keys(ruleNames).find(k => ruleNames[k] === p.seriesName);
-              const events = ruleKey ? chartData.byRule[ruleKey].events[i] : null;
-              if (v == null) {
-                lines.push(`${p.marker}${p.seriesName}: <span style="color:#999">no events</span>`);
-              } else {
-                lines.push(`${p.marker}${p.seriesName}: <strong>${v} min</strong> \u00b7 ${events} ev`);
-              }
-            });
-            lines.push(`<span style="color:#999">Metric score:</span> <strong style="color:${tierColor}">${score.toFixed(1)} (${tier})</strong>`);
-            return lines.join('<br/>');
-          }
-        },
-        grid: {
-          left: 24,
-          right: showMetricScoreLine ? 48 : 24,
-          bottom: 80,
-          top: 100,
-          containLabel: true
-        },
-        dataZoom: [
-          {
-            type: 'slider',
-            xAxisIndex: 0,
-            start: 0,
-            end: initialEndPct,
-            bottom: 16,
-            height: 20,
-            borderColor: 'transparent',
-            backgroundColor: '#f5f5f5',
-            fillerColor: 'rgba(0, 150, 184, 0.15)',
-            handleStyle: { color: '#0096b8', borderColor: '#0096b8' },
-            moveHandleStyle: { color: '#0096b8' },
-            selectedDataBackground: {
-              lineStyle: { color: '#0096b8', width: 1 },
-              areaStyle: { color: 'rgba(0, 150, 184, 0.2)' }
-            },
-            dataBackground: {
-              lineStyle: { color: '#c0c0c0', width: 1 },
-              areaStyle: { color: 'rgba(192, 192, 192, 0.3)' }
-            },
-            textStyle: { color: '#727272', fontSize: 11 },
-            brushSelect: false
-          },
-          {
-            type: 'inside',
-            xAxisIndex: 0,
-            start: 0,
-            end: initialEndPct,
-            zoomOnMouseWheel: true,
-            moveOnMouseMove: false,
-            moveOnMouseWheel: false
-          }
-        ],
-        xAxis: [
-          {
-            type: 'category',
-            data: chartData.users,
-            axisPointer: { type: 'shadow' },
-            axisLabel: { rotate: 45, fontSize: 11, color: '#666' }
-          }
-        ],
-        yAxis: yAxes,
+        tooltip,
+        grid,
+        dataZoom,
+        xAxis,
+        yAxis,
         series: generateChartSeries(chartData),
         animation: true,
         animationDuration: 600
@@ -3882,21 +4025,73 @@
       return chart;
     }
     
-    /* Chart shows grouped bars: one bar per rule per user. The ECharts legend
-       toggles individual rule series on/off independently of the table.
-       Bars are colored by RULE (not by metric-score tier) so each series stays
-       visually distinct in the legend. */
+    /* Chart data prep — emits BOTH the bar-mode aggregates (per-user avg time
+       and event count) and the scatter-mode bins (per-user distribution). The
+       renderer picks the slice it needs based on chartType. */
+    
+    /* Deterministic per-(user, rule) bin generator for the Distribution view.
+       Returns 1-4 bins extending RIGHT of avgTime — that side is natural
+       (elapsed times can run arbitrarily long but never fall below the
+       threshold). The threshold itself acts as a left floor for the data,
+       so left-of-avg bins would collide with it. The bin sweep widens with
+       metric score so high-score users show a longer tail of delayed events. */
+    function generateBins(user, ruleKey) {
+      const r = user[ruleKey];
+      if (!r || r.events === 0) return [];
+      
+      // Deterministic hash so the same (user, rule) always yields the same bins
+      const seedBase = user.id * 1009 + ruleKey.length * 31;
+      const h = (i) => (((seedBase + i * 2654435761) >>> 0) / 4294967295);
+      
+      // Number of bins — lower thresholds so many users get 2+ dots
+      const numBins = r.events < 8 ? 1
+                    : r.events < 30 ? 2
+                    : r.events < 100 ? 3
+                    : 4;
+      
+      // Tail length in minutes — high-score users have a much longer right tail
+      const score = user.outlierScore;
+      const tail = score >= 4.6 ? 90 : score >= 1.4 ? 55 : 30;
+      
+      // Count weights — heaviest at the mode (left, near avg), thinner toward the tail
+      const weights = numBins === 1 ? [1]
+                    : numBins === 2 ? [0.6, 0.4]
+                    : numBins === 3 ? [0.55, 0.30, 0.15]
+                                    : [0.45, 0.30, 0.15, 0.10];
+      
+      const bins = [];
+      let remaining = r.events;
+      for (let i = 0; i < numBins; i++) {
+        // Bin i sits at avgTime + (i/(numBins-1))*tail, plus small jitter so
+        // multiple users with the same avgTime don't all line up identically.
+        const baseOffset = numBins === 1 ? 0 : (i / (numBins - 1)) * tail;
+        const jitter = (h(i * 2 + 1) - 0.5) * (tail / numBins) * 0.5;
+        const center = Math.max(timeThreshold + 5, Math.round(r.avgTime + baseOffset + jitter));
+        
+        const count = (i === numBins - 1) ? remaining : Math.max(1, Math.round(r.events * weights[i]));
+        const used = Math.min(count, remaining);
+        remaining -= used;
+        if (used > 0) bins.push({ midMin: center, count: used });
+        if (remaining <= 0) break;
+      }
+      return bins;
+    }
+    
     function prepareChartData() {
       const allRules = ['firstDispenseFirstAdmin','lastAdminLastWaste','adminBeforeDispense','firstDispenseFirstWaste','recordedNotEqualAction'];
       const data = {
-        users: [],
-        fullNames: [],
+        users: [],            // short labels for category axis
+        fullNames: [],        // full names for tooltips
         metricScores: [],
-        byRule: {}            // rule key -> { avgTime: [], events: [] }
+        byRule: {},           // bar mode: { rule -> { avgTime: [], events: [] } }
+        scatterByRule: {}     // scatter mode: { rule -> [{value: [mins, userIdx], events, userName} ...] }
       };
-      allRules.forEach(r => { data.byRule[r] = { avgTime: [], events: [] }; });
+      allRules.forEach(r => {
+        data.byRule[r] = { avgTime: [], events: [] };
+        data.scatterByRule[r] = [];
+      });
       
-      filteredUsers.forEach(user => {
+      filteredUsers.forEach((user, userIdx) => {
         const parts = user.name.split(' ');
         const shortName = parts[0] + ' ' + (parts[1] ? parts[1].charAt(0) + '.' : '');
         data.users.push(shortName);
@@ -3908,6 +4103,17 @@
           const hasEvents = r && r.events > 0;
           data.byRule[rule].avgTime.push(hasEvents ? r.avgTime : null);
           data.byRule[rule].events.push(hasEvents ? r.events : null);
+          
+          if (hasEvents) {
+            generateBins(user, rule).forEach(bin => {
+              data.scatterByRule[rule].push({
+                value: [bin.midMin, userIdx],
+                events: bin.count,
+                userName: user.name,
+                score: user.outlierScore
+              });
+            });
+          }
         });
       });
       
@@ -3922,10 +4128,7 @@
         firstDispenseFirstWaste: 'First Dispense \u2192 Waste',
         recordedNotEqualAction:  'Recorded Admin \u2260 Action'
       };
-      // One distinct color per rule, drawn from the Bluesight Palette's 500
-       // tier (Base) — matches the categorical convention used in med-trends
-       // (Blue/UC/Orange/Success/Pink). Avoids Danger 500 so red stays reserved
-       // for severity/state meaning elsewhere in the app.
+      // One distinct color per rule, from the Bluesight Palette's 500 tier.
       const ruleColors = {
         firstDispenseFirstAdmin: '#0096B8',   // Blue 500
         lastAdminLastWaste:      '#F5A623',   // Orange 500
@@ -3934,6 +4137,26 @@
         recordedNotEqualAction:  '#16B434'    // Success 500
       };
       
+      if (chartType === 'scatter') {
+        // Scatter: y = user category, x = minutes between events. Dot size
+        // scales with the number of records in that time bin. One series per
+        // rule so the ECharts legend can toggle them just like in bar mode.
+        return Object.keys(data.scatterByRule).map(rule => ({
+          name: ruleNames[rule],
+          type: 'scatter',
+          data: data.scatterByRule[rule].map(pt => ({
+            value: pt.value,
+            events: pt.events,
+            userName: pt.userName,
+            score: pt.score,
+            symbolSize: Math.min(36, 6 + Math.sqrt(pt.events) * 2.4)
+          })),
+          itemStyle: { color: ruleColors[rule], opacity: 0.85 },
+          emphasis: { focus: 'series', itemStyle: { opacity: 1, borderWidth: 2, borderColor: '#fff' } }
+        }));
+      }
+      
+      // Bar mode (default)
       const series = Object.keys(data.byRule).map(rule => ({
         name: ruleNames[rule],
         type: 'bar',
@@ -5145,7 +5368,15 @@
             <!-- Action Times Graph -->
             <div id="action-times-graph-wrap" style="display: none;">
               <div class="graph-toolbar">
-                <label class="toggle-switch">
+                <div class="chart-type-selector" role="tablist" aria-label="Chart type">
+                  <button class="ct-btn active" data-type="bar" onclick="setChartType('bar')" aria-pressed="true">
+                    <span class="material-icons mat-icon">bar_chart</span> Average Time
+                  </button>
+                  <button class="ct-btn" data-type="scatter" onclick="setChartType('scatter')" aria-pressed="false">
+                    <span class="material-icons mat-icon">scatter_plot</span> Distribution
+                  </button>
+                </div>
+                <label class="toggle-switch" id="metric-score-toggle-wrap">
                   <input type="checkbox" id="metric-score-toggle" onchange="toggleMetricScoreLine(this.checked)" />
                   <span class="toggle-slider"></span>
                   <span class="toggle-label">Show metric scores</span>
