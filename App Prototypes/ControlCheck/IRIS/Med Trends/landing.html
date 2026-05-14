@@ -1651,11 +1651,6 @@
       gap: 12px;
       margin-bottom: 8px;
     }
-    .med-trends-card-header .iris-score {
-      /* shrink the chip slightly to feel inline with the title */
-      font-size: 14px;
-      padding: 4px 10px;
-    }
     .med-trends-card-title {
       font-size: 15px;
       font-weight: 700;
@@ -1668,6 +1663,81 @@
       line-height: 1.5;
     }
     .med-trends-card-body p { margin: 0; }
+    /* Stat strip — Metric Score on the left, count stats in the middle,
+       Go to IRIS button on the right (pushed via margin-left: auto). */
+    .med-trends-stat-strip {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .med-trends-stat {
+      padding: 4px 18px;
+      border-right: 1px solid var(--gray-200, #e0e0e0);
+      min-width: 0;
+    }
+    .med-trends-stat:first-child { padding-left: 0; }
+    /* Last count-stat keeps a trailing divider (since the button is visually
+       separated by margin-left:auto whitespace, not a hairline). */
+    .med-trends-stat:nth-last-of-type(1) { border-right: none; }
+    .med-trends-stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-54, #757575);
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+    .med-trends-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--blue-darker, #0a3861);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+      margin-top: 4px;
+    }
+    /* When the value slot holds the IRIS score chip, neutralize wrapper styling. */
+    .med-trends-stat-score .med-trends-stat-value {
+      display: inline-flex;
+    }
+    .med-trends-stat-score .iris-score {
+      font-size: 16px;
+      padding: 4px 12px;
+    }
+    /* Go to IRIS — primary teal-fill pill button on the right edge of the card. */
+    .go-to-iris-btn {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--teal, #0096b8);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .2px;
+      cursor: pointer;
+      transition: background-color .15s, box-shadow .15s;
+      box-shadow: 0 1px 2px rgba(0,0,0,.12);
+    }
+    .go-to-iris-btn:hover {
+      background: var(--teal-dark, #0083a8);
+      box-shadow: 0 2px 4px rgba(0,0,0,.18);
+    }
+    .go-to-iris-btn:active {
+      background: var(--teal-dark, #0083a8);
+      box-shadow: 0 1px 2px rgba(0,0,0,.18) inset;
+    }
+    .go-to-iris-btn:focus-visible {
+      outline: 2px solid var(--teal, #0096b8);
+      outline-offset: 2px;
+    }
+    .go-to-iris-btn .material-icons {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
     .med-trends-card-body ul {
       margin: 8px 0 0;
       padding-left: 22px;
@@ -4075,36 +4145,42 @@
     const score = agg.score;
     const tier = scoreClassFor(score); // 'score-normal' | 'score-moderate' | 'score-critical'
 
-    const chip = document.getElementById('med-trends-card-score');
     const body = document.getElementById('med-trends-card-body');
-    if (!chip || !body) return;
+    if (!body) return;
 
-    chip.className = 'iris-score ' + tier;
-    chip.textContent = score.toFixed(1);
-
-    if (tier === 'score-normal') {
-      body.innerHTML = `<p>${user.name} has no unusual medication activity patterns.</p>`;
-    } else if (tier === 'score-moderate') {
-      body.innerHTML = `<p>${user.name} has slightly unusual medication activity patterns.</p>`;
-    } else {
-      // Critical — pick the top contributing drug-action combinations.
-      // Take the 2-3 drugs with highest individual score.
-      const drugs = [...user.drugs].sort((a, b) => b.score - a.score).slice(0, 3);
-      const items = drugs.map(d => {
-        // Pick the action with the highest event count for this drug
-        const counts = {
-          'Administering':  d.admin    || 0,
-          'Dispensing':     d.dispense || 0,
-          'Wasting':        d.waste    || 0,
-          'Returning':      d.ret      || 0,
-          'Cancelling':     d.cancel   || 0,
-        };
-        const action = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
-        return `<li><a href="#" onclick="return false;">${action} ${d.drug}.</a></li>`;
-      }).join('');
-      body.innerHTML = `<p>${user.name} exhibits highly unusual medication activity patterns when:</p>
-        <ul>${items}</ul>`;
-    }
+    // Stat strip — Metric Score on the left, counts in the middle, Go to IRIS
+    // primary action on the right. Labels on top, values below.
+    // Patients shows "—" for roles that don't have a patient count (e.g. Pharmacy techs).
+    const patients = user.patients ? user.patients.toLocaleString() : '—';
+    body.innerHTML = `
+      <div class="med-trends-stat-strip">
+        <div class="med-trends-stat med-trends-stat-score">
+          <div class="med-trends-stat-label">Metric Score</div>
+          <div class="med-trends-stat-value">
+            <span class="iris-score ${tier}">${score.toFixed(1)}</span>
+          </div>
+        </div>
+        <div class="med-trends-stat">
+          <div class="med-trends-stat-label">Drugs</div>
+          <div class="med-trends-stat-value">${agg.drugCount}</div>
+        </div>
+        <div class="med-trends-stat">
+          <div class="med-trends-stat-label">Shifts</div>
+          <div class="med-trends-stat-value">${user.shifts}</div>
+        </div>
+        <div class="med-trends-stat">
+          <div class="med-trends-stat-label">Patients</div>
+          <div class="med-trends-stat-value">${patients}</div>
+        </div>
+        <div class="med-trends-stat">
+          <div class="med-trends-stat-label">Total Events</div>
+          <div class="med-trends-stat-value">${agg.events.toLocaleString()}</div>
+        </div>
+        <button type="button" class="go-to-iris-btn" onclick="openIrisPanel('${user.id}')">
+          <span class="material-icons">login</span>
+          Go to IRIS
+        </button>
+      </div>`;
   }
 
   function drillToUser(userId) {
@@ -5041,7 +5117,6 @@
             <!-- Med Trends summary card -->
             <div class="med-trends-card" id="med-trends-card">
               <div class="med-trends-card-header">
-                <span class="iris-score" id="med-trends-card-score">—</span>
                 <span class="med-trends-card-title">Med Trends</span>
               </div>
               <div class="med-trends-card-body" id="med-trends-card-body"><!-- populated dynamically --></div>
