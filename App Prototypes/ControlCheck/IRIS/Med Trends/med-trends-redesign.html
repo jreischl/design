@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0062)file:///Users/jonreischl/Downloads/med-trends-redesign_26.html -->
-<html lang="en" class="mat-typography"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Med Trends – ControlCheck</title>
-  <link rel="stylesheet" href="./landing_files/jan0wzl.css">
-  <link href="./landing_files/icon" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,7 +42,7 @@
       line-height: 1.25rem;
       -webkit-font-smoothing: antialiased;
     }
-    body { display: flex; flex-direction: column; overflow: hidden; }
+    body { display: flex; flex-direction: column; }
 
     /* ── Custom element display ─────────────────── */
     app-component, navigation, nav-menu, user-menu,
@@ -52,7 +52,7 @@
     mat-toolbar { display: flex; }
     nav-menu { display: inline-flex; margin-right: auto; }
     router-outlet { display: none; }
-    .flex-col-100 { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
 
     /* ── mat-toolbar / navbar ────────────────────────────── */
     .mat-toolbar.navbar {
@@ -284,31 +284,16 @@
       background: var(--gray-100);
     }
 
-    /* Focus user row — applies in two places:
-       - L3 panel users table (drilled in from a user)
-       - By Drug L2 users table (arrived via Compare from a user) */
+    /* Focus user row (Level 3 — the user we drilled in from) */
     #users-table-view .data-table tbody tr.focus-user td,
-    #users-table-view .data-table tbody tr.focus-user:hover td,
-    #drug-users-table-view .data-table tbody tr.focus-user td,
-    #drug-users-table-view .data-table tbody tr.focus-user:hover td {
+    #users-table-view .data-table tbody tr.focus-user:hover td {
       background: #e7f4fb;
       font-weight: 600;
     }
     #users-table-view .data-table tbody tr.focus-user td:nth-child(1),
-    #users-table-view .data-table tbody tr.focus-user:hover td:nth-child(1),
-    #drug-users-table-view .data-table tbody tr.focus-user td:nth-child(1),
-    #drug-users-table-view .data-table tbody tr.focus-user:hover td:nth-child(1) {
+    #users-table-view .data-table tbody tr.focus-user:hover td:nth-child(1) {
       background: #e7f4fb;
       box-shadow: inset 3px 0 0 #0096b8, 2px 0 4px rgba(0,0,0,.06);
-    }
-    /* Pin the focus-user row just below the sticky thead so it stays visible
-       while scrolling through the rest of the table.
-       top = 48px (th height); z-index sits between thead (2) and body rows. */
-    #users-table-view .data-table tbody tr.focus-user td,
-    #drug-users-table-view .data-table tbody tr.focus-user td {
-      position: sticky;
-      top: 48px;
-      z-index: 1;
     }
 
     /* ── Comparison Score filter bar ──────────── */
@@ -378,10 +363,6 @@
       width: 16px;
       flex-shrink: 0;
     }
-    /* Divider between groups inside the axis-picker menus */
-    .cs-menu-grouped .cs-divider {
-      height: 1px; background: var(--gray-300); margin: 4px 12px;
-    }
 
     /* ── Comparison Score cell ──────────────────── */
     .comp-score {
@@ -404,18 +385,10 @@
       border: 1px solid var(--gray-300);
       border-radius: var(--radius);
       padding: 24px 16px 16px;
-      flex: 1 1 auto;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
     }
-    .chart-wrap > .chart-type-selector,
-    .chart-wrap > .chart-controls-row,
-    .chart-wrap > .chart-legend { flex-shrink: 0; }
     .chart-container {
       width: 100%;
-      flex: 1 1 auto;
-      min-height: 320px;
+      height: 480px;
     }
     .chart-legend {
       display: flex;
@@ -445,12 +418,10 @@
     mat-drawer-container {
       display: flex; flex-direction: row;
       flex: 1 1 auto; overflow: hidden; position: relative;
-      min-height: 0;
     }
     mat-drawer-content {
       display: flex; flex-direction: column;
-      flex: 1 1 auto; overflow: hidden; position: relative;
-      min-height: 0;
+      flex: 1 1 auto; overflow: auto; position: relative;
       max-width: 1440px;
     }
     mat-drawer {
@@ -575,128 +546,72 @@
     /* ── Legacy Experience mode ── */
     .legacy-placeholder {
       display: none;
-      flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 0;
-      font-family: var(--font);
-    }
-    /* Subtle amber notice — soft deprecation cue, not a hard warning. Sits
-       at the top of the placeholder, full-width. */
-    .legacy-banner {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 16px;
-      background: #fff8e1;
-      border-bottom: 1px solid #ffe0b2;
-      color: #6d4c1c;
-      font-size: .875rem;
-      font-weight: 500;
-      letter-spacing: .1px;
-      flex-shrink: 0;
-    }
-    .legacy-banner .mat-icon {
-      font-size: 18px; width: 18px; height: 18px;
-      color: #b26a00;
-    }
-    .legacy-banner-text { line-height: 1.4; }
-    /* The "Legacy Med Trends" centered message below the banner */
-    .legacy-placeholder-body {
-      flex: 1 1 auto;
-      display: flex;
       align-items: center;
       justify-content: center;
+      min-height: calc(100vh - 180px);
       padding: 40px;
       font-size: 2rem;
       font-weight: 600;
       color: var(--text-54, #757575);
+      font-family: var(--font);
       letter-spacing: .3px;
     }
     body.legacy-mode .shared-tab-bar-wrap,
     body.legacy-mode #view-all-users,
-    body.legacy-mode #view-user-drugs,
-    body.legacy-mode #view-all-drugs,
-    body.legacy-mode #view-drug-users {
-      display: none !important;
-    }
-    /* Filter chips (Date / Department / User / Role / Clear) are for the new
-       data views; the legacy placeholder is a static screen so hide them. */
-    body.legacy-mode .filter-chip-group {
+    body.legacy-mode #view-user-drugs {
       display: none !important;
     }
     body.legacy-mode .legacy-placeholder {
       display: flex;
     }
 
-    /* ── Page section indicator (By User / By Drug) ── */
-    .page-section-indicator {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--blue-dark);
-      white-space: nowrap;
+    /* Version selector (Latest / Legacy) */
+    .version-selector { position: relative; display: inline-flex; }
+    .version-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 8px 4px 10px;
+      background: transparent;
+      border: 1px solid var(--gray-300);
+      border-radius: 14px;
+      color: var(--gray-600);
+      font-family: var(--font); font-size: .8125rem; font-weight: 400;
+      cursor: pointer;
+      transition: background-color .15s, border-color .15s;
     }
-    /* Slash divider rendered as a pseudo-element so the indicator itself stays
-       semantically clean and lines up perfectly with the page title. */
-    .page-section-indicator::before {
-      content: '/';
-      margin-right: 10px;
+    .version-btn:hover {
+      background-color: #f5f9fb;
+      border-color: var(--blue-500, #0096b8);
+    }
+    .version-btn .mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--text-54); }
+    .version-menu {
+      position: absolute;
+      top: calc(100% + 4px); left: 0;
+      min-width: 240px;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+      z-index: 50;
+      padding: 4px 0;
+    }
+    .version-option {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background-color .1s;
+    }
+    .version-option:hover { background-color: #e7f4fb; }
+    .version-option.selected .version-option-main { color: var(--blue-500, #0096b8); }
+    .version-option-main {
+      font-size: .875rem; font-weight: 400;
+      color: var(--text-87);
+      line-height: 1.3;
+    }
+    .version-option-sub {
+      font-size: .75rem; font-weight: 400;
       color: var(--text-54);
-      font-weight: 400;
+      margin-top: 2px;
     }
-
-    /* ── Sidebar sub-items (By User / By Drug under Med Trends) ── */
-    .mat-mdc-list-item.sub-item {
-      padding-left: 52px;
-      height: 38px;
-      min-height: 38px;
-    }
-    .mat-mdc-list-item.sub-item .mdc-list-item__primary-text {
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .mat-mdc-list-item.sub-item.active .mdc-list-item__primary-text {
-      color: var(--blue-dark);
-      font-weight: 600;
-    }
-    /* Parent of sub-items shows "section-active" state when one of its children is active */
-    .mat-mdc-list-item.parent-active .mdc-list-item__primary-text {
-      color: var(--blue-dark);
-      font-weight: 600;
-    }
-    .mat-mdc-list-item.parent-active .mdc-list-item__primary-text .mat-icon {
-      color: var(--blue-dark);
-    }
-    /* Expand/collapse chevron at the right edge of the parent item.
-       Rotates -90° when the parent is collapsed (chevron points right).
-       Stays text-54 even on parent-active so the chevron reads as a control
-       rather than as part of the active treatment. */
-    .mat-mdc-list-item .expand-chevron {
-      margin-left: auto;
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      color: var(--text-54);
-      transition: transform .18s ease;
-    }
-    .mat-mdc-list-item.parent-active .mdc-list-item__primary-text .expand-chevron {
-      color: var(--text-54);
-    }
-    .parent-active:not(.expanded) .expand-chevron {
-      transform: rotate(-90deg);
-    }
-    /* Collapsed parent hides its children (the sub-items that follow).
-       Adjacent-sibling selectors so we don't need a wrapper element.
-       Scoped via .parent-active so it can only match the parent (sub-items
-       never get .parent-active), not anonymously match any non-expanded
-       list item that happens to precede a .sub-item. */
-    .parent-active:not(.expanded) + .sub-item,
-    .parent-active:not(.expanded) + .sub-item + .sub-item,
-    .parent-active:not(.expanded) + .sub-item + .sub-item + .sub-item {
-      display: none;
-    }
-    mat-drawer.collapsed .mat-mdc-list-item.sub-item { display: none; }
-
     /* breadcrumb state */
     .page-title.breadcrumb { font-size: .813rem; font-weight: 500; display: flex; align-items: center; gap: 6px; color: var(--text-54); }
     .page-title.breadcrumb .bc-parent { color: var(--teal); font-weight: 600; cursor: pointer; text-decoration: none; background: none; border: none; font-family: var(--font); font-size: .813rem; padding: 0; }
@@ -748,9 +663,7 @@
        CONTENT AREA
     ══════════════════════════════════════════════ */
     .content-area {
-      flex: 1 1 auto; overflow: hidden;
-      display: flex; flex-direction: column;
-      min-height: 0;
+      flex: 1 1 auto; overflow: auto;
       padding: 0 40px 40px;
     }
 
@@ -850,45 +763,13 @@
       background: #fff;
       border: 1px solid var(--gray-300);
       border-radius: var(--radius);
-      overflow: auto;
-      flex: 1 1 auto;
-      min-height: 0;
+      overflow: hidden;
     }
     .data-table {
       width: 100%; border-collapse: collapse;
       font-family: var(--font); font-size: .875rem;
     }
-    /* Sticky table headers — required because the .data-table-wrap is now the
-       scroll container. background on th (not thead) keeps cells opaque on
-       all browsers; soft drop shadow appears as rows scroll under the header. */
     .data-table thead { background: #fff; }
-    .data-table thead th {
-      position: sticky;
-      top: 0;
-      background: #fff;
-      z-index: 2;
-      box-shadow: 0 2px 4px rgba(0,0,0,.04);
-    }
-    /* Chrome elements that live inside the scroll-host but must not scroll */
-    .page-header,
-    .l2-context-block,
-    .shared-tab-bar-wrap { flex-shrink: 0; }
-    .content-area .count-search-row,
-    .content-area .shared-filter-bar { flex-shrink: 0; }
-    /* Table/graph-view wrappers inside each view fill remaining space */
-    #all-users-table-view,
-    #user-drugs-table-view,
-    #all-drugs-table-view,
-    #drug-users-table-view,
-    #all-users-graph-view,
-    #user-drugs-graph-view,
-    #all-drugs-graph-view,
-    #drug-users-graph-view {
-      flex: 1 1 auto;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
     .data-table th {
       padding: 0 16px; height: 48px; text-align: left;
       font-size: .75rem; font-weight: 600;
@@ -1063,17 +944,9 @@
 
     /* ══════════════════════════════════════════════
        VIEW STATES
-       Visible view fills remaining vertical space inside mat-drawer-content
-       so the table-wrap (or chart-wrap) inside can host the actual scroll.
     ══════════════════════════════════════════════ */
     .view { display: none; }
-    .view.visible {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: hidden;
-    }
+    .view.visible { display: block; }
 
     /* ══════════════════════════════════════════════
        GRAPH PLACEHOLDER
@@ -1738,52 +1611,23 @@
     body.legacy-mode .l2-context-block { display: none !important; }
 
   </style>
-  <script src="./landing_files/echarts.min.js"></script>
-<script data-cfasync="false" defer="">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<script data-cfasync="false" defer>
   /* ══════════════════════════════════════════════
      CHART STATE
   ══════════════════════════════════════════════ */
   let allUsersChart  = null;
   let userDrugsChart = null;
   let usersChart     = null;
-  let allDrugsChart  = null;
-  let drugUsersChart = null;
   // Chart type selection ('bar' default, 'scatter' alternative) per level
   let allUsersChartType  = 'bar';
   let userDrugsChartType = 'bar';
   let usersChartType     = 'bar';
-  let allDrugsChartType  = 'bar';
-  let drugUsersChartType = 'bar';
   // Shared tab-bar mode ('table' | 'graph')
   let currentMode = 'table';
   // Level-1 visualized Context: what the chart measures
   //   'drugs' | 'shifts' | 'patients' | 'events'
   let allUsersVizContext = 'events';
-  // By-Drug L1 visualized Context: 'users' | 'events' (legacy — replaced by X/Y axis pickers below)
-  let allDrugsVizContext = 'events';
-
-  /* ══════════════════════════════════════════════
-     BY DRUG L1 — Chart X/Y axis pickers
-     Replaces the "Context" dimension selector on the visualized view.
-     Any column can be selected for the X axis (bar + scatter) and the
-     Y axis (scatter only). Bar mode uses the drug as the Y category.
-  ══════════════════════════════════════════════ */
-  const AXIS_OPTIONS = [
-    { key: 'userCount',    label: 'Users',          group: 'identity', unit: ''  },
-    { key: 'events',       label: 'Total Events',   group: 'events',   unit: ''  },
-    { key: 'dispense',     label: 'Dispense',       group: 'events',   unit: ''  },
-    { key: 'admin',        label: 'Admin',          group: 'events',   unit: ''  },
-    { key: 'waste',        label: 'Waste',          group: 'events',   unit: ''  },
-    { key: 'ret',          label: 'Return',         group: 'events',   unit: ''  },
-    { key: 'cancel',       label: 'Cancels',        group: 'events',   unit: ''  },
-    { key: 'mass',         label: 'Total Mass',     group: 'mass',     unit: 'mg' },
-    { key: 'massDispense', label: 'Mass Dispensed', group: 'mass',     unit: 'mg' },
-    { key: 'massAdmin',    label: 'Mass Admin',     group: 'mass',     unit: 'mg' },
-    { key: 'massWaste',    label: 'Mass Wasted',    group: 'mass',     unit: 'mg' },
-    { key: 'massReturn',   label: 'Mass Returned',  group: 'mass',     unit: 'mg' },
-  ];
-  let xAxisField = 'events';     // default X = Total Events
-  let yAxisField = 'userCount';  // default Y = Users
   // Event-type color palette for Level 2/3 stacked bars
   const EVENT_TYPE_COLORS = {
     dispense: '#0096b8',   // Blue 500
@@ -2540,16 +2384,6 @@
     return rows;
   }
 
-  /* Same as getUsersForDrug but narrowed by the page-header Department / Role
-     chip filters. By-drug L2 uses this so the global filters affect the view. */
-  function getFilteredUsersForDrug(drugName) {
-    return getUsersForDrug(drugName).filter(u => {
-      if (chipFilters.dept.size > 0 && !chipFilters.dept.has(u.dept)) return false;
-      if (chipFilters.role.size > 0 && !chipFilters.role.has(u.role)) return false;
-      return true;
-    });
-  }
-
   /* Drugs list derived from USERS (used for drug filter menus, search). */
   function getAllDrugs() {
     const set = new Set();
@@ -2558,49 +2392,10 @@
   }
 
   /* ══════════════════════════════════════════════
-     BY DRUG — Data aggregation
-     One row per drug, aggregated across users who handle it AND who pass
-     the page-header Department/Role chip filters (via getFilteredUsersForDrug).
-     metric score = max user score; comp = max user compScore;
-     events/dispense/admin/waste/return/cancel = summed across users;
-     mass categories = summed across users.
-     When chip filters exclude every user for a drug, aggregateDrug returns
-     null and the drug is dropped from the L1 list entirely.
-  ══════════════════════════════════════════════ */
-  function aggregateDrug(drugName) {
-    const rows = getFilteredUsersForDrug(drugName);
-    if (!rows.length) return null;
-    const sum = (k) => rows.reduce((s, r) => s + (r[k] || 0), 0);
-    const max = (k) => rows.reduce((m, r) => (r[k] > m ? r[k] : m), 0);
-    return {
-      drug: drugName,
-      userCount: rows.length,
-      score: +max('score').toFixed(1),
-      compScore: +max('compScore').toFixed(1),
-      events: sum('events'),
-      dispense: sum('dispense'),
-      admin: sum('admin'),
-      waste: sum('waste'),
-      ret: sum('ret'),
-      cancel: sum('cancel'),
-      massDispense: +sum('massDispense').toFixed(1),
-      massAdmin:    +sum('massAdmin').toFixed(1),
-      massWaste:    +sum('massWaste').toFixed(1),
-      massReturn:   +sum('massReturn').toFixed(1),
-      mass:         +(sum('massDispense')+sum('massAdmin')+sum('massWaste')+sum('massReturn')).toFixed(1),
-    };
-  }
-  function getAggregatedDrugs() {
-    return getAllDrugs().map(aggregateDrug).filter(Boolean);
-  }
-
-  /* ══════════════════════════════════════════════
      SORT STATE
   ══════════════════════════════════════════════ */
   const allUsersSortState  = { col: 'score', asc: false };
   const userDrugsSortState = { col: 'drug', asc: true };
-  const allDrugsSortState  = { col: 'events', asc: false };
-  const drugUsersSortState = { col: 'name', asc: true };
 
   /* ══════════════════════════════════════════════
      RENDER — ALL USERS TABLE  (Level 0)
@@ -2765,553 +2560,6 @@
     }).join('');
 
     document.getElementById('userDrugsCount').textContent = drugs.length;
-  }
-
-  /* ══════════════════════════════════════════════
-     RENDER — ALL DRUGS TABLE  (By Drug, Level 0)
-     Identity columns: Metric Score, Comp Score, Drug, # Users
-     Context-driven columns:
-       Context = Mass:   Total Events, Mass Dispensed, Mass Admin, Mass Wasted, Mass Returned
-       Context = Events: Dispense, Admin, Waste, Return, Cancels
-  ══════════════════════════════════════════════ */
-  function renderAllDrugsHead() {
-    const head = document.getElementById('allDrugsTableHead');
-    if (!head) return;
-    const s = allDrugsSortState;
-    const arrow = col => {
-      const active = s.col === col;
-      const icon   = active ? (s.asc ? 'arrow_upward' : 'arrow_downward') : 'arrow_upward';
-      const style  = active ? 'color:var(--blue-dark);opacity:1' : 'opacity:.3';
-      return `<span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;${style}">${icon}</span>`;
-    };
-    const th = (key, label, cls, style) =>
-      `<th class="sortable ${cls}" style="${style}" onclick="sortAllDrugsTable('${key}')">`+
-      `<span class="th-inner">${label} ${arrow(key)}</span></th>`;
-
-    const context = getContext(); // 'event_types' | 'mass_per_event'
-    const contextCols = context === 'event_types'
-      ? th('dispense','Dispense','right','width:85px;') +
-        th('admin',   'Admin',   'right','width:75px;') +
-        th('waste',   'Waste',   'right','width:75px;') +
-        th('ret',     'Return',  'right','width:75px;') +
-        th('cancel',  'Cancels', 'right','width:75px;')
-      : th('events',       'Total Events',   'right','width:100px;') +
-        th('massDispense', 'Mass Dispensed', 'right','width:110px;') +
-        th('massAdmin',    'Mass Admin',     'right','width:90px;') +
-        th('massWaste',    'Mass Wasted',    'right','width:95px;') +
-        th('massReturn',   'Mass Returned',  'right','width:105px;');
-
-    head.innerHTML = `<tr>
-      <th class="sortable" style="min-width:260px;" onclick="sortAllDrugsTable('drug')">
-        <span class="th-inner">Drug ${arrow('drug')}</span>
-      </th>
-      ${th('userCount','Users','right','width:80px;')}
-      ${contextCols}
-      <th style="width:130px;"></th>
-    </tr>`;
-  }
-
-  function renderAllDrugsTable() {
-    const context = getContext();
-    const raw = getAggregatedDrugs();
-    const { col, asc } = allDrugsSortState;
-    const drugs = [...raw].sort((a, b) => {
-      let av = a[col], bv = b[col];
-      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
-      av = av ?? 0; bv = bv ?? 0;
-      return asc ? (av > bv ? 1 : av < bv ? -1 : 0)
-                 : (av < bv ? 1 : av > bv ? -1 : 0);
-    });
-    renderAllDrugsHead();
-    const tbody = document.getElementById('allDrugsTableBody');
-
-    tbody.innerHTML = drugs.map(d => {
-      const fixed = `
-        <td>
-          <div class="user-name"><span class="drug-name-plain">${d.drug}</span></div>
-        </td>
-        <td class="num">${d.userCount}</td>`;
-      const data = context === 'event_types'
-        ? `<td class="num">${d.dispense}</td>
-           <td class="num">${d.admin}</td>
-           <td class="num">${d.waste}</td>
-           <td class="num">${d.ret}</td>
-           <td class="num">${d.cancel}</td>`
-        : `<td class="num">${d.events}</td>
-           <td class="num">${d.massDispense} mg</td>
-           <td class="num">${d.massAdmin} mg</td>
-           <td class="num">${d.massWaste} mg</td>
-           <td class="num">${d.massReturn} mg</td>`;
-      const action = `
-        <td style="text-align:right">
-          <a class="investigate-link" href="#" onclick="event.stopPropagation();drillToDrugFromAllDrugs('${d.drug.replace(/'/g, "\\'")}');return false;">
-            View Users <span class="material-icons">chevron_right</span>
-          </a>
-        </td>`;
-      return `<tr onclick="drillToDrugFromAllDrugs('${d.drug.replace(/'/g, "\\'")}')">${fixed}${data}${action}</tr>`;
-    }).join('');
-
-    document.getElementById('allDrugsCount').textContent = drugs.length;
-  }
-
-  /* ══════════════════════════════════════════════
-     RENDER — DRUG'S USERS TABLE  (By Drug, Level 1)
-     Per-user rows for one drug. Context drives event-type vs mass columns.
-     Each row drills L3 (user's drugs, full view).
-  ══════════════════════════════════════════════ */
-  function renderDrugUsersHead(context) {
-    const head = document.getElementById('drugUsersTableHead');
-    if (!head) return;
-    const s = drugUsersSortState;
-    const arrow = col => {
-      const active = s.col === col;
-      const icon   = active ? (s.asc ? 'arrow_upward' : 'arrow_downward') : 'arrow_upward';
-      const style  = active ? 'color:var(--blue-dark);opacity:1' : 'opacity:.3';
-      return `<span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;${style}">${icon}</span>`;
-    };
-    const th = (key, label, cls, style) =>
-      `<th class="sortable ${cls}" style="${style}" onclick="sortDrugUsersTable('${key}')">`+
-      `<span class="th-inner">${label} ${arrow(key)}</span></th>`;
-
-    const contextCols = context === 'event_types'
-      ? th('dispense','Dispense','right','width:85px;') +
-        th('admin',   'Admin',   'right','width:70px;') +
-        th('waste',   'Waste',   'right','width:70px;') +
-        th('ret',     'Return',  'right','width:70px;') +
-        th('cancel',  'Cancel',  'right','width:70px;')
-      : th('events',       'Total Events',   'right','width:90px;') +
-        th('massDispense', 'Mass Dispensed', 'right','width:110px;') +
-        th('massAdmin',    'Mass Admin',     'right','width:90px;') +
-        th('massWaste',    'Mass Wasted',    'right','width:90px;') +
-        th('massReturn',   'Mass Returned',  'right','width:100px;');
-
-    head.innerHTML = `<tr>
-      ${th('score','Metric Score','center','width:90px;')}
-      <th class="sortable" style="min-width:240px;" onclick="sortDrugUsersTable('name')">
-        <span class="th-inner">User ${arrow('name')}</span>
-      </th>
-      ${th('shifts','Shifts','right','width:70px;')}
-      ${th('patients','Patients','right','width:75px;')}
-      ${contextCols}
-      <th style="width:260px;"></th>
-    </tr>`;
-  }
-
-  function renderDrugUsersTable(drugName) {
-    const context = getContext();
-    const raw = getFilteredUsersForDrug(drugName);
-    const { col, asc } = drugUsersSortState;
-    const users = [...raw].sort((a, b) => {
-      let av = a[col], bv = b[col];
-      if (typeof av === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
-      av = av ?? 0; bv = bv ?? 0;
-      return asc ? (av > bv ? 1 : av < bv ? -1 : 0)
-                 : (av < bv ? 1 : av > bv ? -1 : 0);
-    });
-    // Pin the focus user (if any) to position 0 regardless of sort, so the
-    // user that the viewer arrived with via Compare stays at the top.
-    if (currentFocusUserId) {
-      const fi = users.findIndex(u => u.userId === currentFocusUserId);
-      if (fi > 0) users.unshift(users.splice(fi, 1)[0]);
-    }
-    renderDrugUsersHead(context);
-    const tbody = document.getElementById('drugUsersTableBody');
-
-    tbody.innerHTML = users.map(u => {
-      const fixed = `
-        <td class="center">
-          <span class="iris-score ${scoreClassFor(u.score)}">${u.score}</span>
-        </td>
-        <td>
-          <div class="user-name"><a href="#" onclick="event.stopPropagation();openIrisPanel('${u.userId}');return false;" data-tooltip="IRIS Details">${u.name}</a></div>
-          <div class="user-role-dept">${u.role} &bull; ${u.dept}</div>
-        </td>
-        <td class="num">${u.shifts}</td>
-        <td class="num">${u.patients || '—'}</td>`;
-      const data = context === 'event_types'
-        ? `<td class="num">${u.dispense}</td>
-           <td class="num">${u.admin}</td>
-           <td class="num">${u.waste}</td>
-           <td class="num">${u.ret}</td>
-           <td class="num">${u.cancel}</td>`
-        : `<td class="num">${u.events}</td>
-           <td class="num">${u.massDispense} mg</td>
-           <td class="num">${u.massAdmin} mg</td>
-           <td class="num">${u.massWaste} mg</td>
-           <td class="num">${u.massReturn} mg</td>`;
-      const action = `
-        <td class="l2-action-cell">
-          <a class="row-action-btn" href="#" onclick="event.stopPropagation();drillToUserFromDrugUsers('${u.userId}');return false;">
-            <span class="material-icons">medication</span> View Drugs
-          </a>
-          <a class="row-action-btn" href="#" onclick="event.stopPropagation();return false;">
-            <span class="material-icons">open_in_new</span> Investigate
-          </a>
-        </td>`;
-      return `<tr class="${u.userId === currentFocusUserId ? 'focus-user' : ''}" onclick="drillToUserFromDrugUsers('${u.userId}')">${fixed}${data}${action}</tr>`;
-    }).join('');
-
-    document.getElementById('drugUsersCount').textContent = users.length;
-  }
-
-  /* ══════════════════════════════════════════════
-     BY DRUG L2 — User multi-select filter (for chart)
-     "du" prefix = drug-users. Parallels the L3-panel "uu" filter.
-  ══════════════════════════════════════════════ */
-  let duUserFilterSelected = null;
-
-  function duGetFilteredUsers(drugName) {
-    // Apply page-header chip filters first (the universe), then narrow by the
-    // chart's own multi-select user filter (the user's refinement within it).
-    const all = getFilteredUsersForDrug(drugName);
-    if (!duUserFilterSelected || duUserFilterSelected.size === 0) return all;
-    return all.filter(u => duUserFilterSelected.has(u.userId));
-  }
-  function duRebuildUserFilter(drugName) {
-    const list = document.getElementById('du-user-filter-list');
-    if (!list) return;
-    const users = getFilteredUsersForDrug(drugName);
-    duUserFilterSelected = new Set(users.map(u => u.userId));
-    list.innerHTML = users.map(u => `
-      <label class="drug-filter-item">
-        <input type="checkbox" checked onchange="duUserFilterToggle('${u.userId}', this.checked)">
-        <span>${u.name}</span>
-      </label>`).join('');
-    duUpdateUserFilterLabel();
-  }
-  function duUserFilterSearch(query) {
-    query = (query || '').toLowerCase().trim();
-    const items = document.querySelectorAll('#du-user-filter-list .drug-filter-item');
-    let visible = 0;
-    items.forEach(it => {
-      const hit = !query || it.textContent.toLowerCase().includes(query);
-      it.style.display = hit ? '' : 'none';
-      if (hit) visible++;
-    });
-    const empty = document.getElementById('du-user-filter-empty');
-    if (empty) empty.style.display = visible === 0 ? '' : 'none';
-  }
-  function duUpdateUserFilterLabel() {
-    const label = document.getElementById('du-user-filter-label');
-    if (!label) return;
-    const all = getFilteredUsersForDrug(currentDrugName);
-    if (!duUserFilterSelected || duUserFilterSelected.size === all.length) {
-      label.textContent = 'All users';
-    } else if (duUserFilterSelected.size === 0) {
-      label.textContent = 'No users';
-    } else {
-      label.textContent = `${duUserFilterSelected.size} user${duUserFilterSelected.size===1?'':'s'}`;
-    }
-  }
-  function duUserFilterToggle(userId, checked) {
-    if (!duUserFilterSelected) duUserFilterSelected = new Set();
-    if (checked) duUserFilterSelected.add(userId);
-    else duUserFilterSelected.delete(userId);
-    duUpdateUserFilterLabel();
-    if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-    initDrugUsersChart(currentDrugName);
-  }
-  function duUserFilterSelectAll(selectAll) {
-    const all = getFilteredUsersForDrug(currentDrugName);
-    duUserFilterSelected = new Set(selectAll ? all.map(u => u.userId) : []);
-    document.querySelectorAll('#du-user-filter-list input[type=checkbox]').forEach(cb => {
-      cb.checked = selectAll;
-    });
-    duUpdateUserFilterLabel();
-    if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-    initDrugUsersChart(currentDrugName);
-  }
-  function toggleDuUserFilter(ev) {
-    ev?.stopPropagation();
-    const menu = document.getElementById('du-user-filter-menu');
-    if (!menu) return;
-    const open = menu.style.display !== 'none';
-    document.querySelectorAll('.drug-filter-menu').forEach(m => m.style.display = 'none');
-    menu.style.display = open ? 'none' : '';
-    if (!open) {
-      const input = document.getElementById('du-user-filter-search');
-      if (input) { input.value = ''; duUserFilterSearch(''); input.focus(); }
-    }
-  }
-
-  /* ══════════════════════════════════════════════
-     CHARTS — ALL DRUGS (By Drug L1)
-     Axes are driven by xAxisField + yAxisField (both fully configurable).
-     Bar mode uses the drug as the Y category and xAxisField for bar length.
-     Scatter mode uses (xAxisField, yAxisField) for both dimensions.
-     Drugs have no IRIS tier, so colors are uniform navy.
-  ══════════════════════════════════════════════ */
-  function initAllDrugsChart() {
-    const el = document.getElementById('all-drugs-chart');
-    if (!el) return;
-    if (!allDrugsChart) allDrugsChart = echarts.init(el);
-    updateChartLegend('allDrugs', allDrugsChartType);
-
-    const drugs = getAggregatedDrugs();
-    const xOpt = AXIS_OPTIONS.find(o => o.key === xAxisField) || AXIS_OPTIONS[1];
-    const yOpt = AXIS_OPTIONS.find(o => o.key === yAxisField) || AXIS_OPTIONS[0];
-    const xName = xOpt.label + (xOpt.unit ? ` (${xOpt.unit})` : '');
-    const yName = yOpt.label + (yOpt.unit ? ` (${yOpt.unit})` : '');
-    const fmt = (v, opt) => opt.unit ? `${v} ${opt.unit}` : `${v}`;
-
-    const axis = {
-      nameTextStyle: { fontSize: 12, color: '#757575', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
-      axisLine: { lineStyle: { color: '#e5e5e5' } },
-      splitLine: { lineStyle: { color: '#f0f0f0' } },
-      axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#757575' }
-    };
-    const tooltipBase = {
-      trigger: 'item',
-      backgroundColor: 'rgba(10,56,97,.92)',
-      borderColor: 'transparent',
-      textStyle: { color: '#fff', fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 13 }
-    };
-
-    let option;
-    if (allDrugsChartType === 'bar') {
-      const sorted = [...drugs].sort((a,b) => (b[xAxisField]||0) - (a[xAxisField]||0));
-      option = {
-        backgroundColor: 'transparent',
-        grid: { top: 20, right: 80, bottom: 50, left: 220 },
-        tooltip: { ...tooltipBase, formatter: p => {
-          const d = p.data;
-          return `<strong>${d.drug}</strong><br/>
-            ${xOpt.label}: <strong>${fmt(d.value, xOpt)}</strong><br/>
-            Users: ${d.userCount} &bull; Events: ${d.events}<br/>
-            Total Mass: ${d.mass} mg`;
-        }},
-        xAxis: { type: 'value', name: xName, nameLocation: 'middle', nameGap: 30, ...axis },
-        yAxis: { type: 'category',
-          data: sorted.map(d => d.drug),
-          axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#333',
-            formatter: v => v.length > 28 ? v.slice(0,26)+'…' : v },
-          axisLine: { lineStyle: { color: '#e5e5e5' } },
-          axisTick: { show: false }
-        },
-        series: [{
-          type: 'bar',
-          barMaxWidth: 18,
-          data: sorted.map(d => ({
-            value: d[xAxisField] || 0,
-            drug: d.drug, userCount: d.userCount,
-            events: d.events, mass: d.mass,
-            itemStyle: { color: '#044a82', borderRadius: [0,3,3,0] },
-            emphasis: { itemStyle: { shadowBlur: 8, shadowColor: 'rgba(0,0,0,.25)' } }
-          })),
-          label: { show: true, position: 'right', fontSize: 11, color: '#444',
-                   fontFamily: 'proxima-nova, Helvetica, sans-serif',
-                   formatter: p => fmt(p.data.value, xOpt) }
-        }]
-      };
-    } else {
-      // Scatter: drugs positioned by (xAxisField, yAxisField), uniform navy color.
-      option = {
-        backgroundColor: 'transparent',
-        grid: { top: 40, right: 60, bottom: 60, left: 80 },
-        tooltip: { ...tooltipBase, formatter: p => {
-          const d = p.data;
-          return `<strong>${d.drug}</strong><br/>
-            ${xOpt.label}: <strong>${fmt(d.value[0], xOpt)}</strong><br/>
-            ${yOpt.label}: <strong>${fmt(d.value[1], yOpt)}</strong><br/>
-            Users: ${d.userCount} &bull; Events: ${d.events}`;
-        }},
-        xAxis: { type: 'value', name: xName, nameLocation: 'middle', nameGap: 36, ...axis },
-        yAxis: { type: 'value', name: yName, nameLocation: 'middle', nameGap: 56, ...axis },
-        series: [{
-          type: 'scatter',
-          symbolSize: 14,
-          data: drugs.map(d => ({
-            value: [d[xAxisField] || 0, d[yAxisField] || 0],
-            drug: d.drug, userCount: d.userCount,
-            events: d.events, mass: d.mass,
-            itemStyle: { color: '#044a82', opacity: 0.88 },
-            emphasis: { itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } }
-          })),
-          label: {
-            show: true, position: 'right',
-            formatter: p => p.data.drug.length > 18 ? p.data.drug.slice(0,16)+'…' : p.data.drug,
-            fontSize: 11, color: '#555',
-            fontFamily: 'proxima-nova, Helvetica, sans-serif'
-          }
-        }]
-      };
-    }
-
-    allDrugsChart.setOption(option, true);
-    allDrugsChart.off('click');
-    allDrugsChart.on('click', p => { if (p.data?.drug) drillToDrugFromAllDrugs(p.data.drug); });
-    window.addEventListener('resize', () => allDrugsChart && allDrugsChart.resize());
-  }
-
-  /* ══════════════════════════════════════════════
-     CHARTS — DRUG'S USERS  (By Drug L2)
-     Same shape as the L3-panel users chart (initUsersChart) but renders
-     into the L2 container and doesn't apply focus-user highlighting since
-     no user is selected at this level.
-  ══════════════════════════════════════════════ */
-  function initDrugUsersChart(drugName) {
-    const el = document.getElementById('drug-users-chart');
-    if (!el) return;
-    if (!drugUsersChart) drugUsersChart = echarts.init(el);
-    updateChartLegend('drugUsers', drugUsersChartType);
-
-    const users = duGetFilteredUsers(drugName);
-    const axis = {
-      nameTextStyle: { fontSize: 12, color: '#757575', fontFamily: 'proxima-nova, Helvetica, sans-serif' },
-      axisLine: { lineStyle: { color: '#e5e5e5' } },
-      splitLine: { lineStyle: { color: '#f0f0f0' } },
-      axisLabel: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#757575' }
-    };
-    const tooltipBase = {
-      backgroundColor: 'rgba(10,56,97,.92)',
-      borderColor: 'transparent',
-      textStyle: { color: '#fff', fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 13 }
-    };
-
-    let option;
-    if (drugUsersChartType === 'bar') {
-      const ctx = getContext();
-      const useMass = ctx !== 'event_types';
-      const keys   = useMass ? MASS_TYPE_KEYS : eventTypeKeysCancelIncluded();
-      const labels = useMass ? MASS_TYPE_LABELS : EVENT_TYPE_LABELS;
-      const colors = useMass ? MASS_TYPE_COLORS : EVENT_TYPE_COLORS;
-      const unit   = useMass ? ' mg' : '';
-
-      const total = u => keys.reduce((s, k) => s + (u[k] || 0), 0);
-      const sorted = [...users].sort((a,b) => total(b) - total(a));
-
-      const series = keys.map(k => ({
-        name: labels[k],
-        type: 'bar',
-        stack: 'total',
-        barMaxWidth: 20,
-        itemStyle: { color: colors[k] },
-        emphasis: { focus: 'series' },
-        data: sorted.map(u => u[k] || 0),
-        label: (k === keys[keys.length - 1]) ? {
-          show: true, position: 'right', fontSize: 11, color: '#444',
-          fontFamily: 'proxima-nova, Helvetica, sans-serif',
-          formatter: p => {
-            const t = sorted[p.dataIndex] ? total(sorted[p.dataIndex]) : 0;
-            return t + unit;
-          }
-        } : { show: false }
-      }));
-
-      option = {
-        backgroundColor: 'transparent',
-        grid: { top: 50, right: 60, bottom: 40, left: 180 },
-        legend: {
-          top: 6, left: 'center',
-          icon: 'roundRect',
-          itemWidth: 14, itemHeight: 10,
-          textStyle: { fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#555' }
-        },
-        tooltip: { ...tooltipBase, trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-          formatter: ps => {
-            if (!ps || !ps.length) return '';
-            const name = ps[0].name;
-            let html = `<strong>${name}</strong>`;
-            let sum = 0;
-            ps.forEach(p => { sum += p.value; html += `<br/><span style="display:inline-block;width:8px;height:8px;background:${p.color};border-radius:2px;margin-right:6px;"></span>${p.seriesName}: ${p.value}${unit}`; });
-            html += `<br/><strong>Total: ${sum}${unit}</strong>`;
-            return html;
-          }
-        },
-        xAxis: { type: 'value', name: useMass ? 'Total Mass (mg)' : 'Total Events',
-                 nameLocation: 'middle', nameGap: 26, ...axis },
-        yAxis: { type: 'category',
-          data: sorted.map(u => u.userId === currentFocusUserId ? `{focus|${u.name}}` : u.name),
-          axisLabel: {
-            fontFamily: 'proxima-nova, Helvetica, sans-serif', fontSize: 12, color: '#333',
-            rich: {
-              focus: {
-                fontFamily: 'proxima-nova, Helvetica, sans-serif',
-                fontSize: 12, fontWeight: 700,
-                color: '#0a3861',
-                backgroundColor: '#e7f4fb',
-                padding: [4, 8, 4, 8],
-                borderRadius: 4
-              }
-            }
-          },
-          axisLine: { lineStyle: { color: '#e5e5e5' } },
-          axisTick: { show: false }
-        },
-        series
-      };
-    } else {
-      const maxShifts = Math.max(...users.map(u => u.shifts), 1);
-      option = {
-        backgroundColor: 'transparent',
-        grid: { top: 40, right: 40, bottom: 60, left: 70 },
-        tooltip: { ...tooltipBase, trigger: 'item', formatter: p => {
-          const u = p.data;
-          return `<strong>${u.userName}</strong><br/>
-            IRIS Score: <strong>${u.score}</strong><br/>
-            Total Events: ${u.value[0]}<br/>
-            Total Mass: ${u.value[1]} mg<br/>
-            Shifts: ${u.shifts}`;
-        }},
-        xAxis: { type: 'value', name: 'Total Events', nameLocation: 'middle', nameGap: 36, ...axis },
-        yAxis: { type: 'value', name: 'Mass Dispensed (mg)', nameLocation: 'middle', nameGap: 52, ...axis },
-        series: [{
-          type: 'scatter',
-          data: users.map(u => {
-            const isFocus = u.userId === currentFocusUserId;
-            const baseSize = Math.max(10, Math.round(8 + (u.shifts / maxShifts) * 22));
-            return {
-              value: [u.events, u.massDispense ?? u.mass],
-              userName: u.name, score: u.score, shifts: u.shifts, userId: u.userId,
-              isFocus,
-              symbolSize: isFocus ? baseSize + 6 : baseSize,
-              itemStyle: isFocus
-                ? { color: scoreColor(u.score), opacity: 1,
-                    borderColor: '#0096b8', borderWidth: 3,
-                    shadowBlur: 8, shadowColor: 'rgba(0,150,184,0.45)' }
-                : { color: scoreColor(u.score), opacity: 0.88 },
-              emphasis: { itemStyle: { opacity: 1, shadowBlur: 10, shadowColor: 'rgba(0,0,0,.3)' } },
-              z: isFocus ? 10 : 1
-            };
-          }),
-          label: {
-            show: true,
-            position: 'right',
-            formatter: p => {
-              const parts = p.data.userName.split(' ');
-              return parts[0] + ' ' + (parts[1] ? parts[1][0]+'.' : '');
-            },
-            fontSize: 11, color: '#555',
-            fontFamily: 'proxima-nova, Helvetica, sans-serif'
-          }
-        }]
-      };
-      // Per-data label override for the focus user — bigger, bolder, navy
-      option.series[0].data.forEach(d => {
-        if (d.isFocus) {
-          d.label = {
-            show: true,
-            position: 'right',
-            fontSize: 12,
-            fontWeight: 700,
-            color: '#0a3861',
-            fontFamily: 'proxima-nova, Helvetica, sans-serif',
-            formatter: () => {
-              const parts = d.userName.split(' ');
-              return parts[0] + ' ' + (parts[1] ? parts[1][0]+'.' : '');
-            }
-          };
-        }
-      });
-    }
-
-    drugUsersChart.setOption(option, true);
-    drugUsersChart.off('click');
-    drugUsersChart.on('click', p => {
-      if (p.data?.userId) drillToUserFromDrugUsers(p.data.userId);
-    });
-    window.addEventListener('resize', () => drugUsersChart && drugUsersChart.resize());
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -3776,84 +3024,6 @@
   let currentUserId   = null;
   let currentUserName = null;
   let currentDrugName = null;
-  // Top-level page within Med Trends: 'by-user' | 'by-drug'
-  let currentPage = 'by-user';
-  // When set, indicates the drug context the user drilled FROM in the by-drug flow.
-  // Used to highlight the originating drug row at by-drug L3 (a user's drugs).
-  let currentDrugContext = null;
-  // When set on By Drug L2, marks the user the viewer came from via Compare —
-  // highlighted in the table + chart so the user can find them quickly.
-  let currentFocusUserId = null;
-
-  /* ══════════════════════════════════════════════
-     PAGE SWITCH — By User / By Drug
-  ══════════════════════════════════════════════ */
-  function toggleMedTrendsExpansion() {
-    const parent = document.getElementById('nav-med-trends-parent');
-    if (!parent) return;
-    const expanded = parent.classList.toggle('expanded');
-    parent.setAttribute('aria-expanded', String(expanded));
-  }
-
-  function setPage(page) {
-    if (page !== 'by-user' && page !== 'by-drug' && page !== 'legacy') return;
-    currentPage = page;
-    // Reset drilldown state when switching pages
-    currentUserId = null;
-    currentUserName = null;
-    currentDrugName = null;
-    currentDrugContext = null;
-    currentFocusUserId = null;
-    currentLevel = 0;
-
-    // Sidebar active state
-    document.getElementById('nav-med-trends-by-user')?.classList.toggle('active', page === 'by-user');
-    document.getElementById('nav-med-trends-by-drug')?.classList.toggle('active', page === 'by-drug');
-    document.getElementById('nav-med-trends-legacy')?.classList.toggle('active', page === 'legacy');
-    // Parent stays "section-active" while any child is selected
-    document.getElementById('nav-med-trends-parent')?.classList.add('parent-active');
-
-    // Page-section indicator next to title
-    const ind = document.getElementById('page-section-indicator');
-    if (ind) {
-      ind.textContent =
-        page === 'by-user' ? 'By User' :
-        page === 'by-drug' ? 'By Drug' :
-                             'Legacy Experience';
-    }
-
-    // Reset shared tab-bar to Tabular mode
-    currentMode = 'table';
-
-    // Dispose any open charts since we're swapping the page entirely
-    if (allUsersChart)   { allUsersChart.dispose();   allUsersChart = null; }
-    if (userDrugsChart)  { userDrugsChart.dispose();  userDrugsChart = null; }
-    if (allDrugsChart)   { allDrugsChart.dispose();   allDrugsChart = null; }
-    if (drugUsersChart)  { drugUsersChart.dispose();  drugUsersChart = null; }
-    if (usersChart)      { usersChart.dispose();      usersChart = null; }
-
-    // Legacy uses the existing body.legacy-mode wiring (CSS hides all main
-    // views + shared tab bar, shows the legacy-placeholder). Close any open
-    // overlays so they don't float above the placeholder.
-    const enteringLegacy = (page === 'legacy');
-    document.body.classList.toggle('legacy-mode', enteringLegacy);
-    if (enteringLegacy) {
-      if (typeof closeL3Panel === 'function' && typeof l3PanelOpen !== 'undefined' && l3PanelOpen) closeL3Panel();
-      const iris = document.getElementById('iris-panel');
-      if (iris && iris.classList.contains('open') && typeof closeIrisPanel === 'function') closeIrisPanel();
-    }
-
-    // Route to the right L1 view (skipped for legacy — placeholder shown via CSS)
-    if (page === 'by-user') {
-      setVisibleView('view-all-users');
-      renderAllUsersTable();
-    } else if (page === 'by-drug') {
-      setVisibleView('view-all-drugs');
-      renderAllDrugsTable();
-    }
-    setBreadcrumb();
-    updateFilterVisibility();
-  }
 
   function setBreadcrumb() {
     // Page title is now constant — "Med Trends" — for all levels.
@@ -3865,32 +3035,12 @@
   }
 
   function setVisibleView(viewId) {
-    ['view-all-users', 'view-user-drugs', 'view-all-drugs', 'view-drug-users'].forEach(id => {
+    ['view-all-users', 'view-user-drugs'].forEach(id => {
       document.getElementById(id).classList.toggle('visible', id === viewId);
     });
-    // L2 context block (drilldown row + Med Trends card) shows on any L2:
-    //  - by-user L2 (view-user-drugs reached from by-user L1)
-    //  - by-drug L2 (view-drug-users)
-    //  - by-drug L3 (view-user-drugs reached from by-drug L2)
+    // L2 context block (drilldown row + Med Trends card) only on Level 2
     const ctx = document.getElementById('l2-context-block');
-    const isDrilldown = (viewId === 'view-user-drugs') || (viewId === 'view-drug-users');
-    if (ctx) ctx.classList.toggle('open', isDrilldown);
-    // Med Trends summary card is user-scoped. Show on view-user-drugs (by-user L2,
-    // by-drug L3); hide on view-drug-users (by-drug L2).
-    const card = document.getElementById('med-trends-card');
-    if (card) card.style.display = (viewId === 'view-drug-users') ? 'none' : '';
-    // Back-button label varies by destination
-    const backBtn = document.getElementById('l2-back-btn');
-    if (backBtn) {
-      let label = 'Back';
-      if (viewId === 'view-user-drugs') {
-        label = currentPage === 'by-drug' ? `Back to ${currentDrugContext || 'Drug'} Users` : 'Back to All Users';
-      } else if (viewId === 'view-drug-users') {
-        label = 'Back to All Drugs';
-      }
-      backBtn.title = label;
-      backBtn.setAttribute('aria-label', label);
-    }
+    if (ctx) ctx.classList.toggle('open', viewId === 'view-user-drugs');
     // Relocate the shared filter bar to sit directly after count-search-row in the visible view.
     const filterBar = document.querySelector('.shared-filter-bar');
     const countRow  = document.querySelector(`#${viewId} .count-search-row`);
@@ -3903,8 +3053,7 @@
   /* Centralized filter show/hide + Context menu rebuild.
      Called whenever level OR mode changes. */
   function updateFilterVisibility() {
-    const page  = currentPage; // 'by-user' | 'by-drug'
-    const level = currentLevel;  // 0 (L1), 1 (L2), [by-drug only: 2 (L3)]
+    const level = currentLevel;  // 0 (all users), 1 (user drugs), 2 (drug users)
     const mode  = currentMode;   // 'table' | 'graph'
 
     const comp    = document.getElementById('comp-score-filter-wrap');
@@ -3912,19 +3061,11 @@
     const etf     = document.getElementById('event-type-filter');
     const stdDev  = document.getElementById('std-dev-filter-wrap');
 
-    // Comparison Score — visible only on by-user L1 tabular
-    // (by-drug L1 has no IRIS-score column to apply this against)
-    const showComp = (page === 'by-user' && level === 0 && mode === 'table');
-    if (comp) comp.style.display = showComp ? '' : 'none';
+    // Comparison Score — visible only on Level 1 tabular
+    if (comp) comp.style.display = (level === 0 && mode === 'table') ? '' : 'none';
 
-    // Context — shown almost everywhere; hidden when there's no column-set
-    // or dimension-selector role for it to play.
-    //   by-user L1 tabular: hidden (no Mass/Events column toggle exists at this level)
-    //   by-drug L1 visualized: hidden (replaced by X/Y axis pickers in the chart)
-    const hideContext =
-      (page === 'by-user' && level === 0 && mode === 'table') ||
-      (page === 'by-drug' && level === 0 && mode === 'graph');
-    if (ctx) ctx.style.display = hideContext ? 'none' : '';
+    // Context — show always EXCEPT on Level 1 tabular
+    if (ctx) ctx.style.display = (level === 0 && mode === 'table') ? 'none' : '';
 
     // Event Type — shared bar no longer exposes it (L3 panel has its own)
     if (etf) etf.style.display = 'none';
@@ -3932,7 +3073,7 @@
     // Std. Deviation — always visible
     if (stdDev) stdDev.style.display = '';
 
-    // Rebuild the Context menu options for this (page, level, mode) combination
+    // Rebuild the Context menu options for this (level, mode) combination
     rebuildContextMenu(level, mode);
   }
 
@@ -3942,8 +3083,8 @@
     if (!menu || !label) return;
 
     let options;
-    if (currentPage === 'by-user' && level === 0 && mode === 'graph') {
-      // by-user L1 visualized: dimension selector
+    if (level === 0 && mode === 'graph') {
+      // Level 1 visualized: dimension selector
       options = [
         { key: 'drugs',    label: 'Drugs' },
         { key: 'shifts',   label: 'Shifts' },
@@ -3954,9 +3095,7 @@
       const selected = options.find(o => o.key === allUsersVizContext);
       label.textContent = selected.label;
     } else {
-      // Everything else where Context is shown (L2/L3 both modes; by-drug L1 tabular):
-      // Mass vs Events. (by-drug L1 visualized hides the Context pill entirely
-      // and uses X/Y axis pickers instead — see initAllDrugsChart.)
+      // Level 2/3 (both modes): Mass vs Events
       options = [
         { key: 'mass',   label: 'Mass' },
         { key: 'events', label: 'Events' }
@@ -3970,75 +3109,12 @@
     const currentLabel = label.textContent.trim();
     menu.innerHTML = options.map(o => {
       const selected = o.label === currentLabel;
-      const onClick = (currentPage === 'by-user' && level === 0 && mode === 'graph')
+      // The click handler is scope-dependent
+      const onClick = (level === 0 && mode === 'graph')
         ? `setAllUsersVizContext('${o.key}','${o.label}')`
         : `setPillFilter(null,'context-label','context-menu',this);updateContext()`;
       return `<div class="cs-option${selected ? ' selected' : ''}" onclick="${onClick}">${o.label}</div>`;
     }).join('');
-  }
-
-  function setAllDrugsVizContext(key, label) {
-    allDrugsVizContext = key;
-    document.getElementById('context-label').textContent = label;
-    document.querySelectorAll('#context-menu .cs-option').forEach(el => {
-      el.classList.toggle('selected', el.textContent.trim() === label);
-    });
-    document.getElementById('context-menu').style.display = 'none';
-    if (allDrugsChart) { allDrugsChart.dispose(); allDrugsChart = null; }
-    initAllDrugsChart();
-  }
-
-  /* ══════════════════════════════════════════════
-     X/Y AXIS PICKERS (by-drug L1 visualized)
-  ══════════════════════════════════════════════ */
-  function populateAxisMenu(menuId, currentKey, callbackName) {
-    const menu = document.getElementById(menuId);
-    if (!menu) return;
-    let lastGroup = null;
-    menu.innerHTML = AXIS_OPTIONS.map(o => {
-      const divider = (lastGroup !== null && o.group !== lastGroup)
-        ? '<div class="cs-divider"></div>' : '';
-      lastGroup = o.group;
-      const selected = o.key === currentKey ? ' selected' : '';
-      return `${divider}<div class="cs-option${selected}" onclick="${callbackName}('${o.key}','${o.label}')">${o.label}</div>`;
-    }).join('');
-  }
-
-  function setXAxis(key, label) {
-    xAxisField = key;
-    const lbl = document.getElementById('x-axis-label');
-    if (lbl) lbl.textContent = label;
-    const menu = document.getElementById('x-axis-menu');
-    if (menu) {
-      menu.style.display = 'none';
-      menu.querySelectorAll('.cs-option').forEach(o =>
-        o.classList.toggle('selected', o.textContent.trim() === label)
-      );
-    }
-    if (allDrugsChart) { allDrugsChart.dispose(); allDrugsChart = null; }
-    initAllDrugsChart();
-  }
-  function setYAxis(key, label) {
-    yAxisField = key;
-    const lbl = document.getElementById('y-axis-label');
-    if (lbl) lbl.textContent = label;
-    const menu = document.getElementById('y-axis-menu');
-    if (menu) {
-      menu.style.display = 'none';
-      menu.querySelectorAll('.cs-option').forEach(o =>
-        o.classList.toggle('selected', o.textContent.trim() === label)
-      );
-    }
-    if (allDrugsChart) { allDrugsChart.dispose(); allDrugsChart = null; }
-    initAllDrugsChart();
-  }
-  function toggleXAxisMenu() {
-    populateAxisMenu('x-axis-menu', xAxisField, 'setXAxis');
-    togglePillMenu('x-axis-menu');
-  }
-  function toggleYAxisMenu() {
-    populateAxisMenu('y-axis-menu', yAxisField, 'setYAxis');
-    togglePillMenu('y-axis-menu');
   }
 
   function setAllUsersVizContext(key, label) {
@@ -4102,7 +3178,6 @@
     currentLevel = 1;
     currentUserId = userId;
     currentUserName = user.name;
-    currentFocusUserId = null;
     setVisibleView('view-user-drugs');
     setDrilldownHeader('user-drugs', user.name,
       `${user.role} · ${user.dept} · ${user.shifts} shifts · ${user.patients || 0} patients`);
@@ -4115,14 +3190,8 @@
   }
 
   function drillToDrug(drugName) {
-    // Compare from By User L2 → switch to By Drug L2 for this drug, with the
-    // originating user highlighted as the "focus user" on the L2 table + chart.
-    // (Previously opened the L3 overlay panel; openL3Panel() is left in place
-    // as dead code in case the panel pattern is needed from another entry point.)
-    const focusUserId = currentUserId;
-    setPage('by-drug');
-    currentFocusUserId = focusUserId;
-    drillToDrugFromAllDrugs(drugName, { preserveFocus: true });
+    // Level 3 is now an overlay panel. Underlying view stays at L2.
+    openL3Panel(drugName);
   }
 
   function goToAllUsers() {
@@ -4130,7 +3199,6 @@
     currentUserId = null;
     currentUserName = null;
     currentDrugName = null;
-    currentFocusUserId = null;
     setVisibleView('view-all-users');
     setBreadcrumb();
     if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
@@ -4138,91 +3206,10 @@
     switchAllUsersView('table');
   }
 
-  /* ══════════════════════════════════════════════
-     BY DRUG — Navigation
-  ══════════════════════════════════════════════ */
-  function goToAllDrugs() {
-    currentLevel = 0;
-    currentUserId = null;
-    currentUserName = null;
-    currentDrugName = null;
-    currentDrugContext = null;
-    currentFocusUserId = null;
-    setVisibleView('view-all-drugs');
-    setBreadcrumb();
-    if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
-    if (allDrugsChart)  { allDrugsChart.dispose();  allDrugsChart = null; }
-    renderAllDrugsTable();
-    switchAllDrugsView('table');
-  }
-
-  function drillToDrugFromAllDrugs(drugName, opts) {
-    opts = opts || {};
-    currentLevel = 1;
-    currentDrugName = drugName;
-    currentDrugContext = drugName; // remember the drug for L3 highlighting/back
-    // Reset focus user unless this drill is preserving it (Compare cross-page jump).
-    if (!opts.preserveFocus) currentFocusUserId = null;
-    setVisibleView('view-drug-users');
-    setDrilldownHeader('user-drugs', drugName); // reuse the same element
-    // (Med Trends summary card is user-scoped and intentionally hidden on view-drug-users)
-    renderDrugUsersTable(drugName);
-    duRebuildUserFilter(drugName);
-    setBreadcrumb();
-    if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-    switchDrugUsersView('table');
-  }
-
-  function goToDrugUsers(drugName) {
-    // Same as drillToDrugFromAllDrugs but doesn't reset filter selection
-    currentLevel = 1;
-    currentUserId = null;
-    currentUserName = null;
-    currentDrugName = drugName;
-    setVisibleView('view-drug-users');
-    setDrilldownHeader('user-drugs', drugName);
-    // (Med Trends summary card is user-scoped and intentionally hidden on view-drug-users)
-    renderDrugUsersTable(drugName);
-    duRebuildUserFilter(drugName);
-    setBreadcrumb();
-    if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
-    switchDrugUsersView('table');
-  }
-
-  function drillToUserFromDrugUsers(userId) {
-    const user = getUserById(userId);
-    if (!user) return;
-    currentLevel = 2; // by-drug L3
-    currentUserId = userId;
-    currentUserName = user.name;
-    setVisibleView('view-user-drugs');
-    setDrilldownHeader('user-drugs', user.name);
-    renderMedTrendsCard(userId);
-    renderUserDrugsTable(userId);
-    udRebuildDrugFilter(userId);
-    setBreadcrumb();
-    if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
-    switchUserDrugsView('table');
-  }
-
   /* Back button handlers (one level up) */
-  function goBackFromUserDrugs() {
-    if (currentPage === 'by-drug') {
-      // by-drug L3 (user-drugs) → back to L2 (drug-users), preserving drug context
-      goToDrugUsers(currentDrugContext || currentDrugName);
-    } else {
-      goToAllUsers();
-    }
-  }
-  function goBackFromDrugUsers() {
-    goToAllDrugs();
-  }
+  function goBackFromUserDrugs() { goToAllUsers(); }
   function goBack() {
-    if (currentPage === 'by-user' && currentLevel === 1) goBackFromUserDrugs();
-    else if (currentPage === 'by-drug' && currentLevel === 1) goBackFromDrugUsers();
-    else if (currentPage === 'by-drug' && currentLevel === 2) goBackFromUserDrugs();
+    if (currentLevel === 1) goBackFromUserDrugs();
   }
 
   /* Per-view drilldown title helper (lives inside count-search-row) */
@@ -4242,15 +3229,13 @@
   ══════════════════════════════════════════════ */
   function updateChartLegend(level, type) {
     const selector = {
-      allUsers:   '#all-users-graph-view .chart-legend',
-      userDrugs:  '#user-drugs-graph-view .chart-legend',
-      users:      '#users-graph-view .chart-legend',
-      allDrugs:   '#all-drugs-graph-view .chart-legend',
-      drugUsers:  '#drug-users-graph-view .chart-legend'
+      allUsers:  '#all-users-graph-view .chart-legend',
+      userDrugs: '#user-drugs-graph-view .chart-legend',
+      users:     '#users-graph-view .chart-legend'
     }[level];
     const el = document.querySelector(selector);
     if (!el) return;
-    if (level === 'allUsers' || level === 'allDrugs') {
+    if (level === 'allUsers') {
       el.style.display = '';
       const hint = el.querySelector('.dot-size-hint');
       if (hint) hint.style.display = type === 'scatter' ? '' : 'none';
@@ -4264,19 +3249,15 @@
   ══════════════════════════════════════════════ */
   function setChartType(level, type) {
     // Update state
-    if      (level === 'allUsers')   allUsersChartType   = type;
-    else if (level === 'userDrugs')  userDrugsChartType  = type;
-    else if (level === 'users')      usersChartType      = type;
-    else if (level === 'allDrugs')   allDrugsChartType   = type;
-    else if (level === 'drugUsers')  drugUsersChartType  = type;
+    if      (level === 'allUsers')  allUsersChartType  = type;
+    else if (level === 'userDrugs') userDrugsChartType = type;
+    else if (level === 'users')     usersChartType     = type;
 
     // Update button active state within this level's selector
     const containerId = {
-      allUsers:   'all-users-graph-view',
-      userDrugs:  'user-drugs-graph-view',
-      users:      'users-graph-view',
-      allDrugs:   'all-drugs-graph-view',
-      drugUsers:  'drug-users-graph-view'
+      allUsers:  'all-users-graph-view',
+      userDrugs: 'user-drugs-graph-view',
+      users:     'users-graph-view'
     }[level];
     const container = document.getElementById(containerId);
     if (container) {
@@ -4292,18 +3273,9 @@
     } else if (level === 'userDrugs') {
       if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
       initUserDrugsChart(currentUserId);
-    } else if (level === 'users') {
+    } else {
       if (usersChart) { usersChart.dispose(); usersChart = null; }
       initUsersChart(currentDrugName);
-    } else if (level === 'allDrugs') {
-      if (allDrugsChart) { allDrugsChart.dispose(); allDrugsChart = null; }
-      // Y Axis picker meaningful only in scatter mode
-      const yWrap = document.getElementById('y-axis-filter-wrap');
-      if (yWrap) yWrap.style.display = (type === 'scatter') ? '' : 'none';
-      initAllDrugsChart();
-    } else if (level === 'drugUsers') {
-      if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-      initDrugUsersChart(currentDrugName);
     }
   }
 
@@ -4325,15 +3297,8 @@
   }
 
   function switchCurrentView(mode) {
-    if (currentPage === 'by-user') {
-      if (currentLevel === 0) switchAllUsersView(mode);
-      else if (currentLevel === 1) switchUserDrugsView(mode);
-    } else {
-      // by-drug
-      if (currentLevel === 0) switchAllDrugsView(mode);
-      else if (currentLevel === 1) switchDrugUsersView(mode);
-      else if (currentLevel === 2) switchUserDrugsView(mode); // L3 reuses user-drugs view
-    }
+    if (currentLevel === 0) switchAllUsersView(mode);
+    else if (currentLevel === 1) switchUserDrugsView(mode);
   }
 
   function switchAllUsersView(mode) {
@@ -4359,48 +3324,13 @@
     if (mode === 'graph') setTimeout(() => initUserDrugsChart(currentUserId), 0);
   }
 
-  function switchAllDrugsView(mode) {
-    currentMode = mode;
-    _toggleTab('all-drugs-table-view','all-drugs-graph-view', mode);
-    updateFilterVisibility();
-    updateChartLegend('allDrugs', allDrugsChartType);
-    // Y Axis picker is meaningful only in scatter mode (bar uses drug as Y category)
-    const yWrap = document.getElementById('y-axis-filter-wrap');
-    if (yWrap) yWrap.style.display =
-      (mode === 'graph' && allDrugsChartType === 'scatter') ? '' : 'none';
-    const csr = document.querySelector('#view-all-drugs .count-search-row');
-    if (csr) csr.style.display = mode === 'graph' ? 'none' : '';
-    if (allDrugsChart) { allDrugsChart.dispose(); allDrugsChart = null; }
-    if (mode === 'graph') setTimeout(() => initAllDrugsChart(), 0);
-  }
-
-  function switchDrugUsersView(mode) {
-    currentMode = mode;
-    _toggleTab('drug-users-table-view','drug-users-graph-view', mode);
-    updateFilterVisibility();
-    updateChartLegend('drugUsers', drugUsersChartType);
-    const csr = document.querySelector('#view-drug-users .count-search-row');
-    if (csr) csr.style.display = mode === 'graph' ? 'none' : '';
-    if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-    if (mode === 'graph') setTimeout(() => initDrugUsersChart(currentDrugName), 0);
-  }
-
   function updateContext() {
     // Re-render whichever view is currently active (panel uses updatePanelContext instead)
-    if (currentPage === 'by-user') {
-      if (currentLevel === 0) renderAllUsersTable();
-      else if (currentLevel === 1) renderUserDrugsTable(currentUserId);
-    } else {
-      // by-drug
-      if (currentLevel === 0) renderAllDrugsTable();
-      else if (currentLevel === 1) renderDrugUsersTable(currentDrugName);
-      else if (currentLevel === 2) renderUserDrugsTable(currentUserId);
-    }
+    if (currentLevel === 0) renderAllUsersTable();
+    else if (currentLevel === 1) renderUserDrugsTable(currentUserId);
     // Dispose any open chart so it re-renders with new context dims
     if (allUsersChart)  { allUsersChart.dispose();  allUsersChart = null; }
     if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
-    if (allDrugsChart)  { allDrugsChart.dispose();  allDrugsChart = null; }
-    if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
   }
 
   /* ══════════════════════════════════════════════
@@ -4476,34 +3406,14 @@
   }
 
   function applyChipFilters() {
-    // Re-render whichever view is currently visible and respects these filters.
-    if (currentPage === 'by-user' && currentLevel === 0) {
+    // Re-render whatever's currently visible at L1
+    if (currentLevel === 0) {
       renderAllUsersTable();
       if (currentMode === 'graph') {
         if (allUsersChart) { allUsersChart.dispose(); allUsersChart = null; }
         initAllUsersChart();
       }
-    } else if (currentPage === 'by-drug' && currentLevel === 0) {
-      // by-drug L1 — drug aggregates (Users / Total Events / Mass cols) re-roll
-      // from only filter-matching users. Drugs handled by zero matching users drop.
-      renderAllDrugsTable();
-      if (currentMode === 'graph') {
-        if (allDrugsChart) { allDrugsChart.dispose(); allDrugsChart = null; }
-        initAllDrugsChart();
-      }
-    } else if (currentPage === 'by-drug' && currentLevel === 1) {
-      // by-drug L2 — chip filters narrow the user set for this drug.
-      renderDrugUsersTable(currentDrugName);
-      // Rebuild the chart's user-filter so its selection state matches the
-      // newly-filtered universe (avoids stale checkmarks for users that no
-      // longer pass the chip filter).
-      duRebuildUserFilter(currentDrugName);
-      if (currentMode === 'graph') {
-        if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
-        initDrugUsersChart(currentDrugName);
-      }
     }
-    // by-user L2 and by-drug L3 (single-user drug breakdowns) don't react.
   }
 
   function toggleChipFilter(kind, ev) {
@@ -4567,6 +3477,49 @@
   });
 
   /* ══════════════════════════════════════════════
+     VERSION SELECTOR (Latest / Legacy)
+  ══════════════════════════════════════════════ */
+  function toggleVersionMenu(ev) {
+    if (ev) ev.stopPropagation();
+    const menu = document.getElementById('version-menu');
+    const btn  = document.querySelector('.version-btn');
+    if (!menu) return;
+    const show = menu.style.display === 'none';
+    menu.style.display = show ? '' : 'none';
+    if (btn) btn.setAttribute('aria-expanded', String(show));
+  }
+  function selectVersion(label, el) {
+    document.getElementById('version-label').textContent = label;
+    document.querySelectorAll('#version-menu .version-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('version-menu').style.display = 'none';
+    document.querySelector('.version-btn')?.setAttribute('aria-expanded', 'false');
+
+    // Toggle legacy mode — hides all main content, shows placeholder
+    const isLegacy = label === 'Legacy Experience';
+    document.body.classList.toggle('legacy-mode', isLegacy);
+    // Close any open panels when entering Legacy so they don't float above placeholder
+    if (isLegacy) {
+      if (typeof closeL3Panel === 'function' && l3PanelOpen) closeL3Panel();
+      if (typeof closeIrisPanel === 'function') {
+        const iris = document.getElementById('iris-panel');
+        if (iris && iris.classList.contains('open')) closeIrisPanel();
+      }
+    }
+  }
+  // Close version menu on outside click
+  document.addEventListener('click', (e) => {
+    const sel = document.getElementById('version-selector');
+    const menu = document.getElementById('version-menu');
+    if (!sel || !menu) return;
+    if (menu.style.display === 'none') return;
+    if (!sel.contains(e.target)) {
+      menu.style.display = 'none';
+      document.querySelector('.version-btn')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  /* ══════════════════════════════════════════════
      FILTER CHIP TOGGLE (demo only)
   ══════════════════════════════════════════════ */
   function togglePillMenu(menuId) {
@@ -4615,15 +3568,9 @@
       wrap.classList.toggle('selected', idx > 0);
     }
     // Re-render the active view so header labels + sort states refresh
-    if (currentPage === 'by-user') {
-      if (currentLevel === 0) renderAllUsersTable();
-      else if (currentLevel === 1) renderUserDrugsTable(currentUserId);
-      else renderUsersTable(currentDrugName);
-    } else {
-      if (currentLevel === 0) renderAllDrugsTable();
-      else if (currentLevel === 1) renderDrugUsersTable(currentDrugName);
-      else if (currentLevel === 2) renderUserDrugsTable(currentUserId);
-    }
+    if (currentLevel === 0) renderAllUsersTable();
+    else if (currentLevel === 1) renderUserDrugsTable(currentUserId);
+    else renderUsersTable(currentDrugName);
   }
   document.addEventListener('click', e => {
     if (!e.target.closest('.comp-score-filter') && !e.target.closest('.cs-menu')) {
@@ -4671,26 +3618,6 @@
     renderUserDrugsTable(currentUserId);
   }
 
-  function sortAllDrugsTable(col) {
-    if (allDrugsSortState.col === col) {
-      allDrugsSortState.asc = !allDrugsSortState.asc;
-    } else {
-      allDrugsSortState.col = col;
-      allDrugsSortState.asc = col === 'drug';
-    }
-    renderAllDrugsTable();
-  }
-
-  function sortDrugUsersTable(col) {
-    if (drugUsersSortState.col === col) {
-      drugUsersSortState.asc = !drugUsersSortState.asc;
-    } else {
-      drugUsersSortState.col = col;
-      drugUsersSortState.asc = col === 'name';
-    }
-    renderDrugUsersTable(currentDrugName);
-  }
-
   /* ══════════════════════════════════════════════
      SEARCH helpers
   ══════════════════════════════════════════════ */
@@ -4715,28 +3642,6 @@
       if (hit) visible++;
     });
     document.getElementById('userDrugsCount').textContent = visible;
-  }
-  function filterAllDrugsTable(q) {
-    q = (q || '').toLowerCase().trim();
-    const rows = document.querySelectorAll('#allDrugsTableBody tr');
-    let visible = 0;
-    rows.forEach(r => {
-      const hit = !q || r.textContent.toLowerCase().includes(q);
-      r.style.display = hit ? '' : 'none';
-      if (hit) visible++;
-    });
-    document.getElementById('allDrugsCount').textContent = visible;
-  }
-  function filterDrugUsersTable(q) {
-    q = (q || '').toLowerCase().trim();
-    const rows = document.querySelectorAll('#drugUsersTableBody tr');
-    let visible = 0;
-    rows.forEach(r => {
-      const hit = !q || r.textContent.toLowerCase().includes(q);
-      r.style.display = hit ? '' : 'none';
-      if (hit) visible++;
-    });
-    document.getElementById('drugUsersCount').textContent = visible;
   }
   function filterUsersTable(q) {
     q = (q || '').toLowerCase().trim();
@@ -4785,7 +3690,7 @@
 </head>
 
 <body>
-<div id="tt" style="opacity: 0; left: 250.203px; top: 388px;">Highest Med Trends score across all drugs</div>
+<div id="tt"></div>
 <app-component class="flex-col-100">
 
   <!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
@@ -4795,26 +3700,26 @@
       <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
 
         <!-- Logo -->
-        <a class="nav-link" href="file:///dashboard">
+        <a class="nav-link" href="/dashboard">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
             <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
             <g><g><g id="ControlCheck_Logo_Color">
-              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"></path>
-              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"></path>
-              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"></path>
-              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"></path>
-              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"></path>
-              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"></path>
-              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"></path>
-              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"></path>
-              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"></path>
-              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"></path>
-              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"></path>
-              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"></path>
-              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"></path>
-              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"></path>
-              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"></path>
-              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"></path>
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
             </g></g></g>
           </svg>
         </a>
@@ -4831,7 +3736,7 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">Cases<span class="material-icons nav-chevron">arrow_drop_down</span></span>
             </button>
-            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="file:///report">
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
               <span class="mdc-button__label">
                 <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
                   Report
@@ -4841,14 +3746,14 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">Upload<span class="material-icons nav-chevron">arrow_drop_down</span></span>
             </button>
-            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="file:///manage">
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
               <span class="mdc-button__label">
                 <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
                   Manage&nbsp;<span id="mat-badge-content-0" aria-hidden="true" class="mat-badge-content mat-badge-active">!</span>
                 </span>
               </span>
             </a>
-            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="file:///labs">
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/labs">
               <span class="mdc-button__label">
                 <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
                   Labs
@@ -4868,11 +3773,11 @@
                   <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
                 </div>
 
-                </span></button><button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
                   <div class="user-circle mat-primary">AM</div>
                 </button>
-              
-            
+              </span>
+            </button>
             <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
               <span class="material-icons text-primary">help</span>
             </button>
@@ -4899,13 +3804,13 @@
             <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
               <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
                 <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
-                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path></svg></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
               </mat-expansion-panel-header>
               <div class="mat-expansion-panel-content-wrapper" inert="">
                 <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
                   <nav class="mat-mdc-nav-list">
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span>Active IRIS Reviews</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span>Multi-Hospital Users</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span>Active IRIS Reviews</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span>Multi-Hospital Users</span></span></a>
                   </nav>
                 </div></div>
               </div>
@@ -4915,24 +3820,21 @@
             <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
               <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
                 <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
-                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path></svg></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
               </mat-expansion-panel-header>
               <div class="mat-expansion-panel-content-wrapper">
                 <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
                   <nav class="mat-mdc-nav-list">
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
-                    <a class="mat-mdc-list-item parent-active expanded" id="nav-med-trends-parent" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" aria-expanded="true" onclick="toggleMedTrendsExpansion();return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends<span class="material-icons mat-icon expand-chevron">expand_more</span></span></span></a>
-                    <a class="mat-mdc-list-item sub-item active" id="nav-med-trends-by-user" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="setPage(&#39;by-user&#39;);return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By User</span></span></a>
-                    <a class="mat-mdc-list-item sub-item" id="nav-med-trends-by-drug" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="setPage(&#39;by-drug&#39;);return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By Drug</span></span></a>
-                    <a class="mat-mdc-list-item sub-item" id="nav-med-trends-legacy" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="setPage(&#39;legacy&#39;);return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">Legacy Experience</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span>User Mobility</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span>Waste Networks</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span>Full Package Waste</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span>Shift Analysis</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
+                    <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span>User Mobility</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span>Waste Networks</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span>Full Package Waste</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span>Shift Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
                   </nav>
                 </div></div>
               </div>
@@ -4942,15 +3844,15 @@
             <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
               <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
                 <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">OR</mat-panel-title></span>
-                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path></svg></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
               </mat-expansion-panel-header>
               <div class="mat-expansion-panel-content-wrapper" inert="">
                 <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
                   <nav class="mat-mdc-nav-list">
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
                   </nav>
                 </div></div>
               </div>
@@ -4969,7 +3871,21 @@
         <div class="page-header">
           <div class="page-title-group">
             <span class="page-title">Med Trends</span>
-            <span class="page-section-indicator" id="page-section-indicator">By User</span>
+            <div class="version-selector" id="version-selector">
+              <button class="version-btn" onclick="toggleVersionMenu(event)" aria-haspopup="listbox" aria-expanded="false">
+                <span id="version-label">New Experience</span>
+                <span class="material-icons mat-icon">expand_more</span>
+              </button>
+              <div class="version-menu" id="version-menu" role="listbox" style="display:none;">
+                <div class="version-option selected" role="option" onclick="selectVersion('New Experience', this)">
+                  <div class="version-option-main">New Experience</div>
+                </div>
+                <div class="version-option" role="option" onclick="selectVersion('Legacy Experience', this)">
+                  <div class="version-option-main">Legacy Experience</div>
+                  <div class="version-option-sub">Available until end of 2026</div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="filter-chip-group">
             <button class="filter-chip active" onclick="toggleFilter(this)">
@@ -4977,7 +3893,7 @@
               <span class="material-icons mat-icon">arrow_drop_down</span>
             </button>
             <div class="chip-filter-wrap" id="dept-chip-wrap">
-              <button class="filter-chip" id="dept-chip-btn" onclick="toggleChipFilter(&#39;dept&#39;, event)">
+              <button class="filter-chip" id="dept-chip-btn" onclick="toggleChipFilter('dept', event)">
                 <span id="dept-chip-label">Department</span>
                 <span class="material-icons mat-icon">arrow_drop_down</span>
               </button>
@@ -4990,7 +3906,7 @@
               <span class="material-icons mat-icon">arrow_drop_down</span>
             </button>
             <div class="chip-filter-wrap" id="role-chip-wrap">
-              <button class="filter-chip" id="role-chip-btn" onclick="toggleChipFilter(&#39;role&#39;, event)">
+              <button class="filter-chip" id="role-chip-btn" onclick="toggleChipFilter('role', event)">
                 <span id="role-chip-label">Role</span>
                 <span class="material-icons mat-icon">arrow_drop_down</span>
               </button>
@@ -5013,7 +3929,7 @@
           <div class="l2-context-block-inner">
             <!-- Drilldown header: back button + user title -->
             <div class="drilldown-row">
-              <button class="back-btn" id="l2-back-btn" onclick="goBack()" title="Back" aria-label="Back">
+              <button class="back-btn" onclick="goBackFromUserDrugs()" title="Back to All Users" aria-label="Back to All Users">
                 <span class="material-icons mat-icon">arrow_back</span>
               </button>
               <div class="drilldown-title" id="user-drugs-drilldown-title"></div>
@@ -5036,7 +3952,7 @@
         <div class="shared-tab-bar-wrap">
           <div class="view-tab-bar">
             <div class="tab-bar-tabs">
-              <button class="mdc-tab mdc-tab--active" id="shared-tabular-tab" onclick="switchCurrentView(&#39;table&#39;)">
+              <button class="mdc-tab mdc-tab--active" id="shared-tabular-tab" onclick="switchCurrentView('table')">
                 <span class="mdc-tab__content">
                   <span class="material-icons mat-icon">table_chart</span>
                   <span class="mdc-tab__text-label">Tabular Data</span>
@@ -5045,7 +3961,7 @@
                   <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
                 </span>
               </button>
-              <button class="mdc-tab" id="shared-visual-tab" onclick="switchCurrentView(&#39;graph&#39;)">
+              <button class="mdc-tab" id="shared-visual-tab" onclick="switchCurrentView('graph')">
                 <span class="mdc-tab__content">
                   <span class="material-icons mat-icon">scatter_plot</span>
                   <span class="mdc-tab__text-label">Visualized Data</span>
@@ -5079,22 +3995,7 @@
         <!-- ═══════════════════════════════════════
              SHARED PILL FILTERS (live above all three views)
         ═══════════════════════════════════════ -->
-        
-
-        <!-- ═══════════════════════════════════════
-             VIEW 1 — ALL USERS (Level 0, default)
-        ═══════════════════════════════════════ -->
-        <div id="view-all-users" class="view visible">
-          <div class="content-area">
-
-            <!-- Count + search row -->
-            <div class="count-search-row">
-              <div class="row-count"><span id="allUsersCount">20</span> users</div>
-              <div class="search-wrap">
-                <span class="material-icons search-icon">search</span>
-                <input type="text" class="search-input" placeholder="Search users…" oninput="filterAllUsersTable(this.value)">
-              </div>
-            </div><div class="shared-filter-bar">
+        <div class="shared-filter-bar">
           <div class="pill-filters-row">
             <div class="pill-filter-wrap" id="comp-score-filter-wrap">
               <button class="comp-score-filter" onclick="toggleCompScoreMenu()">
@@ -5112,508 +4013,68 @@
                 <div class="cs-option" onclick="setCompScore(this)">Shift Analysis</div>
               </div>
             </div>
-            <div class="pill-filter-wrap" id="context-filter-wrap" style="display: none;">
-              <button class="comp-score-filter" onclick="togglePillMenu(&#39;context-menu&#39;)">
+            <div class="pill-filter-wrap" id="context-filter-wrap">
+              <button class="comp-score-filter" onclick="togglePillMenu('context-menu')">
                 <span class="cs-label">Context:</span>
                 <span id="context-label">Mass</span>
                 <span class="material-icons mat-icon">expand_more</span>
               </button>
-              <div class="cs-menu" id="context-menu" style="display:none;"><div class="cs-option selected" onclick="setPillFilter(null,&#39;context-label&#39;,&#39;context-menu&#39;,this);updateContext()">Mass</div><div class="cs-option" onclick="setPillFilter(null,&#39;context-label&#39;,&#39;context-menu&#39;,this);updateContext()">Events</div></div>
+              <div class="cs-menu" id="context-menu" style="display:none;">
+                <div class="cs-option selected" onclick="setPillFilter(null,'context-label','context-menu',this);updateContext()">Mass</div>
+                <div class="cs-option" onclick="setPillFilter(null,'context-label','context-menu',this);updateContext()">Events</div>
+              </div>
             </div>
             <div class="pill-filter-wrap" id="event-type-filter" style="display:none;">
-              <button class="comp-score-filter" onclick="togglePillMenu(&#39;event-type-menu&#39;)">
+              <button class="comp-score-filter" onclick="togglePillMenu('event-type-menu')">
                 <span class="cs-label">Event Type:</span>
                 <span id="event-type-label">Dispense</span>
                 <span class="material-icons mat-icon">expand_more</span>
               </button>
               <div class="cs-menu" id="event-type-menu" style="display:none;">
-                <div class="cs-option selected" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">All Event Types</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Dispense</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Admin</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Waste</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Return</div>
+                <div class="cs-option selected" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">All Event Types</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Dispense</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Admin</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Waste</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Return</div>
               </div>
             </div>
             <div class="pill-filter-wrap" id="std-dev-filter-wrap">
-              <button class="comp-score-filter" onclick="togglePillMenu(&#39;std-dev-menu&#39;)">
+              <button class="comp-score-filter" onclick="togglePillMenu('std-dev-menu')">
                 <span class="cs-label">Std. Deviation:</span>
                 <span id="std-dev-label">None</span>
                 <span class="material-icons mat-icon">expand_more</span>
               </button>
               <div class="cs-menu" id="std-dev-menu" style="display:none;">
-                <div class="cs-option selected" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">None</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">+1σ</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">+2σ</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">+3σ</div>
+                <div class="cs-option selected" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">None</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+1σ</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+2σ</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+3σ</div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- ═══════════════════════════════════════
+             VIEW 1 — ALL USERS (Level 0, default)
+        ═══════════════════════════════════════ -->
+        <div id="view-all-users" class="view visible">
+          <div class="content-area">
+
+            <!-- Count + search row -->
+            <div class="count-search-row">
+              <div class="row-count"><span id="allUsersCount">0</span> users</div>
+              <div class="search-wrap">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" class="search-input" placeholder="Search users…" oninput="filterAllUsersTable(this.value)">
+              </div>
+            </div>
+
             <!-- Table -->
             <div id="all-users-table-view">
               <div class="data-table-wrap users-table-wrap">
                 <table class="data-table" id="allUsersTable">
-                  <thead id="allUsersTableHead"><tr>
-      <th class="sortable center" style="width:90px;" data-tooltip="Highest Med Trends score across all drugs" onclick="sortAllUsersTable(&#39;score&#39;)"><span class="th-inner">Metric Score <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;color:var(--blue-dark);opacity:1">arrow_downward</span></span></th>
-      <th class="sortable right" style="width:95px;" id="th-all-comp-score" onclick="sortAllUsersTable(&#39;compScore&#39;)">
-        <span class="th-inner">Overall IRIS <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span>
-      </th>
-      <th class="sortable" style="min-width:220px;" onclick="sortAllUsersTable(&#39;name&#39;)">
-        <span class="th-inner">User <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span>
-      </th>
-      <th class="sortable right" style="width:70px;" onclick="sortAllUsersTable(&#39;drugCount&#39;)"><span class="th-inner">Drugs <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:70px;" onclick="sortAllUsersTable(&#39;shifts&#39;)"><span class="th-inner">Shifts <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;patients&#39;)"><span class="th-inner">Patients <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:100px;" onclick="sortAllUsersTable(&#39;events&#39;)"><span class="th-inner">Total Events <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:85px;" onclick="sortAllUsersTable(&#39;dispense&#39;)"><span class="th-inner">Dispense <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;admin&#39;)"><span class="th-inner">Admin <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;waste&#39;)"><span class="th-inner">Waste <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;ret&#39;)"><span class="th-inner">Return <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;cancel&#39;)"><span class="th-inner">Cancels <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th style="width:130px;"></th>
-    </tr></thead>
-                  <tbody id="allUsersTableBody"><tr onclick="drillToUser(&#39;u1&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">9.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">8.2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u1&#39;);return false;" data-tooltip="IRIS Details">Francis Overby</a></div>
-          <div class="user-role-dept">RN • Med North</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">42</td>
-        <td class="num">210</td>
-        <td class="num">64</td>
-        <td class="num">42</td>
-        <td class="num">12</td>
-        <td class="num">8</td>
-        <td class="num">2</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u1&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u2&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">8.7</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">7.9</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u2&#39;);return false;" data-tooltip="IRIS Details">Evan Westcott</a></div>
-          <div class="user-role-dept">Travel Nurse • Med North</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">36</td>
-        <td class="num">178</td>
-        <td class="num">47</td>
-        <td class="num">31</td>
-        <td class="num">9</td>
-        <td class="num">5</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u2&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u3&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">8.2</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">7.4</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u3&#39;);return false;" data-tooltip="IRIS Details">Destiny Bloss</a></div>
-          <div class="user-role-dept">Pharmacist • Pharmacy</div>
-        </td>
-        <td class="num">5</td>
-        <td class="num">48</td>
-        <td class="num">—</td>
-        <td class="num">77</td>
-        <td class="num">63</td>
-        <td class="num">5</td>
-        <td class="num">3</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u3&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u4&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">7.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">7.1</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u4&#39;);return false;" data-tooltip="IRIS Details">Kristel Dorsey</a></div>
-          <div class="user-role-dept">CRNA • ICU</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">32</td>
-        <td class="num">128</td>
-        <td class="num">44</td>
-        <td class="num">28</td>
-        <td class="num">9</td>
-        <td class="num">6</td>
-        <td class="num">1</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u4&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u5&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">4.3</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.9</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u5&#39;);return false;" data-tooltip="IRIS Details">Claire Fraser</a></div>
-          <div class="user-role-dept">RN • Med North</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">38</td>
-        <td class="num">190</td>
-        <td class="num">56</td>
-        <td class="num">39</td>
-        <td class="num">10</td>
-        <td class="num">5</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u5&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u6&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">4.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u6&#39;);return false;" data-tooltip="IRIS Details">Shila Layne</a></div>
-          <div class="user-role-dept">Float Nurse • Med North</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">28</td>
-        <td class="num">140</td>
-        <td class="num">39</td>
-        <td class="num">27</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td class="num">2</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u6&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u11&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">4</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u11&#39;);return false;" data-tooltip="IRIS Details">Samantha Taggart</a></div>
-          <div class="user-role-dept">Pharmacy Technician • Pharmacy</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">44</td>
-        <td class="num">—</td>
-        <td class="num">55</td>
-        <td class="num">49</td>
-        <td class="num">2</td>
-        <td class="num">0</td>
-        <td class="num">4</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u11&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u7&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.7</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u7&#39;);return false;" data-tooltip="IRIS Details">Bulah Vahle</a></div>
-          <div class="user-role-dept">RN • Oncology</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">26</td>
-        <td class="num">130</td>
-        <td class="num">36</td>
-        <td class="num">24</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td class="num">2</td>
-        <td class="num">2</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u7&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u13&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.8</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.6</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u13&#39;);return false;" data-tooltip="IRIS Details">Margaret Houlihan</a></div>
-          <div class="user-role-dept">RN • Med South</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">30</td>
-        <td class="num">150</td>
-        <td class="num">38</td>
-        <td class="num">31</td>
-        <td class="num">3</td>
-        <td class="num">1</td>
-        <td class="num">3</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u13&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u8&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.7</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.6</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u8&#39;);return false;" data-tooltip="IRIS Details">Violeta Colmenero</a></div>
-          <div class="user-role-dept">Nursing Student • ICU</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">22</td>
-        <td class="num">44</td>
-        <td class="num">23</td>
-        <td class="num">15</td>
-        <td class="num">3</td>
-        <td class="num">3</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u8&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u9&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.5</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.3</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u9&#39;);return false;" data-tooltip="IRIS Details">Magda Bonelli</a></div>
-          <div class="user-role-dept">RN • Med South</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">27</td>
-        <td class="num">135</td>
-        <td class="num">35</td>
-        <td class="num">24</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td class="num">1</td>
-        <td class="num">1</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u9&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u10&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.3</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u10&#39;);return false;" data-tooltip="IRIS Details">Norene Turcotte</a></div>
-          <div class="user-role-dept">Anesthesiologist • OR</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">24</td>
-        <td class="num">120</td>
-        <td class="num">26</td>
-        <td class="num">16</td>
-        <td class="num">4</td>
-        <td class="num">4</td>
-        <td class="num">2</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u10&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u12&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u12&#39;);return false;" data-tooltip="IRIS Details">Pamala Linke</a></div>
-          <div class="user-role-dept">Pharmacy Technician • Pharmacy</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">40</td>
-        <td class="num">—</td>
-        <td class="num">41</td>
-        <td class="num">33</td>
-        <td class="num">2</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u12&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u14&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">2.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">2.7</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u14&#39;);return false;" data-tooltip="IRIS Details">Jennifer Marlowe</a></div>
-          <div class="user-role-dept">Nursing Student • ICU</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">18</td>
-        <td class="num">36</td>
-        <td class="num">22</td>
-        <td class="num">15</td>
-        <td class="num">4</td>
-        <td class="num">3</td>
-        <td class="num">0</td>
-        <td class="num">2</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u14&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u15&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">2.4</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">2.4</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u15&#39;);return false;" data-tooltip="IRIS Details">Rhoda Klemm</a></div>
-          <div class="user-role-dept">RN • Med North</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">20</td>
-        <td class="num">100</td>
-        <td class="num">19</td>
-        <td class="num">13</td>
-        <td class="num">3</td>
-        <td class="num">2</td>
-        <td class="num">1</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u15&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u16&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">2.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u16&#39;);return false;" data-tooltip="IRIS Details">Betsy Duvall</a></div>
-          <div class="user-role-dept">CRNA • OR</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">22</td>
-        <td class="num">88</td>
-        <td class="num">23</td>
-        <td class="num">15</td>
-        <td class="num">5</td>
-        <td class="num">3</td>
-        <td class="num">0</td>
-        <td class="num">1</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u16&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u17&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">1.8</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">1.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u17&#39;);return false;" data-tooltip="IRIS Details">Ann Perkins</a></div>
-          <div class="user-role-dept">CRNA • OR</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">18</td>
-        <td class="num">72</td>
-        <td class="num">22</td>
-        <td class="num">14</td>
-        <td class="num">4</td>
-        <td class="num">3</td>
-        <td class="num">1</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u17&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u18&#39;)">
-        <td class="center">
-          <span class="iris-score score-normal" data-tooltip="Highest Med Trends score across all drugs">1.2</span>
-        </td>
-        <td class="num"><span class="comp-score score-normal">1.2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u18&#39;);return false;" data-tooltip="IRIS Details">Sue Barton</a></div>
-          <div class="user-role-dept">Pharmacist • Pharmacy</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">36</td>
-        <td class="num">—</td>
-        <td class="num">32</td>
-        <td class="num">28</td>
-        <td class="num">0</td>
-        <td class="num">0</td>
-        <td class="num">4</td>
-        <td class="num">6</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u18&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u19&#39;)">
-        <td class="center">
-          <span class="iris-score score-normal" data-tooltip="Highest Med Trends score across all drugs">0.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-normal">0.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u19&#39;);return false;" data-tooltip="IRIS Details">Rina Harper</a></div>
-          <div class="user-role-dept">RN • Med South</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">24</td>
-        <td class="num">120</td>
-        <td class="num">14</td>
-        <td class="num">9</td>
-        <td class="num">3</td>
-        <td class="num">2</td>
-        <td class="num">0</td>
-        <td class="num">1</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u19&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u20&#39;)">
-        <td class="center">
-          <span class="iris-score score-normal" data-tooltip="Highest Med Trends score across all drugs">0.5</span>
-        </td>
-        <td class="num"><span class="comp-score score-normal">0.5</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u20&#39;);return false;" data-tooltip="IRIS Details">Evelyn Frazer</a></div>
-          <div class="user-role-dept">Travel Nurse • Med North</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">16</td>
-        <td class="num">80</td>
-        <td class="num">9</td>
-        <td class="num">6</td>
-        <td class="num">2</td>
-        <td class="num">1</td>
-        <td class="num">0</td>
-        <td class="num">2</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u20&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr></tbody>
+                  <thead id="allUsersTableHead"></thead>
+                  <tbody id="allUsersTableBody"></tbody>
                 </table>
               </div>
             </div>
@@ -5622,10 +4083,10 @@
             <div id="all-users-graph-view" style="display:none;">
               <div class="chart-wrap">
                 <div class="chart-type-selector">
-                  <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;allUsers&#39;,&#39;bar&#39;)">
+                  <button class="ct-btn active" data-type="bar" onclick="setChartType('allUsers','bar')">
                     <span class="material-icons mat-icon">bar_chart</span> Bar
                   </button>
-                  <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;allUsers&#39;,&#39;scatter&#39;)">
+                  <button class="ct-btn" data-type="scatter" onclick="setChartType('allUsers','scatter')">
                     <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
                   </button>
                 </div>
@@ -5686,10 +4147,10 @@
                     </div>
                   </div>
                   <div class="chart-type-selector">
-                    <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;userDrugs&#39;,&#39;bar&#39;)">
+                    <button class="ct-btn active" data-type="bar" onclick="setChartType('userDrugs','bar')">
                       <span class="material-icons mat-icon">bar_chart</span> Bar
                     </button>
-                    <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;userDrugs&#39;,&#39;scatter&#39;)">
+                    <button class="ct-btn" data-type="scatter" onclick="setChartType('userDrugs','scatter')">
                       <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
                     </button>
                   </div>
@@ -5702,155 +4163,16 @@
         </div>
 
         <!-- Legacy Experience placeholder (shown when Legacy is selected) -->
-        <!-- Legacy Experience placeholder (shown when Legacy is selected) -->
-        <div id="legacy-placeholder" class="legacy-placeholder">
-          <div class="legacy-banner" role="status" aria-live="polite">
-            <span class="material-icons mat-icon">schedule</span>
-            <span class="legacy-banner-text">Available until the end of 2026</span>
-          </div>
-          <div class="legacy-placeholder-body">Legacy Med Trends</div>
-        </div>
-
-        <!-- ═══════════════════════════════════════
-             VIEW 3 — ALL DRUGS  (By Drug, Level 0)
-        ═══════════════════════════════════════ -->
-        <div id="view-all-drugs" class="view">
-          <div class="content-area">
-
-            <!-- Count + search -->
-            <div class="count-search-row">
-              <div class="row-count"><span id="allDrugsCount">0</span> drugs</div>
-              <div class="search-wrap">
-                <span class="material-icons search-icon">search</span>
-                <input type="text" class="search-input" placeholder="Search drugs…" oninput="filterAllDrugsTable(this.value)">
-              </div>
-            </div>
-
-            <!-- Table -->
-            <div id="all-drugs-table-view">
-              <div class="data-table-wrap users-table-wrap">
-                <table class="data-table" id="allDrugsTable">
-                  <thead id="allDrugsTableHead"></thead>
-                  <tbody id="allDrugsTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Chart -->
-            <div id="all-drugs-graph-view" style="display:none;">
-              <div class="chart-wrap">
-                <div class="chart-controls-row">
-                  <div class="pill-filter-wrap selected" id="x-axis-filter-wrap">
-                    <button class="comp-score-filter" onclick="toggleXAxisMenu()">
-                      <span class="cs-label">X Axis:</span>
-                      <span id="x-axis-label">Total Events</span>
-                      <span class="material-icons mat-icon">expand_more</span>
-                    </button>
-                    <div class="cs-menu cs-menu-grouped" id="x-axis-menu" style="display:none;"></div>
-                  </div>
-                  <div class="pill-filter-wrap selected" id="y-axis-filter-wrap">
-                    <button class="comp-score-filter" onclick="toggleYAxisMenu()">
-                      <span class="cs-label">Y Axis:</span>
-                      <span id="y-axis-label">Users</span>
-                      <span class="material-icons mat-icon">expand_more</span>
-                    </button>
-                    <div class="cs-menu cs-menu-grouped" id="y-axis-menu" style="display:none;"></div>
-                  </div>
-                  <div class="chart-type-selector">
-                    <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;allDrugs&#39;,&#39;bar&#39;)">
-                      <span class="material-icons mat-icon">bar_chart</span> Bar
-                    </button>
-                    <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;allDrugs&#39;,&#39;scatter&#39;)">
-                      <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
-                    </button>
-                  </div>
-                </div>
-                <div id="all-drugs-chart" class="chart-container"></div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- ═══════════════════════════════════════
-             VIEW 4 — DRUG'S USERS  (By Drug, Level 1)
-        ═══════════════════════════════════════ -->
-        <div id="view-drug-users" class="view">
-          <div class="content-area">
-
-            <!-- Count + search -->
-            <div class="count-search-row">
-              <div class="row-count"><span id="drugUsersCount">0</span> users</div>
-              <div class="search-wrap">
-                <span class="material-icons search-icon">search</span>
-                <input type="text" class="search-input" placeholder="Search users…" oninput="filterDrugUsersTable(this.value)">
-              </div>
-            </div>
-
-            <!-- Table -->
-            <div id="drug-users-table-view">
-              <div class="data-table-wrap user-drugs-table-wrap">
-                <table class="data-table" id="drugUsersTable">
-                  <thead id="drugUsersTableHead"></thead>
-                  <tbody id="drugUsersTableBody"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <!-- Chart -->
-            <div id="drug-users-graph-view" style="display:none;">
-              <div class="chart-wrap">
-                <div class="chart-controls-row">
-                  <!-- User multi-select filter -->
-                  <div class="drug-filter-wrap" id="du-user-filter-wrap">
-                    <button class="drug-filter-btn" id="du-user-filter-btn" onclick="toggleDuUserFilter(event)">
-                      <span class="material-icons mat-icon">filter_alt</span>
-                      <span id="du-user-filter-label">All users</span>
-                      <span class="material-icons mat-icon">expand_more</span>
-                    </button>
-                    <div class="drug-filter-menu" id="du-user-filter-menu" style="display:none;">
-                      <div class="drug-filter-search">
-                        <span class="material-icons drug-filter-search-icon">search</span>
-                        <input type="text" id="du-user-filter-search" placeholder="Search users…" oninput="duUserFilterSearch(this.value)" autocomplete="off">
-                      </div>
-                      <div class="drug-filter-actions">
-                        <button class="drug-filter-link" onclick="duUserFilterSelectAll(true)">Select all</button>
-                        <button class="drug-filter-link" onclick="duUserFilterSelectAll(false)">Clear</button>
-                      </div>
-                      <div class="drug-filter-list" id="du-user-filter-list"><!-- populated on drill --></div>
-                      <div class="drug-filter-empty" id="du-user-filter-empty" style="display:none;">No users match</div>
-                    </div>
-                  </div>
-                  <div class="chart-type-selector">
-                    <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;drugUsers&#39;,&#39;bar&#39;)">
-                      <span class="material-icons mat-icon">bar_chart</span> Bar
-                    </button>
-                    <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;drugUsers&#39;,&#39;scatter&#39;)">
-                      <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
-                    </button>
-                  </div>
-                </div>
-                <div id="drug-users-chart" class="chart-container"></div>
-                <div class="chart-legend">
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#b53228"></span>Critical (4.6+)</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4–4.5)</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#16b434"></span>Normal (&lt;1.4)</span>
-                  <span class="chart-legend-item dot-size-hint" style="margin-left:12px;color:var(--text-54);font-style:italic;">Dot size = shifts worked</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+        <div id="legacy-placeholder" class="legacy-placeholder">Legacy Med Trends</div>
 
       </mat-drawer-content>
     </mat-drawer-container>
   </div><!-- /#app-view -->
 
   <footer>
-    Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
-    <a href="mailto:help@bluesight.com">help@bluesight.com</a>
-    • All Rights Reserved |
+    Copyright &copy; 2011&ndash;2026 by Bluesight, Inc. &bull; 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help&#64;bluesight.com">help&#64;bluesight.com</a>
+    &bull; All Rights Reserved |
     <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
   </footer>
 
@@ -5871,7 +4193,7 @@
     <!-- Panel tab bar -->
     <div class="l3-panel-tab-bar view-tab-bar">
       <div class="tab-bar-tabs">
-        <button class="mdc-tab mdc-tab--active" id="l3-panel-tabular-tab" onclick="switchPanelView(&#39;table&#39;)">
+        <button class="mdc-tab mdc-tab--active" id="l3-panel-tabular-tab" onclick="switchPanelView('table')">
           <span class="mdc-tab__content">
             <span class="material-icons mat-icon">table_chart</span>
             <span class="mdc-tab__text-label">Tabular Data</span>
@@ -5880,7 +4202,7 @@
             <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
           </span>
         </button>
-        <button class="mdc-tab" id="l3-panel-visual-tab" onclick="switchPanelView(&#39;graph&#39;)">
+        <button class="mdc-tab" id="l3-panel-visual-tab" onclick="switchPanelView('graph')">
           <span class="mdc-tab__content">
             <span class="material-icons mat-icon">scatter_plot</span>
             <span class="mdc-tab__text-label">Visualized Data</span>
@@ -5924,53 +4246,53 @@
       <div class="l3-panel-filter-bar">
         <div class="pill-filters-row">
           <div class="pill-filter-wrap selected" id="l3-panel-compareby-wrap">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-compareby-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-compareby-menu')">
               <span class="cs-label">Compare By:</span>
               <span id="l3-panel-compareby-label">Department</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-compareby-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setCompareBy(&#39;Department&#39;, this)">Department</div>
-              <div class="cs-option" onclick="setCompareBy(&#39;Role&#39;, this)">Role</div>
-              <div class="cs-option" onclick="setCompareBy(&#39;All&#39;, this)">All</div>
+              <div class="cs-option selected" onclick="setCompareBy('Department', this)">Department</div>
+              <div class="cs-option" onclick="setCompareBy('Role', this)">Role</div>
+              <div class="cs-option" onclick="setCompareBy('All', this)">All</div>
             </div>
           </div>
           <div class="pill-filter-wrap">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-context-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-context-menu')">
               <span class="cs-label">Context:</span>
               <span id="l3-panel-context-label">Mass</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-context-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setPillFilter(null,&#39;l3-panel-context-label&#39;,&#39;l3-panel-context-menu&#39;,this);updatePanelContext()">Mass</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-context-label&#39;,&#39;l3-panel-context-menu&#39;,this);updatePanelContext()">Events</div>
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-context-label','l3-panel-context-menu',this);updatePanelContext()">Mass</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-context-label','l3-panel-context-menu',this);updatePanelContext()">Events</div>
             </div>
           </div>
           <div class="pill-filter-wrap" id="l3-panel-event-type-filter" style="display:none;">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-event-type-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-event-type-menu')">
               <span class="cs-label">Event Type:</span>
               <span id="l3-panel-event-type-label">All Event Types</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-event-type-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">All Event Types</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Dispense</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Admin</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Waste</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Return</div>
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">All Event Types</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Dispense</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Admin</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Waste</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Return</div>
             </div>
           </div>
           <div class="pill-filter-wrap">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-std-dev-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-std-dev-menu')">
               <span class="cs-label">Std. Deviation:</span>
               <span id="l3-panel-std-dev-label">None</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-std-dev-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">None</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">+1σ</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">+2σ</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">+3σ</div>
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">None</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+1σ</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+2σ</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+3σ</div>
             </div>
           </div>
         </div>
@@ -6011,10 +4333,10 @@
               </div>
             </div>
             <div class="chart-type-selector">
-              <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;users&#39;,&#39;bar&#39;)">
+              <button class="ct-btn active" data-type="bar" onclick="setChartType('users','bar')">
                 <span class="material-icons mat-icon">bar_chart</span> Bar
               </button>
-              <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;users&#39;,&#39;scatter&#39;)">
+              <button class="ct-btn" data-type="scatter" onclick="setChartType('users','scatter')">
                 <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
               </button>
             </div>
@@ -6022,7 +4344,7 @@
           <div id="users-chart" class="chart-container"></div>
           <div class="chart-legend">
             <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#b53228"></span>Critical (4.6+)</span>
-            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4–4.5)</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4&ndash;4.5)</span>
             <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#16b434"></span>Normal (&lt;1.4)</span>
             <span class="chart-legend-item" style="margin-left:12px;color:var(--text-54);font-style:italic;">Dot size = shifts worked</span>
           </div>
@@ -6051,5 +4373,5 @@
   </aside>
 
 </app-component>
-
-</body></html>
+</body>
+</html>
