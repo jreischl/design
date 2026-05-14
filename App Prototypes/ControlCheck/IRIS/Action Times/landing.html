@@ -4153,7 +4153,10 @@
             events: pt.events,
             userName: pt.userName,
             score: pt.score,
-            symbolSize: Math.min(36, 6 + Math.sqrt(pt.events) * 2.4)
+            // Dot diameter scales with record count (sqrt = area-proportional,
+            // the standard for size-encoded data so visual area maps to value).
+            // Range: ~9px for single-record bins, capped at 40px for the largest.
+            symbolSize: Math.min(40, 6 + Math.sqrt(pt.events) * 3.2)
           })),
           itemStyle: { color: ruleColors[rule], opacity: 0.85 },
           emphasis: { focus: 'series', itemStyle: { opacity: 1, borderWidth: 2, borderColor: '#fff' } }
