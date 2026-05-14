@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0062)file:///Users/jonreischl/Downloads/med-trends-redesign_26.html -->
-<html lang="en" class="mat-typography"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Med Trends – ControlCheck</title>
-  <link rel="stylesheet" href="./landing_files/jan0wzl.css">
-  <link href="./landing_files/icon" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" crossorigin="anonymous">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1738,8 +1738,8 @@
     body.legacy-mode .l2-context-block { display: none !important; }
 
   </style>
-  <script src="./landing_files/echarts.min.js"></script>
-<script data-cfasync="false" defer="">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+<script data-cfasync="false" defer>
   /* ══════════════════════════════════════════════
      CHART STATE
   ══════════════════════════════════════════════ */
@@ -4785,7 +4785,7 @@
 </head>
 
 <body>
-<div id="tt" style="opacity: 0; left: 250.203px; top: 388px;">Highest Med Trends score across all drugs</div>
+<div id="tt"></div>
 <app-component class="flex-col-100">
 
   <!-- ══ NAVBAR ══════════════════════════════════════════════════════ -->
@@ -4795,26 +4795,26 @@
       <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
 
         <!-- Logo -->
-        <a class="nav-link" href="file:///dashboard">
+        <a class="nav-link" href="/dashboard">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
             <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
             <g><g><g id="ControlCheck_Logo_Color">
-              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"></path>
-              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"></path>
-              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"></path>
-              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"></path>
-              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"></path>
-              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"></path>
-              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"></path>
-              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"></path>
-              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"></path>
-              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"></path>
-              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"></path>
-              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"></path>
-              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"></path>
-              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"></path>
-              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"></path>
-              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"></path>
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
             </g></g></g>
           </svg>
         </a>
@@ -4831,7 +4831,7 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">Cases<span class="material-icons nav-chevron">arrow_drop_down</span></span>
             </button>
-            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="file:///report">
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
               <span class="mdc-button__label">
                 <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
                   Report
@@ -4841,14 +4841,14 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">Upload<span class="material-icons nav-chevron">arrow_drop_down</span></span>
             </button>
-            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="file:///manage">
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
               <span class="mdc-button__label">
                 <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
                   Manage&nbsp;<span id="mat-badge-content-0" aria-hidden="true" class="mat-badge-content mat-badge-active">!</span>
                 </span>
               </span>
             </a>
-            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="file:///labs">
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/labs">
               <span class="mdc-button__label">
                 <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
                   Labs
@@ -4868,11 +4868,11 @@
                   <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
                 </div>
 
-                </span></button><button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
                   <div class="user-circle mat-primary">AM</div>
                 </button>
-              
-            
+              </span>
+            </button>
             <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
               <span class="material-icons text-primary">help</span>
             </button>
@@ -4899,13 +4899,13 @@
             <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
               <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
                 <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
-                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path></svg></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
               </mat-expansion-panel-header>
               <div class="mat-expansion-panel-content-wrapper" inert="">
                 <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
                   <nav class="mat-mdc-nav-list">
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span>Active IRIS Reviews</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span>Multi-Hospital Users</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span>Active IRIS Reviews</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span>Multi-Hospital Users</span></span></a>
                   </nav>
                 </div></div>
               </div>
@@ -4915,24 +4915,24 @@
             <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
               <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
                 <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
-                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path></svg></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
               </mat-expansion-panel-header>
               <div class="mat-expansion-panel-content-wrapper">
                 <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
                   <nav class="mat-mdc-nav-list">
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
-                    <a class="mat-mdc-list-item parent-active expanded" id="nav-med-trends-parent" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" aria-expanded="true" onclick="toggleMedTrendsExpansion();return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends<span class="material-icons mat-icon expand-chevron">expand_more</span></span></span></a>
-                    <a class="mat-mdc-list-item sub-item active" id="nav-med-trends-by-user" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="setPage(&#39;by-user&#39;);return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By User</span></span></a>
-                    <a class="mat-mdc-list-item sub-item" id="nav-med-trends-by-drug" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="setPage(&#39;by-drug&#39;);return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By Drug</span></span></a>
-                    <a class="mat-mdc-list-item sub-item" id="nav-med-trends-legacy" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="setPage(&#39;legacy&#39;);return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">Legacy Experience</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span>User Mobility</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span>Waste Networks</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span>Full Package Waste</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span>Shift Analysis</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
+                    <a class="mat-mdc-list-item parent-active expanded" id="nav-med-trends-parent" href="#" aria-expanded="true" onclick="toggleMedTrendsExpansion();return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends<span class="material-icons mat-icon expand-chevron">expand_more</span></span></span></a>
+                    <a class="mat-mdc-list-item sub-item active" id="nav-med-trends-by-user" href="#" onclick="setPage('by-user');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By User</span></span></a>
+                    <a class="mat-mdc-list-item sub-item" id="nav-med-trends-by-drug" href="#" onclick="setPage('by-drug');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By Drug</span></span></a>
+                    <a class="mat-mdc-list-item sub-item" id="nav-med-trends-legacy" href="#" onclick="setPage('legacy');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">Legacy Experience</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span>User Mobility</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span>Waste Networks</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span>Full Package Waste</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span>Shift Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
                   </nav>
                 </div></div>
               </div>
@@ -4942,15 +4942,15 @@
             <mat-expansion-panel class="mat-expansion-panel mat-expansion-panel-animations-enabled">
               <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expansion-toggle-indicator-after" aria-expanded="false" style="height:45px" onclick="togglePanel(this)">
                 <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">OR</mat-panel-title></span>
-                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"></path></svg></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
               </mat-expansion-panel-header>
               <div class="mat-expansion-panel-content-wrapper" inert="">
                 <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
                   <nav class="mat-mdc-nav-list">
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
-                    <a class="mat-mdc-list-item" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span>Pain Analysis</span></span></a>
                   </nav>
                 </div></div>
               </div>
@@ -4977,7 +4977,7 @@
               <span class="material-icons mat-icon">arrow_drop_down</span>
             </button>
             <div class="chip-filter-wrap" id="dept-chip-wrap">
-              <button class="filter-chip" id="dept-chip-btn" onclick="toggleChipFilter(&#39;dept&#39;, event)">
+              <button class="filter-chip" id="dept-chip-btn" onclick="toggleChipFilter('dept', event)">
                 <span id="dept-chip-label">Department</span>
                 <span class="material-icons mat-icon">arrow_drop_down</span>
               </button>
@@ -4990,7 +4990,7 @@
               <span class="material-icons mat-icon">arrow_drop_down</span>
             </button>
             <div class="chip-filter-wrap" id="role-chip-wrap">
-              <button class="filter-chip" id="role-chip-btn" onclick="toggleChipFilter(&#39;role&#39;, event)">
+              <button class="filter-chip" id="role-chip-btn" onclick="toggleChipFilter('role', event)">
                 <span id="role-chip-label">Role</span>
                 <span class="material-icons mat-icon">arrow_drop_down</span>
               </button>
@@ -5036,7 +5036,7 @@
         <div class="shared-tab-bar-wrap">
           <div class="view-tab-bar">
             <div class="tab-bar-tabs">
-              <button class="mdc-tab mdc-tab--active" id="shared-tabular-tab" onclick="switchCurrentView(&#39;table&#39;)">
+              <button class="mdc-tab mdc-tab--active" id="shared-tabular-tab" onclick="switchCurrentView('table')">
                 <span class="mdc-tab__content">
                   <span class="material-icons mat-icon">table_chart</span>
                   <span class="mdc-tab__text-label">Tabular Data</span>
@@ -5045,7 +5045,7 @@
                   <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
                 </span>
               </button>
-              <button class="mdc-tab" id="shared-visual-tab" onclick="switchCurrentView(&#39;graph&#39;)">
+              <button class="mdc-tab" id="shared-visual-tab" onclick="switchCurrentView('graph')">
                 <span class="mdc-tab__content">
                   <span class="material-icons mat-icon">scatter_plot</span>
                   <span class="mdc-tab__text-label">Visualized Data</span>
@@ -5079,22 +5079,7 @@
         <!-- ═══════════════════════════════════════
              SHARED PILL FILTERS (live above all three views)
         ═══════════════════════════════════════ -->
-        
-
-        <!-- ═══════════════════════════════════════
-             VIEW 1 — ALL USERS (Level 0, default)
-        ═══════════════════════════════════════ -->
-        <div id="view-all-users" class="view visible">
-          <div class="content-area">
-
-            <!-- Count + search row -->
-            <div class="count-search-row">
-              <div class="row-count"><span id="allUsersCount">20</span> users</div>
-              <div class="search-wrap">
-                <span class="material-icons search-icon">search</span>
-                <input type="text" class="search-input" placeholder="Search users…" oninput="filterAllUsersTable(this.value)">
-              </div>
-            </div><div class="shared-filter-bar">
+        <div class="shared-filter-bar">
           <div class="pill-filters-row">
             <div class="pill-filter-wrap" id="comp-score-filter-wrap">
               <button class="comp-score-filter" onclick="toggleCompScoreMenu()">
@@ -5112,508 +5097,68 @@
                 <div class="cs-option" onclick="setCompScore(this)">Shift Analysis</div>
               </div>
             </div>
-            <div class="pill-filter-wrap" id="context-filter-wrap" style="display: none;">
-              <button class="comp-score-filter" onclick="togglePillMenu(&#39;context-menu&#39;)">
+            <div class="pill-filter-wrap" id="context-filter-wrap">
+              <button class="comp-score-filter" onclick="togglePillMenu('context-menu')">
                 <span class="cs-label">Context:</span>
                 <span id="context-label">Mass</span>
                 <span class="material-icons mat-icon">expand_more</span>
               </button>
-              <div class="cs-menu" id="context-menu" style="display:none;"><div class="cs-option selected" onclick="setPillFilter(null,&#39;context-label&#39;,&#39;context-menu&#39;,this);updateContext()">Mass</div><div class="cs-option" onclick="setPillFilter(null,&#39;context-label&#39;,&#39;context-menu&#39;,this);updateContext()">Events</div></div>
+              <div class="cs-menu" id="context-menu" style="display:none;">
+                <div class="cs-option selected" onclick="setPillFilter(null,'context-label','context-menu',this);updateContext()">Mass</div>
+                <div class="cs-option" onclick="setPillFilter(null,'context-label','context-menu',this);updateContext()">Events</div>
+              </div>
             </div>
             <div class="pill-filter-wrap" id="event-type-filter" style="display:none;">
-              <button class="comp-score-filter" onclick="togglePillMenu(&#39;event-type-menu&#39;)">
+              <button class="comp-score-filter" onclick="togglePillMenu('event-type-menu')">
                 <span class="cs-label">Event Type:</span>
                 <span id="event-type-label">Dispense</span>
                 <span class="material-icons mat-icon">expand_more</span>
               </button>
               <div class="cs-menu" id="event-type-menu" style="display:none;">
-                <div class="cs-option selected" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">All Event Types</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Dispense</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Admin</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Waste</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;event-type-label&#39;,&#39;event-type-menu&#39;,this)">Return</div>
+                <div class="cs-option selected" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">All Event Types</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Dispense</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Admin</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Waste</div>
+                <div class="cs-option" onclick="setPillFilter(null,'event-type-label','event-type-menu',this)">Return</div>
               </div>
             </div>
             <div class="pill-filter-wrap" id="std-dev-filter-wrap">
-              <button class="comp-score-filter" onclick="togglePillMenu(&#39;std-dev-menu&#39;)">
+              <button class="comp-score-filter" onclick="togglePillMenu('std-dev-menu')">
                 <span class="cs-label">Std. Deviation:</span>
                 <span id="std-dev-label">None</span>
                 <span class="material-icons mat-icon">expand_more</span>
               </button>
               <div class="cs-menu" id="std-dev-menu" style="display:none;">
-                <div class="cs-option selected" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">None</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">+1σ</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">+2σ</div>
-                <div class="cs-option" onclick="setPillFilter(null,&#39;std-dev-label&#39;,&#39;std-dev-menu&#39;,this)">+3σ</div>
+                <div class="cs-option selected" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">None</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+1σ</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+2σ</div>
+                <div class="cs-option" onclick="setPillFilter(null,'std-dev-label','std-dev-menu',this)">+3σ</div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- ═══════════════════════════════════════
+             VIEW 1 — ALL USERS (Level 0, default)
+        ═══════════════════════════════════════ -->
+        <div id="view-all-users" class="view visible">
+          <div class="content-area">
+
+            <!-- Count + search row -->
+            <div class="count-search-row">
+              <div class="row-count"><span id="allUsersCount">0</span> users</div>
+              <div class="search-wrap">
+                <span class="material-icons search-icon">search</span>
+                <input type="text" class="search-input" placeholder="Search users…" oninput="filterAllUsersTable(this.value)">
+              </div>
+            </div>
+
             <!-- Table -->
             <div id="all-users-table-view">
               <div class="data-table-wrap users-table-wrap">
                 <table class="data-table" id="allUsersTable">
-                  <thead id="allUsersTableHead"><tr>
-      <th class="sortable center" style="width:90px;" data-tooltip="Highest Med Trends score across all drugs" onclick="sortAllUsersTable(&#39;score&#39;)"><span class="th-inner">Metric Score <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;color:var(--blue-dark);opacity:1">arrow_downward</span></span></th>
-      <th class="sortable right" style="width:95px;" id="th-all-comp-score" onclick="sortAllUsersTable(&#39;compScore&#39;)">
-        <span class="th-inner">Overall IRIS <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span>
-      </th>
-      <th class="sortable" style="min-width:220px;" onclick="sortAllUsersTable(&#39;name&#39;)">
-        <span class="th-inner">User <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span>
-      </th>
-      <th class="sortable right" style="width:70px;" onclick="sortAllUsersTable(&#39;drugCount&#39;)"><span class="th-inner">Drugs <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:70px;" onclick="sortAllUsersTable(&#39;shifts&#39;)"><span class="th-inner">Shifts <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;patients&#39;)"><span class="th-inner">Patients <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:100px;" onclick="sortAllUsersTable(&#39;events&#39;)"><span class="th-inner">Total Events <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:85px;" onclick="sortAllUsersTable(&#39;dispense&#39;)"><span class="th-inner">Dispense <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;admin&#39;)"><span class="th-inner">Admin <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;waste&#39;)"><span class="th-inner">Waste <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;ret&#39;)"><span class="th-inner">Return <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th class="sortable right" style="width:75px;" onclick="sortAllUsersTable(&#39;cancel&#39;)"><span class="th-inner">Cancels <span class="material-icons sort-icon" style="font-size:14px;vertical-align:middle;opacity:.3">arrow_upward</span></span></th>
-      <th style="width:130px;"></th>
-    </tr></thead>
-                  <tbody id="allUsersTableBody"><tr onclick="drillToUser(&#39;u1&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">9.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">8.2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u1&#39;);return false;" data-tooltip="IRIS Details">Francis Overby</a></div>
-          <div class="user-role-dept">RN • Med North</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">42</td>
-        <td class="num">210</td>
-        <td class="num">64</td>
-        <td class="num">42</td>
-        <td class="num">12</td>
-        <td class="num">8</td>
-        <td class="num">2</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u1&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u2&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">8.7</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">7.9</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u2&#39;);return false;" data-tooltip="IRIS Details">Evan Westcott</a></div>
-          <div class="user-role-dept">Travel Nurse • Med North</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">36</td>
-        <td class="num">178</td>
-        <td class="num">47</td>
-        <td class="num">31</td>
-        <td class="num">9</td>
-        <td class="num">5</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u2&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u3&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">8.2</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">7.4</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u3&#39;);return false;" data-tooltip="IRIS Details">Destiny Bloss</a></div>
-          <div class="user-role-dept">Pharmacist • Pharmacy</div>
-        </td>
-        <td class="num">5</td>
-        <td class="num">48</td>
-        <td class="num">—</td>
-        <td class="num">77</td>
-        <td class="num">63</td>
-        <td class="num">5</td>
-        <td class="num">3</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u3&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u4&#39;)">
-        <td class="center">
-          <span class="iris-score score-critical" data-tooltip="Highest Med Trends score across all drugs">7.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-critical">7.1</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u4&#39;);return false;" data-tooltip="IRIS Details">Kristel Dorsey</a></div>
-          <div class="user-role-dept">CRNA • ICU</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">32</td>
-        <td class="num">128</td>
-        <td class="num">44</td>
-        <td class="num">28</td>
-        <td class="num">9</td>
-        <td class="num">6</td>
-        <td class="num">1</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u4&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u5&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">4.3</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.9</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u5&#39;);return false;" data-tooltip="IRIS Details">Claire Fraser</a></div>
-          <div class="user-role-dept">RN • Med North</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">38</td>
-        <td class="num">190</td>
-        <td class="num">56</td>
-        <td class="num">39</td>
-        <td class="num">10</td>
-        <td class="num">5</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u5&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u6&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">4.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u6&#39;);return false;" data-tooltip="IRIS Details">Shila Layne</a></div>
-          <div class="user-role-dept">Float Nurse • Med North</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">28</td>
-        <td class="num">140</td>
-        <td class="num">39</td>
-        <td class="num">27</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td class="num">2</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u6&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u11&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">4</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u11&#39;);return false;" data-tooltip="IRIS Details">Samantha Taggart</a></div>
-          <div class="user-role-dept">Pharmacy Technician • Pharmacy</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">44</td>
-        <td class="num">—</td>
-        <td class="num">55</td>
-        <td class="num">49</td>
-        <td class="num">2</td>
-        <td class="num">0</td>
-        <td class="num">4</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u11&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u7&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.7</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u7&#39;);return false;" data-tooltip="IRIS Details">Bulah Vahle</a></div>
-          <div class="user-role-dept">RN • Oncology</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">26</td>
-        <td class="num">130</td>
-        <td class="num">36</td>
-        <td class="num">24</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td class="num">2</td>
-        <td class="num">2</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u7&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u13&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.8</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.6</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u13&#39;);return false;" data-tooltip="IRIS Details">Margaret Houlihan</a></div>
-          <div class="user-role-dept">RN • Med South</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">30</td>
-        <td class="num">150</td>
-        <td class="num">38</td>
-        <td class="num">31</td>
-        <td class="num">3</td>
-        <td class="num">1</td>
-        <td class="num">3</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u13&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u8&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.7</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.6</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u8&#39;);return false;" data-tooltip="IRIS Details">Violeta Colmenero</a></div>
-          <div class="user-role-dept">Nursing Student • ICU</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">22</td>
-        <td class="num">44</td>
-        <td class="num">23</td>
-        <td class="num">15</td>
-        <td class="num">3</td>
-        <td class="num">3</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u8&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u9&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.5</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.3</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u9&#39;);return false;" data-tooltip="IRIS Details">Magda Bonelli</a></div>
-          <div class="user-role-dept">RN • Med South</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">27</td>
-        <td class="num">135</td>
-        <td class="num">35</td>
-        <td class="num">24</td>
-        <td class="num">6</td>
-        <td class="num">4</td>
-        <td class="num">1</td>
-        <td class="num">1</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u9&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u10&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.3</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3.2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u10&#39;);return false;" data-tooltip="IRIS Details">Norene Turcotte</a></div>
-          <div class="user-role-dept">Anesthesiologist • OR</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">24</td>
-        <td class="num">120</td>
-        <td class="num">26</td>
-        <td class="num">16</td>
-        <td class="num">4</td>
-        <td class="num">4</td>
-        <td class="num">2</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u10&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u12&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">3.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">3</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u12&#39;);return false;" data-tooltip="IRIS Details">Pamala Linke</a></div>
-          <div class="user-role-dept">Pharmacy Technician • Pharmacy</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">40</td>
-        <td class="num">—</td>
-        <td class="num">41</td>
-        <td class="num">33</td>
-        <td class="num">2</td>
-        <td class="num">2</td>
-        <td class="num">4</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u12&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u14&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">2.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">2.7</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u14&#39;);return false;" data-tooltip="IRIS Details">Jennifer Marlowe</a></div>
-          <div class="user-role-dept">Nursing Student • ICU</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">18</td>
-        <td class="num">36</td>
-        <td class="num">22</td>
-        <td class="num">15</td>
-        <td class="num">4</td>
-        <td class="num">3</td>
-        <td class="num">0</td>
-        <td class="num">2</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u14&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u15&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">2.4</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">2.4</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u15&#39;);return false;" data-tooltip="IRIS Details">Rhoda Klemm</a></div>
-          <div class="user-role-dept">RN • Med North</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">20</td>
-        <td class="num">100</td>
-        <td class="num">19</td>
-        <td class="num">13</td>
-        <td class="num">3</td>
-        <td class="num">2</td>
-        <td class="num">1</td>
-        <td class="num">4</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u15&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u16&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">2.1</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u16&#39;);return false;" data-tooltip="IRIS Details">Betsy Duvall</a></div>
-          <div class="user-role-dept">CRNA • OR</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">22</td>
-        <td class="num">88</td>
-        <td class="num">23</td>
-        <td class="num">15</td>
-        <td class="num">5</td>
-        <td class="num">3</td>
-        <td class="num">0</td>
-        <td class="num">1</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u16&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u17&#39;)">
-        <td class="center">
-          <span class="iris-score score-moderate" data-tooltip="Highest Med Trends score across all drugs">1.8</span>
-        </td>
-        <td class="num"><span class="comp-score score-moderate">1.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u17&#39;);return false;" data-tooltip="IRIS Details">Ann Perkins</a></div>
-          <div class="user-role-dept">CRNA • OR</div>
-        </td>
-        <td class="num">3</td>
-        <td class="num">18</td>
-        <td class="num">72</td>
-        <td class="num">22</td>
-        <td class="num">14</td>
-        <td class="num">4</td>
-        <td class="num">3</td>
-        <td class="num">1</td>
-        <td class="num">3</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u17&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u18&#39;)">
-        <td class="center">
-          <span class="iris-score score-normal" data-tooltip="Highest Med Trends score across all drugs">1.2</span>
-        </td>
-        <td class="num"><span class="comp-score score-normal">1.2</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u18&#39;);return false;" data-tooltip="IRIS Details">Sue Barton</a></div>
-          <div class="user-role-dept">Pharmacist • Pharmacy</div>
-        </td>
-        <td class="num">4</td>
-        <td class="num">36</td>
-        <td class="num">—</td>
-        <td class="num">32</td>
-        <td class="num">28</td>
-        <td class="num">0</td>
-        <td class="num">0</td>
-        <td class="num">4</td>
-        <td class="num">6</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u18&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u19&#39;)">
-        <td class="center">
-          <span class="iris-score score-normal" data-tooltip="Highest Med Trends score across all drugs">0.9</span>
-        </td>
-        <td class="num"><span class="comp-score score-normal">0.8</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u19&#39;);return false;" data-tooltip="IRIS Details">Rina Harper</a></div>
-          <div class="user-role-dept">RN • Med South</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">24</td>
-        <td class="num">120</td>
-        <td class="num">14</td>
-        <td class="num">9</td>
-        <td class="num">3</td>
-        <td class="num">2</td>
-        <td class="num">0</td>
-        <td class="num">1</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u19&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr><tr onclick="drillToUser(&#39;u20&#39;)">
-        <td class="center">
-          <span class="iris-score score-normal" data-tooltip="Highest Med Trends score across all drugs">0.5</span>
-        </td>
-        <td class="num"><span class="comp-score score-normal">0.5</span></td>
-        <td>
-          <div class="user-name"><a href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="event.stopPropagation();openIrisPanel(&#39;u20&#39;);return false;" data-tooltip="IRIS Details">Evelyn Frazer</a></div>
-          <div class="user-role-dept">Travel Nurse • Med North</div>
-        </td>
-        <td class="num">2</td>
-        <td class="num">16</td>
-        <td class="num">80</td>
-        <td class="num">9</td>
-        <td class="num">6</td>
-        <td class="num">2</td>
-        <td class="num">1</td>
-        <td class="num">0</td>
-        <td class="num">2</td>
-        <td style="text-align:right">
-          <a class="investigate-link" href="file:///Users/jonreischl/Downloads/med-trends-redesign_26.html#" onclick="drillToUser(&#39;u20&#39;);return false;">
-            View Drugs <span class="material-icons">chevron_right</span>
-          </a>
-        </td></tr></tbody>
+                  <thead id="allUsersTableHead"></thead>
+                  <tbody id="allUsersTableBody"></tbody>
                 </table>
               </div>
             </div>
@@ -5622,10 +5167,10 @@
             <div id="all-users-graph-view" style="display:none;">
               <div class="chart-wrap">
                 <div class="chart-type-selector">
-                  <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;allUsers&#39;,&#39;bar&#39;)">
+                  <button class="ct-btn active" data-type="bar" onclick="setChartType('allUsers','bar')">
                     <span class="material-icons mat-icon">bar_chart</span> Bar
                   </button>
-                  <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;allUsers&#39;,&#39;scatter&#39;)">
+                  <button class="ct-btn" data-type="scatter" onclick="setChartType('allUsers','scatter')">
                     <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
                   </button>
                 </div>
@@ -5686,10 +5231,10 @@
                     </div>
                   </div>
                   <div class="chart-type-selector">
-                    <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;userDrugs&#39;,&#39;bar&#39;)">
+                    <button class="ct-btn active" data-type="bar" onclick="setChartType('userDrugs','bar')">
                       <span class="material-icons mat-icon">bar_chart</span> Bar
                     </button>
-                    <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;userDrugs&#39;,&#39;scatter&#39;)">
+                    <button class="ct-btn" data-type="scatter" onclick="setChartType('userDrugs','scatter')">
                       <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
                     </button>
                   </div>
@@ -5757,10 +5302,10 @@
                     <div class="cs-menu cs-menu-grouped" id="y-axis-menu" style="display:none;"></div>
                   </div>
                   <div class="chart-type-selector">
-                    <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;allDrugs&#39;,&#39;bar&#39;)">
+                    <button class="ct-btn active" data-type="bar" onclick="setChartType('allDrugs','bar')">
                       <span class="material-icons mat-icon">bar_chart</span> Bar
                     </button>
-                    <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;allDrugs&#39;,&#39;scatter&#39;)">
+                    <button class="ct-btn" data-type="scatter" onclick="setChartType('allDrugs','scatter')">
                       <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
                     </button>
                   </div>
@@ -5822,10 +5367,10 @@
                     </div>
                   </div>
                   <div class="chart-type-selector">
-                    <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;drugUsers&#39;,&#39;bar&#39;)">
+                    <button class="ct-btn active" data-type="bar" onclick="setChartType('drugUsers','bar')">
                       <span class="material-icons mat-icon">bar_chart</span> Bar
                     </button>
-                    <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;drugUsers&#39;,&#39;scatter&#39;)">
+                    <button class="ct-btn" data-type="scatter" onclick="setChartType('drugUsers','scatter')">
                       <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
                     </button>
                   </div>
@@ -5833,7 +5378,7 @@
                 <div id="drug-users-chart" class="chart-container"></div>
                 <div class="chart-legend">
                   <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#b53228"></span>Critical (4.6+)</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4–4.5)</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4&ndash;4.5)</span>
                   <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#16b434"></span>Normal (&lt;1.4)</span>
                   <span class="chart-legend-item dot-size-hint" style="margin-left:12px;color:var(--text-54);font-style:italic;">Dot size = shifts worked</span>
                 </div>
@@ -5848,9 +5393,9 @@
   </div><!-- /#app-view -->
 
   <footer>
-    Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
-    <a href="mailto:help@bluesight.com">help@bluesight.com</a>
-    • All Rights Reserved |
+    Copyright &copy; 2011&ndash;2026 by Bluesight, Inc. &bull; 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help&#64;bluesight.com">help&#64;bluesight.com</a>
+    &bull; All Rights Reserved |
     <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
   </footer>
 
@@ -5871,7 +5416,7 @@
     <!-- Panel tab bar -->
     <div class="l3-panel-tab-bar view-tab-bar">
       <div class="tab-bar-tabs">
-        <button class="mdc-tab mdc-tab--active" id="l3-panel-tabular-tab" onclick="switchPanelView(&#39;table&#39;)">
+        <button class="mdc-tab mdc-tab--active" id="l3-panel-tabular-tab" onclick="switchPanelView('table')">
           <span class="mdc-tab__content">
             <span class="material-icons mat-icon">table_chart</span>
             <span class="mdc-tab__text-label">Tabular Data</span>
@@ -5880,7 +5425,7 @@
             <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
           </span>
         </button>
-        <button class="mdc-tab" id="l3-panel-visual-tab" onclick="switchPanelView(&#39;graph&#39;)">
+        <button class="mdc-tab" id="l3-panel-visual-tab" onclick="switchPanelView('graph')">
           <span class="mdc-tab__content">
             <span class="material-icons mat-icon">scatter_plot</span>
             <span class="mdc-tab__text-label">Visualized Data</span>
@@ -5924,53 +5469,53 @@
       <div class="l3-panel-filter-bar">
         <div class="pill-filters-row">
           <div class="pill-filter-wrap selected" id="l3-panel-compareby-wrap">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-compareby-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-compareby-menu')">
               <span class="cs-label">Compare By:</span>
               <span id="l3-panel-compareby-label">Department</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-compareby-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setCompareBy(&#39;Department&#39;, this)">Department</div>
-              <div class="cs-option" onclick="setCompareBy(&#39;Role&#39;, this)">Role</div>
-              <div class="cs-option" onclick="setCompareBy(&#39;All&#39;, this)">All</div>
+              <div class="cs-option selected" onclick="setCompareBy('Department', this)">Department</div>
+              <div class="cs-option" onclick="setCompareBy('Role', this)">Role</div>
+              <div class="cs-option" onclick="setCompareBy('All', this)">All</div>
             </div>
           </div>
           <div class="pill-filter-wrap">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-context-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-context-menu')">
               <span class="cs-label">Context:</span>
               <span id="l3-panel-context-label">Mass</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-context-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setPillFilter(null,&#39;l3-panel-context-label&#39;,&#39;l3-panel-context-menu&#39;,this);updatePanelContext()">Mass</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-context-label&#39;,&#39;l3-panel-context-menu&#39;,this);updatePanelContext()">Events</div>
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-context-label','l3-panel-context-menu',this);updatePanelContext()">Mass</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-context-label','l3-panel-context-menu',this);updatePanelContext()">Events</div>
             </div>
           </div>
           <div class="pill-filter-wrap" id="l3-panel-event-type-filter" style="display:none;">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-event-type-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-event-type-menu')">
               <span class="cs-label">Event Type:</span>
               <span id="l3-panel-event-type-label">All Event Types</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-event-type-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">All Event Types</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Dispense</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Admin</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Waste</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-event-type-label&#39;,&#39;l3-panel-event-type-menu&#39;,this)">Return</div>
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">All Event Types</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Dispense</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Admin</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Waste</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-event-type-label','l3-panel-event-type-menu',this)">Return</div>
             </div>
           </div>
           <div class="pill-filter-wrap">
-            <button class="comp-score-filter" onclick="togglePillMenu(&#39;l3-panel-std-dev-menu&#39;)">
+            <button class="comp-score-filter" onclick="togglePillMenu('l3-panel-std-dev-menu')">
               <span class="cs-label">Std. Deviation:</span>
               <span id="l3-panel-std-dev-label">None</span>
               <span class="material-icons mat-icon">expand_more</span>
             </button>
             <div class="cs-menu" id="l3-panel-std-dev-menu" style="display:none;">
-              <div class="cs-option selected" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">None</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">+1σ</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">+2σ</div>
-              <div class="cs-option" onclick="setPillFilter(null,&#39;l3-panel-std-dev-label&#39;,&#39;l3-panel-std-dev-menu&#39;,this)">+3σ</div>
+              <div class="cs-option selected" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">None</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+1σ</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+2σ</div>
+              <div class="cs-option" onclick="setPillFilter(null,'l3-panel-std-dev-label','l3-panel-std-dev-menu',this)">+3σ</div>
             </div>
           </div>
         </div>
@@ -6011,10 +5556,10 @@
               </div>
             </div>
             <div class="chart-type-selector">
-              <button class="ct-btn active" data-type="bar" onclick="setChartType(&#39;users&#39;,&#39;bar&#39;)">
+              <button class="ct-btn active" data-type="bar" onclick="setChartType('users','bar')">
                 <span class="material-icons mat-icon">bar_chart</span> Bar
               </button>
-              <button class="ct-btn" data-type="scatter" onclick="setChartType(&#39;users&#39;,&#39;scatter&#39;)">
+              <button class="ct-btn" data-type="scatter" onclick="setChartType('users','scatter')">
                 <span class="material-icons mat-icon">scatter_plot</span> Scatterplot
               </button>
             </div>
@@ -6022,7 +5567,7 @@
           <div id="users-chart" class="chart-container"></div>
           <div class="chart-legend">
             <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#b53228"></span>Critical (4.6+)</span>
-            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4–4.5)</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#f5dd67"></span>Moderate (1.4&ndash;4.5)</span>
             <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#16b434"></span>Normal (&lt;1.4)</span>
             <span class="chart-legend-item" style="margin-left:12px;color:var(--text-54);font-style:italic;">Dot size = shifts worked</span>
           </div>
@@ -6051,5 +5596,5 @@
   </aside>
 
 </app-component>
-
-</body></html>
+</body>
+</html>
