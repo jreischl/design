@@ -1120,53 +1120,6 @@
       box-sizing: border-box;
       overflow: hidden;
     }
-    
-    /* Slim toolbar above the chart — holds the outlier-line toggle + hint. */
-    .graph-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 0 4px 12px;
-    }
-    .graph-toolbar .graph-hint {
-      font-size: 12px;
-      color: var(--gray-600);
-    }
-    
-    .toggle-switch {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .toggle-switch input { display: none; }
-    .toggle-switch .toggle-slider {
-      position: relative;
-      width: 32px; height: 18px;
-      background: var(--gray-300);
-      border-radius: 9px;
-      transition: background .15s;
-      flex-shrink: 0;
-    }
-    .toggle-switch .toggle-slider::before {
-      content: '';
-      position: absolute;
-      top: 2px; left: 2px;
-      width: 14px; height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      box-shadow: 0 1px 2px rgba(0,0,0,.2);
-      transition: transform .15s;
-    }
-    .toggle-switch input:checked + .toggle-slider { background: #F24335; }
-    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(14px); }
-    .toggle-switch .toggle-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-87);
-    }
 
   </style>
 
@@ -3478,10 +3431,9 @@
     let currentView = 'table';
     let sortState = { col: 'name', asc: true };
     let actionChart = null;
-    let visibleRules = ['firstDispenseFirstAdmin']; // Selected rules — drives BOTH the table columns AND the chart legend.
+    let visibleRules = ['firstDispenseFirstAdmin']; // Array of visible rules
     let selectedComparisonScore = 'overall'; // Current comparison score metric
     let timeThreshold = 240; // Current time threshold in minutes
-    let showMetricScoreLine = false; // toggle for outlier-score overlay on chart
     let tempTimeThreshold = 240; // Temporary value while adjusting
     let filteredUsers = [...ACTION_TIMES_USERS]; // Users visible based on time threshold
 
@@ -3626,10 +3578,7 @@
     function switchView(mode) {
       currentView = mode;
       document.getElementById('action-times-table-view').style.display = mode === 'table' ? '' : 'none';
-      document.getElementById('action-times-graph-wrap').style.display = mode === 'graph' ? '' : 'none';
-      // Rule chips affect table columns — only meaningful on the Tabular tab.
-      // On Visualized Data, ECharts' legend handles series visibility instead.
-      document.getElementById('rules-chips-row').style.display = mode === 'table' ? '' : 'none';
+      document.getElementById('action-times-graph-view').style.display = mode === 'graph' ? '' : 'none';
       
       const tabular = document.getElementById('action-times-tabular-tab');
       const visual = document.getElementById('action-times-visual-tab');
@@ -3651,16 +3600,6 @@
           actionChart.dispose(); 
           actionChart = null; 
         }
-      }
-    }
-    
-    // Toggles the optional metric-score line overlay on the chart. Rebuilds the
-    // chart so the secondary yAxis can be added/removed cleanly.
-    function toggleMetricScoreLine(checked) {
-      showMetricScoreLine = !!checked;
-      if (currentView === 'graph') {
-        if (actionChart) { actionChart.dispose(); actionChart = null; }
-        actionChart = initActionChart();
       }
     }
 
@@ -3695,106 +3634,63 @@
       // Prepare data from current table data (filtered by time threshold)
       const chartData = prepareChartData();
       
-      const ruleNames = {
-        firstDispenseFirstAdmin: 'First Dispense \u2192 Admin',
-        lastAdminLastWaste:      'Last Admin \u2192 Waste',
-        adminBeforeDispense:     'Admin Before Dispense',
-        firstDispenseFirstWaste: 'First Dispense \u2192 Waste',
-        recordedNotEqualAction:  'Recorded Admin \u2260 Action'
-      };
-      
-      // Legend selection mirrors visibleRules — same source of truth as the
-      // tabular view's rule chips, so toggling in either place keeps both in sync.
-      const legendSelected = {};
-      Object.keys(ruleNames).forEach(rule => {
-        legendSelected[ruleNames[rule]] = visibleRules.includes(rule);
-      });
-      if (showMetricScoreLine) legendSelected['Metric score'] = true;
-      
-      const yAxes = [
-        {
-          type: 'value',
-          name: 'Avg time (min)',
-          nameLocation: 'middle',
-          nameGap: 40,
-          nameTextStyle: { color: '#555', fontSize: 12 },
-          axisLabel: { color: '#666' },
-          splitLine: { lineStyle: { color: '#e5e5e5', type: 'dashed' } }
-        }
-      ];
-      if (showMetricScoreLine) {
-        yAxes.push({
-          type: 'value',
-          name: 'Metric score',
-          position: 'right',
-          min: 0,
-          max: 8,
-          axisLabel: { color: '#F24335' },
-          axisLine: { show: true, lineStyle: { color: '#F24335' } },
-          splitLine: { show: false }
-        });
-      }
-      
       const option = {
         title: [
           {
-            text: 'Action Times by User',
+            text: 'Action Times Analysis by User',
             left: 'left',
-            top: 16,
-            textStyle: { fontSize: 18, fontWeight: 600, color: '#044a82' }
+            top: 24,
+            textStyle: {
+              fontSize: 18,
+              fontWeight: 600,
+              color: '#044a82'
+            }
           },
           {
-            text: `${filteredUsers.length} users \u00b7 Time Elapsed: ${timeThreshold} min`,
+            text: `Time Threshold: ${timeThreshold} minutes`,
             left: 'right',
-            top: 20,
-            textStyle: { fontSize: 13, color: '#727272', fontWeight: 400 }
+            top: 24,
+            textStyle: {
+              fontSize: 14,
+              color: '#727272'
+            }
           }
         ],
-        legend: {
-          top: 52,
-          left: 'left',
-          icon: 'roundRect',
-          itemWidth: 14,
-          itemHeight: 10,
-          itemGap: 16,
-          textStyle: { fontSize: 12, color: '#444' },
-          selected: legendSelected
-        },
         tooltip: {
           trigger: 'axis',
-          axisPointer: { type: 'shadow' },
+          axisPointer: {
+            type: 'cross',
+            crossStyle: {
+              color: '#999'
+            }
+          },
           formatter: function (params) {
-            // params may include multiple bar series + the optional score line
-            const i = params[0].dataIndex;
-            const name = chartData.fullNames[i];
-            const score = chartData.metricScores[i];
-            const tier = score >= 4.6 ? 'High' : score >= 1.4 ? 'Elevated' : 'Normal';
-            // Tier text colors use the Bluesight 700 tier — matches the
-            // comp-score column styling in the table (Danger 700 / Warning 700 /
-            // Success 700) so the same tier reads identically across the page.
-            const tierColor = score >= 4.6 ? '#B53228' : score >= 1.4 ? '#A49020' : '#0E7221';
-            
-            let lines = [`<strong>${name}</strong>`];
-            params.forEach(p => {
-              if (p.seriesName === 'Metric score') return; // shown separately below
-              const v = p.value;
-              const ruleKey = Object.keys(ruleNames).find(k => ruleNames[k] === p.seriesName);
-              const events = ruleKey ? chartData.byRule[ruleKey].events[i] : null;
-              if (v == null) {
-                lines.push(`${p.marker}${p.seriesName}: <span style="color:#999">no events</span>`);
+            let result = `<strong>${params[0].name}</strong><br/>`;
+            params.forEach(param => {
+              const value = param.value;
+              if (value === null || value === undefined) {
+                result += `${param.marker}${param.seriesName}: <span style="color:#999">no events</span><br/>`;
+              } else if (param.seriesName.includes('Events')) {
+                result += `${param.marker}${param.seriesName}: ${value} events<br/>`;
               } else {
-                lines.push(`${p.marker}${p.seriesName}: <strong>${v} min</strong> \u00b7 ${events} ev`);
+                result += `${param.marker}${param.seriesName}: ${value} min<br/>`;
               }
             });
-            lines.push(`<span style="color:#999">Metric score:</span> <strong style="color:${tierColor}">${score.toFixed(1)} (${tier})</strong>`);
-            return lines.join('<br/>');
+            return result;
+          }
+        },
+        legend: {
+          data: getChartLegendData(),
+          top: 80,
+          textStyle: {
+            fontSize: 12
           }
         },
         grid: {
           left: 24,
-          right: showMetricScoreLine ? 48 : 24,
+          right: 24,
           bottom: 80,
-          top: 100,
+          top: 112,
           containLabel: true
         },
         dataZoom: [
@@ -3835,44 +3731,68 @@
           {
             type: 'category',
             data: chartData.users,
-            axisPointer: { type: 'shadow' },
-            axisLabel: { rotate: 45, fontSize: 11, color: '#666' }
+            axisPointer: {
+              type: 'shadow'
+            },
+            axisLabel: {
+              rotate: 45,
+              fontSize: 11,
+              color: '#666'
+            }
           }
         ],
-        yAxis: yAxes,
+        yAxis: [
+          {
+            type: 'value',
+            name: 'Events',
+            position: 'left',
+            axisLabel: {
+              formatter: '{value}',
+              color: '#666'
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: '#e5e5e5',
+                type: 'dashed'
+              }
+            }
+          },
+          {
+            type: 'value',
+            name: 'Average Time (min)',
+            position: 'right',
+            axisLabel: {
+              formatter: '{value}',
+              color: '#666'
+            }
+          },
+          {
+            type: 'value',
+            name: 'Metric Score',
+            position: 'right',
+            offset: 60,
+            axisLabel: {
+              formatter: '{value}',
+              color: '#ff4444'
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: '#ff4444'
+              }
+            },
+            splitLine: {
+              show: false
+            }
+          }
+        ],
         series: generateChartSeries(chartData),
         animation: true,
-        animationDuration: 600
+        animationDuration: 1000
       };
       
       chart.setOption(option);
-      
-      // When the user toggles a series via the chart's legend, mirror that
-      // into visibleRules so the tabular rule chips + columns stay in sync.
-      // We also enforce the same "at least 1 rule must stay selected" rule
-      // that the rule chips enforce — if the user tries to turn the last one
-      // off, we re-enable it immediately.
-      chart.on('legendselectchanged', function (e) {
-        const reverseLookup = {
-          'First Dispense \u2192 Admin':   'firstDispenseFirstAdmin',
-          'Last Admin \u2192 Waste':       'lastAdminLastWaste',
-          'Admin Before Dispense':         'adminBeforeDispense',
-          'First Dispense \u2192 Waste':   'firstDispenseFirstWaste',
-          'Recorded Admin \u2260 Action':  'recordedNotEqualAction'
-        };
-        // Ignore non-rule legend toggles (like the Metric Score line).
-        if (!(e.name in reverseLookup)) return;
-        
-        const nextRules = Object.keys(reverseLookup).filter(label => e.selected[label]).map(label => reverseLookup[label]);
-        if (nextRules.length === 0) {
-          // Revert — the user tried to deselect the last rule.
-          chart.dispatchAction({ type: 'legendSelect', name: e.name });
-          return;
-        }
-        visibleRules = nextRules;
-        updateRuleVisibility();   // sync table columns
-        syncRuleChips();          // sync rule-chip visuals
-      });
       
       // Handle window resize
       window.addEventListener('resize', function () {
@@ -3882,80 +3802,130 @@
       return chart;
     }
     
-    /* Chart shows grouped bars: one bar per rule per user. The ECharts legend
-       toggles individual rule series on/off independently of the table.
-       Bars are colored by RULE (not by metric-score tier) so each series stays
-       visually distinct in the legend. */
     function prepareChartData() {
-      const allRules = ['firstDispenseFirstAdmin','lastAdminLastWaste','adminBeforeDispense','firstDispenseFirstWaste','recordedNotEqualAction'];
+      const users = [];
       const data = {
         users: [],
-        fullNames: [],
         metricScores: [],
-        byRule: {}            // rule key -> { avgTime: [], events: [] }
+        firstDispenseFirstAdmin: { events: [], avgTime: [] },
+        lastAdminLastWaste: { events: [], avgTime: [] },
+        adminBeforeDispense: { events: [], avgTime: [] },
+        firstDispenseFirstWaste: { events: [], avgTime: [] },
+        recordedNotEqualAction: { events: [], avgTime: [] }
       };
-      allRules.forEach(r => { data.byRule[r] = { avgTime: [], events: [] }; });
       
       filteredUsers.forEach(user => {
-        const parts = user.name.split(' ');
-        const shortName = parts[0] + ' ' + (parts[1] ? parts[1].charAt(0) + '.' : '');
+        // Use first name + last initial for chart labels
+        const shortName = user.name.split(' ')[0] + ' ' + user.name.split(' ')[1].charAt(0) + '.';
         data.users.push(shortName);
-        data.fullNames.push(user.name);
         data.metricScores.push(user.outlierScore);
         
-        allRules.forEach(rule => {
-          const r = user[rule];
-          const hasEvents = r && r.events > 0;
-          data.byRule[rule].avgTime.push(hasEvents ? r.avgTime : null);
-          data.byRule[rule].events.push(hasEvents ? r.events : null);
+        // Only include data for visible rules
+        visibleRules.forEach(rule => {
+          if (data[rule]) {
+            // Push null (not 0) when the user has no events for this rule.
+            // ECharts renders nulls as gaps — no bar, no line point.
+            const hasEvents = user[rule].events > 0;
+            data[rule].events.push(hasEvents ? user[rule].events : null);
+            data[rule].avgTime.push(hasEvents ? user[rule].avgTime : null);
+          }
         });
       });
       
       return data;
     }
     
-    function generateChartSeries(data) {
+    function getChartLegendData() {
       const ruleNames = {
-        firstDispenseFirstAdmin: 'First Dispense \u2192 Admin',
-        lastAdminLastWaste:      'Last Admin \u2192 Waste',
-        adminBeforeDispense:     'Admin Before Dispense',
-        firstDispenseFirstWaste: 'First Dispense \u2192 Waste',
-        recordedNotEqualAction:  'Recorded Admin \u2260 Action'
-      };
-      // One distinct color per rule, drawn from the Bluesight Palette's 500
-       // tier (Base) — matches the categorical convention used in med-trends
-       // (Blue/UC/Orange/Success/Pink). Avoids Danger 500 so red stays reserved
-       // for severity/state meaning elsewhere in the app.
-      const ruleColors = {
-        firstDispenseFirstAdmin: '#0096B8',   // Blue 500
-        lastAdminLastWaste:      '#F5A623',   // Orange 500
-        adminBeforeDispense:     '#9CA6F1',   // UC 500 (Periwinkle)
-        firstDispenseFirstWaste: '#EB4699',   // Pink 500
-        recordedNotEqualAction:  '#16B434'    // Success 500
+        'firstDispenseFirstAdmin': ['First Dispense → Admin (Events)', 'First Dispense → Admin (Time)'],
+        'lastAdminLastWaste': ['Last Admin → Waste (Events)', 'Last Admin → Waste (Time)'],
+        'adminBeforeDispense': ['Admin Before Dispense (Events)', 'Admin Before Dispense (Time)'],
+        'firstDispenseFirstWaste': ['First Dispense → Waste (Events)', 'First Dispense → Waste (Time)'],
+        'recordedNotEqualAction': ['Recorded ≠ Action (Events)', 'Recorded ≠ Action (Time)']
       };
       
-      const series = Object.keys(data.byRule).map(rule => ({
-        name: ruleNames[rule],
-        type: 'bar',
-        data: data.byRule[rule].avgTime,
-        itemStyle: { color: ruleColors[rule] },
-        barMinWidth: 4,
-        barGap: '20%',
-        emphasis: { focus: 'series' }
-      }));
+      let legend = [];
+      visibleRules.forEach(rule => {
+        if (ruleNames[rule]) {
+          legend.push(...ruleNames[rule]);
+        }
+      });
       
-      if (showMetricScoreLine) {
-        series.push({
-          name: 'Metric score',
-          type: 'line',
-          yAxisIndex: 1,
-          data: data.metricScores,
-          lineStyle: { color: '#F24335', width: 2, type: 'dashed' },
-          itemStyle: { color: '#F24335', borderWidth: 2, borderColor: '#fff' },
-          symbolSize: 7,
-          z: 5
-        });
-      }
+      return legend;
+    }
+    
+    function generateChartSeries(data) {
+      const colors = {
+        'firstDispenseFirstAdmin': ['#0096b8', '#54c8e7'],
+        'lastAdminLastWaste': ['#16b434', '#7ed321'],
+        'adminBeforeDispense': ['#f24335', '#ff6b6b'],
+        'firstDispenseFirstWaste': ['#f5a623', '#ffb347'],
+        'recordedNotEqualAction': ['#9013fe', '#bd10e0']
+      };
+      
+      const ruleNames = {
+        'firstDispenseFirstAdmin': 'First Dispense → Admin',
+        'lastAdminLastWaste': 'Last Admin → Waste',
+        'adminBeforeDispense': 'Admin Before Dispense',
+        'firstDispenseFirstWaste': 'First Dispense → Waste',
+        'recordedNotEqualAction': 'Recorded Admin ≠ Action'
+      };
+      
+      let series = [];
+      
+      // Add metric scores as the first series
+      series.push({
+        name: 'Metric Score',
+        type: 'line',
+        yAxisIndex: 2,
+        data: data.metricScores,
+        lineStyle: {
+          color: '#ff4444',
+          width: 4,
+          type: 'dashed'
+        },
+        itemStyle: {
+          color: '#ff4444',
+          borderWidth: 2,
+          borderColor: '#fff'
+        },
+        symbolSize: 8,
+        emphasis: {
+          focus: 'series'
+        }
+      });
+      
+      visibleRules.forEach(rule => {
+        if (data[rule] && colors[rule]) {
+          // Events bar series
+          series.push({
+            name: `${ruleNames[rule]} (Events)`,
+            type: 'bar',
+            data: data[rule].events,
+            itemStyle: {
+              color: colors[rule][0]
+            },
+            barGap: '10%',
+            barMinWidth: 8
+          });
+          
+          // Average time line series
+          series.push({
+            name: `${ruleNames[rule]} (Time)`,
+            type: 'line',
+            yAxisIndex: 1,
+            data: data[rule].avgTime,
+            lineStyle: {
+              color: colors[rule][1],
+              width: 3
+            },
+            itemStyle: {
+              color: colors[rule][1]
+            },
+            symbolSize: 6
+          });
+        }
+      });
       
       return series;
     }
@@ -3991,6 +3961,7 @@
     // slider are reset inside togglePillter when that pillter opens.
 
     function toggleRuleChip(ruleKey) {
+      console.log('toggleRuleChip called with:', ruleKey);
       const chip = document.getElementById(`chip-${ruleKey}`);
       const isSelected = chip.classList.contains('selected');
       
@@ -3999,14 +3970,17 @@
         if (visibleRules.length > 1) {
           visibleRules = visibleRules.filter(rule => rule !== ruleKey);
           chip.classList.remove('selected');
+          // Remove checkmark icon
           const icon = chip.querySelector('.chip-icon');
           if (icon) icon.remove();
         }
       } else {
+        // Add rule to visible list
         if (!visibleRules.includes(ruleKey)) {
           visibleRules.push(ruleKey);
         }
         chip.classList.add('selected');
+        // Add checkmark icon
         const icon = document.createElement('span');
         icon.className = 'material-icons chip-icon';
         icon.textContent = 'check';
@@ -4015,50 +3989,13 @@
       
       updateRuleVisibility();
       
-      // If the chart is currently rendered, sync its legend to match — no
-      // need to dispose/re-init, just dispatch a legend action.
+      // Update chart if currently viewing it
       if (currentView === 'graph' && actionChart) {
-        const ruleNameMap = {
-          firstDispenseFirstAdmin: 'First Dispense \u2192 Admin',
-          lastAdminLastWaste:      'Last Admin \u2192 Waste',
-          adminBeforeDispense:     'Admin Before Dispense',
-          firstDispenseFirstWaste: 'First Dispense \u2192 Waste',
-          recordedNotEqualAction:  'Recorded Admin \u2260 Action'
-        };
-        const name = ruleNameMap[ruleKey];
-        actionChart.dispatchAction({
-          type: visibleRules.includes(ruleKey) ? 'legendSelect' : 'legendUnSelect',
-          name
-        });
+        actionChart.dispose();
+        actionChart = initActionChart();
       }
-    }
-    
-    // Update rule-chip visual state (selected class + checkmark icon) to match
-    // visibleRules. Used when the chart legend drives the change instead of the
-    // chip itself.
-    function syncRuleChips() {
-      const allRules = ['firstDispenseFirstAdmin','lastAdminLastWaste','adminBeforeDispense','firstDispenseFirstWaste','recordedNotEqualAction'];
-      allRules.forEach(rule => {
-        const chip = document.getElementById(`chip-${rule}`);
-        if (!chip) return;
-        const shouldBeSelected = visibleRules.includes(rule);
-        const isSelected = chip.classList.contains('selected');
-        
-        if (shouldBeSelected && !isSelected) {
-          chip.classList.add('selected');
-          if (!chip.querySelector('.chip-icon')) {
-            const icon = document.createElement('span');
-            icon.className = 'material-icons chip-icon';
-            icon.textContent = 'check';
-            const target = chip.querySelector('.chip-text') || chip.firstChild;
-            chip.insertBefore(icon, target);
-          }
-        } else if (!shouldBeSelected && isSelected) {
-          chip.classList.remove('selected');
-          const icon = chip.querySelector('.chip-icon');
-          if (icon) icon.remove();
-        }
-      });
+      
+      console.log('Visible rules updated:', visibleRules);
     }
     
     function updateRuleVisibility() {
@@ -5057,8 +4994,8 @@
               </div>
             </div>
 
-            <!-- ── Rules Chips (Tabular Data only) ── -->
-            <div class="rules-chips-row" id="rules-chips-row">
+            <!-- ── Rules Chips ── -->
+            <div class="rules-chips-row">
               <button class="rule-chip selected" id="chip-firstDispenseFirstAdmin" onclick="toggleRuleChip('firstDispenseFirstAdmin')">
                 <span class="material-icons chip-icon">check</span>
                 <span class="chip-text">First Dispense → First Admin</span>
@@ -5143,17 +5080,8 @@
               </div>
             </div>
             <!-- Action Times Graph -->
-            <div id="action-times-graph-wrap" style="display: none;">
-              <div class="graph-toolbar">
-                <label class="toggle-switch">
-                  <input type="checkbox" id="metric-score-toggle" onchange="toggleMetricScoreLine(this.checked)" />
-                  <span class="toggle-slider"></span>
-                  <span class="toggle-label">Show metric scores</span>
-                </label>
-              </div>
-              <div id="action-times-graph-view">
-                <!-- Chart will be inserted here -->
-              </div>
+            <div id="action-times-graph-view" style="display: none;">
+              <!-- Chart will be inserted here -->
             </div>
 
           </div>
