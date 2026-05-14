@@ -1047,6 +1047,20 @@
 
     .drilldown-title {
       font-size: 16px; font-weight: 700; color: #0a3861;
+      line-height: 1.25;
+    }
+    /* When a subtitle is present, the title structure is:
+         .drilldown-title
+           .drilldown-title-name   (matches the base drilldown-title look)
+           .drilldown-subtitle     (smaller, muted, sits flush below) */
+    .drilldown-title-name {
+      font-size: 16px; font-weight: 700; color: #0a3861;
+      line-height: 1.25;
+    }
+    .drilldown-subtitle {
+      font-size: 13px; font-weight: 400; color: var(--text-54);
+      line-height: 1.25;
+      margin-top: 2px;
     }
 
     /* ══════════════════════════════════════════════
@@ -4104,8 +4118,7 @@
     currentUserName = user.name;
     currentFocusUserId = null;
     setVisibleView('view-user-drugs');
-    setDrilldownHeader('user-drugs', user.name,
-      `${user.role} · ${user.dept} · ${user.shifts} shifts · ${user.patients || 0} patients`);
+    setDrilldownHeader('user-drugs', user.name, `${user.role} · ${user.dept}`);
     renderMedTrendsCard(userId);
     renderUserDrugsTable(userId);
     udRebuildDrugFilter(userId);
@@ -4198,7 +4211,7 @@
     currentUserId = userId;
     currentUserName = user.name;
     setVisibleView('view-user-drugs');
-    setDrilldownHeader('user-drugs', user.name);
+    setDrilldownHeader('user-drugs', user.name, `${user.role} · ${user.dept}`);
     renderMedTrendsCard(userId);
     renderUserDrugsTable(userId);
     udRebuildDrugFilter(userId);
@@ -4225,10 +4238,19 @@
     else if (currentPage === 'by-drug' && currentLevel === 2) goBackFromUserDrugs();
   }
 
-  /* Per-view drilldown title helper (lives inside count-search-row) */
-  function setDrilldownHeader(viewScope, title /* , _ignoredSubtitle */) {
+  /* Per-view drilldown title helper.
+     `title`    — large bold line (user name or drug name)
+     `subtitle` — optional smaller muted line below. Used on user drilldowns
+                  to show "Role · Department"; drug drilldowns pass nothing. */
+  function setDrilldownHeader(viewScope, title, subtitle) {
     const titleEl = document.getElementById(`${viewScope}-drilldown-title`);
-    if (titleEl) titleEl.textContent = title;
+    if (!titleEl) return;
+    if (subtitle) {
+      titleEl.innerHTML = `<div class="drilldown-title-name">${title}</div>` +
+                          `<div class="drilldown-subtitle">${subtitle}</div>`;
+    } else {
+      titleEl.textContent = title;
+    }
   }
 
   /* ══════════════════════════════════════════════
