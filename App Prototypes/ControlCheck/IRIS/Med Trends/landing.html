@@ -751,7 +751,7 @@
       flex: 1 1 auto; overflow: hidden;
       display: flex; flex-direction: column;
       min-height: 0;
-      padding: 0 40px 40px;
+      padding: 0 40px 0;
     }
 
     /* ── Toolbar ── */
@@ -2907,7 +2907,7 @@
       ${th('shifts','Shifts','right','width:70px;')}
       ${th('patients','Patients','right','width:75px;')}
       ${contextCols}
-      <th style="width:260px;"></th>
+      <th style="width:130px;"></th>
     </tr>`;
   }
 
@@ -2954,12 +2954,9 @@
            <td class="num">${u.massWaste} mg</td>
            <td class="num">${u.massReturn} mg</td>`;
       const action = `
-        <td class="l2-action-cell">
-          <a class="row-action-btn" href="#" onclick="event.stopPropagation();drillToUserFromDrugUsers('${u.userId}');return false;">
-            <span class="material-icons">medication</span> View Drugs
-          </a>
-          <a class="row-action-btn" href="#" onclick="event.stopPropagation();return false;">
-            <span class="material-icons">open_in_new</span> Investigate
+        <td style="text-align:right">
+          <a class="investigate-link" href="#" onclick="event.stopPropagation();drillToUserFromDrugUsers('${u.userId}');return false;">
+            View Drugs <span class="material-icons">chevron_right</span>
           </a>
         </td>`;
       return `<tr class="${u.userId === currentFocusUserId ? 'focus-user' : ''}" onclick="drillToUserFromDrugUsers('${u.userId}')">${fixed}${data}${action}</tr>`;
