@@ -3669,6 +3669,10 @@
       // Rule chips affect table columns — only meaningful on the Tabular tab.
       // On Visualized Data, ECharts' legend handles series visibility instead.
       document.getElementById('rules-chips-row').style.display = mode === 'table' ? '' : 'none';
+      // Comparison Score only affects the table's comp-score column, so hide it
+      // on the chart. Time Elapsed stays — it scales avgTime / retention rate
+      // and re-inits the chart on Apply.
+      document.getElementById('pillter-comp-score').style.display = mode === 'table' ? '' : 'none';
       
       const tabular = document.getElementById('action-times-tabular-tab');
       const visual = document.getElementById('action-times-visual-tab');
@@ -5232,9 +5236,11 @@
             </div>
 
             <!-- ── Secondary pillter filters ── -->
+            <!-- Comparison Score: Tabular only (table-comp-score column).
+                 Time Elapsed: both views — it scales avgTime / retention. -->
             <div class="content-toolbar">
               <div class="toolbar-left">
-                <!-- Comparison Score pillter (single-select) -->
+                <!-- Comparison Score pillter (single-select) — hidden on graph view -->
                 <div class="pillter-wrapper" id="pillter-comp-score">
                   <button class="filter-chip secondary active" id="chip-comp-score" onclick="togglePillter('pillter-comp-score')">
                     <span class="cs-label">Comparison Score:</span>
