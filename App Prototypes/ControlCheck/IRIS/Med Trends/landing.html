@@ -1062,6 +1062,24 @@
       line-height: 1.25;
       margin-top: 2px;
     }
+    /* Breadcrumb-style drilldown title.
+       Used on By Drug L2 when arrived via Compare from a user.
+       Format: "Francis Overby / fentaNYL Inj / Compare" — first segment is
+       a Navy 500 link, last segments + separators are text-54. */
+    .drilldown-crumb-link {
+      font-size: 16px; font-weight: 700; color: var(--blue-dark, #044a82);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color .12s;
+    }
+    .drilldown-crumb-link:hover { color: var(--teal, #0096b8); text-decoration: underline; }
+    .drilldown-crumb-current {
+      font-size: 16px; font-weight: 700; color: var(--text-54, #757575);
+    }
+    .drilldown-crumb-sep {
+      font-size: 16px; font-weight: 400; color: var(--gray-400, #bdbdbd);
+      margin: 0 4px;
+    }
 
     /* ══════════════════════════════════════════════
        SUMMARY STATS BAR  (drilldown view)
@@ -3865,6 +3883,9 @@
   // When set on By Drug L2, marks the user the viewer came from via Compare —
   // highlighted in the table + chart so the user can find them quickly.
   let currentFocusUserId = null;
+  // Display name of the focus user (so breadcrumb / back nav can label correctly
+  // without needing to look it up again).
+  let currentFocusUserName = null;
 
   /* ══════════════════════════════════════════════
      PAGE SWITCH — By User / By Drug
@@ -3885,6 +3906,7 @@
     currentDrugName = null;
     currentDrugContext = null;
     currentFocusUserId = null;
+    currentFocusUserName = null;
     currentLevel = 0;
 
     // Sidebar active state
@@ -3967,7 +3989,9 @@
       if (viewId === 'view-user-drugs') {
         label = currentPage === 'by-drug' ? `Back to ${currentDrugContext || 'Drug'} Users` : 'Back to All Users';
       } else if (viewId === 'view-drug-users') {
-        label = 'Back to All Drugs';
+        label = currentFocusUserName
+          ? `Back to ${currentFocusUserName}`
+          : 'Back to All Drugs';
       }
       backBtn.title = label;
       backBtn.setAttribute('aria-label', label);
@@ -4190,6 +4214,7 @@
     currentUserId = userId;
     currentUserName = user.name;
     currentFocusUserId = null;
+    currentFocusUserName = null;
     setVisibleView('view-user-drugs');
     setDrilldownHeader('user-drugs', user.name, `${user.role} · ${user.dept}`);
     renderMedTrendsCard(userId);
@@ -4203,11 +4228,15 @@
   function drillToDrug(drugName) {
     // Compare from By User L2 → switch to By Drug L2 for this drug, with the
     // originating user highlighted as the "focus user" on the L2 table + chart.
+    // The drilldown header renders as a breadcrumb: "User / Drug / Compare"
+    // with the User segment clickable (returns to that user's By User L2).
     // (Previously opened the L3 overlay panel; openL3Panel() is left in place
     // as dead code in case the panel pattern is needed from another entry point.)
-    const focusUserId = currentUserId;
+    const focusUserId   = currentUserId;
+    const focusUserName = currentUserName;
     setPage('by-drug');
-    currentFocusUserId = focusUserId;
+    currentFocusUserId   = focusUserId;
+    currentFocusUserName = focusUserName;
     drillToDrugFromAllDrugs(drugName, { preserveFocus: true });
   }
 
@@ -4217,6 +4246,7 @@
     currentUserName = null;
     currentDrugName = null;
     currentFocusUserId = null;
+    currentFocusUserName = null;
     setVisibleView('view-all-users');
     setBreadcrumb();
     if (userDrugsChart) { userDrugsChart.dispose(); userDrugsChart = null; }
@@ -4234,6 +4264,7 @@
     currentDrugName = null;
     currentDrugContext = null;
     currentFocusUserId = null;
+    currentFocusUserName = null;
     setVisibleView('view-all-drugs');
     setBreadcrumb();
     if (drugUsersChart) { drugUsersChart.dispose(); drugUsersChart = null; }
@@ -4249,9 +4280,23 @@
     currentDrugName = drugName;
     currentDrugContext = drugName; // remember the drug for L3 highlighting/back
     // Reset focus user unless this drill is preserving it (Compare cross-page jump).
-    if (!opts.preserveFocus) currentFocusUserId = null;
+    if (!opts.preserveFocus) {
+      currentFocusUserId = null;
+      currentFocusUserName = null;
+    }
     setVisibleView('view-drug-users');
-    setDrilldownHeader('user-drugs', drugName); // reuse the same element
+    // Header: plain drug name OR breadcrumb (User / Drug / Compare) when arrived
+    // via Compare. The User segment links back to that user's By User L2.
+    if (currentFocusUserId && currentFocusUserName) {
+      const escName = currentFocusUserName.replace(/'/g, "\\'");
+      setDrilldownHeader('user-drugs', { breadcrumb: [
+        { label: currentFocusUserName, onClick: `goBackToFocusUser()` },
+        { label: drugName },
+        { label: 'Compare' }
+      ]});
+    } else {
+      setDrilldownHeader('user-drugs', drugName);
+    }
     // (Med Trends summary card is user-scoped and intentionally hidden on view-drug-users)
     renderDrugUsersTable(drugName);
     duRebuildUserFilter(drugName);
@@ -4261,13 +4306,22 @@
   }
 
   function goToDrugUsers(drugName) {
-    // Same as drillToDrugFromAllDrugs but doesn't reset filter selection
+    // Same as drillToDrugFromAllDrugs but doesn't reset filter selection.
+    // Called from L3 → L2 back navigation; preserves focus user breadcrumb.
     currentLevel = 1;
     currentUserId = null;
     currentUserName = null;
     currentDrugName = drugName;
     setVisibleView('view-drug-users');
-    setDrilldownHeader('user-drugs', drugName);
+    if (currentFocusUserId && currentFocusUserName) {
+      setDrilldownHeader('user-drugs', { breadcrumb: [
+        { label: currentFocusUserName, onClick: `goBackToFocusUser()` },
+        { label: drugName },
+        { label: 'Compare' }
+      ]});
+    } else {
+      setDrilldownHeader('user-drugs', drugName);
+    }
     // (Med Trends summary card is user-scoped and intentionally hidden on view-drug-users)
     renderDrugUsersTable(drugName);
     duRebuildUserFilter(drugName);
@@ -4303,7 +4357,23 @@
     }
   }
   function goBackFromDrugUsers() {
-    goToAllDrugs();
+    // If we arrived here via Compare from a user's By User L2, back returns
+    // to that user (not to By Drug L1). The breadcrumb's user-segment link
+    // does the same thing via goBackToFocusUser().
+    if (currentFocusUserId) {
+      goBackToFocusUser();
+    } else {
+      goToAllDrugs();
+    }
+  }
+
+  /* Jump back to By User L2 for the focus user (the one we arrived from
+     via Compare). Used by both the back button and the breadcrumb. */
+  function goBackToFocusUser() {
+    const focusId = currentFocusUserId;
+    if (!focusId) { goToAllDrugs(); return; }
+    setPage('by-user');
+    drillToUser(focusId);
   }
   function goBack() {
     if (currentPage === 'by-user' && currentLevel === 1) goBackFromUserDrugs();
@@ -4312,12 +4382,33 @@
   }
 
   /* Per-view drilldown title helper.
-     `title`    — large bold line (user name or drug name)
-     `subtitle` — optional smaller muted line below. Used on user drilldowns
-                  to show "Role · Department"; drug drilldowns pass nothing. */
+     One of three shapes can be rendered:
+     1. Plain title:    setDrilldownHeader(scope, 'fentaNYL Inj')
+     2. Title+subtitle: setDrilldownHeader(scope, 'Francis Overby', 'RN · Med North')
+     3. Breadcrumb:     setDrilldownHeader(scope, { breadcrumb: [
+          { label: 'Francis Overby', onClick: 'goToFocusUser()' },
+          { label: 'fentaNYL Inj' },
+          { label: 'Compare' }
+        ]})
+     For breadcrumb, segments with onClick render as Navy 500 links; the
+     last segment (and any without onClick) render as text-54. */
   function setDrilldownHeader(viewScope, title, subtitle) {
     const titleEl = document.getElementById(`${viewScope}-drilldown-title`);
     if (!titleEl) return;
+    // Breadcrumb shape (title is an object)
+    if (title && typeof title === 'object' && Array.isArray(title.breadcrumb)) {
+      const sep = ' <span class="drilldown-crumb-sep">/</span> ';
+      titleEl.innerHTML = title.breadcrumb.map((seg, i) => {
+        const isLast = i === title.breadcrumb.length - 1;
+        const cls = (!isLast && seg.onClick) ? 'drilldown-crumb-link' : 'drilldown-crumb-current';
+        if (!isLast && seg.onClick) {
+          return `<a href="#" class="${cls}" onclick="${seg.onClick};return false;">${seg.label}</a>`;
+        }
+        return `<span class="${cls}">${seg.label}</span>`;
+      }).join(sep);
+      return;
+    }
+    // Standard title or title+subtitle
     if (subtitle) {
       titleEl.innerHTML = `<div class="drilldown-title-name">${title}</div>` +
                           `<div class="drilldown-subtitle">${subtitle}</div>`;
