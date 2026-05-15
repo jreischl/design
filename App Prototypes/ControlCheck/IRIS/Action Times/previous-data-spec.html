@@ -602,81 +602,28 @@
       font-weight: 400;
     }
     
-    /* Time-threshold menu — preset chips + custom input + live preview.
-       Replaces the old slider since Kaiser's "before" value (10 min) wasn't
-       reachable with step=15, and the test intervals from IRIS Logic
-       Refinement (10/30/60/120/240) deserve to be first-class. */
-    .pillter-menu .threshold-section { padding: 14px 16px 4px; }
-    .pillter-menu .threshold-section h5 {
+    /* Slider menu body — shared between Time Elapsed and any future slider pillters */
+    .pillter-menu .slider-section { padding: 14px 16px 4px; }
+    .pillter-menu .slider-section h5 {
       margin: 0 0 10px;
       font-size: 12px; font-weight: 600;
       color: var(--text-87);
     }
-    .pillter-menu .threshold-preset-row {
-      display: flex; flex-wrap: wrap; gap: 6px;
+    .pillter-menu .slider-row {
+      display: flex; align-items: center; gap: 12px;
     }
-    .pillter-menu .threshold-preset-chip {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 0 12px; min-height: 28px;
-      border-radius: 14px;
-      border: 1px solid var(--teal);
-      background: #fff;
-      color: var(--teal);
-      font-family: var(--font);
-      font-size: .75rem; font-weight: 600;
-      cursor: pointer;
-      transition: all .15s ease;
-      white-space: nowrap;
+    .pillter-menu .slider-row input[type="range"] {
+      flex: 1; accent-color: var(--teal);
     }
-    .pillter-menu .threshold-preset-chip:hover { background: rgba(0,150,184,.05); }
-    .pillter-menu .threshold-preset-chip.selected {
-      background: var(--teal); color: #fff; border-color: var(--teal);
-    }
-    .pillter-menu .threshold-custom-row {
-      display: flex; align-items: center; gap: 8px;
-    }
-    .pillter-menu .threshold-custom-row input[type="number"] {
-      width: 72px; height: 30px;
+    .pillter-menu .slider-row input[type="number"] {
+      width: 60px; height: 30px;
       border: 1px solid #cfcfcf; border-radius: 4px;
       padding: 0 6px; text-align: center;
       font-family: var(--font); font-size: 13px;
     }
-    .pillter-menu .threshold-unit {
-      font-size: 12px; color: var(--text-54);
-    }
-    .pillter-menu .threshold-preview {
-      display: flex; align-items: flex-start; gap: 6px;
-      margin: 12px 16px 0;
-      padding: 8px 10px;
-      background: rgba(0,150,184,.08);
-      border-radius: 4px;
-      font-size: 12px;
-      color: var(--text-87);
-      line-height: 1.35;
-    }
-    .pillter-menu .threshold-preview .preview-icon {
-      font-size: 16px; width: 16px; height: 16px;
-      color: var(--teal);
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-    .pillter-menu .threshold-help {
-      padding: 10px 16px 4px;
+    .pillter-menu .slider-help {
+      padding: 0 16px 10px;
       font-size: 11px; color: #9e9e9e; line-height: 1.4;
-    }
-    
-    /* Persistent impact summary that sits next to the Time Elapsed chip in the
-       toolbar — keeps the threshold's effect visible after Apply, not just in
-       the configuration menu. */
-    .toolbar-threshold-summary {
-      font-size: 12px;
-      color: var(--text-54);
-      font-weight: 400;
-      white-space: nowrap;
-    }
-    .toolbar-threshold-summary strong {
-      color: var(--text-87);
-      font-weight: 600;
     }
     
     /* Single-select list used by Comparison Score */
@@ -3569,7 +3516,7 @@
     let currentView = 'table';
     let sortState = { col: 'name', asc: true };
     let actionChart = null;
-    let visibleRules = ['adminBeforeDispense']; // Selected rules — drives BOTH the table columns AND the chart legend. Default: Admin Before Dispense (the Kaiser-driving sub-metric per IRIS Logic Refinement scope).
+    let visibleRules = ['firstDispenseFirstAdmin']; // Selected rules — drives BOTH the table columns AND the chart legend.
     let selectedComparisonScore = 'overall'; // Current comparison score metric
     let timeThreshold = 240; // Current time threshold in minutes
     let showMetricScoreLine = false; // toggle for outlier-score overlay on chart
@@ -3666,14 +3613,14 @@
               </div>
               <div class="user-role-dept">${user.role}${user.dept ? ' • ' + user.dept : ''}</div>
             </td>
-            <td class="num col-abd-events">${fmtEvents(user.adminBeforeDispense)}</td>
-            <td class="num col-abd-time">${fmtAvgTime(user.adminBeforeDispense)}</td>
-            <td class="num col-fdfa-events hidden">${fmtEvents(user.firstDispenseFirstAdmin)}</td>
-            <td class="num col-fdfa-time hidden">${fmtAvgTime(user.firstDispenseFirstAdmin)}</td>
-            <td class="num col-fdfw-events hidden">${fmtEvents(user.firstDispenseFirstWaste)}</td>
-            <td class="num col-fdfw-time hidden">${fmtAvgTime(user.firstDispenseFirstWaste)}</td>
+            <td class="num col-fdfa-events">${fmtEvents(user.firstDispenseFirstAdmin)}</td>
+            <td class="num col-fdfa-time">${fmtAvgTime(user.firstDispenseFirstAdmin)}</td>
             <td class="num col-lalw-events hidden">${fmtEvents(user.lastAdminLastWaste)}</td>
             <td class="num col-lalw-time hidden">${fmtAvgTime(user.lastAdminLastWaste)}</td>
+            <td class="num col-abd-events hidden">${fmtEvents(user.adminBeforeDispense)}</td>
+            <td class="num col-abd-time hidden">${fmtAvgTime(user.adminBeforeDispense)}</td>
+            <td class="num col-fdfw-events hidden">${fmtEvents(user.firstDispenseFirstWaste)}</td>
+            <td class="num col-fdfw-time hidden">${fmtAvgTime(user.firstDispenseFirstWaste)}</td>
             <td class="num col-rnea-events hidden">${fmtEvents(user.recordedNotEqualAction)}</td>
             <td class="num col-rnea-time hidden">${fmtAvgTime(user.recordedNotEqualAction)}</td>
             <td class="center fixed-col-right">
@@ -4394,74 +4341,15 @@
       });
     }
 
-    /* Time-threshold handlers — preset chips + custom input.
-       tempTimeThreshold holds the in-flight value while the menu is open;
-       Apply commits it to timeThreshold and re-filters the dataset. */
-    
-    function setThresholdPreset(value) {
+    function updateTimeThreshold(value) {
       tempTimeThreshold = parseInt(value);
       document.getElementById('time-input').value = tempTimeThreshold;
-      syncThresholdPresetChips();
-      updateThresholdPreview();
     }
     
-    function setThresholdCustom(value) {
-      const parsed = parseInt(value);
-      tempTimeThreshold = Math.max(0, Math.min(480, isNaN(parsed) ? 0 : parsed));
-      // Don't snap the input back while the user is mid-type — only re-snap on
-      // out-of-bounds. The number input's own min/max also catches it on blur.
-      syncThresholdPresetChips();
-      updateThresholdPreview();
-    }
-    
-    // Highlight the preset chip whose value matches tempTimeThreshold (if any).
-    // When the user picks a custom value, no preset is highlighted.
-    function syncThresholdPresetChips() {
-      document.querySelectorAll('.threshold-preset-chip').forEach(chip => {
-        const matches = parseInt(chip.dataset.value) === tempTimeThreshold;
-        chip.classList.toggle('selected', matches);
-      });
-    }
-    
-    // Live preview inside the menu — recomputes the user count for the
-    // currently-staged threshold so the user can see the impact before Apply.
-    function updateThresholdPreview() {
-      const count = calculateUserCountAtThreshold(tempTimeThreshold);
-      const total = ACTION_TIMES_USERS.length;
-      const el = document.getElementById('threshold-preview-text');
-      if (el) {
-        el.innerHTML = `~<strong>${count}</strong> of ${total} users above this threshold`;
-      }
-    }
-    
-    // Persistent summary that sits next to the Time Elapsed chip in the
-    // toolbar — reflects the *applied* threshold, not the in-flight one.
-    function updateThresholdSummary() {
-      const count = calculateUserCountAtThreshold(timeThreshold);
-      const total = ACTION_TIMES_USERS.length;
-      const el = document.getElementById('threshold-summary');
-      if (el) {
-        el.innerHTML = `<strong>${count}</strong> of ${total} users above this threshold`;
-      }
-    }
-    
-    // Mirror of the retention math in filterDataByTimeThreshold(), extracted so
-    // both the live preview and the persistent summary can use it without
-    // running the full filter pipeline.
-    function calculateUserCountAtThreshold(threshold) {
-      let retentionRate;
-      if (threshold === 0) {
-        retentionRate = 1.0;
-      } else if (threshold <= 30) {
-        retentionRate = 0.60 - ((threshold - 1) / 29) * 0.30;
-      } else if (threshold <= 240) {
-        retentionRate = 0.30 - ((threshold - 30) / 210) * 0.20;
-      } else {
-        retentionRate = 0.10 - ((threshold - 240) / 240) * 0.07;
-      }
-      retentionRate = Math.max(0.03, retentionRate);
-      const total = ACTION_TIMES_USERS.length;
-      return Math.max(3, Math.round(total * retentionRate));
+    function updateTimeThresholdFromInput(value) {
+      tempTimeThreshold = Math.max(0, Math.min(480, parseInt(value) || 0));
+      document.getElementById('time-slider').value = tempTimeThreshold;
+      document.getElementById('time-input').value = tempTimeThreshold;
     }
     
     function applyTimeThreshold() {
@@ -4472,7 +4360,6 @@
       // Filter and re-render table based on time threshold
       filterDataByTimeThreshold();
       renderUsersTable();
-      updateThresholdSummary();
       
       // Update chart if currently viewing it
       if (currentView === 'graph' && actionChart) {
@@ -4653,9 +4540,8 @@
     function cancelTimeThreshold() {
       // Reset to current applied values
       tempTimeThreshold = timeThreshold;
+      document.getElementById('time-slider').value = timeThreshold;
       document.getElementById('time-input').value = timeThreshold;
-      syncThresholdPresetChips();
-      updateThresholdPreview();
       closePillter('pillter-time-threshold');
     }
     
@@ -4714,15 +4600,14 @@
         const chip = wrapper.querySelector('.filter-chip');
         if (chip) chip.classList.add('active');
         
-        // Reset temp values for the time-threshold menu each time it opens
-        // so Cancel reverts cleanly, and sync the preset chip + preview to the
-        // currently-applied threshold.
+        // Reset temp values for the time-threshold slider each time it opens
+        // so Cancel reverts cleanly.
         if (wrapperId === 'pillter-time-threshold') {
           tempTimeThreshold = timeThreshold;
+          const slider = document.getElementById('time-slider');
           const input = document.getElementById('time-input');
+          if (slider) slider.value = tempTimeThreshold;
           if (input) input.value = tempTimeThreshold;
-          syncThresholdPresetChips();
-          updateThresholdPreview();
         }
       }
     }
@@ -4773,7 +4658,7 @@
     
     function applyDatePillter() {
       const selected = document.querySelector('#pillter-date .date-preset-item.selected-item');
-      const label = selected ? selected.textContent.trim() : '04/15/2026 – 05/15/2026';
+      const label = selected ? selected.textContent.trim() : '04/14/2026 – 04/13/2026';
       document.getElementById('chip-date-label').textContent = label;
       document.getElementById('chip-date').classList.add('active');
       closePillter('pillter-date');
@@ -4817,7 +4702,7 @@
         const r = i.querySelector('input[type="radio"]');
         if (r) r.checked = (idx === 1);
       });
-      document.getElementById('chip-date-label').textContent = '04/15/2026 – 05/15/2026';
+      document.getElementById('chip-date-label').textContent = '04/14/2026 – 04/13/2026';
       document.getElementById('chip-date').classList.add('active'); // date always has a value
     }
     
@@ -4888,11 +4773,6 @@
       
       // Initialize comparison score header
       updateCompScoreHeader();
-      
-      // Initialize time-threshold preview (inside menu) and persistent summary
-      // (next to chip in toolbar) so both reflect the default 240-min state.
-      updateThresholdPreview();
-      updateThresholdSummary();
     });
 
   </script>
@@ -5211,7 +5091,7 @@
             <!-- Date Range pillter -->
             <div class="pillter-wrapper" id="pillter-date">
               <button class="filter-chip active" id="chip-date" onclick="togglePillter('pillter-date')">
-                <span id="chip-date-label">04/15/2026 – 05/15/2026</span>
+                <span id="chip-date-label">04/14/2026 – 04/13/2026</span>
               </button>
               <div class="pillter-menu date-menu">
                 <div class="date-presets">
@@ -5223,9 +5103,9 @@
                 </div>
                 <div class="menu-divider"></div>
                 <div class="date-footer-inputs">
-                  <input type="text" value="04/15/2026" />
+                  <input type="text" value="04/14/2026" />
                   <span class="material-icons">arrow_forward</span>
-                  <input type="text" value="05/15/2026" />
+                  <input type="text" value="04/13/2026" />
                 </div>
                 <div class="menu-footer">
                   <button class="btn-cancel" onclick="closePillter('pillter-date')">Cancel</button>
@@ -5372,6 +5252,7 @@
                   <div class="pillter-menu" style="width:220px">
                     <div class="menu-options">
                       <div class="menu-item selected-item" onclick="setCompScore('overall', this)">Overall IRIS</div>
+                      <div class="menu-item" onclick="setCompScore('actionTimes', this)">Action Times</div>
                       <div class="menu-item" onclick="setCompScore('varianceTrends', this)">Variance Trends</div>
                       <div class="menu-item" onclick="setCompScore('dispensePatterns', this)">Dispense Patterns</div>
                       <div class="menu-item" onclick="setCompScore('medTrends', this)">Med Trends</div>
@@ -5381,36 +5262,23 @@
                   </div>
                 </div>
                 
-                <!-- Time Elapsed pillter (preset chips + custom + live preview) -->
+                <!-- Time Elapsed pillter (slider) -->
                 <div class="pillter-wrapper" id="pillter-time-threshold">
                   <button class="filter-chip secondary active" id="chip-time-threshold" onclick="togglePillter('pillter-time-threshold')">
                     <span class="cs-label">Time Elapsed:</span>
                     <span id="time-threshold-label">240 Minutes</span>
                   </button>
-                  <div class="pillter-menu" style="width:340px">
-                    <div class="threshold-section">
-                      <h5>Preset thresholds</h5>
-                      <div class="threshold-preset-row">
-                        <button class="threshold-preset-chip" data-value="10" onclick="setThresholdPreset(10)">10 min</button>
-                        <button class="threshold-preset-chip" data-value="30" onclick="setThresholdPreset(30)">30 min</button>
-                        <button class="threshold-preset-chip" data-value="60" onclick="setThresholdPreset(60)">60 min</button>
-                        <button class="threshold-preset-chip" data-value="120" onclick="setThresholdPreset(120)">120 min</button>
-                        <button class="threshold-preset-chip selected" data-value="240" onclick="setThresholdPreset(240)">240 min</button>
+                  <div class="pillter-menu" style="width:320px">
+                    <div class="slider-section">
+                      <h5>Minutes</h5>
+                      <div class="slider-row">
+                        <input type="range" id="time-slider" min="0" max="480" value="240" step="15"
+                               oninput="updateTimeThreshold(this.value)" />
+                        <input type="number" id="time-input" min="0" max="480" value="240" step="15"
+                               onchange="updateTimeThresholdFromInput(this.value)" />
                       </div>
                     </div>
-                    <div class="threshold-section">
-                      <h5>Custom</h5>
-                      <div class="threshold-custom-row">
-                        <input type="number" id="time-input" min="0" max="480" value="240"
-                               oninput="setThresholdCustom(this.value)" />
-                        <span class="threshold-unit">minutes (0–480)</span>
-                      </div>
-                    </div>
-                    <div class="threshold-preview">
-                      <span class="material-icons preview-icon">info_outline</span>
-                      <span id="threshold-preview-text">~10 of 100 users above this threshold</span>
-                    </div>
-                    <p class="threshold-help">Only flag events where the time between actions exceeds this threshold. Raising the threshold reduces false-positive variances from documentation timing.</p>
+                    <p class="slider-help">Adjust the minimum time that has elapsed between events.</p>
                     <div class="menu-divider"></div>
                     <div class="menu-footer">
                       <button class="btn-cancel" onclick="cancelTimeThreshold()">Cancel</button>
@@ -5418,28 +5286,23 @@
                     </div>
                   </div>
                 </div>
-                
-                <!-- Persistent threshold impact summary (visible after Apply) -->
-                <span class="toolbar-threshold-summary" id="threshold-summary">
-                  <strong>10</strong> of 100 users above this threshold
-                </span>
               </div>
             </div>
 
             <!-- ── Rules Chips (Tabular Data only) ── -->
             <div class="rules-chips-row" id="rules-chips-row">
-              <button class="rule-chip selected" id="chip-adminBeforeDispense" onclick="toggleRuleChip('adminBeforeDispense')">
+              <button class="rule-chip selected" id="chip-firstDispenseFirstAdmin" onclick="toggleRuleChip('firstDispenseFirstAdmin')">
                 <span class="material-icons chip-icon">check</span>
-                <span class="chip-text">Admin Before Dispense</span>
-              </button>
-              <button class="rule-chip" id="chip-firstDispenseFirstAdmin" onclick="toggleRuleChip('firstDispenseFirstAdmin')">
                 <span class="chip-text">First Dispense → First Admin</span>
-              </button>
-              <button class="rule-chip" id="chip-firstDispenseFirstWaste" onclick="toggleRuleChip('firstDispenseFirstWaste')">
-                <span class="chip-text">First Dispense → First Waste</span>
               </button>
               <button class="rule-chip" id="chip-lastAdminLastWaste" onclick="toggleRuleChip('lastAdminLastWaste')">
                 <span class="chip-text">Last Admin → Last Waste</span>
+              </button>
+              <button class="rule-chip" id="chip-adminBeforeDispense" onclick="toggleRuleChip('adminBeforeDispense')">
+                <span class="chip-text">Admin Before Dispense</span>
+              </button>
+              <button class="rule-chip" id="chip-firstDispenseFirstWaste" onclick="toggleRuleChip('firstDispenseFirstWaste')">
+                <span class="chip-text">First Dispense → First Waste</span>
               </button>
               <button class="rule-chip" id="chip-recordedNotEqualAction" onclick="toggleRuleChip('recordedNotEqualAction')">
                 <span class="chip-text">Recorded Admin ≠ Action Time</span>
@@ -5462,28 +5325,28 @@
                         <th class="sortable sort-asc fixed-col" data-col="name" onclick="sortUsersTable('name')">
                           <span class="th-inner">User <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center sortable col-abd-events" data-col="adminBeforeDispense.events" onclick="sortUsersTable('adminBeforeDispense.events')">
-                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
-                        </th>
-                        <th class="center sortable col-abd-time" data-col="adminBeforeDispense.avgTime" onclick="sortUsersTable('adminBeforeDispense.avgTime')">
-                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
-                        </th>
                         <th class="center sortable col-fdfa-events" data-col="firstDispenseFirstAdmin.events" onclick="sortUsersTable('firstDispenseFirstAdmin.events')">
                           <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center sortable col-fdfa-time" data-col="firstDispenseFirstAdmin.avgTime" onclick="sortUsersTable('firstDispenseFirstAdmin.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center sortable col-fdfw-events" data-col="firstDispenseFirstWaste.events" onclick="sortUsersTable('firstDispenseFirstWaste.events')">
-                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
-                        </th>
-                        <th class="center sortable col-fdfw-time" data-col="firstDispenseFirstWaste.avgTime" onclick="sortUsersTable('firstDispenseFirstWaste.avgTime')">
-                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
-                        </th>
                         <th class="center sortable col-lalw-events" data-col="lastAdminLastWaste.events" onclick="sortUsersTable('lastAdminLastWaste.events')">
                           <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center sortable col-lalw-time" data-col="lastAdminLastWaste.avgTime" onclick="sortUsersTable('lastAdminLastWaste.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-abd-events" data-col="adminBeforeDispense.events" onclick="sortUsersTable('adminBeforeDispense.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-abd-time" data-col="adminBeforeDispense.avgTime" onclick="sortUsersTable('adminBeforeDispense.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-fdfw-events" data-col="firstDispenseFirstWaste.events" onclick="sortUsersTable('firstDispenseFirstWaste.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-fdfw-time" data-col="firstDispenseFirstWaste.avgTime" onclick="sortUsersTable('firstDispenseFirstWaste.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center sortable col-rnea-events" data-col="recordedNotEqualAction.events" onclick="sortUsersTable('recordedNotEqualAction.events')">
@@ -5496,10 +5359,10 @@
                       </tr>
                       <tr class="col-group-header">
                         <th colspan="3" class="fixed-col-group"></th>
-                        <th colspan="2" id="group-abd" class="col-abd-group">Admin Before Dispense</th>
-                        <th colspan="2" id="group-fdfa" class="col-fdfa-group hidden">First Dispense → First Admin</th>
-                        <th colspan="2" id="group-fdfw" class="col-fdfw-group hidden">First Dispense → First Waste</th>
+                        <th colspan="2" id="group-fdfa" class="col-fdfa-group">First Dispense → First Admin</th>
                         <th colspan="2" id="group-lalw" class="col-lalw-group hidden">Last Admin → Last Waste</th>
+                        <th colspan="2" id="group-abd" class="col-abd-group hidden">Admin Before Dispense</th>
+                        <th colspan="2" id="group-fdfw" class="col-fdfw-group hidden">First Dispense → First Waste</th>
                         <th colspan="2" id="group-rnea" class="col-rnea-group hidden">Recorded Admin ≠ Action Time</th>
                         <th class="fixed-col-group-right"></th>
                       </tr>
