@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Variance Trends – ControlCheck</title>
+  <title>Variance Trends · Children – ControlCheck</title>
   <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
 
@@ -146,7 +146,11 @@
       display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--gray-300);
       flex-shrink: 0;
-      margin: 1rem 0;
+      /* Bottom margin zeroed — the subtitle row immediately below it
+         already provides 12px of breathing room via its own top margin.
+         Stacking both was creating ~28px of dead space between the tab
+         bar's underline and the row count / search input. */
+      margin: 1rem 0 0;
     }
     .tab-bar-tabs { display: flex; gap: 1rem; }
     .tab-bar-download { flex-shrink: 0; }
@@ -543,53 +547,6 @@
       margin-right: auto;
     }
 
-    /* Version selector */
-    .version-selector { position: relative; display: inline-flex; }
-    .version-btn {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 8px 4px 10px;
-      background: transparent;
-      border: 1px solid var(--gray-300);
-      border-radius: 14px;
-      color: var(--gray-600);
-      font-family: var(--font); font-size: .8125rem; font-weight: 400;
-      cursor: pointer;
-      transition: background-color .15s, border-color .15s;
-    }
-    .version-btn:hover {
-      background-color: #f5f9fb;
-      border-color: var(--teal);
-    }
-    .version-btn .mat-icon { font-size: 18px; width: 18px; height: 18px; color: var(--text-54); }
-    .version-menu {
-      position: absolute;
-      top: calc(100% + 4px); left: 0;
-      min-width: 240px;
-      background: #fff;
-      border: 1px solid var(--gray-300);
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,.12);
-      z-index: 50;
-      padding: 4px 0;
-    }
-    .version-option {
-      padding: 10px 14px; cursor: pointer;
-      font-family: var(--font);
-      transition: background-color .1s;
-    }
-    .version-option:hover { background-color: #e7f4fb; }
-    .version-option.selected .version-option-main { color: var(--teal); }
-    .version-option-main {
-      font-size: .875rem; font-weight: 400;
-      color: var(--text-87);
-      line-height: 1.3;
-    }
-    .version-option-sub {
-      font-size: .75rem; font-weight: 400;
-      color: var(--text-54);
-      margin-top: 2px;
-    }
-
     /* Global pillters */
     .filter-chip-group { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
     .filter-chip {
@@ -974,6 +931,11 @@
       padding: 0 40px;
       flex-shrink: 0;
     }
+    /* Extra breathing room between the page-header (title + filter chips)
+       and the Context cards row. The page-header is a 72px fixed-height
+       toolbar so a sibling margin-top is the cleanest way to add the gap
+       without growing the header itself. */
+    .shared-filter-bar-wrap { margin-top: 16px; }
     .shared-filter-bar { margin-bottom: 8px; }
     .shared-filter-bar .pill-filters-row { margin-bottom: 0; }
 
@@ -1058,6 +1020,151 @@
     .ct-btn.active:hover { background: var(--teal-dark); color: #fff; }
     .ct-btn .mat-icon { font-size: 16px; height: 16px; width: 16px; line-height: 16px; }
 
+    /* ── Page section indicator (By User / By Department / By Drug / Legacy) ── */
+    .page-section-indicator {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      white-space: nowrap;
+    }
+    /* Slash divider rendered as a pseudo-element so the indicator itself stays
+       semantically clean and lines up with the page title. */
+    .page-section-indicator::before {
+      content: '/';
+      margin-right: 10px;
+      color: var(--text-54);
+      font-weight: 400;
+    }
+
+    /* ── Sidebar sub-items (By User / By Department / By Drug / Legacy under Variance Trends) ── */
+    .mat-mdc-list-item.sub-item {
+      padding-left: 52px;
+      height: 38px;
+      min-height: 38px;
+    }
+    .mat-mdc-list-item.sub-item .mdc-list-item__primary-text {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .mat-mdc-list-item.sub-item.active .mdc-list-item__primary-text {
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+    /* Parent of sub-items shows "section-active" state when one of its children is active */
+    .mat-mdc-list-item.parent-active .mdc-list-item__primary-text {
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+    .mat-mdc-list-item.parent-active .mdc-list-item__primary-text .mat-icon {
+      color: var(--blue-dark);
+    }
+    /* Expand/collapse chevron at the right edge of the parent item.
+       Rotates -90° when the parent is collapsed (chevron points right).
+       Stays text-54 even on parent-active so the chevron reads as a control
+       rather than as part of the active treatment. */
+    .mat-mdc-list-item .expand-chevron {
+      margin-left: auto;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--text-54);
+      transition: transform .18s ease;
+    }
+    .mat-mdc-list-item.parent-active .mdc-list-item__primary-text .expand-chevron {
+      color: var(--text-54);
+    }
+    .parent-active:not(.expanded) .expand-chevron {
+      transform: rotate(-90deg);
+    }
+    /* Collapsed parent hides its 4 children (the sub-items that follow).
+       Adjacent-sibling selectors so we don't need a wrapper element.
+       Scoped via .parent-active so it can only match the parent (sub-items
+       never get .parent-active), not anonymously match any non-expanded
+       list item that happens to precede a .sub-item. */
+    .parent-active:not(.expanded) + .sub-item,
+    .parent-active:not(.expanded) + .sub-item + .sub-item,
+    .parent-active:not(.expanded) + .sub-item + .sub-item + .sub-item,
+    .parent-active:not(.expanded) + .sub-item + .sub-item + .sub-item + .sub-item {
+      display: none;
+    }
+    mat-drawer.collapsed .mat-mdc-list-item.sub-item { display: none; }
+
+    /* ── Context cards row (L1 only — replaces the old Context pillter) ──
+       Sits in .shared-filter-bar-wrap so the existing drilldown auto-hide
+       via updateBreadcrumb() keeps working. Each card is a clickable radio-
+       style trigger that activates a Context and re-renders the table. */
+    .context-cards-row {
+      display: flex; align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+    .context-cards {
+      display: flex; gap: 8px;
+      flex: 1 1 auto;
+      flex-wrap: nowrap;
+      min-width: 0;
+    }
+    .context-card {
+      flex: 1 1 0;
+      min-width: 132px;
+      background: #fff;
+      padding: 9px 13px;
+      box-shadow: 0 1px 3px #0003, 0 2px 1px -1px #0000001f, 0 1px 1px #00000024;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: box-shadow .15s, background-color .15s;
+      display: flex; flex-direction: column;
+      gap: 2px;
+      text-align: left;
+      font-family: var(--font);
+    }
+    .context-card:hover {
+      background: #f5f9fb;
+    }
+    .context-card:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+    .context-card.active {
+      /* Selection is carried by a 4px navy left-edge stripe. We compensate
+         left padding (13 → 9) so the content origin stays put when toggling
+         active state. */
+      border-left: 4px solid #044a82;
+      padding-left: 9px;
+    }
+    .context-card-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-54);
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .context-card.active .context-card-label {
+      color: #0a3861;
+      font-weight: 600;
+    }
+    .context-card-metric {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+    .context-card.active .context-card-metric {
+      color: #0a3861;
+    }
+    .context-card-suffix {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--gray-600);
+      line-height: 1.2;
+    }
+
     /* Legacy placeholder */
     .legacy-placeholder {
       display: none;
@@ -1071,8 +1178,9 @@
     }
     body.legacy-mode .shared-tab-bar-wrap,
     body.legacy-mode .shared-filter-bar-wrap,
-    body.legacy-mode #view-departments,
-    body.legacy-mode #view-department-detail {
+    body.legacy-mode #view-data,
+    body.legacy-mode .filter-chip-group,
+    body.legacy-mode #drilldown-context-block {
       display: none !important;
     }
     body.legacy-mode .legacy-placeholder { display: flex; }
@@ -1178,6 +1286,38 @@
     ═══════════════════════════════════════════════════════════════ */
     #entity-table-view .data-table-wrap { overflow-x: auto; }
     #entity-table-view .data-table { width: max-content; min-width: 100%; }
+
+    /* ── Context-change column highlight ──
+       When a Context card is clicked, only the columns that *change* between
+       contexts (the [data-ctx-col] cells in head + body) animate in — fade
+       up with a small Y translation so the eye is drawn to what's new.
+       Stable columns (Score/Name/Departments/Investigate) hold position so
+       the user can keep their place in the row they were reading.
+
+       The animation is gated by .ctx-cols-entering on #entity-table-view so
+       it ONLY fires on context changes — not on initial paint, not on chip
+       filter changes, not on sort. setVtContext adds the class for one
+       animation duration then removes it.
+
+       Respects prefers-reduced-motion below. */
+    @keyframes ctx-col-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(-3px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    #entity-table-view.ctx-cols-entering .data-table [data-ctx-col] {
+      animation: ctx-col-fade-in 260ms cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #entity-table-view.ctx-cols-entering .data-table [data-ctx-col] {
+        animation: none;
+      }
+    }
 
     /* Default (departments / drugs): name in col 1, sticky left + Investigate sticky right */
     #entity-table-view .data-table th:nth-child(1),
@@ -1285,8 +1425,13 @@
       margin: 0;
     }
     .row-count-and-search {
-      margin-left: auto;
-      display: flex; align-items: center; gap: 16px;
+      /* Stretch to fill the row so we can split the row count to the far
+         left and the search input to the far right. Previously this had
+         margin-left:auto and a 16px gap, which kept them clustered on the
+         right edge of the page. */
+      flex: 1 1 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px;
     }
 
     /* Drilldown context block — back arrow + scope name + summary card
@@ -1361,11 +1506,11 @@
     /* Context heading above the stat row — communicates which Context the stats belong to */
     .dd-summary-heading {
       font-family: var(--font);
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
-      color: var(--text-54, #757575);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+      color: #0a3861;
+      text-transform: none;
+      letter-spacing: normal;
     }
     /* Inner stat row — same horizontal column layout the body had previously */
     .dd-stat-row {
@@ -1424,6 +1569,54 @@
       background: rgba(0, 150, 184, 0.10);
       color: var(--blue-dark);
       font-weight: 600;
+    }
+    /* Clickable chip variant — used in the "Departments with Activity" cell.
+       Resets default button chrome and adds pointer + subtle hover lift so
+       the chip reads as an interactive control. The hover bg is teal-tinted
+       so it pairs with the navy text of .home chips and the gray text of
+       non-home chips alike. */
+    .dept-chip.clickable {
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+      transition: background-color .12s ease, color .12s ease;
+    }
+    .dept-chip.clickable:hover {
+      background: rgba(0, 150, 184, 0.20);
+      color: var(--blue-dark);
+    }
+    .dept-chip.clickable.home:hover {
+      background: rgba(0, 150, 184, 0.28);
+    }
+    .dept-chip.clickable:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    /* ── Highlighted user row ──
+       Set when a user arrives in a drilldown via clicking a dept chip on
+       another user's row. Persists for the lifetime of the drilldown so
+       the user can keep their place across sorts/filters. Beats hover
+       (the highlighted row stays tinted on hover; only the leftmost cell
+       picks up a slightly darker hover variant for affordance).
+
+       Implementation note: the navy stripe is drawn via inset box-shadow
+       on the first cell rather than a left border so it doesn't change
+       cell width and trigger column reflow. Combined with the existing
+       sticky-cell shadow (2px 0 4px rgba(0,0,0,.06)) via comma-separation. */
+    #entity-table-view .data-table tbody tr.row-highlighted td,
+    #entity-table-view .data-table tbody tr.row-highlighted:hover td {
+      background: #e7f4fb;
+    }
+    #entity-table-view .data-table tbody tr.row-highlighted td:nth-child(1) {
+      background: #e7f4fb;
+      box-shadow: inset 4px 0 0 #044a82, 2px 0 4px rgba(0,0,0,.06);
+    }
+    /* The user table has a 2-col sticky-left region (Score + Name) — the
+       second cell needs the same tinted bg or it'll read as a "gap" in
+       the highlight where the sticky shadow falls on white. */
+    #entity-table-view .data-table[data-show="users"] tbody tr.row-highlighted td:nth-child(2) {
+      background: #e7f4fb;
     }
 
     /* Entity pagination (per Figma 478px wide, right-aligned) */
@@ -1581,7 +1774,11 @@
                 <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
                   <nav class="mat-mdc-nav-list">
                     <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span>IRIS Worklist</span></span></a>
-                    <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends</span></span></a>
+                    <a class="mat-mdc-list-item parent-active expanded" id="nav-vt-parent" href="#" aria-expanded="true" onclick="toggleVtExpansion();return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span>Variance Trends<span class="material-icons mat-icon expand-chevron">expand_more</span></span></span></a>
+                    <a class="mat-mdc-list-item sub-item active" id="nav-vt-by-user" href="#" onclick="setPage('by-user');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By User</span></span></a>
+                    <a class="mat-mdc-list-item sub-item" id="nav-vt-by-department" href="#" onclick="setPage('by-department');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By Department</span></span></a>
+                    <a class="mat-mdc-list-item sub-item" id="nav-vt-by-drug" href="#" onclick="setPage('by-drug');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">By Drug</span></span></a>
+                    <a class="mat-mdc-list-item sub-item" id="nav-vt-legacy" href="#" onclick="setPage('legacy');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text">Legacy Experience</span></span></a>
                     <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span>Dispense Patterns</span></span></a>
                     <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span>Med Trends</span></span></a>
                     <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span>Action Times</span></span></a>
@@ -1620,26 +1817,13 @@
       <mat-drawer-content class="mat-drawer-content">
 
         <!-- ═══════════════════════════════════════
-             PAGE HEADER (shared across both views)
+             PAGE HEADER (shared across By User / By Department / By Drug / Legacy children)
+             The page-section-indicator shows which child is active.
         ═══════════════════════════════════════ -->
         <div class="page-header">
           <div class="page-title-group">
             <span class="page-title">Variance Trends</span>
-            <div class="version-selector" id="version-selector">
-              <button class="version-btn" onclick="toggleVersionMenu(event)" aria-haspopup="listbox" aria-expanded="false">
-                <span id="version-label">New Experience</span>
-                <span class="material-icons mat-icon">expand_more</span>
-              </button>
-              <div class="version-menu" id="version-menu" role="listbox" style="display:none;">
-                <div class="version-option selected" role="option" onclick="selectVersion('New Experience', this)">
-                  <div class="version-option-main">New Experience</div>
-                </div>
-                <div class="version-option" role="option" onclick="selectVersion('Legacy Experience', this)">
-                  <div class="version-option-main">Legacy Experience</div>
-                  <div class="version-option-sub">Available until end of 2026</div>
-                </div>
-              </div>
-            </div>
+            <span class="page-section-indicator" id="page-section-indicator">By User</span>
           </div>
           <div class="filter-chip-group">
             <button class="filter-chip selected" onclick="toggleFilter(this)">
@@ -1723,6 +1907,30 @@
         </div>
 
         <!-- ═══════════════════════════════════════
+             SHARED FILTER BAR  (Context cards — per Figma "Context:" picker, flattened)
+
+             The 5 contexts are now exposed as a row of triage cards instead
+             of a dropdown pillter. Each card shows the % of the current
+             page's variances that involve that context type (Variance Rate
+             is 100% by definition — the umbrella view).
+
+             Sits above the tab bar so the Context selection feels like a
+             primary filter on the page's data (it changes which columns
+             render in BOTH the table and the chart), not a control nested
+             inside one view mode.
+
+             The wrapper is reused so the existing drilldown auto-hide via
+             updateBreadcrumb() keeps working untouched.
+        ═══════════════════════════════════════ -->
+        <div class="shared-filter-bar-wrap">
+          <div class="shared-filter-bar">
+            <div class="context-cards-row">
+              <div class="context-cards" id="context-cards" role="radiogroup" aria-label="Variance context"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
              SHARED TAB BAR (Tabular / Visualized)
         ═══════════════════════════════════════ -->
         <div class="shared-tab-bar-wrap">
@@ -1769,48 +1977,12 @@
         </div>
 
         <!-- ═══════════════════════════════════════
-             SHARED FILTER BAR  (Show, Context, Status — per Figma "Show:" / "Context:" pillters)
-        ═══════════════════════════════════════ -->
-        <div class="shared-filter-bar-wrap">
-          <div class="shared-filter-bar">
-            <div class="pill-filters-row">
-              <div class="pill-filter-wrap selected" id="show-filter-wrap">
-                <button class="comp-score-filter" onclick="togglePillMenu('show-menu')">
-                  <span class="cs-label">Show:</span>
-                  <span id="show-label">Users</span>
-                  <span class="material-icons mat-icon">expand_more</span>
-                </button>
-                <div class="cs-menu" id="show-menu" style="display:none; min-width:200px;">
-                  <div class="cs-option show-option selected" onclick="setShow('users', this)">Users</div>
-                  <div class="cs-option show-option" onclick="setShow('departments', this)">Departments</div>
-                  <div class="cs-option show-option" onclick="setShow('drugs', this)">Drugs</div>
-                </div>
-              </div>
-              <div class="pill-filter-wrap selected" id="vt-context-filter-wrap">
-                <button class="comp-score-filter" onclick="togglePillMenu('vt-context-menu')">
-                  <span class="cs-label">Context:</span>
-                  <span id="vt-context-label">Variance Rate</span>
-                  <span class="material-icons mat-icon">expand_more</span>
-                </button>
-                <div class="cs-menu" id="vt-context-menu" style="display:none; min-width:280px;">
-                  <div class="cs-option ctx-option selected" onclick="setVtContext('variance-rate', this)">Variance Rate</div>
-                  <div class="cs-option ctx-option" onclick="setVtContext('doc-timing', this)">Documentation Timing Issues</div>
-                  <div class="cs-option ctx-option" onclick="setVtContext('incorrect-doc', this)">Incorrect Documentation</div>
-                  <div class="cs-option ctx-option" onclick="setVtContext('missing-doc', this)">Missing Documentation</div>
-                  <div class="cs-option ctx-option" onclick="setVtContext('system-limit', this)">System Limitation</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ═══════════════════════════════════════
-             UNIFIED ENTITY VIEW  (Users / Departments / Drugs — switched via Show pillter)
+             UNIFIED ENTITY VIEW  (Users / Departments / Drugs — switched via sidebar child pages)
         ═══════════════════════════════════════ -->
         <div id="view-data" class="view visible">
           <div class="content-area">
             <div class="page-subtitle-row">
-              <h2 id="page-subtitle" class="page-subtitle">Variance Trends by Users</h2>
+              <h2 id="page-subtitle" class="page-subtitle" style="display:none;">Variance Trends by Users</h2>
               <div class="row-count-and-search">
                 <div class="row-count"><span id="entityCount">0</span> rows</div>
                 <div class="search-wrap">
@@ -2270,12 +2442,22 @@ function annotateDrugsWithUserCounts() {
 /* ════════════════════════════════════════════════════════════════
    STATE & HELPERS
 ═══════════════════════════════════════════════════════════════ */
-// Show: which entity to view (per Figma "Show" pillter — Users / Departments / Drugs)
+// Show: which entity to view — driven by the active child page (By User / By Department / By Drug)
+// Kept as 'users' | 'departments' | 'drugs' so the rendering pipeline stays untouched;
+// setPage() maps the active sidebar child onto this value.
 let showEntity = 'users';     // 'users' | 'departments' | 'drugs'
+// Child page within Variance Trends: 'by-user' | 'by-department' | 'by-drug' | 'legacy'
+let currentPage = 'by-user';
 // Context: which lens to view (per Figma "Context" pillter)
 let vtContext = 'variance-rate';  // 'variance-rate' | 'doc-timing' | 'incorrect-doc' | 'missing-doc' | 'system-limit'
-// Drilldown — when set, the table shows users scoped to a specific dept or drug
-let drilldownState = { type: null, scope: null };  // type: 'dept' | 'drug' | null, scope: name string
+// Drilldown — when set, the table shows users scoped to a specific dept or drug.
+// fromPage records which child page the user drilled FROM so exitDrilldown
+// can return them there (cross-page drilldown: drill from By Department → lands
+// on By User with the dept scope; back returns to By Department).
+// highlightUserId pins a specific user row (used when drilldown is entered
+// via clicking a Department chip on a user's row — the user wants to "trace"
+// that user across the department's full population).
+let drilldownState = { type: null, scope: null, fromPage: null, highlightUserId: null };
 let currentMode = 'table';    // 'table' | 'graph'
 let activeStatuses = new Set(['unreconciled', 'reconciled', 'open']);  // 3-status model from Figma chart legend
 let entityChart = null;
@@ -2295,13 +2477,20 @@ let chartFilterSearchQuery = '';
 // "Effective" show entity — when drilling into a dept/drug we render the user table regardless of pillter
 function effectiveShow() { return drilldownState.type ? 'users' : showEntity; }
 
-// Variance Trends Contexts (per Figma "Context" dropdown)
+// Variance Trends Contexts (per Figma "Context" dropdown).
+// cardLabel is the compact label rendered on the L1 context cards;
+// name is the full label used in the table column group + drilldown summary
+// heading + a11y title.
+// The Variance Rate card is intentionally re-labelled "Variances" because
+// the card metric for that context is total variances (not a %); the full
+// "Variance Rate" name still applies everywhere else (table column header,
+// drilldown summary heading).
 const VT_CONTEXTS = [
-  { id: 'variance-rate',  name: 'Variance Rate' },
-  { id: 'doc-timing',     name: 'Documentation Timing Issues' },
-  { id: 'incorrect-doc',  name: 'Incorrect Documentation' },
-  { id: 'missing-doc',    name: 'Missing Documentation' },
-  { id: 'system-limit',   name: 'System Limitation' }
+  { id: 'variance-rate',  name: 'Variance Rate',                cardLabel: 'Variances'     },
+  { id: 'doc-timing',     name: 'Documentation Timing Issues',  cardLabel: 'Doc Timing'    },
+  { id: 'incorrect-doc',  name: 'Incorrect Documentation',      cardLabel: 'Incorrect Doc' },
+  { id: 'missing-doc',    name: 'Missing Documentation',        cardLabel: 'Missing Doc'   },
+  { id: 'system-limit',   name: 'System Limitation',            cardLabel: 'System Limit'  }
 ];
 
 // Show options (per Figma "Show" dropdown)
@@ -2418,19 +2607,95 @@ function toggleDrawer() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   VERSION SELECTOR
+   CHILD PAGE NAVIGATION  (By User / By Department / By Drug / Legacy)
+
+   This replaces the old "Show" pillter — instead of switching entity type
+   inside one page, each entity now has its own sidebar child item under
+   "Variance Trends". The rendering pipeline still keys off `showEntity`
+   ('users' | 'departments' | 'drugs'); setPage maps the active child onto
+   that value and resets drilldown / chart state on navigation.
+
+   Pattern intentionally mirrors med-trends-redesign.html's setPage flow.
 ═══════════════════════════════════════════════════════════════ */
-function toggleVersionMenu(ev) {
-  ev.stopPropagation();
-  const menu = document.getElementById('version-menu');
-  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+
+// Map: sidebar child page → entity key consumed by the rendering pipeline
+const PAGE_TO_ENTITY = {
+  'by-user':       'users',
+  'by-department': 'departments',
+  'by-drug':       'drugs'
+};
+
+// Map: sidebar child page → label for the page-section-indicator
+const PAGE_TO_LABEL = {
+  'by-user':       'By User',
+  'by-department': 'By Department',
+  'by-drug':       'By Drug',
+  'legacy':        'Legacy Experience'
+};
+
+function toggleVtExpansion() {
+  const parent = document.getElementById('nav-vt-parent');
+  if (!parent) return;
+  const expanded = parent.classList.toggle('expanded');
+  parent.setAttribute('aria-expanded', String(expanded));
 }
-function selectVersion(label, el) {
-  document.getElementById('version-label').textContent = label;
-  document.querySelectorAll('.version-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('version-menu').style.display = 'none';
-  document.body.classList.toggle('legacy-mode', label === 'Legacy Experience');
+
+function setPage(page, opts) {
+  opts = opts || {};
+  if (!(page in PAGE_TO_LABEL)) return;
+  currentPage = page;
+
+  // Reset drilldown + transient table state on every page swap UNLESS the
+  // caller explicitly wants to preserve drilldown (used by drillIntoDept /
+  // drillIntoDrug to jump to By User while keeping the scope). Sort/filter
+  // state per entity is intentionally preserved across page switches
+  // (entitySortStates, chartFilterState are keyed by entity).
+  if (!opts.preserveDrilldown) {
+    drilldownState = { type: null, scope: null, fromPage: null, highlightUserId: null };
+  }
+  chartFilterSearchQuery = '';
+  const chartSearch = document.getElementById('chart-filter-search');
+  if (chartSearch) chartSearch.value = '';
+
+  // Sidebar active states — only the active sub-item carries .active;
+  // the parent stays .parent-active while any child is selected so the
+  // section reads as "current" in the nav rail.
+  document.getElementById('nav-vt-by-user')?.classList.toggle('active', page === 'by-user');
+  document.getElementById('nav-vt-by-department')?.classList.toggle('active', page === 'by-department');
+  document.getElementById('nav-vt-by-drug')?.classList.toggle('active', page === 'by-drug');
+  document.getElementById('nav-vt-legacy')?.classList.toggle('active', page === 'legacy');
+  document.getElementById('nav-vt-parent')?.classList.add('parent-active');
+
+  // Page-section indicator (right of the page title)
+  const ind = document.getElementById('page-section-indicator');
+  if (ind) ind.textContent = PAGE_TO_LABEL[page];
+
+  // Legacy is a placeholder screen — toggle the body class + tear down any
+  // live charts/panels and bail before touching the data pipeline.
+  const enteringLegacy = (page === 'legacy');
+  document.body.classList.toggle('legacy-mode', enteringLegacy);
+  if (enteringLegacy) {
+    if (entityChart) { entityChart.dispose(); entityChart = null; }
+    const iris = document.getElementById('iris-panel');
+    if (iris && iris.classList.contains('open')) closeIrisPanel();
+    // Close any open menus so they don't float over the placeholder
+    closeAllChipMenus?.();
+    closeAllPillMenus?.();
+    closeDownloadMenus?.();
+    return;
+  }
+
+  // Map the active child onto the existing entity-keyed rendering pipeline.
+  showEntity = PAGE_TO_ENTITY[page];
+
+  // Reset shared tab bar to Tabular on every page swap (graphs are entity-
+  // specific; keeping the tab sticky across pages tends to mislead).
+  switchCurrentView('table');
+
+  updatePageTitle();
+  updateBreadcrumb();
+  renderContextCards();
+  renderEntityTable();
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -2515,6 +2780,7 @@ function clearAllChipFilters() {
 // as a no-op for now (kept as scaffolding).
 function rerenderAfterChipChange(kind) {
   if (kind === 'user') return;
+  renderContextCards();
   renderEntityTable();
   if (currentMode === 'graph') initEntityChart();
 }
@@ -2574,67 +2840,194 @@ function closeDownloadMenus() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   SHOW + CONTEXT PILLTERS  (per Figma "Show:" and "Context:" pillters)
+   CONTEXT PILLTER  (per Figma "Context:" pillter)
+   The "Show" pillter has been replaced by sidebar child-page navigation
+   (see setPage above). The "Context:" pillter has been replaced by the
+   context-cards row (5 cards exposing all contexts at once + their %
+   share of total variances). Card clicks call setVtContext directly.
+
+   Visual transition: changing contexts re-renders the table synchronously
+   (instant swap — stable columns hold position) and then applies a brief
+   .ctx-cols-entering class to fade-in only the new context columns. See
+   the @keyframes ctx-col-fade-in CSS rule for the actual animation.
 ═══════════════════════════════════════════════════════════════ */
-function setShow(entity, el) {
-  showEntity = entity;
-  drilldownState = { type: null, scope: null };  // changing Show clears any active drilldown
-  chartFilterSearchQuery = '';                   // reset search input when switching entity
-  const searchInput = document.getElementById('chart-filter-search');
-  if (searchInput) searchInput.value = '';
-  const opt = SHOW_OPTIONS.find(o => o.id === entity);
-  document.getElementById('show-label').textContent = opt.name;
-  el.parentElement.querySelectorAll('.show-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('show-menu').style.display = 'none';
-  document.querySelector('#show-filter-wrap').classList.remove('open');
-  updatePageTitle();
-  updateBreadcrumb();
+// Animation duration MUST match the @keyframes ctx-col-fade-in duration in
+// CSS, or the class will be stripped mid-animation and the cells will pop.
+const CTX_FADE_DURATION_MS = 260;
+// Tracks the pending class-clear timeout so rapid context clicks reset the
+// animation cleanly (without this, fast back-to-back clicks could leave the
+// class stuck on or get stripped early).
+let _ctxFadeTimer = null;
+
+function setVtContext(ctxId) {
+  if (!VT_CONTEXTS.find(c => c.id === ctxId)) return;
+  if (vtContext === ctxId) return;
+
+  vtContext = ctxId;
+  // Cards repaint immediately — the active-state flip IS the click feedback.
+  renderContextCards();
+  // Render the table FIRST so the new [data-ctx-col] cells exist before we
+  // trigger the animation. Old context columns simply vanish (no exit
+  // animation — the point is to call attention to what's NEW, not what's
+  // leaving). Stable columns (Score/Name/Departments/Investigate) stay
+  // exactly where they were.
   renderEntityTable();
   if (currentMode === 'graph') renderCurrentChart();
+
+  const tableEl = document.getElementById('entity-table-view');
+  const prefersReducedMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!tableEl || prefersReducedMotion) return;
+
+  // Rapid-click safety: cancel any in-flight class-clear so the new animation
+  // gets a full duration before the class is removed.
+  if (_ctxFadeTimer) { clearTimeout(_ctxFadeTimer); _ctxFadeTimer = null; }
+
+  // Remove + reapply so the animation restarts even if the class was already
+  // present (back-to-back clicks within the animation duration). The reflow
+  // forces the browser to acknowledge the removal before the re-add.
+  tableEl.classList.remove('ctx-cols-entering');
+  void tableEl.offsetHeight;  // force reflow so the CSS animation restarts
+  tableEl.classList.add('ctx-cols-entering');
+
+  _ctxFadeTimer = setTimeout(() => {
+    tableEl.classList.remove('ctx-cols-entering');
+    _ctxFadeTimer = null;
+  }, CTX_FADE_DURATION_MS);
 }
 
-function setVtContext(ctxId, el) {
-  vtContext = ctxId;
-  const ctx = VT_CONTEXTS.find(c => c.id === ctxId);
-  document.getElementById('vt-context-label').textContent = ctx.name;
-  el.parentElement.querySelectorAll('.ctx-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('vt-context-menu').style.display = 'none';
-  document.querySelector('#vt-context-filter-wrap').classList.remove('open');
-  renderEntityTable();
-  if (currentMode === 'graph') renderCurrentChart();
+/* ════════════════════════════════════════════════════════════════
+   CONTEXT CARDS  (L1 triage surface — replaces the Context: pillter)
+
+   Renders 5 cards (one per Context) showing the % of the page's total
+   variances that involve each context type. Variance Rate is always
+   100% (umbrella view). The metric is computed against the chip-filtered
+   entity list BEFORE the variance-rate-only status filter, so the
+   percentages stay stable when switching contexts on Variance Rate.
+
+   Drilldown hides the cards automatically — they live inside
+   .shared-filter-bar-wrap which updateBreadcrumb() toggles to display:none.
+═══════════════════════════════════════════════════════════════ */
+function renderContextCards() {
+  const wrap = document.getElementById('context-cards');
+  if (!wrap) return;
+  // Skip the math during drilldown — the row is hidden anyway, and the
+  // entity list is scoped to a single dept/drug so the aggregate is
+  // meaningless until the user exits.
+  if (drilldownState.type) { wrap.innerHTML = ''; return; }
+
+  const list = getEntityListUnfiltered();
+  const totalVar = list.reduce((sum, rec) => sum + (rec.variances || 0), 0);
+
+  // For each context, compute its share of total variances.
+  // Variance Rate is special-cased — its card shows the raw total (the
+  // denominator) plus a "total variances" suffix, so the user sees the
+  // absolute volume before the other cards distribute that volume by %.
+  // Other contexts: sum of that context's columns / total variances.
+  //   Note: a single variance can fall into multiple sub-types within a
+  //   context (e.g. both "Admin Late" AND "Backcharting"), so summing the
+  //   columns counts each occurrence — yielding share of variances that
+  //   "touch" this context type. Edge case (uncommon with current data):
+  //   if a single variance triggers multiple sub-types, the percentage
+  //   can technically exceed 100% — left as raw for honesty.
+  function pctForContext(ctxId) {
+    if (totalVar <= 0) return 0;
+    const cols = CONTEXT_COLUMNS[ctxId] || [];
+    const sum = list.reduce((s, rec) => {
+      return s + cols.reduce((c, col) => c + (rec[col.key] || 0), 0);
+    }, 0);
+    return Math.round((sum / totalVar) * 100);
+  }
+
+  const html = VT_CONTEXTS.map(ctx => {
+    const active = ctx.id === vtContext;
+    // Variance Rate uses the raw count (the denominator everyone else
+    // divides by). All other contexts use % share.
+    const isVarianceRate = (ctx.id === 'variance-rate');
+    const metric = isVarianceRate ? fmtNum(totalVar)         : pctForContext(ctx.id) + '%';
+    const suffix = isVarianceRate ? 'total variances'        : 'of all variances';
+    return '<button type="button" class="context-card' + (active ? ' active' : '') + '" '
+         +   'onclick="setVtContext(\'' + ctx.id + '\')" '
+         +   'role="radio" aria-checked="' + active + '" '
+         +   'title="' + ctx.name + '">'
+         + '<div class="context-card-label">' + ctx.cardLabel + '</div>'
+         + '<div class="context-card-metric">' + metric + '</div>'
+         + '<div class="context-card-suffix">' + suffix + '</div>'
+         + '</button>';
+  }).join('');
+  wrap.innerHTML = html;
 }
 
 /* ════════════════════════════════════════════════════════════════
    DRILLDOWN  (Department → Users in dept,  Drug → Users on drug)
+
+   Cross-page model: drilling from By Department or By Drug navigates the
+   active child to By User and keeps the scope in drilldownState. The
+   drilldown-context-block (back btn + scope name + summary card +
+   Investigate) renders on top of the By User table to orient the user.
+   drilldownState.fromPage records the origin so exitDrilldown can route
+   the back button to the correct child.
+
+   highlightUserId (optional) pins a specific user row when the drilldown
+   is entered by clicking a dept chip in the user table — the user wants
+   to locate THAT specific user inside the department's full list. The
+   row gets a persistent navy-stripe + tinted-bg treatment and is
+   scrolled into view after the table renders.
 ═══════════════════════════════════════════════════════════════ */
-function drillIntoDept(deptName) {
-  drilldownState = { type: 'dept', scope: deptName };
-  updatePageTitle();
-  updateBreadcrumb();
-  renderEntityTable();
-  if (currentMode === 'graph') renderCurrentChart();
+function drillIntoDept(deptName, highlightUserId) {
+  drilldownState = {
+    type: 'dept',
+    scope: deptName,
+    fromPage: currentPage,
+    highlightUserId: highlightUserId || null
+  };
+  setPage('by-user', { preserveDrilldown: true });
   const drawer = document.querySelector('.mat-drawer-content');
-  if (drawer) drawer.scrollTo({ top: 0, behavior: 'smooth' });
+  if (highlightUserId) {
+    // Defer scroll until the drilldown context block expand animation has
+    // settled (280ms grid-template-rows transition) — scrolling earlier
+    // can land on the wrong final position because heights are still
+    // interpolating.
+    setTimeout(() => scrollToHighlightedRow(), 320);
+  } else if (drawer) {
+    drawer.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
-function drillIntoDrug(drugName) {
-  drilldownState = { type: 'drug', scope: drugName };
-  updatePageTitle();
-  updateBreadcrumb();
-  renderEntityTable();
-  if (currentMode === 'graph') renderCurrentChart();
+function drillIntoDrug(drugName, highlightUserId) {
+  drilldownState = {
+    type: 'drug',
+    scope: drugName,
+    fromPage: currentPage,
+    highlightUserId: highlightUserId || null
+  };
+  setPage('by-user', { preserveDrilldown: true });
   const drawer = document.querySelector('.mat-drawer-content');
-  if (drawer) drawer.scrollTo({ top: 0, behavior: 'smooth' });
+  if (highlightUserId) {
+    setTimeout(() => scrollToHighlightedRow(), 320);
+  } else if (drawer) {
+    drawer.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function exitDrilldown() {
-  drilldownState = { type: null, scope: null };
-  updatePageTitle();
-  updateBreadcrumb();
-  renderEntityTable();
-  if (currentMode === 'graph') renderCurrentChart();
+  // Route back to whichever child the user drilled from. Fallback to By User
+  // if fromPage wasn't recorded (shouldn't happen, but defensive).
+  const returnTo = drilldownState.fromPage || 'by-user';
+  // setPage() clears drilldownState (preserveDrilldown defaults to false).
+  setPage(returnTo);
+}
+
+// Scroll the highlighted-user row into view inside the page's scroll container.
+// Called from drillIntoDept/Drug when highlightUserId is supplied.
+function scrollToHighlightedRow() {
+  if (!drilldownState.highlightUserId) return;
+  const tbody = document.getElementById('entityTableBody');
+  if (!tbody) return;
+  const row = tbody.querySelector('tr[data-rec-id="' +
+    String(drilldownState.highlightUserId).replace(/"/g, '\\"') + '"]');
+  if (!row) return;
+  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function updateBreadcrumb() {
@@ -2647,7 +3040,9 @@ function updateBreadcrumb() {
     block.classList.remove('open');
     if (sharedFilterBar) sharedFilterBar.style.display = '';
     if (subtitleRow) subtitleRow.style.display = '';
-    if (subtitleEl) subtitleEl.style.display = '';
+    // Subtitle stays hidden on L1 — the page-section-indicator
+    // ("By User" / "By Department" / "By Drug") carries that label now.
+    if (subtitleEl) subtitleEl.style.display = 'none';
     return;
   }
   const parentLabel = drilldownState.type === 'dept' ? 'Departments' : 'Drugs';
@@ -2740,7 +3135,13 @@ function makeScopedUser(user, type, scope) {
   return Object.assign({}, user, stats);
 }
 
-function getEntityList() {
+// Returns the entity list for the current page with chip filters applied
+// but BEFORE the variance-rate-only status filter. Used by:
+//   - getEntityList (which then applies the status filter on top)
+//   - renderContextCards (which wants context-agnostic numbers — status
+//     filter only meaningful for variance-rate, so cards stay stable when
+//     switching contexts on Variance Rate by reading pre-status data).
+function getEntityListUnfiltered() {
   let list;
   if (drilldownState.type === 'dept') {
     list = getAllUsers()
@@ -2795,8 +3196,12 @@ function getEntityList() {
       return true;
     });
   }
+  return list;
+}
+
+function getEntityList() {
   // Status filter only affects Variance Rate context
-  return list.filter(rec => {
+  return getEntityListUnfiltered().filter(rec => {
     if (vtContext !== 'variance-rate') return true;
     if (activeStatuses.size === 0) return true;
     return Array.from(activeStatuses).some(s => (rec[s] || 0) > 0)
@@ -2842,7 +3247,10 @@ function renderEntityHead() {
   cols.forEach(col => {
     // Consistent 160px width across context columns — supports 2-line label wrapping
     // with extra room for the sort toggle icon (16px + gap) on the right.
-    html += '<th class="sortable center" style="width:160px; min-width:160px; max-width:160px;" onclick="sortEntityTable(\'' + col.key + '\')"><span class="th-inner">' + col.label + ' <span class="material-icons sort-icon">arrow_downward</span></span></th>';
+    // data-ctx-col tags context-specific columns so the post-render fade-in
+    // animation in setVtContext can target only the changing columns
+    // (stable columns like Score/Name/Departments don't carry this attr).
+    html += '<th class="sortable center" data-ctx-col style="width:160px; min-width:160px; max-width:160px;" onclick="sortEntityTable(\'' + col.key + '\')"><span class="th-inner">' + col.label + ' <span class="material-icons sort-icon">arrow_downward</span></span></th>';
   });
   // Action column needs more room on dept/drug views for the View Users button
   // Action column holds a single button on every entity view now (Investigate on Users, View Users on Dept/Drug)
@@ -2901,15 +3309,25 @@ function renderEntityTable() {
     const recId = rec.id || rec.name;
     const escId = String(recId).replace(/'/g, "\\'");
     const escName = String(rec.name || '').replace(/'/g, "\\'");
+    // data-rec-id stamps every row with its record ID so the highlighted-row
+    // scroll-target logic in scrollToHighlightedRow can find it across
+    // sort/filter re-renders.
+    const recIdAttr = ' data-rec-id="' + String(recId).replace(/"/g, '&quot;') + '"';
+    // .row-highlighted — the "you came from here" treatment for cross-page
+    // drilldown chip clicks. Applies in user views (incl. drilldown) only.
+    const isHighlighted = (eff === 'users' &&
+      drilldownState.highlightUserId &&
+      String(drilldownState.highlightUserId) === String(recId));
+    const highlightClass = isHighlighted ? ' row-highlighted' : '';
     // Dept/drug rows are clickable as a whole (drill into Users); user rows are not
     // (their explicit interactive elements are the user-name link and Investigate button).
     let row;
     if (eff === 'departments') {
-      row = '<tr class="row-clickable" onclick="drillIntoDept(\'' + escName + '\')">';
+      row = '<tr class="row-clickable' + highlightClass + '"' + recIdAttr + ' onclick="drillIntoDept(\'' + escName + '\')">';
     } else if (eff === 'drugs') {
-      row = '<tr class="row-clickable" onclick="drillIntoDrug(\'' + escName + '\')">';
+      row = '<tr class="row-clickable' + highlightClass + '"' + recIdAttr + ' onclick="drillIntoDrug(\'' + escName + '\')">';
     } else {
-      row = '<tr>';
+      row = '<tr class="' + (highlightClass.trim() || '') + '"' + recIdAttr + '>';
     }
     if (eff === 'users') {
       // Score chip + User name (clickable → opens IRIS Detail Panel, matches med-trends pattern)
@@ -2918,11 +3336,18 @@ function renderEntityTable() {
           +    '<div class="entity-name"><a href="#" onclick="event.stopPropagation();openIrisPanel(\'' + escId + '\');return false;">' + rec.name + '</a></div>'
           +    '<div class="entity-sub">' + (rec.role || '') + ' · ' + (rec.homeDept || rec.dept || '') + '</div>'
           +  '</div></td>';
-      // Departments with Activity — list of all depts the user touches (home highlighted)
+      // Departments with Activity — clickable chips that drill into the dept
+      // and highlight this user, so PMs can trace "how does this user compare
+      // to peers in their department?" without losing their place.
       const depts = rec.activeDepts || [rec.homeDept || rec.dept].filter(Boolean);
       const deptChips = depts.map(dn => {
         const isHome = dn === (rec.homeDept || rec.dept);
-        return '<span class="dept-chip' + (isHome ? ' home' : '') + '" title="' + dn + (isHome ? ' (home)' : '') + '">' + dn + '</span>';
+        const escDn = String(dn).replace(/'/g, "\\'");
+        const titleAttr = dn + (isHome ? ' (home) — click to view department' : ' — click to view department');
+        return '<button type="button" class="dept-chip clickable' + (isHome ? ' home' : '') + '" '
+             + 'title="' + titleAttr + '" '
+             + 'onclick="event.stopPropagation();drillIntoDept(\'' + escDn + '\',\'' + escId + '\');return false;">'
+             + dn + '</button>';
       }).join('');
       row += '<td><div class="dept-chip-list">' + deptChips + '</div></td>';
     } else if (eff === 'departments') {
@@ -2937,7 +3362,9 @@ function renderEntityTable() {
     cols.forEach(col => {
       const v = getColValue(rec, col.key);
       const display = col.isPct ? (v + '%') : fmtNum(v);
-      row += '<td class="num center">' + display + '</td>';
+      // data-ctx-col — see renderEntityHead, used by the fade-in animation
+      // when the Context selection changes.
+      row += '<td class="num center" data-ctx-col>' + display + '</td>';
     });
     // Action cell content depends on entity:
     // - Users: Investigate (the row's specific record)
@@ -3269,9 +3696,6 @@ document.addEventListener('keydown', (e) => {
    GLOBAL CLICK HANDLER — close menus on outside click
 ═══════════════════════════════════════════════════════════════ */
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('#version-selector')) {
-    document.getElementById('version-menu').style.display = 'none';
-  }
   if (!e.target.closest('.chip-filter-wrap')) {
     closeAllChipMenus();
   }
@@ -3303,8 +3727,9 @@ function init() {
   buildChipFilterList('user', uniqueUsers.sort((a, b) => a.label.localeCompare(b.label)));
   buildChipFilterList('role', Array.from(allRoles).sort().map(r => ({ value: r, label: r })));
 
-  updatePageTitle();
-  renderEntityTable();
+  // Route to the default child page. setPage handles updatePageTitle +
+  // renderEntityTable + sidebar / page-section-indicator sync.
+  setPage('by-user');
 
   window.addEventListener('resize', () => {
     if (entityChart) entityChart.resize();
