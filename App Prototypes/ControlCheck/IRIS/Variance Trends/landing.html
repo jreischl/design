@@ -2103,49 +2103,75 @@ const DEPARTMENTS = [
   { id:'behavioral', name:'Behavioral Health', vtScore:1.4, compScores:{'Overall IRIS':2.1,'Variance Trends':1.4,'Med Trends':2.5,'Action Times':1.8,'Dispense Patterns':1.7,'Full Package Waste':0.6,'Shift Analysis':1.5}, totalEvents:524,  variances:36,  unreconciled:9,  reconciled:24, open3:3,  openhist:0 }
 ];
 
+// ─────────────────────────────────────────────────────────────
 // Drugs (per department) — for L2 view
+//
+// REAL BACKEND GROUPING (per the API endpoint
+// POST /api/v1/data_science/variance_trends/state_counts):
+//   group_by = 'equivalent_medication' × form_factor_id
+//
+// That means:
+//   • Two brands that map to the same equivalent_medication collapse to one row
+//     (e.g. Morphine sulfate + Morphine PF sulfate inject → one "Morphine · Injection")
+//   • Tablet vs Injection of the same med are SEPARATE rows
+//   • Strength/concentration is NOT a grouping dimension — different strengths
+//     of the same (med, form) aggregate into a single row.
+//
+// Each row carries `medication` and `formFactor` explicitly; getAllDrugs()
+// composes them into `name` via drugDisplayName() using the · separator.
+// Invariant preserved: variances = unreconciled + reconciled + open3 + openhist.
+// ─────────────────────────────────────────────────────────────
+const DRUG_NAME_SEPARATOR = ' · ';
+function drugDisplayName(rec) {
+  return rec.medication + DRUG_NAME_SEPARATOR + rec.formFactor;
+}
+
 const DRUGS_BY_DEPT = {
   emergency: [
-    { drug:'LORazepam 2 mg/mL Inj', vtScore:6.4, totalEvents:267, variances:96, unreconciled:19, reconciled:48, open3:29, openhist:0 },
-    { drug:'Morphine 4 mg/mL Inj',  vtScore:3.1, totalEvents:854, variances:27, unreconciled:8,  reconciled:14, open3:5,  openhist:0 },
-    { drug:'Midazolam 1 mg/mL Inj', vtScore:5.2, totalEvents:152, variances:31, unreconciled:11, reconciled:14, open3:6,  openhist:0 },
-    { drug:'Morphine 15 mg Oral',   vtScore:3.8, totalEvents:124, variances:22, unreconciled:6,  reconciled:13, open3:3,  openhist:0 },
-    { drug:'Ketamine 50 mg/mL Inj', vtScore:7.2, totalEvents:42,  variances:28, unreconciled:9,  reconciled:13, open3:6,  openhist:0 },
-    { drug:'LORazepam 1 mg Oral',   vtScore:1.8, totalEvents:98,  variances:5,  unreconciled:1,  reconciled:3,  open3:1,  openhist:0 },
-    { drug:'HYDROmorphone 1 mg/mL Inj', vtScore:2.4, totalEvents:432, variances:14, unreconciled:4,  reconciled:8,  open3:2,  openhist:0 },
-    { drug:'Morphine PF 2 mg/mL Inj',   vtScore:4.1, totalEvents:88,  variances:8,  unreconciled:3,  reconciled:3,  open3:2,  openhist:0 },
-    { drug:'fentaNYL 50 mcg/mL Inj',    vtScore:1.6, totalEvents:218, variances:9,  unreconciled:1,  reconciled:7,  open3:1,  openhist:0 },
-    { drug:'Meperidine 50 mg/mL Inj',   vtScore:2.9, totalEvents:24,  variances:8,  unreconciled:2,  reconciled:5,  open3:1,  openhist:0 },
-    { drug:'Acetaminophen-Codeine Liquid', vtScore:0.9, totalEvents:64, variances:3, unreconciled:0, reconciled:3,  open3:0,  openhist:0 },
-    { drug:'Codeine-Promethazine Liquid',  vtScore:0.7, totalEvents:78, variances:2, unreconciled:0, reconciled:2,  open3:0,  openhist:0 },
-    { drug:'Acetaminophen-oxyCODONE Oral', vtScore:0.5, totalEvents:142, variances:1, unreconciled:0, reconciled:1, open3:0,  openhist:0 },
-    { drug:'diazePAM 5 mg Oral',        vtScore:0.3, totalEvents:54,  variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 },
-    { drug:'HYDROmorphone 4 mg Oral',   vtScore:0.4, totalEvents:38,  variances:1,  unreconciled:0,  reconciled:1,  open3:0,  openhist:0 },
-    { drug:'oxyCODONE 5 mg Oral',       vtScore:0.2, totalEvents:122, variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 },
-    { drug:'alprazolam 0.5 mg Oral',    vtScore:0.6, totalEvents:34,  variances:1,  unreconciled:0,  reconciled:1,  open3:0,  openhist:0 },
-    { drug:'phenobarbital 30 mg Oral',  vtScore:0.0, totalEvents:8,   variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 }
+    // Note: Morphine · Injection here is the collapse of what used to be
+    // separate "Morphine 4 mg/mL Inj" + "Morphine PF 2 mg/mL Inj" rows.
+    // Combined: 854+88=942 events, 27+8=35 variances (11+17+7), score is
+    // variance-weighted: (3.1·27 + 4.1·8)/35 ≈ 3.3.
+    { medication:'LORazepam',                  formFactor:'Injection', vtScore:6.4, totalEvents:267, variances:96, unreconciled:19, reconciled:48, open3:29, openhist:0 },
+    { medication:'Morphine',                   formFactor:'Injection', vtScore:3.3, totalEvents:942, variances:35, unreconciled:11, reconciled:17, open3:7,  openhist:0 },
+    { medication:'Midazolam',                  formFactor:'Injection', vtScore:5.2, totalEvents:152, variances:31, unreconciled:11, reconciled:14, open3:6,  openhist:0 },
+    { medication:'Morphine',                   formFactor:'Oral',      vtScore:3.8, totalEvents:124, variances:22, unreconciled:6,  reconciled:13, open3:3,  openhist:0 },
+    { medication:'Ketamine',                   formFactor:'Injection', vtScore:7.2, totalEvents:42,  variances:28, unreconciled:9,  reconciled:13, open3:6,  openhist:0 },
+    { medication:'LORazepam',                  formFactor:'Oral',      vtScore:1.8, totalEvents:98,  variances:5,  unreconciled:1,  reconciled:3,  open3:1,  openhist:0 },
+    { medication:'HYDROmorphone',              formFactor:'Injection', vtScore:2.4, totalEvents:432, variances:14, unreconciled:4,  reconciled:8,  open3:2,  openhist:0 },
+    { medication:'fentaNYL',                   formFactor:'Injection', vtScore:1.6, totalEvents:218, variances:9,  unreconciled:1,  reconciled:7,  open3:1,  openhist:0 },
+    { medication:'Meperidine',                 formFactor:'Injection', vtScore:2.9, totalEvents:24,  variances:8,  unreconciled:2,  reconciled:5,  open3:1,  openhist:0 },
+    { medication:'Acetaminophen-Codeine',      formFactor:'Liquid',    vtScore:0.9, totalEvents:64,  variances:3,  unreconciled:0,  reconciled:3,  open3:0,  openhist:0 },
+    { medication:'Codeine-Promethazine',       formFactor:'Liquid',    vtScore:0.7, totalEvents:78,  variances:2,  unreconciled:0,  reconciled:2,  open3:0,  openhist:0 },
+    { medication:'Acetaminophen-oxyCODONE',    formFactor:'Oral',      vtScore:0.5, totalEvents:142, variances:1,  unreconciled:0,  reconciled:1,  open3:0,  openhist:0 },
+    { medication:'diazePAM',                   formFactor:'Oral',      vtScore:0.3, totalEvents:54,  variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 },
+    { medication:'HYDROmorphone',              formFactor:'Oral',      vtScore:0.4, totalEvents:38,  variances:1,  unreconciled:0,  reconciled:1,  open3:0,  openhist:0 },
+    { medication:'oxyCODONE',                  formFactor:'Oral',      vtScore:0.2, totalEvents:122, variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 },
+    { medication:'alprazolam',                 formFactor:'Oral',      vtScore:0.6, totalEvents:34,  variances:1,  unreconciled:0,  reconciled:1,  open3:0,  openhist:0 },
+    { medication:'phenobarbital',              formFactor:'Oral',      vtScore:0.0, totalEvents:8,   variances:0,  unreconciled:0,  reconciled:0,  open3:0,  openhist:0 }
   ],
   recovery: [
-    { drug:'fentaNYL 50 mcg/mL Inj', vtScore:5.4, totalEvents:128, variances:24, unreconciled:7, reconciled:13, open3:4, openhist:0 },
-    { drug:'Morphine 4 mg/mL Inj',   vtScore:4.2, totalEvents:96,  variances:18, unreconciled:5, reconciled:10, open3:3, openhist:0 },
-    { drug:'HYDROmorphone 1 mg/mL Inj', vtScore:3.1, totalEvents:84, variances:11, unreconciled:3, reconciled:6,  open3:2, openhist:0 },
-    { drug:'Ketorolac 30 mg/mL Inj', vtScore:1.8, totalEvents:54,  variances:5,  unreconciled:1, reconciled:3,  open3:1, openhist:0 },
-    { drug:'Ondansetron 4 mg/2 mL Inj', vtScore:0.6, totalEvents:36, variances:2, unreconciled:1, reconciled:1,  open3:0, openhist:0 },
-    { drug:'Acetaminophen 1000 mg IV',  vtScore:1.2, totalEvents:14, variances:6,  unreconciled:1, reconciled:5,  open3:0, openhist:0 }
+    { medication:'fentaNYL',       formFactor:'Injection', vtScore:5.4, totalEvents:128, variances:24, unreconciled:7, reconciled:13, open3:4, openhist:0 },
+    { medication:'Morphine',       formFactor:'Injection', vtScore:4.2, totalEvents:96,  variances:18, unreconciled:5, reconciled:10, open3:3, openhist:0 },
+    { medication:'HYDROmorphone',  formFactor:'Injection', vtScore:3.1, totalEvents:84,  variances:11, unreconciled:3, reconciled:6,  open3:2, openhist:0 },
+    { medication:'Ketorolac',      formFactor:'Injection', vtScore:1.8, totalEvents:54,  variances:5,  unreconciled:1, reconciled:3,  open3:1, openhist:0 },
+    { medication:'Ondansetron',    formFactor:'Injection', vtScore:0.6, totalEvents:36,  variances:2,  unreconciled:1, reconciled:1,  open3:0, openhist:0 },
+    // "Acetaminophen 1000 mg IV" → IV is an injection form factor in this taxonomy
+    { medication:'Acetaminophen',  formFactor:'Injection', vtScore:1.2, totalEvents:14,  variances:6,  unreconciled:1, reconciled:5,  open3:0, openhist:0 }
   ],
   pacu: [
-    { drug:'fentaNYL 100 mcg/2 mL Inj', vtScore:6.1, totalEvents:114, variances:28, unreconciled:11, reconciled:13, open3:4, openhist:0 },
-    { drug:'Midazolam 5 mg/mL Inj', vtScore:5.4, totalEvents:78,  variances:18, unreconciled:8, reconciled:8, open3:2, openhist:0 },
-    { drug:'Morphine 4 mg/mL Inj',  vtScore:3.2, totalEvents:62,  variances:9,  unreconciled:3, reconciled:5, open3:1, openhist:0 },
-    { drug:'HYDROmorphone 1 mg/mL Inj', vtScore:2.4, totalEvents:34, variances:5, unreconciled:2, reconciled:3, open3:0, openhist:0 },
-    { drug:'Ondansetron 4 mg/2 mL Inj', vtScore:0.4, totalEvents:10, variances:2, unreconciled:0, reconciled:1, open3:1, openhist:0 }
+    { medication:'fentaNYL',       formFactor:'Injection', vtScore:6.1, totalEvents:114, variances:28, unreconciled:11, reconciled:13, open3:4, openhist:0 },
+    { medication:'Midazolam',      formFactor:'Injection', vtScore:5.4, totalEvents:78,  variances:18, unreconciled:8,  reconciled:8,  open3:2, openhist:0 },
+    { medication:'Morphine',       formFactor:'Injection', vtScore:3.2, totalEvents:62,  variances:9,  unreconciled:3,  reconciled:5,  open3:1, openhist:0 },
+    { medication:'HYDROmorphone',  formFactor:'Injection', vtScore:2.4, totalEvents:34,  variances:5,  unreconciled:2,  reconciled:3,  open3:0, openhist:0 },
+    { medication:'Ondansetron',    formFactor:'Injection', vtScore:0.4, totalEvents:10,  variances:2,  unreconciled:0,  reconciled:1,  open3:1, openhist:0 }
   ],
   or: [
-    { drug:'fentaNYL 100 mcg/2 mL Inj', vtScore:3.4, totalEvents:178, variances:18, unreconciled:5, reconciled:11, open3:2, openhist:0 },
-    { drug:'Midazolam 5 mg/mL Inj', vtScore:3.1, totalEvents:122, variances:14, unreconciled:4, reconciled:8, open3:2, openhist:0 },
-    { drug:'Propofol 200 mg/20 mL Inj', vtScore:2.1, totalEvents:96, variances:8,  unreconciled:2, reconciled:5, open3:1, openhist:0 },
-    { drug:'Morphine 4 mg/mL Inj',  vtScore:1.8, totalEvents:64, variances:5, unreconciled:1, reconciled:3, open3:1, openhist:0 },
-    { drug:'Sufentanil 50 mcg/mL Inj', vtScore:1.2, totalEvents:24, variances:2, unreconciled:0, reconciled:2, open3:0, openhist:0 }
+    { medication:'fentaNYL',       formFactor:'Injection', vtScore:3.4, totalEvents:178, variances:18, unreconciled:5, reconciled:11, open3:2, openhist:0 },
+    { medication:'Midazolam',      formFactor:'Injection', vtScore:3.1, totalEvents:122, variances:14, unreconciled:4, reconciled:8,  open3:2, openhist:0 },
+    { medication:'Propofol',       formFactor:'Injection', vtScore:2.1, totalEvents:96,  variances:8,  unreconciled:2, reconciled:5,  open3:1, openhist:0 },
+    { medication:'Morphine',       formFactor:'Injection', vtScore:1.8, totalEvents:64,  variances:5,  unreconciled:1, reconciled:3,  open3:1, openhist:0 },
+    { medication:'Sufentanil',     formFactor:'Injection', vtScore:1.2, totalEvents:24,  variances:2,  unreconciled:0, reconciled:2,  open3:0, openhist:0 }
   ]
 };
 
@@ -2153,13 +2179,17 @@ function drugsForDept(deptId) {
   if (DRUGS_BY_DEPT[deptId]) return DRUGS_BY_DEPT[deptId];
   const dept = DEPARTMENTS.find(d => d.id === deptId);
   if (!dept || dept.variances === 0) return [];
+  // Fallback pool — same (med, form) shape as the per-dept rosters, used for
+  // depts that don't have an explicit DRUGS_BY_DEPT entry. Distribution model
+  // matches the previous implementation: front-loaded weighting with the
+  // tail row absorbing whatever variance is left so totals reconcile.
   const baseDrugs = [
-    'Morphine 4 mg/mL Inj',
-    'HYDROmorphone 1 mg/mL Inj',
-    'fentaNYL 50 mcg/mL Inj',
-    'LORazepam 2 mg/mL Inj',
-    'Ondansetron 4 mg/2 mL Inj',
-    'Acetaminophen 1000 mg IV'
+    { medication: 'Morphine',       formFactor: 'Injection' },
+    { medication: 'HYDROmorphone',  formFactor: 'Injection' },
+    { medication: 'fentaNYL',       formFactor: 'Injection' },
+    { medication: 'LORazepam',      formFactor: 'Injection' },
+    { medication: 'Ondansetron',    formFactor: 'Injection' },
+    { medication: 'Acetaminophen',  formFactor: 'Injection' }
   ];
   const out = [];
   let remVar = dept.variances, remEvt = dept.totalEvents;
@@ -2181,7 +2211,8 @@ function drugsForDept(deptId) {
     }
     const o3 = Math.max(0, v - ur - r);
     out.push({
-      drug: baseDrugs[i],
+      medication: baseDrugs[i].medication,
+      formFactor: baseDrugs[i].formFactor,
       vtScore: Math.max(0, dept.vtScore - i*0.6 + (Math.random()-.5)*0.4),
       totalEvents: Math.max(8, e),
       variances: Math.max(0, v),
@@ -2404,11 +2435,15 @@ function getAllUsers() {
 
 function getAllDrugs() {
   if (_allDrugs) return _allDrugs;
-  // Aggregate same drug across departments by summing
+  // Aggregate same (medication, formFactor) across departments by summing.
+  // The composite name (e.g. "Morphine · Injection") becomes the public
+  // identifier — it's what activeDrugs / drugStats / drilldown scope all
+  // reference downstream. The Map key uses a tab separator to avoid any
+  // collision with the · used in the display name.
   const map = new Map();
   DEPARTMENTS.forEach(d => {
     drugsForDept(d.id).forEach(dr => {
-      const key = dr.drug;
+      const key = dr.medication + '\t' + dr.formFactor;
       const existing = map.get(key);
       if (existing) {
         existing.totalEvents  += dr.totalEvents;
@@ -2418,7 +2453,20 @@ function getAllDrugs() {
         existing.open3        += dr.open3 || 0;
         existing.openhist     += dr.openhist || 0;
       } else {
-        map.set(key, Object.assign({ name: dr.drug, entity: 'drugs', open3: dr.open3 || 0, openhist: dr.openhist || 0 }, dr));
+        const displayName = drugDisplayName(dr);
+        map.set(key, Object.assign({
+          name: displayName,
+          medication: dr.medication,
+          formFactor: dr.formFactor,
+          entity: 'drugs',
+          open3: dr.open3 || 0,
+          openhist: dr.openhist || 0
+        }, dr, {
+          // Re-overlay these to make sure the spread didn't clobber them
+          name: displayName,
+          medication: dr.medication,
+          formFactor: dr.formFactor
+        }));
       }
     });
   });
@@ -3292,8 +3340,16 @@ function renderEntityTable() {
   const sortState = entitySortStates[eff];
   list.sort((a, b) => {
     let av, bv;
-    if (sortState.col === 'name') { av = a.name; bv = b.name; }
-    else if (sortState.col === 'vtScore') { av = a.vtScore || 0; bv = b.vtScore || 0; }
+    if (sortState.col === 'name') {
+      // localeCompare with sensitivity:'base' so tall-man lettering drugs
+      // ("alprazolam", "diazePAM", "fentaNYL") sort alongside their
+      // capitalized neighbors instead of all clustering at the bottom of
+      // an ASCII sort. Same behavior matters for User and Department
+      // name sorts too — case shouldn't drive position.
+      const cmp = String(a.name).localeCompare(String(b.name), undefined, { sensitivity: 'base' });
+      return sortState.asc ? cmp : -cmp;
+    }
+    if (sortState.col === 'vtScore') { av = a.vtScore || 0; bv = b.vtScore || 0; }
     else { av = getColValue(a, sortState.col); bv = getColValue(b, sortState.col); }
     if (av < bv) return sortState.asc ? -1 : 1;
     if (av > bv) return sortState.asc ? 1 : -1;
