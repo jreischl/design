@@ -3316,18 +3316,24 @@ function renderPanelContent(pharmIdx, drugIdx) {
     ? mulberry32(drugIdx * 53 + (PANEL_STATE.typeKey || '').length * 11 + 9001)
     : mulberry32(pharmIdx * 31 + drugIdx * 7 + 1);
 
-  // Active types for the trend chart:
+  // Active types for the trend chart + type stats + filterable
+  // breakdown. These must agree with the canonical cell breakdown
+  // (the same data the By-Adjustment-Type heatmap reads), otherwise
+  // the cell panel would show different per-type counts than the
+  // heatmap cell that opened it.
   //   - aggregate scope: just the pre-scoped type (the panel is about
   //     this one type by design)
-  //   - cell scope: 3-6 random types representing the cell's mix
+  //   - cell scope: every type that has a non-zero count for this
+  //     (pharmacy, drug) cell, in canonical order. Order is preserved
+  //     from ADJ_TYPES so the type-stat cards render in a stable
+  //     sequence regardless of which cell was clicked.
   let activeTypes;
   if (isAggregate) {
     const t = TYPE_BY_KEY[PANEL_STATE.typeKey];
     activeTypes = t ? [t] : [];
   } else {
-    const numTypes = 3 + Math.floor(rand() * 4);
-    const shuffled = ADJ_TYPES.slice().sort(() => rand() - 0.5);
-    activeTypes = shuffled.slice(0, numTypes);
+    const breakdown = getCellBreakdown(pharmIdx, drugIdx);
+    activeTypes = ADJ_TYPES.filter(t => (breakdown[t.key] || 0) > 0);
   }
 
   // Per-month, per-type matrix.
@@ -4160,57 +4166,57 @@ function pickComment(typeKey, rand) {
 function renderMedTable(pharmIdx, drugIdx, rand, activeTypes) {
   const variants = MED_VARIANTS[drugIdx];
   const isAggregate = (PANEL_STATE.scope === 'aggregate');
-  // Aggregate scope: total = pre-scoped type across all pharmacies.
-  // Cell scope: the (pharmacy, drug) cell value.
-  const total = isAggregate
-    ? getTypeCellValue(PANEL_STATE.typeKey, drugIdx)
-    : (HEATMAP[pharmIdx][drugIdx].v || 0);
 
-  // Distribute the total across variants (preserved from prior version)
-  const counts = variants.map(() => 0);
-  for (let i = 0; i < total; i++) {
-    counts[Math.floor(rand() * variants.length)] += 1;
+  // Canonical per-type totals for this panel. These MUST agree with
+  // what the heatmap shows — otherwise the type-stat cards and the
+  // filterable med-table will display different numbers than the
+  // cell that opened this panel.
+  //   - cell scope: pull from getCellBreakdown so every type-stat
+  //     card matches the corresponding cell in the By-Adjustment-
+  //     Type view.
+  //   - aggregate scope: the panel is pre-scoped to one type, so
+  //     the entire total is that type.
+  const adjustmentTypes = activeTypes.filter(t => t.key !== 'cycle_count');
+  const typeTotals = {};
+  adjustmentTypes.forEach(t => { typeTotals[t.key] = 0; });
+  if (isAggregate) {
+    if (adjustmentTypes.length) {
+      typeTotals[adjustmentTypes[0].key] = getTypeCellValue(PANEL_STATE.typeKey, drugIdx);
+    }
+  } else {
+    const breakdown = getCellBreakdown(pharmIdx, drugIdx);
+    adjustmentTypes.forEach(t => { typeTotals[t.key] = breakdown[t.key] || 0; });
   }
 
-  // For each variant, split its count across the active types so
-  // filter buttons map cleanly to row-level counts.
-  // Cycle Count is excluded from the variant distribution — it's a
-  // verification event, not an adjustment, so it shouldn't drive a
-  // type-stat card or appear as a row-level adjustment count.
-  const adjustmentTypes = activeTypes.filter(t => t.key !== 'cycle_count');
-  const variantState = variants.map((v, i) => {
-    const variantTotal = counts[i];
-    const byType = {};
-    const totalByType = {};
-    adjustmentTypes.forEach(t => { byType[t.key] = 0; totalByType[t.key] = 0; });
+  // Distribute each type's total across variants deterministically.
+  // Round-robin with a per-type rotation so the "+1 remainder" rotates
+  // around the variant list rather than always landing on variant 0.
+  // Sum across variants for any type equals typeTotals[type] — that's
+  // what keeps the panel honest.
+  const variantState = variants.map(v => ({
+    name: v.name, strength: v.strength,
+    byType: Object.fromEntries(adjustmentTypes.map(t => [t.key, 0])),
+    totalByType: Object.fromEntries(adjustmentTypes.map(t => [t.key, 0])),
+  }));
+  adjustmentTypes.forEach((t, ti) => {
+    const cnt = typeTotals[t.key];
+    if (cnt <= 0) return;
+    const n = variants.length;
+    const rotation = (pharmIdx * 17 + drugIdx * 11 + ti * 5 + 3) % n;
+    for (let k = 0; k < cnt; k++) {
+      const vi = (rotation + k) % n;
+      variantState[vi].byType[t.key] += 1;
+    }
+  });
 
-    // Bias toward count_correction / return_to_stock since those are the
-    // most common adjustment types in real pharmacy data.
-    function pickType() {
-      const r = rand();
-      const ordered = adjustmentTypes.slice().sort((a, b) => {
-        const w = { count_correction: 4, return_to_stock: 2 };
-        return (w[b.key] || 1) - (w[a.key] || 1);
-      });
-      let cum = 0;
-      const weights = ordered.map(t => (({count_correction:4,return_to_stock:2})[t.key] || 1));
-      const sum = weights.reduce((s,x)=>s+x,0);
-      for (let k = 0; k < ordered.length; k++) {
-        cum += weights[k]/sum;
-        if (r <= cum) return ordered[k].key;
-      }
-      return ordered[ordered.length - 1].key;
-    }
-    for (let j = 0; j < variantTotal; j++) {
-      byType[pickType()] += 1;
-    }
-    // Per-unit "Total Adjusted" amount factor for each type (deterministic)
+  // Per-unit "Total Adjusted" amount factor for each (variant, type).
+  // Stays random for realism — only the count distribution above
+  // needs to be deterministic vs the heatmap.
+  variantState.forEach(v => {
     adjustmentTypes.forEach(t => {
       const perUnit = 30 + Math.floor(rand() * 70);
-      totalByType[t.key] = byType[t.key] * perUnit;
+      v.totalByType[t.key] = v.byType[t.key] * perUnit;
     });
-
-    return { name: v.name, strength: v.strength, byType, totalByType };
   });
 
   MED_STATE = { variantState, activeTypes };
