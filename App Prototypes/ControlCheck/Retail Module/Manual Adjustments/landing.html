@@ -155,6 +155,127 @@
     #app-view { flex: 1 1 auto; position: relative; display: flex; flex-direction: column; }
 
     /* ═══════════════════════════════════════════════════════
+       DRAWER LAYOUT — analyze sidebar + main content area
+       Sidebar lives inside #app-view; main content occupies
+       whatever's left. Sidebar is a fixed 220px (48px when
+       collapsed). Footer sits below the drawer-container in
+       #app-view's column layout.
+    ═══════════════════════════════════════════════════════ */
+    mat-drawer-container, mat-drawer-content, mat-drawer { display: block; }
+    mat-drawer-container {
+      display: flex; flex-direction: row;
+      flex: 1 1 auto; overflow: hidden; position: relative;
+      min-height: 0;
+    }
+    mat-drawer-content {
+      display: flex; flex-direction: column;
+      flex: 1 1 auto; overflow: auto; position: relative;
+      min-height: 0;
+    }
+    mat-drawer {
+      display: block; position: relative; overflow: visible;
+      background: #fff; border-right: 1px solid var(--gray-300);
+      width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%; height: 100%; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    /* Drawer collapse/expand FAB sticks to the drawer's right edge */
+    .mdc-fab.mat-mdc-mini-fab {
+      width: 24px; height: 24px; min-height: 24px;
+      border-radius: 50%; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--teal); color: #fff;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+      transition: background .15s, transform .3s cubic-bezier(.4,0,.2,1);
+      position: absolute; right: -12px; top: 10px; z-index: 99; padding: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background: var(--teal-dark, #0083a8); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; transition: transform .3s; }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    /* Accordion (section headers) */
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header, mat-panel-title { display: block; }
+    .navigation-accordion mat-expansion-panel {
+      background: #fff; border-radius: 0; box-shadow: none;
+      border-bottom: none;
+    }
+    .navigation-accordion mat-expansion-panel-header {
+      height: 45px !important; padding: 0 16px;
+      cursor: pointer; display: flex; align-items: center;
+      transition: background .15s;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .mat-content { display: flex; flex: 1; align-items: center; }
+    .navigation-accordion mat-panel-title {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--gray-600, #757575);
+      flex-grow: 1;
+      text-transform: uppercase;
+    }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg { width: 24px; height: 24px; fill: var(--gray-600, #757575); transition: transform 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+
+    /* Nav list items */
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px;
+      text-decoration: none; cursor: pointer; position: relative;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active { background: rgba(4,74,130,.08); border-left-color: var(--blue-dark); }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: rgba(0,0,0,.87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon {
+      font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600, #757575);
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span { display: none; }
+    mat-drawer.collapsed .mdc-list-item__primary-text .mat-icon { margin: 0; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-expansion-panel-header { justify-content: center; padding: 0; }
+
+    /* Page-section indicator — renders next to the page title with a `/`
+       separator. E.g. "Manual Adjustments / By Retail Pharmacy". Hidden
+       when the page is in a drilled state (title takes over). */
+    .page-section-indicator {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      white-space: nowrap;
+    }
+    .page-section-indicator::before {
+      content: '/';
+      margin-right: 10px;
+      color: rgba(0,0,0,.54);
+      font-weight: 400;
+    }
+
+    /* ═══════════════════════════════════════════════════════
        PAGE LAYOUT
     ═══════════════════════════════════════════════════════ */
     .page-content { padding: 1.5rem 2rem 2rem; flex: 1 1 auto; }
@@ -284,6 +405,15 @@
       font-weight: 600;
     }
     .chip.chip-secondary:hover { background: var(--teal-50); }
+    /* Narrower-than-everything filter state (the chip-badge variant).
+       Higher specificity than the base .chip.chip-secondary above so
+       the transparent default doesn't win the cascade. */
+    .chip.chip-secondary.selected {
+      background: var(--teal-50);
+      color: var(--teal-900);
+      border-color: transparent;
+    }
+    .chip.chip-secondary.selected:hover { background: #d3ecf3; }
     .chip.chip-secondary.active,
     .chip.chip-secondary.active.selected {
       background: var(--teal-50);
@@ -421,14 +551,29 @@
       padding: 10px 16px;
       margin: 0 0 16px;
     }
+    /* Legend label sits flush-left in the adj-legend bar. Two-line stack:
+       the title ("Manual Adjustments") sits on top and matches the
+       severity pills' weight/case, the subtext below explains that
+       the scale moves with the date range (i.e. these numbers are not
+       a fixed legend). */
     .adj-legend-label {
-      font-size: 12px; font-weight: 600;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1px;
+      line-height: 1.2;
+    }
+    .adj-legend-label-title {
+      font-size: 12px;
+      font-weight: 600;
       color: var(--gray-700);
       letter-spacing: .04em;
-      display: inline-flex; align-items: center; gap: 6px;
     }
-    .adj-legend-label .material-icons {
-      font-size: 16px; color: var(--teal); cursor: help;
+    .adj-legend-label-sub {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--gray-600);
+      letter-spacing: 0;
     }
     .adj-legend-pill {
       display: inline-flex; align-items: center;
@@ -491,6 +636,21 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+    /* Row count — left side of the heatmap toolbar. Slightly muted so
+       the filter chip next to it remains the primary affordance. The
+       count itself is bolded against the surrounding label so it reads
+       as a data point rather than a static caption. */
+    .row-count {
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      white-space: nowrap;
+    }
+    .row-count strong {
+      color: var(--blue-darker, #0a3861);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
     }
     .heatmap-search {
       position: relative;
@@ -642,6 +802,29 @@
       font-weight: 500;
       color: var(--gray-700);
       font-size: .8125rem;
+    }
+
+    /* User row label — two-line stack: user name on top, pharmacy
+       subtext below. Used as the row-label cell in the By User view
+       where each row represents one (user, pharmacy) pairing. The
+       subtext shares the size of the .pharmacy-name baseline but
+       uses gray-600 to recede behind the bold name above. */
+    .user-row-label {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.25;
+      gap: 1px;
+    }
+    .user-row-name {
+      font-weight: 500;
+      color: var(--gray-700);
+      font-size: .8125rem;
+    }
+    .user-row-pharm {
+      font-weight: 400;
+      color: var(--gray-600, #757575);
+      font-size: .75rem;
     }
 
     /* Heat-map cells */
@@ -1232,6 +1415,23 @@
       display: flex; align-items: center; gap: 6px;
     }
 
+    /* Highlighted transaction row — used when the panel was opened
+       from the By User view, to surface rows attributed to that
+       user. Soft teal-50 fill with a left accent stripe so the
+       eye can scan to them. Composes with .cc-row (a cycle-count
+       row can also be highlighted). */
+    table.tx-table tbody tr.tx-row-highlighted {
+      background: #e7f4f8;                           /* teal-50 */
+      box-shadow: inset 3px 0 0 var(--teal, #0096b8);
+    }
+    table.tx-table tbody tr.tx-row-highlighted:hover {
+      background: #d3ecf3;                           /* slightly darker on hover */
+    }
+    table.tx-table tbody tr.tx-row-highlighted .user-cell {
+      font-weight: 700;
+      color: var(--blue-darker, #0a3861);
+    }
+
     /* Cycle Count rows — verification events, not balance changes.
        Amount column shows an em-dash; Comments column carries the
        counted value and variance (or "Match"). Optional subtle navy
@@ -1361,7 +1561,7 @@
               <span class="mdc-button__label">Analyze</span>
             </button>
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
-              <span class="mdc-button__label">Cases</span>
+              <span class="mdc-button__label">Reviews &amp; Cases</span>
             </button>
             <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
               <span class="mdc-button__label">
@@ -1409,6 +1609,39 @@
 
   <!-- ── PAGE CONTENT ────────────────────────────────────── -->
   <div id="app-view">
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── ANALYZE SIDEBAR ── -->
+      <mat-drawer mode="side" opened="" class="mat-drawer mat-drawer-opened mat-drawer-side" id="analyze-drawer">
+        <div class="mat-drawer-inner-container">
+          <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <span class="mat-icon material-icons">chevron_left</span>
+          </button>
+          <mat-accordion class="mat-accordion navigation-accordion mat-accordion-multi">
+
+            <!-- Manual Adjustments — section header with the two view-mode pages -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Manual Adjustments</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item active" id="nav-manual-adjustments-by-pharmacy" href="#" onclick="setPage('by-pharmacy');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">store</span>By Retail Pharmacy</span></span></a>
+                    <a class="mat-mdc-list-item" id="nav-manual-adjustments-by-type" href="#" onclick="setPage('by-type');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">edit_note</span>By Adjustment Type</span></span></a>
+                    <a class="mat-mdc-list-item" id="nav-manual-adjustments-by-user" href="#" onclick="setPage('by-user');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">person</span>By User</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <!-- ── MAIN CONTENT ── -->
+      <mat-drawer-content class="mat-drawer-content">
     <div class="page-content">
 
       <!-- Breadcrumb -->
@@ -1422,6 +1655,7 @@
       <div class="page-header">
         <div class="page-title-group" id="page-title-group">
           <h1 class="page-title">Manual Adjustments</h1>
+          <span class="page-section-indicator" id="page-section-indicator">By Retail Pharmacy</span>
         </div>
 
         <div class="pillter-row" id="pillter-row">
@@ -1508,16 +1742,12 @@
       <div class="description-legend-row">
         <p class="page-description">
           Explore manual balance adjustments across your retail network with an interactive heat-map view.
-          Adjustments are inventory changes outside of dispenses — including count corrections, returns to stock, waste, expirations, and other reasons. Cycle counts are tracked separately as verification events.
         </p>
 
         <div class="adj-legend">
           <span class="adj-legend-label">
-            Manual Adjustments
-            <span class="tip-target">
-              <span class="material-icons" aria-hidden="true">info</span>
-              <span class="tip" id="legend-tip">Adjustment volume per pharmacy/drug pair</span>
-            </span>
+            <span class="adj-legend-label-title">Manual Adjustments</span>
+            <span class="adj-legend-label-sub">Scale adjusts based on selected date range</span>
           </span>
           <span class="adj-legend-pill lvl-low"    id="legend-low">0–1</span>
           <span class="adj-legend-pill lvl-mid"    id="legend-mid">2–3</span>
@@ -1538,28 +1768,40 @@
       </div>
 
       <!-- HEAT MAP -->
-      <!-- Toolbar sits above the card — View By selector on the left,
-           row search on the right. Both are view-control affordances
-           (they affect how the table is presented), distinct from the
-           data filters above which scope which records are included. -->
+      <!-- Toolbar sits above the card — row search on the right.
+           The View By selector that used to live here has moved into
+           the sidebar (Manual Adjustments → By Retail Pharmacy /
+           By Adjustment Type / By User). In By User mode, a secondary
+           Retail Pharmacy filter chip appears on the left to scope
+           the user-set to one pharmacy. -->
       <div class="heatmap-toolbar">
         <div class="toolbar-left">
-          <div class="menu-wrapper" id="mw-viewby">
-            <button class="chip chip-secondary" type="button" id="mw-viewby-chip" onclick="toggleMenu('mw-viewby', event)">
-              <span class="chip-label-prefix">View by:</span>
-              <span id="viewby-label">Retail Pharmacy</span>
+          <!-- Row count — always visible, updated per render. Noun reflects
+               the current Y-axis (retail pharmacies / adjustment types /
+               users). Drives off the same row set the heatmap is actually
+               rendering, so search + filter narrowing are reflected. -->
+          <span class="row-count" id="row-count"></span>
+          <!-- Retail Pharmacy filter — only visible in By User view.
+               Multi-select. Chip has two shapes:
+                 • Default (everything selected, the canonical null state):
+                     "Retail Pharmacy: All Retail Pharmacies"
+                 • Active narrower selection (0, 1, or 2+ pharmacies):
+                     "[N] Retail Pharmacies"     ← teal badge + plural noun
+               updatePharmFilterLabel rewrites the chip's contents per
+               render to match. Internally, VIEW_BY.pharmFilter is null
+               when everything is selected and a Set<number> otherwise,
+               so the "all selected" state is a single representation
+               rather than "Set of every index". -->
+          <div class="menu-wrapper" id="mw-pharmfilter" style="display:none;">
+            <button class="chip chip-secondary" type="button" id="pharmfilter-chip" onclick="toggleMenu('mw-pharmfilter', event)">
+              <!-- contents written by updatePharmFilterLabel -->
             </button>
-            <div class="menu" style="width: 240px;">
-              <div class="menu-options" id="viewby-options">
-                <label class="menu-option">
-                  <input type="radio" name="viewby" value="pharmacy" checked onchange="setViewBy('pharmacy')">
-                  Retail Pharmacy
-                </label>
-                <label class="menu-option">
-                  <input type="radio" name="viewby" value="adj_type" onchange="setViewBy('adj_type')">
-                  Adjustment Type
-                </label>
+            <div class="menu" style="width: 280px;">
+              <div class="menu-actions">
+                <button class="link-btn" type="button" onclick="pharmFilterSelectAll()">Select all</button>
+                <button class="link-btn" type="button" onclick="pharmFilterClear()">Clear</button>
               </div>
+              <div class="menu-options" id="pharmfilter-options"></div>
             </div>
           </div>
         </div>
@@ -1590,6 +1832,9 @@
       </div>
 
     </div><!-- /.page-content -->
+
+      </mat-drawer-content>
+    </mat-drawer-container>
 
     <footer>
       Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
@@ -1714,6 +1959,7 @@
           </table>
         </div>
       </div>
+
     </div>
     </div><!-- /panel-pane-data -->
 
@@ -1833,15 +2079,25 @@ const HEATMAP = [
    mode: 'pharmacy' (default) — Y axis is pharmacies, the canonical view.
          'adj_type'           — Y axis is adjustment types (cycle_count
                                 excluded; not part of the cell totals).
+         'user'               — Y axis is users; cells are user × drug
+                                counts derived from each user's pharmacy
+                                assignments. pharmFilter (below) narrows
+                                the user-set to a single pharmacy.
    drillType: null            — top-level view of the current mode.
               <typeKey>       — drilled into a specific adjustment type
                                 inside the adj_type view. Heat-map renders
                                 pharmacies × drugs scoped to that type,
                                 with a breadcrumb showing the way back.
+   pharmFilter: null          — By-User mode shows all users across all
+                                pharmacies they work at.
+                <pharmIdx>    — By-User mode narrows to users assigned
+                                to that one pharmacy. Reset on any view
+                                switch.
 
-   Switching mode always clears drillType. Drilling does NOT touch the
-   user-owned Adjustment Type filter chip or the View By selection. */
-const VIEW_BY = { mode: 'pharmacy', drillType: null };
+   Switching mode always clears drillType and pharmFilter. Drilling does
+   NOT touch the user-owned Adjustment Type filter chip or the View By
+   selection. */
+const VIEW_BY = { mode: 'pharmacy', drillType: null, pharmFilter: null };
 
 /* Row search — case-insensitive substring match against the Y-axis
    label of each row (pharmacy name in pharmacy and drilled views;
@@ -1979,6 +2235,19 @@ function getColTotals() {
         }
       }
     }
+  } else if (VIEW_BY.mode === 'user') {
+    // Sum across the visible (user, pharmacy) rows for each drug
+    // column. Each row contributes its own pharmacy's share of that
+    // drug — i.e. one cell value per row, no cross-pharmacy summing
+    // (multi-pharm users get two separate rows that each contribute
+    // independently).
+    const visibleRows = getSortedUserRows();
+    for (let j = 0; j < DRUGS.length; j++) {
+      for (const r of visibleRows) {
+        const row = USER_ROWS[r];
+        t[j] += getUserPharmDrugCount(row.userIdx, row.pharmIdx, j);
+      }
+    }
   } else {
     for (let i = 0; i < HEATMAP.length; i++) {
       for (let j = 0; j < DRUGS.length; j++) {
@@ -2045,25 +2314,20 @@ function severityClass(n, bands) {
 /* renderLegend — update the heat-map legend pills to reflect the
    bands actually in use for this render. When σ is dynamic the
    ranges shift; when σ < 1.67 they fall back to the static defaults.
-   The tooltip also surfaces the σ value for transparency. */
+   The legend's subtext ("Scale adjusts based on selected date range")
+   is static — the changing pill values themselves are the indicator
+   that the scale moved. */
 function renderLegend(bands) {
   const lowEl  = document.getElementById('legend-low');
   const midEl  = document.getElementById('legend-mid');
   const orgEl  = document.getElementById('legend-orange');
   const redEl  = document.getElementById('legend-red');
-  const tipEl  = document.getElementById('legend-tip');
   if (!lowEl) return;
   const fmtRange = (lo, hi) => lo === hi ? `${lo}` : `${lo}–${hi}`;
   lowEl.textContent = fmtRange(0, bands.lowMax);
   midEl.textContent = fmtRange(bands.lowMax + 1, bands.warnMax);
   orgEl.textContent = fmtRange(bands.warnMax + 1, bands.tertMax);
   redEl.textContent = `${bands.tertMax + 1}+`;
-  if (tipEl) {
-    const sigmaStr = bands.sigma.toFixed(2);
-    tipEl.textContent = bands.dynamic
-      ? `Adjustment volume per pharmacy/drug pair. Bands scale with σ (currently ${sigmaStr}).`
-      : `Adjustment volume per pharmacy/drug pair. Static bands in use (σ ${sigmaStr} < 1.67 threshold).`;
-  }
 }
 
 /* ─── Sort state ───────────────────────────────────────────
@@ -2133,6 +2397,58 @@ function getSortedTypes() {
   return types;
 }
 
+/* Sorted-order list of user-row indices for the By-User view. Each
+   entry indexes USER_ROWS, which is a flat (user, pharmacy) list —
+   multi-pharmacy users appear as separate rows with different
+   pharmIdx values. Filtered by:
+     - pharmFilter (drop rows whose pharmacy isn't selected)
+     - row-search query (matches user name OR pharmacy name —
+       since both are visible in the row label, both should be
+       searchable)
+   Sort key:
+     - 'user' → user name asc, with pharmacy name as tiebreaker so
+                a multi-pharm user's two rows sit next to each other
+     - numeric → column j (the cell's adjustment count) */
+function getSortedUserRows() {
+  let rowIdxs = USER_ROWS.map((_, i) => i);
+  // Pharmacy filter
+  const f = VIEW_BY.pharmFilter;
+  if (f && typeof f.has === 'function') {
+    rowIdxs = rowIdxs.filter(r => f.has(USER_ROWS[r].pharmIdx));
+  } else if (typeof f === 'number') {
+    rowIdxs = rowIdxs.filter(r => USER_ROWS[r].pharmIdx === f);
+  }
+  // Search filter — matches name or pharmacy
+  if (HEATMAP_SEARCH.query) {
+    const q = HEATMAP_SEARCH.query;
+    rowIdxs = rowIdxs.filter(r => {
+      const row = USER_ROWS[r];
+      return USERS[row.userIdx].toLowerCase().includes(q) ||
+             PHARMACIES[row.pharmIdx].toLowerCase().includes(q);
+    });
+  }
+  // Sort
+  if (SORT.key === null) return rowIdxs;
+  if (SORT.key === 'user') {
+    rowIdxs.sort((a, b) => {
+      const rA = USER_ROWS[a], rB = USER_ROWS[b];
+      const cmp = USERS[rA.userIdx].localeCompare(USERS[rB.userIdx]);
+      return cmp !== 0 ? cmp : PHARMACIES[rA.pharmIdx].localeCompare(PHARMACIES[rB.pharmIdx]);
+    });
+  } else if (SORT.key === 'pharmacy' || SORT.key === 'adj_type') {
+    return rowIdxs;  // not meaningful for this view
+  } else {
+    const col = Number(SORT.key);
+    rowIdxs.sort((a, b) => {
+      const rA = USER_ROWS[a], rB = USER_ROWS[b];
+      return getUserPharmDrugCount(rA.userIdx, rA.pharmIdx, col)
+           - getUserPharmDrugCount(rB.userIdx, rB.pharmIdx, col);
+    });
+  }
+  if (SORT.dir === 'desc') rowIdxs.reverse();
+  return rowIdxs;
+}
+
 function sortIcon(key) {
   if (SORT.key === key) {
     return SORT.dir === 'asc'
@@ -2181,12 +2497,23 @@ function updatePageChrome(isDrilled) {
       + '</button>'
       + '<h1 class="page-title">' + label + '</h1>';
   } else {
+    // Un-drilled: standard breadcrumb + title + page-section-indicator
+    // (the indicator names the active sub-page — "By Retail Pharmacy" or
+    // "By Adjustment Type" — and is intentionally suppressed in the
+    // drilled state, since the title there already names the specific
+    // adjustment type the viewer is inspecting.)
+    const sectionLabel = (VIEW_BY.mode === 'adj_type')
+      ? 'By Adjustment Type'
+      : (VIEW_BY.mode === 'user')
+      ? 'By User'
+      : 'By Retail Pharmacy';
     breadcrumbEl.innerHTML =
       '<button class="bc-parent" type="button">Analyze</button>'
       + '<span class="bc-sep">›</span>'
       + '<span class="bc-current">Manual Adjustments</span>';
     titleGroupEl.innerHTML =
-      '<h1 class="page-title">Manual Adjustments</h1>';
+      '<h1 class="page-title">Manual Adjustments</h1>'
+      + '<span class="page-section-indicator" id="page-section-indicator">' + sectionLabel + '</span>';
   }
 }
 
@@ -2199,12 +2526,15 @@ function renderHeatmap() {
   const head = document.getElementById('heatmap-head');
   const body = document.getElementById('heatmap-body');
 
-  // Three render cases share most of the table structure:
+  // Four render cases share most of the table structure:
   //   A. pharmacy view (canonical)
   //   B. adj_type top-level (Y axis = types)
   //   C. adj_type drilled (Y axis = pharmacies, scoped to one type)
+  //   D. user view (Y axis = users; secondary pharmFilter scopes the
+  //                 user-set to one pharmacy)
   const isDrilled  = VIEW_BY.mode === 'adj_type' && !!VIEW_BY.drillType;
   const isTypeTop  = VIEW_BY.mode === 'adj_type' && !VIEW_BY.drillType;
+  const isUserView = VIEW_BY.mode === 'user';
 
   // Drilled-state surfacing now lives in the page-level breadcrumb +
   // page title (rather than an in-card breadcrumb above the heatmap).
@@ -2218,6 +2548,9 @@ function renderHeatmap() {
   if (isTypeTop) {
     yAxisLabel   = 'Adjustment Type';
     yAxisSortKey = 'adj_type';
+  } else if (isUserView) {
+    yAxisLabel   = 'User';
+    yAxisSortKey = 'user';
   } else {
     yAxisLabel   = 'Retail Pharmacy';
     yAxisSortKey = 'pharmacy';
@@ -2241,6 +2574,8 @@ function renderHeatmap() {
   //   - pharmacy view: all pharmacy × drug cell values
   //   - adj_type top:  all type × drug aggregated values
   //   - adj_type drill: cells of the drilled type across pharmacies × drugs
+  //   - user view:     all user × drug values for the currently-visible
+  //                    user-set (respects pharmFilter)
   // The bands are then passed to severityClass() for each cell.
   let bandPopulation;
   if (isTypeTop) {
@@ -2255,6 +2590,20 @@ function renderHeatmap() {
         bandPopulation.push(getDrilledCellValue(i, j, VIEW_BY.drillType));
       }
     }
+  } else if (isUserView) {
+    // Bands use all (user, pharmacy) rows matching the pharm filter
+    // (not the search filter — search is a UI narrow, the population
+    // shouldn't shrink with each keystroke).
+    bandPopulation = [];
+    const f = VIEW_BY.pharmFilter;
+    for (let r = 0; r < USER_ROWS.length; r++) {
+      const row = USER_ROWS[r];
+      if (f && typeof f.has === 'function' && !f.has(row.pharmIdx)) continue;
+      if (typeof f === 'number' && row.pharmIdx !== f) continue;
+      for (let j = 0; j < DRUGS.length; j++) {
+        bandPopulation.push(getUserPharmDrugCount(row.userIdx, row.pharmIdx, j));
+      }
+    }
   } else {
     bandPopulation = [];
     for (let i = 0; i < HEATMAP.length; i++) {
@@ -2265,6 +2614,24 @@ function renderHeatmap() {
   }
   const bands = computeBands(bandPopulation);
   renderLegend(bands);
+
+  // Row count for the heatmap toolbar — number of Y-axis rows actually
+  // rendered (respecting search + filter narrowing) plus a noun matching
+  // the current axis. Computed once here so the case branches below
+  // can stay focused on their data paths.
+  let rowCount, rowNoun;
+  if (isTypeTop) {
+    rowCount = getSortedTypes().length;
+    rowNoun = rowCount === 1 ? 'adjustment type' : 'adjustment types';
+  } else if (isUserView) {
+    rowCount = getSortedUserRows().length;
+    rowNoun = rowCount === 1 ? 'user' : 'users';
+  } else {
+    rowCount = getSortedIndices().length;
+    rowNoun = rowCount === 1 ? 'retail pharmacy' : 'retail pharmacies';
+  }
+  const rowCountEl = document.getElementById('row-count');
+  if (rowCountEl) rowCountEl.innerHTML = `<strong>${rowCount}</strong> ${rowNoun}`;
 
   if (isTypeTop) {
     // ─── Case B: adj_type top-level — each row is one type ──────
@@ -2321,8 +2688,41 @@ function renderHeatmap() {
       });
       html += '</tr>';
     });
+  } else if (isUserView) {
+    // ─── Case D: user view ─────────────────────────────────────
+    // Y axis = (user, pharmacy) rows. Each cell value comes from
+    // getUserPharmDrugCount for the row's specific (user, pharm)
+    // pair, not summed across pharmacies. Multi-pharm users appear
+    // as two consecutive rows with different pharmacy subtext.
+    const order = getSortedUserRows();
+    order.forEach(rowIdx => {
+      const { userIdx, pharmIdx } = USER_ROWS[rowIdx];
+      const userName  = USERS[userIdx];
+      const pharmName = PHARMACIES[pharmIdx];
+      html += `<tr class="pharmacy-row">
+        <td>
+          <span class="user-row-label">
+            <span class="user-row-name">${userName}</span>
+            <span class="user-row-pharm">${pharmName}</span>
+          </span>
+        </td>`;
+      DRUGS.forEach((d, j) => {
+        const v = getUserPharmDrugCount(userIdx, pharmIdx, j);
+        const sev = severityClass(v, bands);
+        if (v === 0) {
+          html += `<td><span class="hm-zero">0</span></td>`;
+        } else {
+          html += `<td>
+            <button class="hm-cell ${sev}" type="button"
+              onclick="openPanel(${pharmIdx},${j},null,${userIdx})"
+              aria-label="${userName} at ${pharmName} — ${d.name}: ${v} adjustments"
+            >${v}</button>
+          </td>`;
+        }
+      });
+      html += '</tr>';
+    });
   } else {
-    // ─── Case A: pharmacy view (canonical) ──────────────────────
     const order = getSortedIndices();
     order.forEach(i => {
       const row = HEATMAP[i];
@@ -2359,20 +2759,222 @@ function renderHeatmap() {
   body.innerHTML = html;
 }
 
-/* setViewBy — switch between Retail Pharmacy and Adjustment Type views.
-   Switching always clears any drilled state. Drilling does NOT switch
-   the view mode — adj_type top-level and adj_type-drilled-into-a-type
-   are both inside the adj_type view (parent vs child). */
-function setViewBy(mode) {
-  if (VIEW_BY.mode === mode && VIEW_BY.drillType === null) return;
-  VIEW_BY.mode = mode;
-  VIEW_BY.drillType = null;
-  // Reset sort — column indices still work, but key 'pharmacy'/'adj_type'
-  // may not be the right one if we just flipped.
+/* ============================================================
+   SIDEBAR INTERACTIONS
+   ============================================================ */
+
+/* togglePanel — flip an accordion section open/closed. Driven by the
+   click handler on each mat-expansion-panel-header. */
+function togglePanel(header) {
+  const panel = header.closest('mat-expansion-panel');
+  if (!panel) return;
+  const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+  const isOpen = panel.classList.contains('mat-expanded');
+  panel.classList.toggle('mat-expanded', !isOpen);
+  header.classList.toggle('mat-expanded', !isOpen);
+  header.setAttribute('aria-expanded', !isOpen);
+  if (!wrapper) return;
+  isOpen ? wrapper.setAttribute('inert','') : wrapper.removeAttribute('inert');
+}
+
+/* toggleDrawer — collapse/expand the analyze sidebar. Collapsed state
+   shrinks the drawer to 48px and hides nav labels (CSS handles that). */
+function toggleDrawer() {
+  document.getElementById('analyze-drawer')?.classList.toggle('collapsed');
+}
+
+/* ─── Secondary Retail Pharmacy filter — By User view ─────────────
+   VIEW_BY.pharmFilter is the source of truth:
+     null            → every pharmacy selected (canonical default;
+                       avoids two equivalent representations for "all")
+     Set<number>     → the specific subset that's currently selected
+                       (an empty Set is the "nothing selected" state)
+   The chip label is derived from this state; the menu checkboxes are
+   kept in sync with it via syncPharmFilterMenu(). ─────────────────── */
+
+/* setPharmFilter — replace the whole filter set in one go. Pass null
+   for "all"; pass a Set<number> for a specific subset. Use this when
+   you want to set the state from outside the menu (e.g. on view
+   switch). For incremental checkbox updates, togglePharmFilter is
+   cheaper because it doesn't rebuild the menu. */
+function setPharmFilter(value) {
+  if (value === null || value === undefined) {
+    VIEW_BY.pharmFilter = null;
+  } else if (value && typeof value.has === 'function' && value.size === PHARMACIES.length) {
+    // Canonicalize "all selected" Set to null so the chip + downstream
+    // logic don't see two equivalent representations of the same state.
+    VIEW_BY.pharmFilter = null;
+  } else {
+    VIEW_BY.pharmFilter = value;
+  }
+  // Reset row sort — the user-set just changed shape.
   SORT.key = null;
   SORT.dir = 'desc';
-  document.getElementById('viewby-label').textContent =
-    (mode === 'adj_type') ? 'Adjustment Type' : 'Retail Pharmacy';
+  syncPharmFilterMenu();
+  updatePharmFilterLabel();
+  renderHeatmap();
+}
+
+/* togglePharmFilter — flip the checked state of one pharmacy from
+   inside the menu without closing it. The first un-check on a fresh
+   "all selected" state materializes the Set with every pharmacy minus
+   the one being un-checked. */
+function togglePharmFilter(pharmIdx, checked) {
+  // Materialize the Set on first interaction from the "all" state.
+  if (VIEW_BY.pharmFilter === null) {
+    VIEW_BY.pharmFilter = new Set(PHARMACIES.map((_, i) => i));
+  }
+  if (checked) VIEW_BY.pharmFilter.add(pharmIdx);
+  else         VIEW_BY.pharmFilter.delete(pharmIdx);
+  // Collapse back to the canonical "all" representation when the user
+  // re-checks every pharmacy — keeps label + downstream logic simple.
+  if (VIEW_BY.pharmFilter.size === PHARMACIES.length) {
+    VIEW_BY.pharmFilter = null;
+  }
+  // Reset row sort — the user-set may have changed shape.
+  SORT.key = null;
+  SORT.dir = 'desc';
+  updatePharmFilterLabel();
+  renderHeatmap();
+}
+
+function pharmFilterSelectAll() {
+  setPharmFilter(null);
+}
+
+function pharmFilterClear() {
+  setPharmFilter(new Set());
+}
+
+/* Re-render the chip's contents from the current filter state.
+   Two shapes:
+     null (filter inactive — the canonical default) →
+       "Retail Pharmacy"   ← plain label, no badge, no fill
+     Set (any active selection, including 0) →
+       "[N] Retail Pharmacies"   ← teal badge + plural noun
+   An inactive filter is functionally equivalent to "all selected"
+   (nothing gets filtered out), so showing the noun on its own keeps
+   the chip quiet until the user actually narrows the scope.
+   The chip's .selected class is toggled so the active narrower state
+   gets the same teal-50 fill the other primary pillters use to signal
+   an applied filter. */
+function updatePharmFilterLabel() {
+  const chip = document.getElementById('pharmfilter-chip');
+  if (!chip) return;
+  const f = VIEW_BY.pharmFilter;
+  if (f === null || f === undefined) {
+    // Default — filter inactive, plain label, no badge or fill.
+    chip.classList.remove('selected');
+    chip.innerHTML = '<span id="pharmfilter-label">Retail Pharmacy</span>';
+  } else {
+    // Active — badge with count + plural noun. f.size can be 0,
+    // 1, or 2+ here; "Retail Pharmacies" plural reads naturally in
+    // all three since the count itself is the singular/plural cue
+    // (matches the reference pattern's "2 Review Statuses").
+    chip.classList.add('selected');
+    chip.innerHTML =
+      `<span class="chip-badge">${f.size}</span>` +
+      '<span id="pharmfilter-label">Retail Pharmacies</span>';
+  }
+}
+
+/* Render a filter value as a label string. Same shape as the chip
+   text, used wherever else the filter needs to be described (panel
+   subtitle, aria labels, etc.). */
+function pharmFilterLabel(f) {
+  if (f === null || f === undefined) return 'All Retail Pharmacies';
+  if (typeof f === 'number') return PHARMACIES[f];
+  // Set
+  if (f.size === 0) return 'No Retail Pharmacies';
+  if (f.size === 1) return PHARMACIES[[...f][0]];
+  if (f.size === PHARMACIES.length) return 'All Retail Pharmacies';
+  return `${f.size} of ${PHARMACIES.length} Retail Pharmacies`;
+}
+
+/* Scope phrasing for inline use (aria labels on heatmap cells).
+   Slightly different wording than the chip label so it reads
+   naturally inside a sentence. */
+function pharmFilterScopeText(f) {
+  if (f === null || f === undefined) return 'all Retail Pharmacies';
+  if (typeof f === 'number') return PHARMACIES[f];
+  if (f.size === 0) return 'no Retail Pharmacies';
+  if (f.size === 1) return PHARMACIES[[...f][0]];
+  if (f.size === PHARMACIES.length) return 'all Retail Pharmacies';
+  return `${f.size} selected Retail Pharmacies`;
+}
+
+/* Sync the menu's checkbox states to VIEW_BY.pharmFilter.
+   Called when setPharmFilter is invoked programmatically (e.g. by the
+   Select all / Clear buttons or by a view switch). Per-checkbox
+   onchange calls don't need to call this — they're already in sync. */
+function syncPharmFilterMenu() {
+  const f = VIEW_BY.pharmFilter;
+  document.querySelectorAll('#pharmfilter-options input[type="checkbox"]').forEach(cb => {
+    const idx = Number(cb.value);
+    cb.checked = (f === null) ? true : f.has(idx);
+  });
+}
+
+/* Populate the pharmacy-filter menu with one checkbox per pharmacy.
+   Called once on DOMContentLoaded so the menu reflects PHARMACIES
+   without hardcoding the list in markup. */
+function populatePharmFilterMenu() {
+  const list = document.getElementById('pharmfilter-options');
+  if (!list) return;
+  list.innerHTML = PHARMACIES.map((name, i) =>
+    `<label class="menu-option">
+       <input type="checkbox" value="${i}" checked onchange="togglePharmFilter(${i}, this.checked)">
+       ${name}
+     </label>`).join('');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  populatePharmFilterMenu();
+  updatePharmFilterLabel();
+});
+
+/* setPage — sidebar entry point. Wraps setViewBy so the two nav links
+   ("By Retail Pharmacy" / "By Adjustment Type") drive the same view-mode
+   state that the old in-toolbar View By pillter used to control. Also
+   bails out cleanly if the same page is clicked again. */
+function setPage(page) {
+  if (page !== 'by-pharmacy' && page !== 'by-type' && page !== 'by-user') return;
+  const mode = (page === 'by-type')   ? 'adj_type'
+             : (page === 'by-user')   ? 'user'
+             :                          'pharmacy';
+  // setViewBy handles drill-reset + pharmFilter-reset + sidebar active
+  // toggling + re-render.
+  setViewBy(mode);
+}
+
+/* setViewBy — switch between Retail Pharmacy, Adjustment Type, and User
+   views. Switching always clears any drilled state AND the secondary
+   pharmacy filter (which is meaningful only inside the user view).
+   Drilling within adj_type does NOT switch the view mode — adj_type
+   top-level and adj_type-drilled-into-a-type are both inside the
+   adj_type view (parent vs child). */
+function setViewBy(mode) {
+  if (VIEW_BY.mode === mode && VIEW_BY.drillType === null && VIEW_BY.pharmFilter === null) return;
+  VIEW_BY.mode = mode;
+  VIEW_BY.drillType = null;
+  VIEW_BY.pharmFilter = null;
+  // Reset sort — column indices still work, but row-axis sort keys
+  // ('pharmacy' / 'adj_type' / 'user') only apply to their own view.
+  SORT.key = null;
+  SORT.dir = 'desc';
+  // Sidebar nav-item active state mirrors VIEW_BY.mode (3-way).
+  const byPharm = document.getElementById('nav-manual-adjustments-by-pharmacy');
+  const byType  = document.getElementById('nav-manual-adjustments-by-type');
+  const byUser  = document.getElementById('nav-manual-adjustments-by-user');
+  if (byPharm) byPharm.classList.toggle('active', mode === 'pharmacy');
+  if (byType)  byType .classList.toggle('active', mode === 'adj_type');
+  if (byUser)  byUser .classList.toggle('active', mode === 'user');
+  // Secondary Retail Pharmacy pillter is visible only in user mode.
+  // (Reset its label + checkbox state to "all selected" in case the
+  // user just switched away from user mode with a partial selection.)
+  const pharmPill = document.getElementById('mw-pharmfilter');
+  if (pharmPill) pharmPill.style.display = (mode === 'user') ? '' : 'none';
+  updatePharmFilterLabel();
+  syncPharmFilterMenu();
   closeAllMenus();
   renderHeatmap();
 }
@@ -2484,15 +3086,40 @@ function clearAllFilters() {
    cameFrom: when the user drilled into a cell from an aggregate
              panel, this carries the aggregate (typeKey, drugIdx) so
              a back link can return them exactly there. Null otherwise. */
-const PANEL_STATE = { pharm: 0, drug: 0, total: 0, scope: 'cell', typeKey: null, cameFrom: null };
+/* Panel state.
+   scope:
+     'cell'      — opened from a (pharmacy, drug) cell in the pharmacy
+                   view or the drilled child view. Standard layout.
+     'aggregate' — opened from a (type, drug) cell badge in the
+                   adj_type top-level view. Data is aggregated across
+                   all pharmacies and pre-scoped to one adjustment type.
+     'user'      — opened from a (user, drug) cell badge in the user view.
+                   Shows that user's contribution for the drug. Scoped to
+                   one pharmacy when VIEW_BY.pharmFilter is set, otherwise
+                   summed across the pharmacies the user works at.
+   pharm: pharmacy index in 'cell' scope; -1 in 'aggregate' and 'user'
+          scope (or the active pharmFilter in 'user' scope — see below).
+   drug:  drug index (used in all scopes).
+   userIdx: user index — only meaningful in 'user' scope. */
+const PANEL_STATE = { pharm: 0, drug: 0, total: 0, scope: 'cell', typeKey: null, userIdx: null, highlightUserIdx: null, cameFrom: null };
 
-function openPanel(pharmIdx, drugIdx, cameFrom = null) {
+/* openPanel — opens the standard (pharmacy, drug) cell detail panel.
+   Arguments:
+     pharmIdx, drugIdx       — the cell coordinates
+     cameFrom                — for the back-link affordance when drilling
+                               in from an aggregate panel (null otherwise)
+     highlightUserIdx        — when entering from the By User view, the
+                               user whose events should be visually
+                               highlighted in the panel's Events table.
+                               null when entering from any other view. */
+function openPanel(pharmIdx, drugIdx, cameFrom = null, highlightUserIdx = null) {
   PANEL_STATE.pharm    = pharmIdx;
   PANEL_STATE.drug     = drugIdx;
   PANEL_STATE.total    = HEATMAP[pharmIdx][drugIdx].v || 0;
   PANEL_STATE.scope    = 'cell';
   PANEL_STATE.typeKey  = null;
   PANEL_STATE.cameFrom = cameFrom;
+  PANEL_STATE.highlightUserIdx = highlightUserIdx;
 
   // Reset type filter for the new panel
   PANEL_FILTER.activeTypes.clear();
@@ -2503,7 +3130,15 @@ function openPanel(pharmIdx, drugIdx, cameFrom = null) {
   const reviewState = HEATMAP[pharmIdx][drugIdx].r;
 
   document.getElementById('panel-title').textContent = drug;
-  document.getElementById('panel-subtitle').textContent = pharm;
+  // Subtitle shows the cell's pharmacy. When entering from the By User
+  // view, the subtitle also names the user being highlighted so the
+  // viewer has continuity from the row they clicked.
+  const subtitleEl = document.getElementById('panel-subtitle');
+  if (highlightUserIdx !== null && highlightUserIdx !== undefined) {
+    subtitleEl.textContent = `${pharm} · Highlighting ${USERS[highlightUserIdx]}`;
+  } else {
+    subtitleEl.textContent = pharm;
+  }
   document.getElementById('med-table-title').textContent = `Adjustments by Medication from Apr 04, 2026 to May 04, 2026`;
 
   // Reviews-tab counter — reflects cell-level review state so the
@@ -2540,6 +3175,7 @@ function openTypeDrugPanel(typeKey, drugIdx) {
   PANEL_STATE.scope    = 'aggregate';
   PANEL_STATE.typeKey  = typeKey;
   PANEL_STATE.cameFrom = null;                                // aggregate is itself a top-level entry
+  PANEL_STATE.highlightUserIdx = null;                        // aggregate scope doesn't highlight a user
 
   // Pre-scope to the clicked type for any data path that still reads
   // PANEL_FILTER (the Trend chart, for instance).
@@ -3345,10 +3981,122 @@ const MED_VARIANTS = [
 
 /* Fictional users (rotated per row) */
 const USERS = [
-  'Jordan Reeves', 'Casey Whitman', 'Riley Foster', 'Morgan Avery',
-  'Taylor Bennett', 'Sage Holloway', 'Devon Marsh', 'Quinn Delgado',
-  'Avery Dunbar', 'Sloan Kavanaugh',
+  'Jordan Reeves',    'Casey Whitman',   'Riley Foster',     'Morgan Avery',
+  'Taylor Bennett',   'Sage Holloway',   'Devon Marsh',      'Quinn Delgado',
+  'Avery Dunbar',     'Sloan Kavanaugh', 'Cameron Ellis',    'Skylar Reyes',
+  'Hayden Park',      'Reese Whitfield', 'Emerson Walsh',    'Logan Patel',
+  'Parker Knox',      'Drew Mathis',     'Sawyer Hayes',     'Finley Cross',
+  'Ellis Boone',      'Rowan Tate',      'Blake Sutton',     'Marlow Chen',
+  'Phoenix Vargas',   'Harper Vance',    'Jamie Lin',        'Spencer Yates',
+  'Bennett Cole',     'Adair Singh',     'Toby Ramirez',     'Jules Castellano',
 ];
+
+/* ──────────────────────────────────────────────────────────
+   USER ↔ PHARMACY assignment
+
+   New model (this iteration): single-pharmacy assignment is the
+   norm — most users work at exactly one retail pharmacy. A small
+   minority (4 of 32) work at two pharmacies; those are represented
+   in the By-User view as two separate rows (the "treat as separate
+   people" rule), each with that user's name and the relevant
+   pharmacy as subtext.
+
+   USER_PHARMS is the canonical mapping (userIdx → pharmIdx[]).
+   USER_ROWS, below, flattens it to one entry per (user, pharm)
+   pair — that's what the heatmap iterates over.
+
+   Constraints satisfied by the build below:
+     • 28 users at 1 pharmacy + 4 users at 2 pharmacies = 36 rows.
+     • Every pharmacy gets at least 4 rows (load-balanced fill).
+     • Deterministic (seeded) so the layout is stable on reload.
+   ────────────────────────────────────────────────────────── */
+function _userPharmsRng(seed) {
+  let a = seed >>> 0;
+  return function() {
+    a += 0x6D2B79F5;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const USER_PHARMS = (() => {
+  const rng = _userPharmsRng(1337);
+  const USER_COUNT  = USERS.length;          // 32
+  const PHARM_COUNT = PHARMACIES.length;     // 8
+  const MULTI_PHARM_USERS = 4;               // out of 32 — the "rare" case
+
+  // Pick which user indices get the multi-pharmacy treatment. Spread
+  // across the list rather than clumping at the top so a casual scroll
+  // hits a couple of duplicates.
+  const multi = new Set();
+  while (multi.size < MULTI_PHARM_USERS) {
+    multi.add(Math.floor(rng() * USER_COUNT));
+  }
+
+  const assignments = USERS.map(() => []);
+
+  // Load-balanced fill: for each user, pick the least-loaded pharmacy
+  // (or two, if multi). Seeded tiebreaker keeps the distribution from
+  // locking into a too-tidy diagonal.
+  for (let u = 0; u < USER_COUNT; u++) {
+    const numPharms = multi.has(u) ? 2 : 1;
+    const loads = Array.from({ length: PHARM_COUNT }, (_, p) => ({
+      p,
+      load: assignments.filter(a => a.includes(p)).length,
+    }));
+    loads.sort((a, b) => a.load - b.load || (rng() < 0.5 ? -1 : 1));
+    for (let i = 0; i < numPharms; i++) {
+      assignments[u].push(loads[i].p);
+    }
+  }
+  return assignments.map(a => a.sort((x, y) => x - y));
+})();
+
+/* Flattened (user, pharmacy) rows for the By-User heatmap. Each
+   entry is one row in the table — multi-pharmacy users appear in
+   two consecutive rows with different `pharmIdx` values, treated
+   as separate people for purposes of the count breakdown. */
+const USER_ROWS = (() => {
+  const rows = [];
+  for (let u = 0; u < USERS.length; u++) {
+    for (const p of USER_PHARMS[u]) {
+      rows.push({ userIdx: u, pharmIdx: p });
+    }
+  }
+  return rows;
+})();
+
+/* All user-row indices at a given pharmacy. With the single-pharm
+   norm + per-row representation, this is just the rows whose
+   pharmIdx matches. */
+function getUsersInPharm(pharmIdx) {
+  const out = [];
+  for (let i = 0; i < USER_PHARMS.length; i++) {
+    if (USER_PHARMS[i].includes(pharmIdx)) out.push(i);
+  }
+  return out;
+}
+
+/* Adjustment count contributed by one user at one (pharmacy, drug) cell.
+   The per-pharmacy cell total HEATMAP[p][d].v is split deterministically
+   across the users assigned to that pharmacy via integer round-robin
+   with a (pharmacy, drug)-keyed rotation, so the split varies per cell
+   and no single user always gets the "+1 remainder". */
+function getUserPharmDrugCount(userIdx, pharmIdx, drugIdx) {
+  const usersHere = getUsersInPharm(pharmIdx);
+  const userPos = usersHere.indexOf(userIdx);
+  if (userPos < 0) return 0;
+  const total = (HEATMAP[pharmIdx] && HEATMAP[pharmIdx][drugIdx] && HEATMAP[pharmIdx][drugIdx].v) || 0;
+  if (total === 0) return 0;
+  const n = usersHere.length;
+  const base = Math.floor(total / n);
+  const extra = total % n;
+  const rotation = (pharmIdx * 101 + drugIdx * 19 + 7) % n;
+  const adjustedPos = (userPos - rotation + n) % n;
+  return base + (adjustedPos < extra ? 1 : 0);
+}
 
 /* Realistic comment patterns sourced from the customer session */
 const COMMENT_TEMPLATES = {
@@ -3568,6 +4316,29 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
     return pickWeightedType(rand);
   }
 
+  /* Pick a user-name attribution for a transaction. Three layers:
+       1. If the panel was opened with a highlight user (entered from
+          the By User view), give that user ~35% of the rows so the
+          highlight isn't probabilistically invisible.
+       2. Otherwise, prefer users who actually work at this pharmacy
+          (since transactions at a retail location should be done by
+          staff who work there). Aggregate scope has no pharmacy,
+          so it falls through to step 3.
+       3. Fallback to a uniform pick across all USERS. */
+  function pickTxUser() {
+    const hl = PANEL_STATE.highlightUserIdx;
+    if (hl !== null && hl !== undefined && rand() < 0.35) {
+      return USERS[hl];
+    }
+    if (PANEL_STATE.scope === 'cell' && PANEL_STATE.pharm >= 0) {
+      const usersHere = getUsersInPharm(PANEL_STATE.pharm);
+      if (usersHere.length > 0) {
+        return USERS[usersHere[Math.floor(rand() * usersHere.length)]];
+      }
+    }
+    return USERS[Math.floor(rand() * USERS.length)];
+  }
+
   // synthesize tx rows: manual adjustments + dispense events.
   // Dispenses are always decreases, small amounts (1–3 units),
   // and outnumber manual adjustments in real pharmacy data.
@@ -3598,7 +4369,7 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
       date: fmt(d),
       time: `${hh}:${mn}`,
       ndc, type: typeKey, amount: amt, balance: bal,
-      user: USERS[Math.floor(rand() * USERS.length)],
+      user: pickTxUser(),
       comment: pickComment(typeKey, rand),
     });
   }
@@ -3637,7 +4408,7 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
         amount: null,
         counted, variance,
         balance: bal,                    // unchanged
-        user: USERS[Math.floor(rand() * USERS.length)],
+        user: pickTxUser(),
         comment: '',
       });
     }
@@ -3656,7 +4427,7 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
       date: fmt(d),
       time: `${hh}:${mn}`,
       ndc, type: 'dispense', amount: amt, balance: bal,
-      user: USERS[Math.floor(rand() * USERS.length)],
+      user: pickTxUser(),
       comment: '',                                // dispenses don't get analyst comments
     });
   }
@@ -3738,8 +4509,19 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
                 commentCell = `<td class="comment-cell"></td>`;
               }
 
+              // Highlight: when the panel was opened from the By User
+              // view, mark rows attributed to that user so the viewer
+              // can spot them at a glance. The class composes with
+              // cc-row (a cycle-count row can also be highlighted).
+              const hl = PANEL_STATE.highlightUserIdx;
+              const isHighlighted = (hl !== null && hl !== undefined && tx.user === USERS[hl]);
+              const rowClasses = [];
+              if (isCycle) rowClasses.push('cc-row');
+              if (isHighlighted) rowClasses.push('tx-row-highlighted');
+              const rowClassAttr = rowClasses.length ? ` class="${rowClasses.join(' ')}"` : '';
+
               return `
-                <tr${isCycle ? ' class="cc-row"' : ''}>
+                <tr${rowClassAttr}>
                   <td>${tx.date} at ${tx.time}</td>
                   <td>${tx.ndc}</td>
                   <td><div class="user-cell">${tx.user}</div></td>
