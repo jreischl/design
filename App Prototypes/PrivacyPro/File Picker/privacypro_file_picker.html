@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrivacyPro — File Picker Iteration</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* PrivacyPro shell tokens */
+      --nav-bg:        #0096b8;
+      --nav-hover:     rgba(255,255,255,0.15);
+      --surface:       #F4F6F8;
+      --surface-alt:   #FAFBFC;
+      --border:        #E2E6EA;
+      --border-strong: #C8D0D7;
+      --text-primary:  #1A2A35;
+      --text-muted:    #6B7C8D;
+      --text-faint:    #94A3AE;
+
+      /* Accents (from Bluesight palette) */
+      --teal-500:      #0096b8;
+      --teal-100:      #E0F4F8;
+      --teal-50:       #F0FAFC;
+
+      /* States */
+      --success-500:   #16B434;
+      --success-100:   #DBEDD7;
+      --danger-500:    #F24335;
+      --danger-100:    #FCD9D7;
+      --warning-500:   #F5DD67;
+      --warning-100:   #FDF9E5;
+
+      /* Focus ring */
+      --focus-ring:    0 0 0 3px rgba(0, 150, 184, 0.25);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    /* ── Top bar (just for context) ─────────────────────────── */
+    .navbar {
+      background: var(--nav-bg);
+      height: 62.5px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 8px;
+    }
+    .navbar__title {
+      color: rgba(255,255,255,0.95);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.01em;
+    }
+    .navbar__crumb {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      margin-left: 12px;
+    }
+
+    /* ── Page header ────────────────────────────────────────── */
+    .page-header {
+      padding: 22px 36px 16px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .page-header .case-icon {
+      width: 32px; height: 32px;
+      border-radius: 6px;
+      background: var(--teal-100);
+      color: var(--teal-500);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .page-header h1 {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    .page-header .case-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    /* ── Tabs ───────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 12px 36px 0;
+      background: white;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 10px 16px;
+      border-radius: 6px 6px 0 0;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: none;
+      display: flex; align-items: center; gap: 8px;
+      position: relative;
+      top: 1px;
+      background: var(--surface-alt);
+    }
+    .tab.active {
+      background: white;
+      color: var(--teal-500);
+      border-color: var(--border);
+      font-weight: 600;
+    }
+    .tab .count {
+      background: var(--surface);
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+    .tab.active .count {
+      background: var(--teal-100);
+      color: var(--teal-500);
+    }
+
+    /* ── Main layout ────────────────────────────────────────── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 0;
+      max-width: 1400px;
+    }
+    .main-col { padding: 28px 36px; }
+    .side-col {
+      padding: 28px 32px;
+      border-left: 1px solid var(--border);
+      background: white;
+      min-height: calc(100vh - 168px);
+    }
+
+    /* ── Add attachments dropdown (visual only) ─────────────── */
+    .attach-select {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 14px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 100%;
+      max-width: 320px;
+      font-size: 13px;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .attach-select:hover { border-color: var(--border-strong); }
+    .attach-select .material-icons { font-size: 18px; color: var(--text-muted); }
+
+    /* ─────────────────────────────────────────────────────────
+       ✦ THE NEW FILE PICKER ✦
+       ───────────────────────────────────────────────────────── */
+    .filepicker {
+      background: white;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* Drop zone */
+    .dropzone {
+      position: relative;
+      display: block;
+      padding: 28px 24px;
+      border: 2px dashed var(--border-strong);
+      border-radius: 8px;
+      background: var(--surface-alt);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      margin: 16px;
+    }
+
+    .dropzone:hover {
+      border-color: var(--teal-500);
+      background: var(--teal-50);
+    }
+
+    .dropzone:focus-within {
+      outline: none;
+      box-shadow: var(--focus-ring);
+      border-color: var(--teal-500);
+    }
+
+    .dropzone.is-dragover {
+      border-color: var(--teal-500);
+      border-style: solid;
+      background: var(--teal-100);
+      transform: scale(1.005);
+    }
+
+    .dropzone.is-dragover .dropzone__icon {
+      transform: translateY(-2px) scale(1.08);
+      color: var(--teal-500);
+    }
+
+    .dropzone.has-files {
+      padding: 18px 20px;
+      margin-bottom: 0;
+      background: var(--surface-alt);
+    }
+
+    .dropzone__input {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .dropzone__icon {
+      width: 44px; height: 44px;
+      margin: 0 auto 10px;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .dropzone__icon .material-icons { font-size: 22px; }
+
+    .dropzone.has-files .dropzone__icon {
+      width: 32px; height: 32px;
+      margin-bottom: 0;
+      display: inline-flex;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    .dropzone.has-files .dropzone__icon .material-icons { font-size: 18px; }
+
+    .dropzone__primary {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .dropzone__primary .link {
+      color: var(--teal-500);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .dropzone__secondary {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .dropzone.has-files .dropzone__compact {
+      display: inline-flex;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+    .dropzone.has-files .dropzone__compact .link {
+      color: var(--teal-500);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      margin-left: 4px;
+    }
+
+    /* ── File list ──────────────────────────────────────────── */
+    .file-list {
+      list-style: none;
+      padding: 0 16px 8px;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: white;
+      border: 1px solid var(--border);
+      margin-bottom: 6px;
+      transition: border-color 0.15s;
+    }
+    .file-row:hover { border-color: var(--border-strong); }
+    .file-row.is-error { border-color: var(--danger-500); background: #FEF7F6; }
+    .file-row.is-success { border-color: var(--success-500); background: #F5FBF3; }
+
+    .file-icon {
+      width: 36px; height: 36px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.02em;
+    }
+    .file-icon.is-img { background: #6447F2; }
+    .file-icon.is-pdf { background: #E03E3E; }
+    .file-icon.is-doc { background: #2B6CB0; }
+    .file-icon.is-xls { background: #2D7D45; }
+    .file-icon.is-generic { background: #6B7C8D; }
+
+    .file-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .file-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    .file-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .file-meta .dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--text-faint);
+    }
+    .file-meta .status-success { color: var(--success-500); font-weight: 500; display: inline-flex; align-items: center; gap: 3px; }
+    .file-meta .status-error { color: var(--danger-500); font-weight: 500; }
+    .file-meta .material-icons { font-size: 13px; }
+
+    /* Progress bar */
+    .progress-track {
+      height: 4px;
+      background: var(--border);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--teal-500);
+      border-radius: 100px;
+      transition: width 0.3s ease;
+    }
+    .progress-fill.is-success { background: var(--success-500); }
+
+    .file-action {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .icon-btn {
+      width: 30px; height: 30px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .icon-btn:hover {
+      background: var(--surface);
+      color: var(--text-primary);
+    }
+    .icon-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .icon-btn.is-danger:hover {
+      background: var(--danger-100);
+      color: var(--danger-500);
+    }
+    .icon-btn .material-icons { font-size: 18px; }
+
+    /* ── Optional note & actions (kept from original layout) ── */
+    .note-area {
+      margin-top: 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .note-area textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: none;
+      resize: vertical;
+      min-height: 80px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text-primary);
+      background: white;
+    }
+    .note-area textarea:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 2px var(--teal-500);
+    }
+    .note-area textarea::placeholder { color: var(--text-faint); }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .btn {
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+    .btn--ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border-color: var(--border);
+    }
+    .btn--ghost:hover {
+      background: var(--surface);
+      color: var(--text-primary);
+    }
+    .btn--primary {
+      background: var(--teal-500);
+      color: white;
+    }
+    .btn--primary:hover { background: #007A98; }
+    .btn--primary:disabled {
+      background: var(--border-strong);
+      cursor: not-allowed;
+    }
+
+    /* ── Section labels & demo notes ────────────────────────── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Side panel — keeps right rail context */
+    .side-col h3 {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .field { margin-bottom: 14px; }
+    .field-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
+    .field-value { font-size: 13px; color: var(--text-primary); }
+    .field-value a { color: var(--teal-500); text-decoration: none; }
+    .field-value a:hover { text-decoration: underline; }
+
+    /* Live region for SR announcements (visually hidden) */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Demo state switcher */
+    .demo-bar {
+      background: #1A2A35;
+      color: white;
+      padding: 10px 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+    .demo-bar__label {
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+      margin-right: 4px;
+    }
+    .demo-chip {
+      padding: 4px 10px;
+      border-radius: 100px;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .demo-chip:hover { background: rgba(255,255,255,0.18); }
+    .demo-chip.active {
+      background: var(--teal-500);
+      border-color: var(--teal-500);
+    }
+
+    .a11y-callout {
+      margin-top: 20px;
+      padding: 12px 14px;
+      background: var(--teal-50);
+      border-left: 3px solid var(--teal-500);
+      border-radius: 0 6px 6px 0;
+      font-size: 12px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .a11y-callout strong { color: var(--teal-500); }
+    .a11y-callout ul { margin: 6px 0 0 18px; }
+    .a11y-callout li { margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar (context only) -->
+  <nav class="navbar">
+    <span class="material-icons" style="color:white;font-size:22px;">folder</span>
+    <span class="navbar__title">Case 541</span>
+    <span class="navbar__crumb">/ Caseflow / Add Attachments</span>
+  </nav>
+
+  <!-- Demo state switcher -->
+  <div class="demo-bar" role="region" aria-label="Demo state switcher">
+    <span class="demo-bar__label">Preview state:</span>
+    <button class="demo-chip active" data-state="empty">Empty</button>
+    <button class="demo-chip" data-state="dragover">Drag-over (simulated)</button>
+    <button class="demo-chip" data-state="uploading">Uploading</button>
+    <button class="demo-chip" data-state="mixed">Files + error</button>
+    <span style="margin-left:auto;color:rgba(255,255,255,0.5);font-size:11.5px;">Real drag-drop also works ↓</span>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="case-icon"><span class="material-icons" style="font-size:18px;">folder</span></div>
+    <div>
+      <div class="case-label">Case 541</div>
+      <h1>Sadie Glen Emmerich V accessed Bette Paris Monahan on 3/3/2026</h1>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active">Caseflow</div>
+    <div class="tab">Accesses</div>
+    <div class="tab">Assessments <span class="count">1</span></div>
+    <div class="tab">User &amp; Patient Details</div>
+  </div>
+
+  <!-- Layout -->
+  <div class="layout">
+    <div class="main-col">
+
+      <!-- Section: Add Attachments -->
+      <div class="section-label">Add attachments</div>
+
+      <!-- Attachment type selector -->
+      <button class="attach-select" type="button">
+        <span>Choose attachment type…</span>
+        <span class="material-icons">expand_more</span>
+      </button>
+
+      <!-- ✦ THE FILE PICKER ✦ -->
+      <div class="filepicker" id="filepicker">
+
+        <!-- Drop zone (also the label that wraps the input) -->
+        <label class="dropzone" id="dropzone" for="fileInput">
+          <input
+            class="dropzone__input"
+            id="fileInput"
+            type="file"
+            multiple
+            aria-describedby="dropzone-help"
+            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.txt,.csv"
+          />
+          <div class="dropzone__default">
+            <div class="dropzone__icon">
+              <span class="material-icons" aria-hidden="true">cloud_upload</span>
+            </div>
+            <div class="dropzone__primary">
+              Drag files here or <span class="link">browse to upload</span>
+            </div>
+            <div class="dropzone__secondary" id="dropzone-help">
+              PDF, image, Word, Excel, or text · 25 MB max per file
+            </div>
+          </div>
+          <div class="dropzone__compact" hidden>
+            <div class="dropzone__icon">
+              <span class="material-icons" aria-hidden="true">add</span>
+            </div>
+            <span>Drop more files or <span class="link">browse</span></span>
+          </div>
+        </label>
+
+        <!-- File list -->
+        <ul class="file-list" id="fileList" aria-label="Attached files"></ul>
+
+        <!-- Screen reader live region -->
+        <div class="sr-only" aria-live="polite" id="srStatus"></div>
+      </div>
+
+      <!-- Optional note (kept from original layout) -->
+      <div class="note-area">
+        <textarea placeholder="Optional note (visible to anyone viewing this case)"></textarea>
+      </div>
+
+      <!-- Form actions -->
+      <div class="form-actions">
+        <button class="btn btn--ghost" type="button">Cancel</button>
+        <button class="btn btn--primary" type="button" id="saveBtn">Save attachment</button>
+      </div>
+
+      <!-- Accessibility callout -->
+      <div class="a11y-callout">
+        <strong>Accessibility notes</strong>
+        <ul>
+          <li><strong>Native:</strong> the drop zone is a <code>&lt;label&gt;</code> wrapping a real <code>&lt;input type="file"&gt;</code>, so it's Tab-focusable, Enter/Space opens the picker, and screen readers announce it as a file input.</li>
+          <li><strong>Focus ring:</strong> visible 3px teal ring on keyboard focus (not on click).</li>
+          <li><strong>Live region:</strong> upload progress and errors are announced via <code>aria-live="polite"</code>.</li>
+          <li><strong>Remove buttons:</strong> each has an <code>aria-label</code> naming the file being removed.</li>
+          <li><strong>Drop zone help text</strong> is linked via <code>aria-describedby</code> so SRs hear the constraints alongside the control.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Side rail (preserved from original case detail) -->
+    <aside class="side-col">
+      <h3>Case Information</h3>
+      <div class="field">
+        <div class="field-label">EMR User</div>
+        <div class="field-value"><a href="#">Sadie Glen Emmerich V</a></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Patient</div>
+        <div class="field-value"><a href="#">Bette Paris Monahan</a></div>
+      </div>
+      <div class="field">
+        <div class="field-label">Case Type</div>
+        <div class="field-value">Privacy UNI: Self Access</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Created</div>
+        <div class="field-value">Mar 10, 2026  4:00 AM CDT</div>
+      </div>
+      <div class="field">
+        <div class="field-label">Owner</div>
+        <div class="field-value">Unassigned · <a href="#">Assign To Me</a></div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    /* ─────────────────────────────────────────────────────────
+       File picker behavior
+       ───────────────────────────────────────────────────────── */
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const defaultView = dropzone.querySelector('.dropzone__default');
+    const compactView = dropzone.querySelector('.dropzone__compact');
+    const srStatus = document.getElementById('srStatus');
+    const saveBtn = document.getElementById('saveBtn');
+
+    let files = []; // { id, name, size, type, progress, status: 'uploading'|'success'|'error', error? }
+    let uid = 0;
+
+    const TYPE_MAP = {
+      pdf:  { cls: 'is-pdf',     label: 'PDF' },
+      png:  { cls: 'is-img',     label: 'PNG' },
+      jpg:  { cls: 'is-img',     label: 'JPG' },
+      jpeg: { cls: 'is-img',     label: 'JPG' },
+      doc:  { cls: 'is-doc',     label: 'DOC' },
+      docx: { cls: 'is-doc',     label: 'DOC' },
+      xls:  { cls: 'is-xls',     label: 'XLS' },
+      xlsx: { cls: 'is-xls',     label: 'XLS' },
+      txt:  { cls: 'is-generic', label: 'TXT' },
+      csv:  { cls: 'is-generic', label: 'CSV' },
+    };
+
+    function getExt(name) {
+      const i = name.lastIndexOf('.');
+      return i === -1 ? '' : name.slice(i + 1).toLowerCase();
+    }
+    function getTypeMeta(name) {
+      return TYPE_MAP[getExt(name)] || { cls: 'is-generic', label: 'FILE' };
+    }
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function render() {
+      // Toggle compact vs default drop zone
+      const hasFiles = files.length > 0;
+      dropzone.classList.toggle('has-files', hasFiles);
+      defaultView.hidden = hasFiles;
+      compactView.hidden = !hasFiles;
+
+      // Render rows
+      fileList.innerHTML = '';
+      files.forEach(f => {
+        const meta = getTypeMeta(f.name);
+        const li = document.createElement('li');
+        li.className = 'file-row';
+        if (f.status === 'success') li.classList.add('is-success');
+        if (f.status === 'error')   li.classList.add('is-error');
+
+        let metaLine = '';
+        if (f.status === 'uploading') {
+          metaLine = `${formatSize(f.size)} <span class="dot"></span> Uploading ${f.progress}%`;
+        } else if (f.status === 'success') {
+          metaLine = `${formatSize(f.size)} <span class="dot"></span>
+            <span class="status-success"><span class="material-icons">check_circle</span> Uploaded</span>`;
+        } else if (f.status === 'error') {
+          metaLine = `${formatSize(f.size)} <span class="dot"></span>
+            <span class="status-error">${f.error || 'Upload failed'}</span>`;
+        }
+
+        const progressBar = (f.status === 'uploading')
+          ? `<div class="progress-track"><div class="progress-fill" style="width:${f.progress}%"></div></div>`
+          : '';
+
+        li.innerHTML = `
+          <div class="file-icon ${meta.cls}">${meta.label}</div>
+          <div class="file-info">
+            <div class="file-name" title="${f.name}">${f.name}</div>
+            <div class="file-meta">${metaLine}</div>
+            ${progressBar}
+          </div>
+          <div class="file-action">
+            ${f.status === 'error'
+              ? `<button class="icon-btn" type="button" aria-label="Retry uploading ${f.name}" data-action="retry" data-id="${f.id}">
+                   <span class="material-icons">refresh</span>
+                 </button>`
+              : ''}
+            <button class="icon-btn is-danger" type="button" aria-label="Remove ${f.name}" data-action="remove" data-id="${f.id}">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+        `;
+        fileList.appendChild(li);
+      });
+
+      // Disable Save if anything is uploading or no files
+      const uploading = files.some(f => f.status === 'uploading');
+      const validCount = files.filter(f => f.status === 'success').length;
+      saveBtn.disabled = uploading || validCount === 0;
+    }
+
+    function announce(msg) {
+      srStatus.textContent = msg;
+    }
+
+    function addFiles(fileObjs) {
+      Array.from(fileObjs).forEach(file => {
+        const id = ++uid;
+        // Simple validation
+        const tooBig = file.size > 25 * 1024 * 1024;
+        const entry = {
+          id,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          progress: 0,
+          status: tooBig ? 'error' : 'uploading',
+          error: tooBig ? 'File exceeds 25 MB limit' : null
+        };
+        files.push(entry);
+
+        if (!tooBig) {
+          // Simulate upload
+          simulateUpload(id);
+          announce(`Uploading ${file.name}`);
+        } else {
+          announce(`${file.name} rejected: exceeds 25 MB limit`);
+        }
+      });
+      render();
+    }
+
+    function simulateUpload(id) {
+      const interval = setInterval(() => {
+        const f = files.find(x => x.id === id);
+        if (!f || f.status !== 'uploading') { clearInterval(interval); return; }
+        f.progress = Math.min(100, f.progress + Math.random() * 18 + 8);
+        if (f.progress >= 100) {
+          f.progress = 100;
+          f.status = 'success';
+          clearInterval(interval);
+          announce(`${f.name} uploaded`);
+        }
+        render();
+      }, 220);
+    }
+
+    /* ── Drag & drop wiring ─────────────────────────────────── */
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropzone.addEventListener(evt, e => {
+        e.preventDefault();
+        dropzone.classList.add('is-dragover');
+      });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      dropzone.addEventListener(evt, e => {
+        e.preventDefault();
+        if (evt === 'dragleave' && dropzone.contains(e.relatedTarget)) return;
+        dropzone.classList.remove('is-dragover');
+      });
+    });
+    dropzone.addEventListener('drop', e => {
+      const dropped = e.dataTransfer?.files;
+      if (dropped && dropped.length) addFiles(dropped);
+    });
+
+    /* ── Native file input ──────────────────────────────────── */
+    fileInput.addEventListener('change', e => {
+      if (e.target.files.length) addFiles(e.target.files);
+      e.target.value = ''; // allow re-selecting the same file
+    });
+
+    /* ── Row actions (remove / retry) ───────────────────────── */
+    fileList.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = Number(btn.dataset.id);
+      const action = btn.dataset.action;
+      const idx = files.findIndex(f => f.id === id);
+      if (idx === -1) return;
+
+      if (action === 'remove') {
+        const removed = files[idx].name;
+        files.splice(idx, 1);
+        announce(`${removed} removed`);
+        render();
+      } else if (action === 'retry') {
+        files[idx].status = 'uploading';
+        files[idx].progress = 0;
+        files[idx].error = null;
+        simulateUpload(id);
+        render();
+      }
+    });
+
+    /* ─────────────────────────────────────────────────────────
+       Demo state switcher (for stakeholder review)
+       ───────────────────────────────────────────────────────── */
+    document.querySelectorAll('.demo-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.demo-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const state = chip.dataset.state;
+
+        // Reset
+        files = [];
+        dropzone.classList.remove('is-dragover');
+
+        if (state === 'empty') {
+          // nothing
+        } else if (state === 'dragover') {
+          dropzone.classList.add('is-dragover');
+        } else if (state === 'uploading') {
+          files = [
+            { id: ++uid, name: 'IRIS Worklist.png',         size: 248320,  status: 'uploading', progress: 64 },
+            { id: ++uid, name: 'access_log_3-3-2026.csv',   size: 14200,   status: 'success',   progress: 100 },
+          ];
+        } else if (state === 'mixed') {
+          files = [
+            { id: ++uid, name: 'IRIS Worklist.png',           size: 248320,    status: 'success', progress: 100 },
+            { id: ++uid, name: 'Manager email.pdf',           size: 184500,    status: 'success', progress: 100 },
+            { id: ++uid, name: 'Full system export.xlsx',     size: 31457280,  status: 'error',   error: 'File exceeds 25 MB limit' },
+          ];
+        }
+        render();
+      });
+    });
+
+    // Initial render
+    render();
+  </script>
+
+</body>
+</html>
