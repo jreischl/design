@@ -452,6 +452,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
   }
+  #filelist .row .meta { display: none; }
   .icon { width: 18px; height: 18px; flex-shrink: 0; }
   .icon-folder  { color: var(--c-folder); }
   .icon-product { color: var(--text); }
