@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prism Assistant – DRSA Enhancement | ControlCheck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --blue-100:    #e7f4f8;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --red:         #f24335;
+      --red-100:     #FCD9D7;
+      --green:       #16b434;
+      --green-100:   #DBEDD7;
+      --yellow:      #f5dd67;
+      --yellow-100:  #FDF9E5;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #727272;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+
+      /* Prism brand colors (sampled from nav SVG) */
+      --prism-navy:    #004E7D;
+      --prism-pink:    #E969A7;
+      --prism-pink-d:  #AB336F;
+      --prism-blue:    #54C8E7;
+      --prism-blue-d:  #4EADDD;
+      --prism-pink-l:  #F49ACC;
+      --prism-blue-l:  #9FDCEF;
+      --prism-bg:      #fdf5fa;
+      --prism-border:  #f3d5e8;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* ── Custom element display ──────────────────────────── */
+    app-component, navigation, nav-menu, user-menu,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-panel-description,
+    mat-card, mat-card-header, mat-card-title, mat-card-subtitle,
+    mat-selection-card, mat-tab-header, mat-tab-body,
+    mat-drawer, mat-drawer-container, mat-drawer-content,
+    mat-nav-list, mat-icon, user-info, user-score, workflowstate-badge,
+    mat-divider, router-outlet { display: block; }
+    mat-card-title, mat-card-subtitle { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+    mat-icon { display: inline-flex; }
+    mat-divider.mat-divider-vertical { display: inline-block; }
+
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex;
+      align-items: center;
+      border-radius: var(--radius);
+      flex-direction: row;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    /* ── nav-menu .navigation ───────────────────────────── */
+    .navigation {
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin-left: 1rem;
+      padding-top: 0;
+    }
+    .mdc-button.mat-mdc-button {
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--blue-dark);
+      cursor: pointer;
+      padding: 0 12px;
+      height: 48px;
+      border-radius: var(--radius);
+      transition: background .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+      white-space: nowrap;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+    span.nav-svg-icon { display: flex; }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    .mdc-button__label { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-link.active .mdc-button__label {
+      color: inherit;
+      box-shadow: 0 2px;
+      align-items: center;
+      display: inline-flex;
+      line-height: 32px;
+      justify-content: center;
+    }
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red); color: #fff;
+      font-size: 9px; font-weight: 700;
+      border-radius: 50%; width: 14px; height: 14px;
+      text-align: center; line-height: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-left: -4px;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+
+    /* ── user-menu ──────────────────────────────────────── */
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center; background-color: transparent; border: none;
+      border-radius: 1.5rem; cursor: pointer; display: flex; flex-direction: row;
+      transition: background-color .2s ease-in-out; padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark); font-size: .813rem; letter-spacing: .01rem;
+      line-height: 1.25rem; min-height: 40px; padding-left: 1rem;
+      white-space: normal; text-align: right;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .header-customer-fullName  { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark); color: #fff; border-radius: 50%;
+      width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; margin-left: 8px; flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%; background: none; border: none; cursor: pointer;
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s; padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    /* ── #app-view ──────────────────────────────────────── */
+    #app-view { flex: 1 1 auto; display: flex; overflow: hidden; position: relative; }
+
+    /* ── footer ──────────────────────────────────────────── */
+    footer {
+      color: var(--gray-600); display: block; font-size: 11px;
+      padding: 7px 0; text-align: center; width: 100%;
+      border-top: 1px solid var(--gray-300);
+    }
+    footer a { color: var(--gray-600); }
+
+    /* ════════════════════════════════════════════════════════
+       ANALYZE SIDEBAR
+       ════════════════════════════════════════════════════════ */
+    mat-drawer-container {
+      display: flex; flex-direction: row; flex: 1 1 auto;
+      overflow: hidden; position: relative;
+    }
+    mat-drawer-content {
+      display: flex; flex-direction: column; flex: 1 1 auto;
+      overflow: auto; position: relative;
+    }
+    mat-drawer {
+      display: block; position: relative; overflow: visible;
+      background: #fff; border-right: 1px solid var(--gray-300);
+      width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%; height: 100%; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    .mdc-fab.mat-mdc-mini-fab {
+      background-color: #0096b8; color: #fff;
+      height: 24px; width: 24px;
+      position: absolute; right: -12px; top: 10px; z-index: 99;
+      border: none; border-radius: 24px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+      padding: 0; flex-shrink: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background-color: var(--teal-dark); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon {
+      font-size: 18px; width: 18px; height: 18px; color: #fff;
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    .navigation-accordion mat-expansion-panel {
+      background: #fff; border-radius: 0; box-shadow: none;
+    }
+    .navigation-accordion mat-expansion-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 45px !important; padding: 0 16px; cursor: pointer;
+      transition: background .15s;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .navigation-accordion mat-panel-title { flex-grow: 1; }
+    .navigation-accordion mat-panel-title.mat-expansion-panel-header-title {
+      color: #9e9e9e; font-size: 12px; font-weight: 700;
+      letter-spacing: .44px; text-transform: uppercase;
+    }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg {
+      width: 24px; height: 24px; fill: var(--gray-600);
+      transition: transform 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px;
+      text-decoration: none; cursor: pointer; position: relative;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active {
+      background: rgba(4,74,130,.08); border-left-color: var(--blue-dark);
+    }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon {
+      font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600);
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span[class*="mat-badge"] { display: none; }
+    mat-drawer.collapsed .mdc-list-item__primary-text .mat-icon { margin: 0; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-expansion-panel-header { justify-content: center; padding: 0; }
+
+    /* ════════════════════════════════════════════════════════
+       IRIS WORKLIST PAGE
+       ════════════════════════════════════════════════════════ */
+    .page-content { padding: 1.5rem 2rem; overflow: auto; flex: 1; }
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px;
+    }
+    .page-header h2 { margin: 0; font-size: 24px; line-height: 30px; font-weight: 600; letter-spacing: .2px; color: var(--text-87); }
+    .page-header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .clear-btn {
+      background: none; border: none; color: var(--teal);
+      font-family: var(--font); font-size: .8125rem; font-weight: 600;
+      letter-spacing: .4px; text-transform: uppercase; cursor: pointer;
+      padding: 0 8px;
+    }
+    .filter-btn {
+      background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 6px 10px; font-family: var(--font); font-size: .8125rem; font-weight: 500;
+      color: var(--text-87); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .filter-btn .material-icons { font-size: 18px; color: var(--gray-600); }
+    .filter-btn.date-btn { color: var(--teal); border-color: var(--teal-light); background: var(--blue-100); }
+
+    .count-cards-row { display: flex; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
+    mat-card.iris-count-card {
+      background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 18px; min-width: 110px; cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    mat-card.iris-count-card:hover { border-color: var(--teal-light); }
+    mat-card.iris-count-card.active { background: var(--blue-100); border-color: var(--teal); }
+    .count-value { font-size: 1.5rem; font-weight: 700; color: var(--text-87); line-height: 1.2; }
+    .count-label { font-size: .75rem; color: var(--text-54); margin-top: 2px; }
+
+    .sort-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; margin-bottom: 12px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .sort-bar-left { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .sort-chip {
+      background: none; border: none; color: var(--teal);
+      font-family: var(--font); font-size: .8125rem; font-weight: 600;
+      cursor: pointer; padding: 4px 8px;
+      display: inline-flex; align-items: center; gap: 2px;
+    }
+    .sort-chip .material-icons { font-size: 18px; }
+    .unflagged-btn {
+      background: none; border: none; color: var(--teal);
+      font-family: var(--font); font-size: .8125rem; font-weight: 600;
+      cursor: pointer; padding: 4px 8px;
+    }
+    .sort-divider { color: var(--gray-300); font-size: 1.25rem; line-height: 1; }
+
+    .iris-worklist-list { display: flex; flex-direction: column; gap: 8px; }
+    mat-card.iris-worklist-card {
+      display: flex; flex-direction: row; align-items: center;
+      padding: 12px 16px; border: 1px solid var(--border);
+      border-left: 3px solid transparent; border-radius: var(--radius);
+      background: #fff; cursor: pointer;
+      transition: border-left-color .15s, background .15s;
+    }
+    mat-card.iris-worklist-card:hover { border-left-color: var(--teal); }
+    mat-card.iris-worklist-card.selected {
+      border-left-color: var(--teal);
+      background: rgba(0,150,184,.04);
+    }
+    .user-info {
+      display: flex; flex-direction: row; align-items: center; gap: 10px;
+      flex: 0 0 280px; min-width: 0;
+    }
+    .user-score {
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; flex-shrink: 0; border-radius: var(--radius);
+    }
+    .user-score.badge-style.lrg {
+      width: 44px; height: 44px; font-size: 1.125rem; color: #fff;
+    }
+    .user-score.badge-style.lrg.mat-danger  { background: var(--red); }
+    .user-score.badge-style.lrg.mat-warning { background: var(--yellow); color: var(--text-87); }
+    .user-score.badge-style.lrg.mat-success { background: var(--green); }
+    .user-score.lrg:not(.badge-style) {
+      font-size: 1.125rem; width: 36px; text-align: center;
+    }
+    .user-score.lrg.mat-danger:not(.badge-style)  { color: var(--red); }
+    .user-score.lrg.mat-warning:not(.badge-style) { color: #c8a200; }
+    .user-score.lrg.mat-success:not(.badge-style) { color: var(--green); }
+    .score-dash {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--gray-400); flex-shrink: 0;
+    }
+    .provider-info { display: flex; flex-direction: column; min-width: 0; gap: 4px; }
+    .provider-info--name {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .9375rem; font-weight: 600; color: var(--text-87); white-space: nowrap;
+    }
+    .provider-info--role {
+      display: flex; align-items: center; gap: 4px;
+      font-size: .75rem; font-weight: 500; color: var(--text-54);
+    }
+    .provider-info--role .mat-icon-xs { font-size: 8px; width: 8px; height: 8px; color: var(--gray-400); }
+    span.badge {
+      display: inline-flex; align-items: center;
+      border-radius: 3px; font-size: .6875rem; font-weight: 700;
+      padding: 2px 8px; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap;
+    }
+    span.badge.needs-review { background: var(--gray-100); border: 1px solid var(--gray-300); color: var(--gray-700); }
+    .provider-metric {
+      display: flex; flex-direction: column; align-items: flex-end;
+      flex: 1 1 0%; min-width: 0; gap: 4px;
+    }
+    .provider-metric--title { font-size: .6875rem; font-weight: 500; color: var(--text-54); white-space: nowrap; }
+    .provider-metric--value { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    mat-divider.mat-divider-vertical {
+      width: 1px; height: 36px;
+      background: var(--gray-300); margin: 0 12px;
+      flex-shrink: 0; align-self: center;
+    }
+
+    /* worklist becomes narrower when detail panel is open */
+    .with-detail-panel .user-info { flex: 0 0 220px; }
+    .with-detail-panel .provider-metric { display: none; }
+    .with-detail-panel .provider-metric:nth-of-type(2) { display: flex; }
+    .with-detail-panel mat-divider.mat-divider-vertical { display: none; }
+
+    /* ════════════════════════════════════════════════════════
+       USER DETAIL PANEL (overlay)
+       ════════════════════════════════════════════════════════ */
+    .udp-backdrop {
+      position: fixed;
+      top: 80px; bottom: 0; left: 0; right: 0;
+      background: rgba(0, 0, 0, .32);
+      z-index: 49;
+    }
+    .user-detail-panel {
+      position: fixed;
+      top: 80px; bottom: 0; right: 0;
+      width: 62%;
+      background: #fff;
+      border-left: 1px solid var(--gray-300);
+      box-shadow: -4px 0 12px rgba(0,0,0,.08);
+      z-index: 50;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .udp-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--gray-300);
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+    .udp-name-block { flex: 1; min-width: 0; }
+    .udp-name {
+      font-size: 1.25rem; font-weight: 700; color: var(--text-87);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .udp-name .material-icons-outlined {
+      font-size: 18px; color: var(--gray-600);
+      cursor: pointer;
+    }
+    .udp-role {
+      font-size: .8125rem; color: var(--text-54);
+      margin-top: 2px;
+    }
+    .udp-status-select {
+      display: inline-flex; align-items: center;
+      background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 6px 10px; font-size: .75rem; font-weight: 700;
+      color: var(--text-87); letter-spacing: .4px; cursor: pointer;
+      text-transform: uppercase;
+    }
+    .udp-status-select .material-icons { font-size: 18px; margin-left: 6px; color: var(--gray-600); }
+    .udp-action-btn {
+      background: none; border: none; padding: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%; transition: background .15s;
+    }
+    .udp-action-btn:hover { background: rgba(0,0,0,.06); }
+    .udp-action-btn .material-icons,
+    .udp-action-btn .material-icons-outlined {
+      font-size: 22px; color: var(--blue-dark);
+    }
+    .udp-close .material-icons { color: var(--gray-600); }
+
+    .udp-tabs {
+      display: flex; align-items: center;
+      border-bottom: 1px solid var(--gray-300);
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .udp-tab {
+      background: none; border: none; cursor: pointer;
+      padding: 14px 16px; font-family: var(--font);
+      font-size: .9375rem; font-weight: 500; color: var(--text-87);
+      position: relative;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .udp-tab.active { color: var(--blue-dark); font-weight: 600; }
+    .udp-tab.active::after {
+      content: ''; position: absolute;
+      left: 0; right: 0; bottom: -1px;
+      height: 2px; background: var(--blue-dark);
+    }
+    .udp-tab .case-dot {
+      background: var(--blue-dark); color: #fff;
+      border-radius: 50%; width: 18px; height: 18px;
+      font-size: .6875rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+
+    .udp-body { flex: 1; overflow: auto; padding: 24px; background: #fafafa; }
+
+    /* IRIS summary row */
+    .udp-iris-summary {
+      display: flex; gap: 36px;
+      padding: 16px 18px;
+      background: #ffffff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
+      margin-bottom: 20px;
+    }
+    .iris-summary-item {
+      display: flex; gap: 14px; align-items: center;
+    }
+    .iris-summary-score {
+      font-size: 1.75rem; font-weight: 700; line-height: 1;
+    }
+    .iris-summary-score.mat-danger { color: var(--red); }
+    .iris-summary-score.mat-warning { color: #c8a200; }
+    .iris-summary-score.mat-success { color: var(--green); }
+    /* Boxed/badged score (used for the flagged IRIS) */
+    .iris-summary-score.badge-style {
+      width: 56px; height: 40px;
+      border-radius: var(--radius);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff;
+      font-size: 1.5rem;
+    }
+    .iris-summary-score.badge-style.mat-danger  { background: var(--red); color: #fff; }
+    .iris-summary-score.badge-style.mat-warning { background: var(--yellow); color: var(--text-87); }
+    .iris-summary-score.badge-style.mat-success { background: var(--green); color: #fff; }
+    .iris-summary-meta { font-size: .8125rem; }
+    .iris-summary-meta-label { color: var(--blue-dark); font-weight: 700; font-size: 1rem; }
+    .iris-summary-meta-range { color: var(--text-54); font-size: .75rem; margin-top: 2px; }
+
+    .udp-section-title {
+      font-size: .9375rem; font-weight: 600; color: var(--text-87);
+      margin: 24px 0 12px;
+    }
+
+    /* Chart area */
+    .iris-chart-card {
+      background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 16px 18px; margin-bottom: 8px;
+    }
+    .iris-chart-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .iris-chart-title { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    .iris-chart-legend {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .75rem; color: var(--text-54);
+    }
+    .legend-swatch { width: 18px; height: 2px; background: var(--text-87); }
+    .iris-chart-svg { width: 100%; height: auto; display: block; }
+    .iris-chart-axis-label { font-size: 10px; fill: var(--gray-600); }
+    .iris-chart-bar { fill: var(--red); opacity: .7; }
+    .iris-chart-bar-yellow { fill: var(--yellow); opacity: .9; }
+    .iris-chart-bar-green { fill: var(--green); opacity: .7; }
+    .iris-chart-bar-value {
+      font-size: 10px; font-weight: 700;
+      fill: #fff; text-anchor: middle;
+    }
+    .iris-chart-bar-value.outside { fill: var(--text-87); }
+    .iris-chart-avg-line { stroke: #222; stroke-width: 2; }
+
+    .iris-disp-title {
+      margin: 18px 0 6px;
+      font-size: .8125rem; font-weight: 600; color: var(--text-87);
+    }
+    .iris-disp-row {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 8px; font-size: .8125rem; padding: 6px 0;
+      border-bottom: 1px solid var(--gray-200);
+      text-align: center;
+    }
+    .iris-disp-row.header { font-weight: 600; color: var(--text-54); font-size: .6875rem; text-transform: uppercase; letter-spacing: .4px; }
+    .iris-disp-row.values { color: var(--text-87); font-weight: 600; border-bottom: none; }
+
+    /* DRSA section */
+    .drsa-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 24px 0 12px;
+    }
+    .drsa-date-range {
+      font-size: .8125rem; color: var(--teal); font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+    }
+    .drsa-date-range .material-icons { font-size: 18px; }
+
+    /* DRSA cards */
+    .drsa-group-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 18px 0 10px;
+    }
+    .drsa-group-header:first-of-type { margin-top: 4px; }
+    .drsa-group-title {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .9375rem; font-weight: 700; color: var(--text-87);
+    }
+    .drsa-group-title .help-icon {
+      color: var(--gray-400);
+      font-size: 16px;
+      cursor: help;
+    }
+    .drsa-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+      padding: 4px 0;
+    }
+    .low-score-toggle {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .8125rem; color: var(--text-87); cursor: pointer;
+      user-select: none;
+    }
+    .low-score-toggle-switch {
+      position: relative;
+      width: 34px; height: 18px;
+      background: var(--teal);
+      border-radius: 9px;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+    .low-score-toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 18px;
+      width: 14px; height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: left .2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    }
+    .low-score-toggle.off .low-score-toggle-switch {
+      background: var(--gray-400);
+    }
+    .low-score-toggle.off .low-score-toggle-switch::after {
+      left: 2px;
+    }
+    .collapse-all-btn {
+      background: none; border: none;
+      color: var(--teal); font-family: var(--font);
+      font-size: .8125rem; font-weight: 600;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 8px;
+    }
+    .collapse-all-btn .material-icons { font-size: 16px; }
+
+    /* When low-score toggle is OFF, hide green cards */
+    .drsa-cards.hide-low .drsa-card.low-score { display: none; }
+    .drsa-cards.hide-low .drsa-group:not(:has(.drsa-card:not(.low-score))) { display: none; }
+
+    .drsa-card {
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff; margin-bottom: 8px;
+      transition: box-shadow .25s, border-color .25s;
+      overflow: hidden;
+    }
+    .drsa-card.enhanced { border-color: var(--prism-pink-l); }
+    .drsa-card-header {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 18px;
+    }
+    .metric-score-badge {
+      flex-shrink: 0;
+      width: 36px; height: 24px;
+      border-radius: 3px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .8125rem; font-weight: 700; color: #fff;
+    }
+    .metric-score-badge.mat-danger  { background: var(--red); }
+    .metric-score-badge.mat-warning { background: var(--yellow); color: var(--text-87); }
+    .metric-score-badge.mat-success { background: var(--green); }
+    .drsa-card-content { flex: 1; min-width: 0; }
+    .drsa-card-title {
+      font-size: 1rem; font-weight: 700; margin-bottom: 4px;
+      color: var(--blue-darker);
+    }
+    .drsa-card-base-summary {
+      font-size: .8125rem; color: var(--text-87);
+      line-height: 1.4;
+    }
+    .drsa-card-base-bullet {
+      font-size: .8125rem; color: var(--text-87);
+      margin-top: 6px; padding-left: 18px;
+      position: relative; line-height: 1.4;
+    }
+    .drsa-card-base-bullet::before {
+      content: '•'; position: absolute; left: 6px; color: var(--text-54);
+    }
+    .drsa-card-base-bullet .material-icons {
+      font-size: 14px; color: var(--teal); cursor: pointer;
+      vertical-align: middle; margin-left: 4px;
+    }
+
+    /* Tertiary button — used by Analyze, Continue with Assistant, Add to Review */
+    .prism-explain-btn {
+      flex-shrink: 0;
+      background: #fff;
+      border: 1px solid var(--teal-light);
+      border-radius: var(--radius);
+      padding: 5px 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font); font-size: .75rem; font-weight: 600;
+      color: var(--teal);
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .prism-explain-btn:hover,
+    .prism-explain-btn:focus {
+      background: var(--blue-100);
+      border-color: var(--teal);
+      outline: none;
+    }
+    .prism-explain-btn:active {
+      background: var(--blue-100);
+      border-color: var(--teal-dark);
+    }
+    .prism-explain-btn:disabled {
+      color: var(--teal-light);
+      border-color: #d4ecf2;
+      background: #fff;
+      cursor: not-allowed;
+    }
+    .prism-explain-btn svg { flex-shrink: 0; }
+    .prism-explain-btn .material-icons,
+    .prism-explain-btn .material-icons-outlined {
+      font-size: 14px;
+    }
+
+    /* Loading shimmer */
+    .prism-loading {
+      padding: 16px 18px 18px;
+      background: var(--prism-bg);
+      border-top: 1px solid var(--prism-border);
+      animation: prismFadeIn .25s ease-out;
+    }
+    .prism-loading-header {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: .75rem; font-weight: 600;
+      color: var(--prism-pink-d);
+      margin-bottom: 10px;
+      letter-spacing: .4px; text-transform: uppercase;
+    }
+    .prism-loading-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--prism-pink);
+      animation: prismPulse 1.2s infinite ease-in-out;
+    }
+    .prism-loading-dot:nth-child(2) { animation-delay: .15s; background: var(--prism-blue); }
+    .prism-loading-dot:nth-child(3) { animation-delay: .3s; background: var(--prism-pink-l); }
+    .prism-loading-dots { display: inline-flex; gap: 4px; margin-left: 4px; }
+    @keyframes prismPulse {
+      0%, 80%, 100% { transform: scale(.5); opacity: .5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .shimmer-line {
+      height: 10px; border-radius: 3px; margin-bottom: 8px;
+      background: linear-gradient(90deg,
+        rgba(244,154,204,.15) 0%,
+        rgba(233,105,167,.35) 50%,
+        rgba(84,200,231,.15) 100%);
+      background-size: 200% 100%;
+      animation: shimmerSlide 1.4s infinite linear;
+    }
+    .shimmer-line.w90 { width: 92%; }
+    .shimmer-line.w75 { width: 75%; }
+    .shimmer-line.w60 { width: 60%; }
+    .shimmer-line.w40 { width: 40%; }
+    @keyframes shimmerSlide {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    @keyframes prismFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Enhanced content */
+    .prism-enhanced {
+      padding: 14px 18px 18px;
+      background: var(--prism-bg);
+      border-top: 1px solid var(--prism-border);
+      animation: prismFadeIn .35s ease-out;
+    }
+    .prism-enhanced.collapsed { padding-bottom: 14px; }
+    .prism-enhanced-label {
+      display: flex; align-items: center; gap: 6px;
+      width: 100%;
+      background: none; border: none;
+      padding: 0;
+      font-family: var(--font);
+      font-size: .6875rem; font-weight: 700;
+      color: var(--prism-pink-d);
+      letter-spacing: .5px; text-transform: uppercase;
+      margin-bottom: 10px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .prism-enhanced.collapsed .prism-enhanced-label { margin-bottom: 0; }
+    .prism-enhanced-label:hover { color: var(--prism-pink); }
+    .prism-enhanced-label svg { flex-shrink: 0; }
+    .prism-enhanced-label .label-text { flex: 1; }
+    .prism-enhanced-label .toggle-chevron {
+      font-size: 18px;
+      color: var(--prism-pink-d);
+      transition: transform .2s ease;
+    }
+    .prism-enhanced.collapsed .prism-enhanced-label .toggle-chevron {
+      transform: rotate(-90deg);
+    }
+    .prism-enhanced-body {
+      overflow: hidden;
+      transition: max-height .25s ease, opacity .2s ease;
+    }
+    .prism-enhanced.collapsed .prism-enhanced-body {
+      max-height: 0 !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .prism-enhanced-headline {
+      font-size: .9375rem; color: var(--text-87);
+      line-height: 1.45; font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .prism-enhanced-headline strong { font-weight: 700; }
+
+    .prism-stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 12px;
+    }
+    .prism-stat-tile {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+    }
+    .prism-stat-label {
+      font-size: .6875rem; font-weight: 600; color: var(--text-54);
+      text-transform: uppercase; letter-spacing: .4px;
+      margin-bottom: 4px;
+    }
+    .prism-stat-value {
+      font-size: 1.125rem; font-weight: 700; color: var(--text-87);
+      line-height: 1.2;
+    }
+    .prism-stat-sub {
+      font-size: .75rem; color: var(--text-54);
+      margin-top: 2px;
+    }
+    .prism-stat-tile.compare {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .prism-stat-tile.compare .compare-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: .8125rem;
+    }
+    .prism-stat-tile.compare .compare-row .label { color: var(--text-54); }
+    .prism-stat-tile.compare .compare-row .value { font-weight: 700; color: var(--text-87); }
+    .prism-stat-tile.compare .compare-row.provider .value { color: var(--prism-pink-d); }
+
+    .prism-finding-list {
+      display: flex; flex-direction: column; gap: 8px;
+      font-size: .8125rem; color: var(--text-87);
+      line-height: 1.45;
+    }
+    .prism-finding {
+      display: flex; gap: 10px;
+      padding: 8px 10px;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+    }
+    .prism-finding-icon {
+      flex-shrink: 0;
+      width: 20px; height: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .prism-finding-icon .material-icons,
+    .prism-finding-icon .material-icons-outlined { font-size: 18px; }
+    .prism-finding-icon.warn .material-icons,
+    .prism-finding-icon.warn .material-icons-outlined { color: #b88a00; }
+    .prism-finding-icon.info .material-icons,
+    .prism-finding-icon.info .material-icons-outlined { color: var(--prism-blue-d); }
+    .prism-finding-icon.success .material-icons,
+    .prism-finding-icon.success .material-icons-outlined { color: var(--green); }
+    .prism-finding-text strong { font-weight: 700; }
+    .prism-finding-text .muted { color: var(--text-54); font-size: .75rem; display: block; margin-top: 2px; }
+
+    .prism-actions-row {
+      display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+      margin-top: 14px;
+    }
+    .prism-action-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fff;
+      border: 1px solid var(--teal-light);
+      border-radius: var(--radius);
+      padding: 6px 14px;
+      font-family: var(--font); font-size: .75rem; font-weight: 600;
+      color: var(--teal);
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .prism-action-btn:hover,
+    .prism-action-btn:focus {
+      background: var(--blue-100);
+      border-color: var(--teal);
+      outline: none;
+    }
+    .prism-action-btn:active {
+      background: var(--blue-100);
+      border-color: var(--teal-dark);
+    }
+    .prism-action-btn:disabled {
+      color: var(--teal-light);
+      border-color: #d4ecf2;
+      background: #fff;
+      cursor: not-allowed;
+    }
+    .prism-action-btn .material-icons,
+    .prism-action-btn .material-icons-outlined {
+      font-size: 16px;
+    }
+
+    /* Primary variant — used by Continue with Prism */
+    .prism-action-btn.primary {
+      background: var(--prism-pink);
+      border-color: var(--prism-pink);
+      color: #fff;
+    }
+    .prism-action-btn.primary:hover,
+    .prism-action-btn.primary:focus {
+      background: var(--prism-pink-d);
+      border-color: var(--prism-pink-d);
+      color: #fff;
+    }
+    .prism-action-btn.primary:active {
+      background: var(--prism-pink-d);
+      border-color: var(--prism-pink-d);
+    }
+    .prism-action-btn.primary:disabled {
+      background: var(--prism-pink-l);
+      border-color: var(--prism-pink-l);
+      color: #fff;
+    }
+
+    .prism-footnote {
+      display: flex; align-items: center; gap: 10px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--prism-border);
+    }
+    .prism-footnote-text {
+      flex: 1;
+      font-size: .6875rem; color: var(--text-54);
+      line-height: 1.4;
+    }
+    .prism-footnote-actions {
+      display: inline-flex; gap: 6px;
+    }
+    .prism-icon-btn {
+      background: none; border: none; cursor: pointer;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--gray-600);
+      transition: background .15s, color .15s;
+    }
+    .prism-icon-btn:hover { background: rgba(0,0,0,.06); color: var(--prism-pink-d); }
+    .prism-icon-btn .material-icons,
+    .prism-icon-btn .material-icons-outlined { font-size: 18px; }
+
+    /* Banner at top of DRSA */
+    .prism-banner {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--prism-bg);
+      border: 1px solid var(--prism-border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+    .prism-banner-icon { flex-shrink: 0; }
+    .prism-banner-text {
+      flex: 1;
+      font-size: .8125rem; color: var(--text-87);
+      line-height: 1.4;
+    }
+    .prism-banner-text strong { color: var(--prism-pink-d); font-weight: 700; }
+    .prism-banner-action {
+      flex-shrink: 0;
+      background: #fff;
+      border: 1px solid var(--prism-pink-l);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-family: var(--font); font-size: .75rem; font-weight: 600;
+      color: var(--prism-pink-d);
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: background .15s, box-shadow .15s;
+    }
+    .prism-banner-action:hover {
+      background: var(--prism-bg);
+      box-shadow: 0 1px 4px rgba(233,105,167,.2);
+    }
+
+    /* Toast */
+    .prism-toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text-87); color: #fff;
+      padding: 10px 16px; border-radius: var(--radius);
+      font-size: .8125rem; font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity .25s, transform .25s;
+      pointer-events: none;
+    }
+    .prism-toast.show {
+      opacity: 1; transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body class="mat-typography">
+
+<app-component class="flex-col-100">
+<div class="app-container flex-col-100">
+
+  <!-- ── navigation ──────────────────────────────────────── -->
+  <navigation>
+    <header>
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+        <a class="nav-link" href="/dashboard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <g id="ControlCheck_Logo_Color">
+              <path fill="#54c8e7" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path fill="#54c8e7" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path fill="#54c8e7" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path fill="#54c8e7" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path fill="#54c8e7" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path fill="#54c8e7" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path fill="#54c8e7" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path fill="#004e7d" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path fill="#004e7d" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path fill="#004e7d" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path fill="#004e7d" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path fill="#004e7d" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path fill="#004e7d" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path fill="#54c8e7" fill-rule="evenodd" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path fill="#54c8e7" fill-rule="evenodd" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path fill="#004e7d" fill-rule="evenodd" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+            </g>
+          </svg>
+        </a>
+
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Audit</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active">
+              <span class="mdc-button__label">Analyze</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Cases</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">Report</span>
+              </span>
+            </a>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Upload</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
+                  Manage&nbsp;<span class="mat-badge-content mat-badge-active">!</span>
+                </span>
+              </span>
+            </a>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/labs">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">Labs</span>
+              </span>
+            </a>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/prism">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
+                  <span class="nav-svg-icon"><svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg></span><strong>Prism Assistant</strong>
+                </span>
+              </span>
+            </a>
+          </div>
+        </nav-menu>
+
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Jon Reischl</div>
+                  <div class="header-customer-hospitalName">[933934024] QA Eastwood Regional Hospital</div>
+                </div>
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">JR</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ── #app-view ─────────────────────────────────────────── -->
+  <div id="app-view">
+    <router-outlet></router-outlet>
+
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── Analyze sidebar ──────────────────────────── -->
+      <mat-drawer id="analyze-drawer" class="mat-drawer">
+        <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" aria-label="Toggle sidebar">
+          <mat-icon class="mat-icon material-icons" aria-hidden="true">chevron_left</mat-icon>
+        </button>
+        <div class="mat-drawer-inner-container">
+          <mat-accordion class="navigation-accordion mat-accordion">
+
+            <mat-expansion-panel class="mat-expansion-panel">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert=""><div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body"></div></div></div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-expanded" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content">
+                  <div class="mat-expansion-panel-body">
+                    <mat-nav-list class="mat-mdc-nav-list">
+                      <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">dns</mat-icon><span>IRIS Worklist</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">timeline</mat-icon><span>Variance Trends</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">grid_view</mat-icon><span>Dispense Patterns</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">query_stats</mat-icon><span>Med Trends</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">schedule</mat-icon><span>Action Times</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">directions_walk</mat-icon><span>User Mobility</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">hub</mat-icon><span>Waste Networks</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">inventory_2</mat-icon><span>Full Package Waste</span></span></span></a>
+                      <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">event_note</mat-icon><span>Shift Analysis</span></span></span></a>
+                    </mat-nav-list>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="mat-expansion-panel">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">OR</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert=""><div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body"></div></div></div>
+            </mat-expansion-panel>
+
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <mat-drawer-content class="mat-drawer-content">
+
+        <div class="page-content with-detail-panel">
+
+          <div class="page-header">
+            <h2>IRIS Worklist</h2>
+            <div class="page-header-controls">
+              <button class="clear-btn">CLEAR ALL</button>
+              <button class="filter-btn date-btn">02/18/2026 – 03/20/2026 <span class="material-icons">expand_more</span></button>
+              <button class="filter-btn">Department <span class="material-icons">expand_more</span></button>
+              <button class="filter-btn">User <span class="material-icons">expand_more</span></button>
+              <button class="filter-btn">Role <span class="material-icons">expand_more</span></button>
+            </div>
+          </div>
+
+          <div class="count-cards-row">
+            <mat-card class="iris-count-card"><div class="count-value">3651</div><div class="count-label">All Users</div></mat-card>
+            <mat-card class="iris-count-card active"><div class="count-value">9</div><div class="count-label">Needs Review</div></mat-card>
+          </div>
+
+          <div class="sort-bar">
+            <div class="sort-bar-left">
+              <button class="sort-chip">Sort By: Flagged IRIS Score <span class="material-icons">expand_more</span></button>
+              <span class="sort-divider">|</span>
+              <button class="sort-chip">Sort By Metric Score: Overall Score <span class="material-icons">expand_more</span></button>
+            </div>
+          </div>
+
+          <div class="iris-worklist-list">
+
+            <mat-card class="iris-worklist-card selected" id="worklist-card-selected">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">6.4</div></user-score>
+                  <user-score><div class="user-score lrg mat-warning">3.1</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">
+                      Marlena Cosgrove
+                      <workflowstate-badge><span class="badge needs-review">Needs Review</span></workflowstate-badge>
+                    </div>
+                    <div class="provider-info--role">
+                      RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Medical-Surgical Unit
+                    </div>
+                  </div>
+                </div>
+              </user-info>
+              <div class="provider-metric"><div class="provider-metric--title">Avg CS Dispenses Per Shift</div><div class="provider-metric--value">2.3</div></div>
+            </mat-card>
+
+            <mat-card class="iris-worklist-card">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">5.2</div></user-score>
+                  <user-score><div class="user-score lrg mat-danger">5.1</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">Mary Vaillancourt <workflowstate-badge><span class="badge needs-review">Needs Review</span></workflowstate-badge></div>
+                    <div class="provider-info--role">RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Operating Room (Surgical Services)</div>
+                  </div>
+                </div>
+              </user-info>
+              <div class="provider-metric"><div class="provider-metric--title">Avg CS Dispenses Per Shift</div><div class="provider-metric--value">3.1</div></div>
+            </mat-card>
+
+            <mat-card class="iris-worklist-card">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">5.1</div></user-score>
+                  <user-score><div class="user-score lrg mat-warning">4.4</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">Erin Ashley <workflowstate-badge><span class="badge needs-review">Needs Review</span></workflowstate-badge></div>
+                    <div class="provider-info--role">RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Operating Room (Surgical Services)</div>
+                  </div>
+                </div>
+              </user-info>
+              <div class="provider-metric"><div class="provider-metric--title">Avg CS Dispenses Per Shift</div><div class="provider-metric--value">2.8</div></div>
+            </mat-card>
+
+            <mat-card class="iris-worklist-card">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">5.0</div></user-score>
+                  <user-score><div class="user-score lrg mat-danger">5.0</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">Jona Hill <workflowstate-badge><span class="badge needs-review">Needs Review</span></workflowstate-badge></div>
+                    <div class="provider-info--role">RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Operating Room (Surgical Services)</div>
+                  </div>
+                </div>
+              </user-info>
+              <div class="provider-metric"><div class="provider-metric--title">Avg CS Dispenses Per Shift</div><div class="provider-metric--value">2.4</div></div>
+            </mat-card>
+
+            <mat-card class="iris-worklist-card">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">5.0</div></user-score>
+                  <user-score><div class="user-score lrg mat-warning">3.3</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">Ralph Hardin$ <workflowstate-badge><span class="badge needs-review">Needs Review</span></workflowstate-badge></div>
+                    <div class="provider-info--role">RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Intensive Care Unit (ICU)</div>
+                  </div>
+                </div>
+              </user-info>
+              <div class="provider-metric"><div class="provider-metric--title">Avg CS Dispenses Per Shift</div><div class="provider-metric--value">3.4</div></div>
+            </mat-card>
+
+          </div>
+        </div>
+
+      </mat-drawer-content>
+    </mat-drawer-container>
+
+    <!-- ════════════════════════════════════════════════════════
+         USER DETAIL PANEL (overlay)
+         ════════════════════════════════════════════════════════ -->
+    <div class="udp-backdrop"></div>
+    <aside class="user-detail-panel" id="userDetailPanel">
+      <div class="udp-header">
+        <div class="udp-name-block">
+          <div class="udp-name">
+            Marlena Cosgrove
+            <span class="material-icons-outlined" title="Open in new tab">open_in_new</span>
+          </div>
+          <div class="udp-role">RN &middot; Medical-Surgical Unit</div>
+        </div>
+        <button class="udp-status-select">NEEDS REVIEW <span class="material-icons">expand_more</span></button>
+        <button class="udp-action-btn" title="Create case"><span class="material-icons-outlined">post_add</span></button>
+        <button class="udp-action-btn udp-close" title="Close"><span class="material-icons">close</span></button>
+      </div>
+
+      <div class="udp-tabs">
+        <button class="udp-tab active">IRIS</button>
+        <button class="udp-tab">Custom IRIS</button>
+        <button class="udp-tab">Reviews &amp; Cases <span class="case-dot">1</span></button>
+        <button class="udp-tab">Documentation</button>
+      </div>
+
+      <div class="udp-body">
+
+        <!-- IRIS summary -->
+        <div class="udp-iris-summary">
+          <div class="iris-summary-item">
+            <div class="iris-summary-score badge-style mat-danger">6.4</div>
+            <div class="iris-summary-meta">
+              <div class="iris-summary-meta-label">Flagged IRIS</div>
+              <div class="iris-summary-meta-range">For Jan 31, 2026 – Mar 2, 2026</div>
+            </div>
+          </div>
+          <div class="iris-summary-item">
+            <div class="iris-summary-score mat-warning">3.1</div>
+            <div class="iris-summary-meta">
+              <div class="iris-summary-meta-label">Current IRIS</div>
+              <div class="iris-summary-meta-range">For Apr 16, 2026 – May 16, 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="udp-section-title">6 Month IRIS &amp; Activity History</div>
+
+        <div class="iris-chart-card">
+          <div class="iris-chart-header">
+            <div class="iris-chart-title">IRIS Score</div>
+            <div class="iris-chart-legend">
+              <span class="legend-swatch"></span> Department Average
+            </div>
+          </div>
+          <svg class="iris-chart-svg" viewBox="0 0 720 180" id="iris-chart">
+            <!-- y-axis ticks -->
+            <line x1="40" y1="20" x2="40" y2="150" stroke="#e5e5e5" stroke-width="1"/>
+            <line x1="40" y1="150" x2="710" y2="150" stroke="#e5e5e5" stroke-width="1"/>
+            <text class="iris-chart-axis-label" x="32" y="24" text-anchor="end">8</text>
+            <text class="iris-chart-axis-label" x="32" y="88" text-anchor="end">4</text>
+            <text class="iris-chart-axis-label" x="32" y="153" text-anchor="end">0</text>
+            <!-- Bars + dept avg lines populated via JS -->
+          </svg>
+
+          <div class="iris-disp-title">Average CS Dispenses Per Shift / Department Average</div>
+          <div class="iris-disp-row header">
+            <div>NOV</div><div>DEC</div><div>JAN</div><div>FEB</div><div>MAR</div><div>APR</div>
+          </div>
+          <div class="iris-disp-row values">
+            <div>2.1 / 2.6</div>
+            <div>1.4 / 2.8</div>
+            <div>5.8 / 2.6</div>
+            <div>6.3 / 2.3</div>
+            <div>4.2 / 2.4</div>
+            <div>3.4 / 2.2</div>
+          </div>
+        </div>
+
+        <!-- DRSA section -->
+        <div class="drsa-section-header">
+          <div class="udp-section-title" style="margin: 0;">Detailed Risk Score Analysis</div>
+          <div class="drsa-date-range">Flagged Date Range: 01/31/2026 – 03/02/2026 <span class="material-icons">expand_more</span></div>
+        </div>
+
+        <!-- Prism banner -->
+        <div class="prism-banner">
+          <span class="prism-banner-icon">
+            <svg width="22" height="20" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+              <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+              <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+              <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+              <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+              <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+            </svg>
+          </span>
+          <div class="prism-banner-text">
+            <strong>Prism Assistant</strong> can deep-dive on any metric below — surfacing peer benchmarks, medication-specific patterns, and trend context the base summary leaves out.
+          </div>
+          <button class="prism-banner-action" onclick="explainAll()">
+            <span class="material-icons-outlined" style="font-size: 16px;">auto_awesome</span>
+            Analyze all
+          </button>
+        </div>
+
+        <!-- DRSA toolbar -->
+        <div class="drsa-toolbar" style="display: none;">
+          <label class="low-score-toggle" onclick="toggleLowScores(this)">
+            <span class="low-score-toggle-switch"></span>
+            Include metrics with low scores
+          </label>
+          <button class="collapse-all-btn" onclick="collapseAllPrism()">
+            <span class="material-icons">unfold_less</span>
+            Collapse All
+          </button>
+        </div>
+
+        <!-- ───── DRSA CARDS ───── -->
+        <div id="drsa-cards" class="drsa-cards">
+
+          <!-- ═══ SCREENING METRICS ═══ -->
+          <div class="drsa-group" data-group="screening">
+
+            <div class="drsa-group-header">
+              <div class="drsa-group-title">
+                Screening Metrics
+                <span class="material-icons-outlined help-icon" title="High-weight metrics that screen for the strongest diversion signals">help_outline</span>
+              </div>
+            </div>
+
+            <!-- Med Trends (1.9 → bumped to yellow for screening visibility) -->
+            <div class="drsa-card" data-metric="med_trends">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-warning">1.9</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-warning">Med Trends</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has slightly unusual medication activity patterns.</div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('med_trends')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+            <!-- Variance Trends (1.2 - low) -->
+            <div class="drsa-card low-score" data-metric="variance_count">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-success">1.2</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-success">Variance Trends</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has 3 variances.</div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('variance_count')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+            <!-- Full Package Waste (2.4) -->
+            <div class="drsa-card" data-metric="full_package_waste">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-warning">2.4</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-warning">Full Package Waste</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has wasted 5 full packages.</div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('full_package_waste')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ═══ RESEARCH METRICS ═══ -->
+          <div class="drsa-group" data-group="research">
+
+            <div class="drsa-group-header">
+              <div class="drsa-group-title">
+                Research Metrics
+                <span class="material-icons-outlined help-icon" title="Lower-weight metrics that add context and corroborate screening signals">help_outline</span>
+              </div>
+            </div>
+
+            <!-- Action Times (4.7 - RED outlier) -->
+            <div class="drsa-card" data-metric="action_times">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-danger">4.7</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-danger">Action Times</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove logged 10 actions with time between events exceeding the threshold:</div>
+                  <div class="drsa-card-base-bullet">6 actions with first dispense and first admin for a patient &gt; 30 mins (Hospital Threshold)<span class="material-icons">launch</span></div>
+                  <div class="drsa-card-base-bullet">4 actions with last admin and last waste for a patient &gt; 30 mins (Hospital Threshold)<span class="material-icons">launch</span></div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('action_times')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+            <!-- Canceled Transactions (2.4) -->
+            <div class="drsa-card" data-metric="canceled_transactions">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-warning">2.4</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-warning">Canceled Transactions</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has 22 canceled transactions across departments.</div>
+                  <div class="drsa-card-base-bullet">Medical-Surgical Unit: Canceled 20 of 651 dispenses<span class="material-icons">launch</span></div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('canceled_transactions')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+            <!-- Dispense Patterns / Dispense No Admin (18.1 - RED outlier) -->
+            <div class="drsa-card" data-metric="dispense_no_admin">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-danger">18.1</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-danger">Dispense Patterns</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has 42 transactions with 77 medication dispenses without corresponding administrations across the hospital:</div>
+                  <div class="drsa-card-base-bullet">77 items dispensed in 42 variances<span class="material-icons">launch</span></div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('dispense_no_admin')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+            <!-- Overrides (6.5 - RED outlier) -->
+            <div class="drsa-card" data-metric="overrides">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-danger">6.5</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-danger">Overrides</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has 47 overrides across departments.</div>
+                  <div class="drsa-card-base-bullet">Pharmacy: Overrode 47 of 94 total dispenses, with 47 overrides related to fentanyl Inj.<span class="material-icons">launch</span></div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('overrides')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+            <!-- Waste Networks (1.3 - low) -->
+            <div class="drsa-card low-score" data-metric="waste_networks">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-success">1.3</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-success">Waste Networks</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove exhibits no unusual patterns when wasting medications.</div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('waste_networks')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+            <!-- User Mobility (0.0 - low) -->
+            <div class="drsa-card low-score" data-metric="mobility">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-success">0.0</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title mat-success">User Mobility</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove exhibits no unusual transitions between departments during a shift.</div>
+                </div>
+                <button class="prism-explain-btn" onclick="explainMetric('mobility')">
+                  <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                    <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                    <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                    <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                    <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                    <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+                  </svg>
+                  Analyze
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div><!-- /drsa-cards -->
+
+      </div><!-- /udp-body -->
+    </aside>
+
+  </div>
+
+  <footer>
+    Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help@bluesight.com">help@bluesight.com</a>
+    • All Rights Reserved |
+    <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+  </footer>
+
+</div>
+</app-component>
+
+<div class="prism-toast" id="prismToast">Copied to clipboard</div>
+
+<script>
+  /* ── Panel/drawer toggles ──────────────────────────── */
+  function togglePanel(header) {
+    const panel = header.closest('mat-expansion-panel');
+    const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+    const isOpen = panel.classList.contains('mat-expanded');
+    panel.classList.toggle('mat-expanded', !isOpen);
+    header.classList.toggle('mat-expanded', !isOpen);
+    header.setAttribute('aria-expanded', !isOpen);
+    if (isOpen) wrapper.setAttribute('inert', '');
+    else wrapper.removeAttribute('inert');
+  }
+  function toggleDrawer() {
+    document.getElementById('analyze-drawer').classList.toggle('collapsed');
+  }
+
+  /* ── IRIS chart bars ───────────────────────────────── */
+  (function () {
+    const data = [
+      { m: 'NOV', iris: 1.1, avg: 1.0 },
+      { m: 'DEC', iris: 0.4, avg: 1.0 },
+      { m: 'JAN', iris: 5.2, avg: 0.9 },
+      { m: 'FEB', iris: 6.4, avg: 0.9 },
+      { m: 'MAR', iris: 4.1, avg: 0.9 },
+      { m: 'APR', iris: 3.1, avg: 0.9 },
+    ];
+    const svg = document.getElementById('iris-chart');
+    const x0 = 60, x1 = 700, y0 = 20, y1 = 150;
+    const max = 8;
+    const colW = (x1 - x0) / data.length;
+    data.forEach((d, i) => {
+      const cx = x0 + colW * i;
+      const barW = 50;
+      const barX = cx + (colW - barW) / 2;
+      // bar
+      const h = (d.iris / max) * (y1 - y0);
+      const barY = y1 - h;
+      const cls = d.iris >= 4.6 ? 'iris-chart-bar' : (d.iris >= 1.4 ? 'iris-chart-bar-yellow' : 'iris-chart-bar-green');
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', barX);
+      rect.setAttribute('y', barY);
+      rect.setAttribute('width', barW);
+      rect.setAttribute('height', h);
+      rect.setAttribute('class', cls);
+      rect.setAttribute('rx', '2');
+      svg.appendChild(rect);
+      // value
+      const val = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      val.setAttribute('x', barX + barW / 2);
+      val.setAttribute('y', h > 14 ? barY + 12 : barY - 4);
+      val.setAttribute('class', h > 14 ? 'iris-chart-bar-value' : 'iris-chart-bar-value outside');
+      val.textContent = d.iris.toFixed(1);
+      svg.appendChild(val);
+      // avg tick
+      const avgY = y1 - (d.avg / max) * (y1 - y0);
+      const avgLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      avgLine.setAttribute('x1', barX - 4);
+      avgLine.setAttribute('x2', barX + barW + 4);
+      avgLine.setAttribute('y1', avgY);
+      avgLine.setAttribute('y2', avgY);
+      avgLine.setAttribute('class', 'iris-chart-avg-line');
+      svg.appendChild(avgLine);
+      // x label
+      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      label.setAttribute('x', cx + colW / 2);
+      label.setAttribute('y', 170);
+      label.setAttribute('text-anchor', 'middle');
+      label.setAttribute('class', 'iris-chart-axis-label');
+      label.textContent = d.m;
+      svg.appendChild(label);
+    });
+  })();
+
+  /* ════════════════════════════════════════════════════════
+     PRISM ENHANCED CONTENT — pre-authored per metric
+     Built from the API payload + plausible name lookups
+     ════════════════════════════════════════════════════════ */
+  const PRISM_CONTENT = {
+    action_times: {
+      headline: 'Of <strong>10 threshold-exceeding actions</strong>, 6 are <strong>First Dispense → First Admin</strong> (FDFA) events averaging <strong>42.3 min</strong> — over 5× the hospital mean. The remaining 4 are <strong>Last Admin → Last Waste</strong> (LALW) events averaging <strong>78.4 min</strong>. Pattern is consistent and well above outlier threshold.',
+      stats: [
+        { type: 'compare', label: 'First Dispense → First Admin (FDFA)', rows: [
+          { label: 'Provider avg', value: '42.3 min', highlight: true },
+          { label: 'Hospital mean', value: '7.7 min' },
+          { label: 'Threshold events', value: '6 of 10' }
+        ]},
+        { type: 'compare', label: 'Last Admin → Last Waste (LALW)', rows: [
+          { label: 'Provider avg', value: '78.4 min', highlight: true },
+          { label: 'Hospital mean', value: '31.9 min' },
+          { label: 'Threshold events', value: '4 of 10' }
+        ]}
+      ],
+      findings: [
+        { tone: 'warn', icon: 'priority_high', text: '<strong>FDFA delays of 30+ minutes</strong> are the strongest signal — medication is leaving the cabinet well before it reaches the patient. Cross-reference with witness logs and patient acuity at dispense time.' },
+        { tone: 'warn', icon: 'warning_amber', text: 'LALW delays compound the concern — controlled substance remains unaccounted for between last admin and final waste. <strong>Both subreasons point to the same window of time</strong>.' },
+        { tone: 'info', icon: 'info', text: 'Action Times is the top driver of the flagged IRIS score alongside Dispense Patterns and Overrides.' }
+      ]
+    },
+
+    canceled_transactions: {
+      headline: 'Cancel rate is <strong>3.2%</strong> against a peer-group rate of <strong>2.0%</strong> — moderately elevated but not an outlier. <strong>HYDROmorphone Inj.</strong> accounts for the largest single-medication cluster.',
+      stats: [
+        { type: 'compare', label: 'Cancel rate vs. peer group', rows: [
+          { label: 'Provider rate', value: '3.2% (22/695)', highlight: true },
+          { label: 'Peer group rate', value: '2.0% (4,271/215,086)' }
+        ]},
+        { type: 'kv', label: 'Top medication driver', value: 'HYDROmorphone Inj.', sub: '4 cancels in Medical-Surgical Unit (peer group: department)' }
+      ],
+      findings: [
+        { tone: 'warn', icon: 'priority_high', text: '<strong>20 of 22 cancels</strong> are in the home department (Medical-Surgical). Cancel rate there is 3.1% (20/651) vs. a department peer rate of 3.1% (1,571/51,300) — <strong>in line with peers</strong>, not above them. The overall elevation is driven by activity outside the home dept.' },
+        { tone: 'info', icon: 'info', text: 'In Operating Room (Surgical Services), 2 of 18 dispenses were canceled (11.1%) — a small denominator but well above the 1.4% peer rate there.' }
+      ]
+    },
+
+    full_package_waste: {
+      headline: '5 full-package waste events across the period. No medication concentration or peer outlier pattern in the data — <strong>within acceptable range but worth tracking</strong> month-over-month.',
+      stats: [
+        { type: 'kv', label: 'Full-package waste count', value: '5', sub: 'Over 243 shifts · 548 total dispenses' },
+        { type: 'kv', label: 'Medication concentration', value: 'None detected', sub: 'No single med >1 event' }
+      ],
+      findings: [
+        { tone: 'success', icon: 'check_circle', text: 'No peer-group outliers flagged. The score is elevated by raw count alone, not by an unusual pattern.' }
+      ]
+    },
+
+    overrides: {
+      headline: 'Provider override rate is <strong>50%</strong> (47 of 94) — <strong>~460× the peer rate</strong> of 0.11%. <strong>All 47 overrides involve fentanyl Inj.</strong> in Pharmacy. This is a dominant, single-medication pattern.',
+      stats: [
+        { type: 'compare', label: 'Override rate vs. peer group', rows: [
+          { label: 'Provider rate', value: '50.0% (47/94)', highlight: true },
+          { label: 'Peer group rate', value: '0.11% (189/173,643)' }
+        ]},
+        { type: 'kv', label: 'All 47 overrides involved', value: 'fentanyl Inj.', sub: 'Pharmacy department · 100% of overrides on one medication' }
+      ],
+      findings: [
+        { tone: 'warn', icon: 'priority_high', text: '<strong>A 50% override rate on a single Schedule II medication</strong> is well outside any benign explanation. This warrants immediate review of dispense records, clinical justification, and witness documentation.' },
+        { tone: 'warn', icon: 'warning_amber', text: 'Same medication (<strong>fentanyl Inj.</strong>) also appears in Med Trends as an outlier. The cross-metric corroboration strengthens the signal.' },
+        { tone: 'info', icon: 'info', text: 'Pharmacy is the home department here, not a unit floor — context matters for interpreting "override" in this setting.' }
+      ]
+    },
+
+    med_trends: {
+      headline: 'Two medications flagged as outliers vs. the home department peer group: <strong>HYDROmorphone Inj.</strong> and <strong>oxyCODONE 5 mg Tab</strong>. Both show unusual activity in <strong>administering and dispensing</strong> event types.',
+      stats: [
+        { type: 'kv', label: 'Flagged medications', value: '2', sub: 'HYDROmorphone Inj. · oxyCODONE 5 mg Tab' },
+        { type: 'kv', label: 'Event types', value: 'Administering, Dispensing', sub: 'Peer group: Medical-Surgical Unit' }
+      ],
+      findings: [
+        { tone: 'info', icon: 'query_stats', text: '<strong>HYDROmorphone Inj.</strong> also appears as the top driver in Canceled Transactions — the same medication is flagged across two metrics, which strengthens the signal.' },
+        { tone: 'info', icon: 'info', text: 'Use the Med Trends report to see exact dispense/admin counts and the peer distribution.' }
+      ]
+    },
+
+    dispense_no_admin: {
+      headline: '<strong>77 dispenses across 42 transactions</strong> have no corresponding administration documented in the eMAR. Only <strong>5 carry a return flag</strong> — the remaining 72 are unaccounted for.',
+      stats: [
+        { type: 'kv', label: 'DNA events', value: '77', sub: 'Across 42 transactions' },
+        { type: 'compare', label: 'Return reconciliation', rows: [
+          { label: 'Flagged as returns', value: '5' },
+          { label: 'Unaccounted', value: '72', highlight: true }
+        ]}
+      ],
+      findings: [
+        { tone: 'warn', icon: 'priority_high', text: '<strong>72 unaccounted dispenses</strong> is the highest-stakes finding in this profile. Each one represents a controlled substance that was removed but never tied to a patient administration or formal return.' },
+        { tone: 'warn', icon: 'warning_amber', text: 'The volume here makes this the single largest contributor to the IRIS score — it accounts for the majority of the 6.4 flagged value.' },
+        { tone: 'info', icon: 'info', text: 'Cross-reference with the Variance Trends and Action Times findings to identify whether the same time windows and medications recur.' }
+      ]
+    },
+
+    waste_networks: {
+      headline: 'Score is driven by <strong>witness count</strong> — Marlena had <strong>~115 unique waste-network interactions</strong>, the highest signal in this metric. No unusual concentration with any single witness.',
+      stats: [
+        { type: 'kv', label: 'Unique witness interactions', value: '~115', sub: 'Across the flagged date range' },
+        { type: 'kv', label: 'Concentration', value: 'Diffuse', sub: 'No single witness exceeds threshold' }
+      ],
+      findings: [
+        { tone: 'success', icon: 'check_circle', text: 'High witness count without concentration is typically a sign of <strong>broad floor coverage</strong>, not a closed network of repeat witnesses.' }
+      ]
+    },
+
+    variance_count: {
+      headline: 'Only 3 variances total — but <strong>2 remain open</strong>. Open variances are the higher-priority subset; closed-by-user is informational.',
+      stats: [
+        { type: 'kv', label: 'Open variances', value: '2', sub: 'Action recommended' },
+        { type: 'kv', label: 'Closed by user', value: '1', sub: 'Resolved' }
+      ],
+      findings: [
+        { tone: 'warn', icon: 'warning_amber', text: 'Both open variances are in the home department. <strong>Review and triage</strong> before this provider\'s next IRIS cycle.' }
+      ]
+    },
+
+    mobility: {
+      headline: 'No unusual department transitions detected across <strong>243 shifts</strong>. Provider activity stayed within expected unit boundaries.',
+      stats: [
+        { type: 'kv', label: 'Shifts of interest', value: '0', sub: 'Of 243 shifts' },
+        { type: 'kv', label: 'Departments worked', value: '4', sub: 'Medical-Surgical (home), ICU, ED, PACU' }
+      ],
+      findings: [
+        { tone: 'success', icon: 'check_circle', text: 'No further investigation indicated for mobility.' }
+      ]
+    }
+  };
+
+  /* ════════════════════════════════════════════════════════
+     EXPLAIN / RENDER
+     ════════════════════════════════════════════════════════ */
+  function explainMetric(metricKey) {
+    const card = document.querySelector(`.drsa-card[data-metric="${metricKey}"]`);
+    if (!card) return;
+    const btn = card.querySelector('.prism-explain-btn');
+
+    if (card.classList.contains('enhanced')) {
+      // Regenerate — clear existing content and re-run the analyze flow
+      const existing = card.querySelector('.prism-loading, .prism-enhanced');
+      if (existing) existing.remove();
+      // fall through to loading state below
+    } else {
+      // First-time analyze — capture original button content for any future state changes
+      if (!btn.dataset.originalContent) btn.dataset.originalContent = btn.innerHTML;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="material-icons">refresh</span> Regenerate`;
+
+    // loading state
+    const loader = document.createElement('div');
+    loader.className = 'prism-loading';
+    loader.innerHTML = `
+      <div class="prism-loading-header">
+        <svg width="14" height="12" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+          <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+          <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+          <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+          <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+          <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+        </svg>
+        Prism Assistant is analyzing
+        <span class="prism-loading-dots"><span class="prism-loading-dot"></span><span class="prism-loading-dot"></span><span class="prism-loading-dot"></span></span>
+      </div>
+      <div class="shimmer-line w90"></div>
+      <div class="shimmer-line w75"></div>
+      <div class="shimmer-line w60"></div>
+    `;
+    card.appendChild(loader);
+    card.classList.add('enhanced');
+
+    // simulated latency
+    setTimeout(() => {
+      loader.remove();
+      renderEnhanced(card, metricKey);
+      btn.disabled = false;
+    }, 1200);
+  }
+
+  function toggleEnhanced(headerBtn) {
+    const wrap = headerBtn.closest('.prism-enhanced');
+    if (!wrap) return;
+    const body = wrap.querySelector('.prism-enhanced-body');
+    const willCollapse = !wrap.classList.contains('collapsed');
+    if (willCollapse) {
+      // capture current height first so transition has something to animate from
+      body.style.maxHeight = body.scrollHeight + 'px';
+      // force reflow
+      body.offsetHeight;
+      wrap.classList.add('collapsed');
+      headerBtn.setAttribute('aria-expanded', 'false');
+    } else {
+      wrap.classList.remove('collapsed');
+      body.style.maxHeight = body.scrollHeight + 'px';
+      headerBtn.setAttribute('aria-expanded', 'true');
+      // clear inline max-height after animation so future content changes work
+      setTimeout(() => { body.style.maxHeight = ''; }, 260);
+    }
+  }
+
+  function renderEnhanced(card, metricKey) {
+    const content = PRISM_CONTENT[metricKey];
+    if (!content) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'prism-enhanced';
+
+    let statsHTML = '';
+    if (content.stats && content.stats.length) {
+      statsHTML = '<div class="prism-stat-grid">';
+      content.stats.forEach(s => {
+        if (s.type === 'kv') {
+          statsHTML += `
+            <div class="prism-stat-tile">
+              <div class="prism-stat-label">${s.label}</div>
+              <div class="prism-stat-value">${s.value}</div>
+              ${s.sub ? `<div class="prism-stat-sub">${s.sub}</div>` : ''}
+            </div>`;
+        } else if (s.type === 'compare') {
+          let rows = '';
+          s.rows.forEach(r => {
+            rows += `
+              <div class="compare-row ${r.highlight ? 'provider' : ''}">
+                <span class="label">${r.label}</span>
+                <span class="value">${r.value}</span>
+              </div>`;
+          });
+          statsHTML += `
+            <div class="prism-stat-tile compare">
+              <div class="prism-stat-label">${s.label}</div>
+              ${rows}
+            </div>`;
+        }
+      });
+      statsHTML += '</div>';
+    }
+
+    let findingsHTML = '';
+    if (content.findings && content.findings.length) {
+      findingsHTML = '<div class="prism-finding-list">';
+      content.findings.forEach(f => {
+        findingsHTML += `
+          <div class="prism-finding">
+            <span class="prism-finding-icon ${f.tone}"><span class="material-icons-outlined">${f.icon}</span></span>
+            <div class="prism-finding-text">${f.text}</div>
+          </div>`;
+      });
+      findingsHTML += '</div>';
+    }
+
+    wrap.innerHTML = `
+      <button class="prism-enhanced-label" onclick="toggleEnhanced(this)" aria-expanded="true">
+        <svg width="12" height="10" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+          <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+          <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+          <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+          <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+          <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+        </svg>
+        <span class="label-text">Prism Assistant analysis</span>
+        <span class="material-icons toggle-chevron">expand_more</span>
+      </button>
+      <div class="prism-enhanced-body">
+        <div class="prism-enhanced-headline">${content.headline}</div>
+        ${statsHTML}
+        ${findingsHTML}
+        <div class="prism-actions-row">
+          <button class="prism-action-btn" onclick="addToReview('${metricKey}', this)">
+            <span class="material-icons-outlined">note_add</span>
+            Add to Review
+          </button>
+          <button class="prism-action-btn primary" onclick="continueWithAssistant('${metricKey}')">
+            <span class="material-icons-outlined">chat_bubble_outline</span>
+            Continue with Prism
+          </button>
+        </div>
+        <div class="prism-footnote">
+          <div class="prism-footnote-text">
+            Generated from this provider's IRIS payload for the flagged date range. Medication and department names shown for clarity — confirm specifics in the linked reports.
+          </div>
+          <div class="prism-footnote-actions">
+            <button class="prism-icon-btn" title="Helpful" onclick="rate(this, 'up')"><span class="material-icons-outlined">thumb_up</span></button>
+            <button class="prism-icon-btn" title="Not helpful" onclick="rate(this, 'down')"><span class="material-icons-outlined">thumb_down</span></button>
+            <button class="prism-icon-btn" title="Copy" onclick="copyAnalysis(this)"><span class="material-icons-outlined">content_copy</span></button>
+          </div>
+        </div>
+      </div>
+    `;
+    card.appendChild(wrap);
+  }
+
+  function explainAll() {
+    const cards = document.querySelectorAll('.drsa-card:not(.enhanced)');
+    cards.forEach((c, i) => {
+      setTimeout(() => {
+        explainMetric(c.dataset.metric);
+      }, i * 220);
+    });
+  }
+
+  function rate(btn, kind) {
+    const parent = btn.closest('.prism-footnote-actions');
+    parent.querySelectorAll('.prism-icon-btn').forEach(b => b.style.color = '');
+    btn.style.color = kind === 'up' ? 'var(--green)' : 'var(--red)';
+    showToast(kind === 'up' ? 'Thanks for the feedback' : 'Got it — Prism will learn from this');
+  }
+
+  function copyAnalysis(btn) {
+    const card = btn.closest('.drsa-card');
+    const text = card.querySelector('.prism-enhanced-headline').innerText;
+    navigator.clipboard?.writeText(text).catch(() => {});
+    showToast('Copied to clipboard');
+  }
+
+  function continueWithAssistant(metricKey) {
+    showToast('Creating session in Prism Assistant');
+  }
+
+  function addToReview(metricKey, btn) {
+    const label = metricKey.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    btn.innerHTML = `<span class="material-icons" style="font-size: 16px; color: var(--green);">check_circle</span> Added to Review`;
+    btn.disabled = true;
+    btn.style.cursor = 'default';
+    showToast(`${label} analysis added to Review`);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('prismToast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastT);
+    window._toastT = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function toggleLowScores(label) {
+    const cards = document.getElementById('drsa-cards');
+    const off = label.classList.toggle('off');
+    cards.classList.toggle('hide-low', off);
+  }
+
+  function collapseAllPrism() {
+    const expanded = document.querySelectorAll('.prism-enhanced:not(.collapsed)');
+    if (expanded.length === 0) {
+      showToast('Nothing to collapse');
+      return;
+    }
+    expanded.forEach(wrap => {
+      const headerBtn = wrap.querySelector('.prism-enhanced-label');
+      if (headerBtn) toggleEnhanced(headerBtn);
+    });
+  }
+</script>
+</body>
+</html>
