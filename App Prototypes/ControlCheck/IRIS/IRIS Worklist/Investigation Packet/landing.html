@@ -812,15 +812,27 @@
     .done-icon-wrap .material-icons { font-size: 28px; color: var(--green); }
     .done-title { font-size: 1.125rem; font-weight: 700; color: var(--text-87); margin-bottom: 6px; }
     .done-sub { font-size: .875rem; color: var(--text-54); margin-bottom: 24px; max-width: 360px; }
-    .done-file-preview {
+    .done-file-list {
+      display: flex; flex-direction: column; gap: 8px;
+      width: 100%; max-width: 420px; margin-bottom: 20px; text-align: left;
+    }
+    .done-file-row {
       display: flex; align-items: center; gap: 12px;
       background: var(--gray-100); border: 1px solid var(--gray-300);
-      border-radius: var(--radius); padding: 12px 16px; width: 100%; max-width: 420px;
-      margin-bottom: 20px; text-align: left;
+      border-radius: var(--radius); padding: 10px 12px;
     }
-    .done-file-icon { font-size: 32px; color: var(--blue-dark); flex-shrink: 0; }
-    .done-file-name { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
-    .done-file-meta { font-size: .75rem; color: var(--text-54); margin-top: 2px; }
+    .done-file-icon { font-size: 28px; flex-shrink: 0; color: var(--gray-400); }
+    .done-file-info { flex: 1; min-width: 0; }
+    .done-file-name { font-size: .875rem; font-weight: 600; color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .done-file-meta { font-size: .6875rem; color: var(--text-54); margin-top: 2px; }
+    .done-file-open {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background .15s; flex-shrink: 0;
+      color: var(--teal);
+    }
+    .done-file-open:hover { background: rgba(0,150,184,.1); }
+    .done-file-open .material-icons-outlined { font-size: 18px; }
     .done-actions { display: flex; gap: 8px; }
 
     /* Dialog footer */
@@ -1573,13 +1585,6 @@
       <!-- ── STEP 1: Date Range ── -->
       <div class="wizard-step-panel active" id="panel-step-1">
 
-        <div class="flagged-range-note">
-          <span class="material-icons-outlined">flag</span>
-          <span>Provider was flagged for <strong>Jan 31 – Mar 2, 2026</strong>.
-            <button class="flagged-quick-chip" onclick="selectFlaggedRange()">Use flagged range</button>
-          </span>
-        </div>
-
         <div class="wizard-section-label">Select a date range</div>
 
         <div class="date-range-grid">
@@ -1620,18 +1625,20 @@
         <label class="custom-date-row" id="preset-custom" onclick="selectDatePreset(this, 'custom')">
           <input type="radio" name="datePreset" value="custom">
           <div class="date-range-radio" style="flex-shrink:0;margin-top:0;"></div>
-          <div class="custom-date-inputs" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
-            <div class="custom-date-field">
-              <label>From</label>
-              <input type="date" id="customFrom" value="2026-01-31" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
-            </div>
-            <div class="custom-date-sep">–</div>
-            <div class="custom-date-field">
-              <label>To</label>
-              <input type="date" id="customTo" value="2026-03-02" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.9375rem;font-weight:600;color:var(--text-87);margin-bottom:8px;">Custom range</div>
+            <div class="custom-date-inputs" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
+              <div class="custom-date-field">
+                <label>From</label>
+                <input type="date" id="customFrom" value="2026-01-31" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
+              </div>
+              <div class="custom-date-sep">–</div>
+              <div class="custom-date-field">
+                <label>To</label>
+                <input type="date" id="customTo" value="2026-03-02" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
+              </div>
             </div>
           </div>
-          <div style="font-size:.9375rem;font-weight:600;color:var(--text-87);flex-shrink:0;margin-left:8px;">Custom range</div>
         </label>
 
       </div><!-- /panel-step-1 -->
@@ -1649,8 +1656,8 @@
 
         <div class="sections-list">
 
-          <label class="section-option selected" onclick="toggleSection(this)">
-            <input type="checkbox" checked>
+          <label class="section-option selected">
+            <input type="checkbox" checked onchange="toggleSection(this)">
             <div class="section-checkbox"></div>
             <div class="section-meta">
               <div class="section-name">
@@ -1661,8 +1668,8 @@
             </div>
           </label>
 
-          <label class="section-option selected" onclick="toggleSection(this)">
-            <input type="checkbox" checked>
+          <label class="section-option selected">
+            <input type="checkbox" checked onchange="toggleSection(this)">
             <div class="section-checkbox"></div>
             <div class="section-meta">
               <div class="section-name">
@@ -1673,8 +1680,8 @@
             </div>
           </label>
 
-          <label class="section-option selected" onclick="toggleSection(this)">
-            <input type="checkbox" checked>
+          <label class="section-option selected">
+            <input type="checkbox" checked onchange="toggleSection(this)">
             <div class="section-checkbox"></div>
             <div class="section-meta">
               <div class="section-name">
@@ -1685,8 +1692,8 @@
             </div>
           </label>
 
-          <label class="section-option selected" onclick="toggleSection(this)">
-            <input type="checkbox" checked>
+          <label class="section-option selected">
+            <input type="checkbox" checked onchange="toggleSection(this)">
             <div class="section-checkbox"></div>
             <div class="section-meta">
               <div class="section-name">
@@ -1697,8 +1704,8 @@
             </div>
           </label>
 
-          <label class="section-option selected" onclick="toggleSection(this)">
-            <input type="checkbox" checked>
+          <label class="section-option selected">
+            <input type="checkbox" checked onchange="toggleSection(this)">
             <div class="section-checkbox"></div>
             <div class="section-meta">
               <div class="section-name">IRIS Score History</div>
@@ -1706,8 +1713,8 @@
             </div>
           </label>
 
-          <label class="section-option" onclick="toggleSection(this)">
-            <input type="checkbox">
+          <label class="section-option">
+            <input type="checkbox" onchange="toggleSection(this)">
             <div class="section-checkbox"></div>
             <div class="section-meta">
               <div class="section-name">Analyst Notes</div>
@@ -1715,8 +1722,8 @@
             </div>
           </label>
 
-          <label class="section-option" onclick="toggleSection(this)">
-            <input type="checkbox">
+          <label class="section-option">
+            <input type="checkbox" onchange="toggleSection(this)">
             <div class="section-checkbox"></div>
             <div class="section-meta">
               <div class="section-name">Raw Data Appendix</div>
@@ -1787,20 +1794,16 @@
             <span class="material-icons">check</span>
           </div>
           <div class="done-title">Packet ready</div>
-          <div class="done-sub">The investigation packet for Marlena Cosgrove has been generated and is ready for download.</div>
-          <div class="done-file-preview">
-            <span class="material-icons done-file-icon">picture_as_pdf</span>
-            <div>
-              <div class="done-file-name" id="doneFileName">Investigation_Packet_Cosgrove_20260120.pdf</div>
-              <div class="done-file-meta" id="doneFileMeta">5 sections &nbsp;·&nbsp; Generated May 20, 2026 at 2:41 PM &nbsp;·&nbsp; by Jon Reischl</div>
-            </div>
+          <div class="done-sub" id="doneSub">The investigation packet for Marlena Cosgrove has been generated and is ready for download.</div>
+          <div class="done-file-list" id="doneFileList">
+            <!-- Files injected by showDone() -->
           </div>
           <div class="done-actions">
             <button class="btn-primary" onclick="openPdfViewer()">
               <span class="material-icons-outlined">open_in_new</span>
-              Open
+              Open PDF
             </button>
-            <button class="btn-teal" onclick="simulateDownload()">
+            <button class="btn-teal" id="doneDownloadBtn" onclick="simulateDownload()">
               <span class="material-icons-outlined">download</span>
               Download
             </button>
@@ -2697,10 +2700,9 @@
   /* ═══════════════════════════════════════════════════
      STEP 2 — SECTIONS
      ═══════════════════════════════════════════════════ */
-  function toggleSection(el) {
-    el.classList.toggle('selected');
-    const cb = el.querySelector('input[type="checkbox"]');
-    cb.checked = el.classList.contains('selected');
+  function toggleSection(cb) {
+    const label = cb.closest('.section-option');
+    label.classList.toggle('selected', cb.checked);
     updateSectionsCount();
   }
 
@@ -2806,14 +2808,54 @@
     document.getElementById('wizardSteps').style.opacity = '';
     document.getElementById('wizardFooter').style.display = 'none';
 
-    // Update done file name based on format
     const ext = selectedFormat === 'docx' ? 'docx' : 'pdf';
-    document.getElementById('doneFileName').textContent = 'Investigation_Packet_Cosgrove_20260131.' + ext;
-
+    const pdfName = 'Investigation_Packet_Cosgrove_20260131.' + ext;
     const selCount = document.querySelectorAll('#panel-step-2 .section-option.selected').length;
-    document.getElementById('doneFileMeta').textContent =
-      selCount + ' section' + (selCount !== 1 ? 's' : '') +
+    const meta = selCount + ' section' + (selCount !== 1 ? 's' : '') +
       '  ·  Generated May 20, 2026 at 2:41 PM  ·  by Jon Reischl';
+
+    // Check if Raw Data Appendix is selected (last section option)
+    const allSections = document.querySelectorAll('#panel-step-2 .section-option');
+    const rawDataSelected = allSections[allSections.length - 1].classList.contains('selected');
+
+    const list = document.getElementById('doneFileList');
+    list.innerHTML = '';
+
+    // PDF row
+    const pdfRow = document.createElement('div');
+    pdfRow.className = 'done-file-row';
+    pdfRow.innerHTML = `
+      <span class="material-icons done-file-icon pdf">picture_as_pdf</span>
+      <div class="done-file-info">
+        <div class="done-file-name">${pdfName}</div>
+        <div class="done-file-meta">${meta}</div>
+      </div>
+      <button class="done-file-open" onclick="openPdfViewer()" title="Open">
+        <span class="material-icons-outlined">open_in_new</span>
+      </button>`;
+    list.appendChild(pdfRow);
+
+    // CSV row — only if Raw Data Appendix is selected
+    if (rawDataSelected) {
+      const csvRow = document.createElement('div');
+      csvRow.className = 'done-file-row';
+      csvRow.innerHTML = `
+        <span class="material-icons done-file-icon csv">table_chart</span>
+        <div class="done-file-info">
+          <div class="done-file-name">Investigation_Packet_Cosgrove_20260131_RawData.csv</div>
+          <div class="done-file-meta">Raw transaction export  ·  547 rows</div>
+        </div>
+        <button class="done-file-open" onclick="showToast('Opening CSV…')" title="Open">
+          <span class="material-icons-outlined">open_in_new</span>
+        </button>`;
+      list.appendChild(csvRow);
+    }
+
+    // Update download button label
+    const dlBtn = document.getElementById('doneDownloadBtn');
+    dlBtn.innerHTML = rawDataSelected
+      ? '<span class="material-icons-outlined">download</span> Download .zip'
+      : '<span class="material-icons-outlined">download</span> Download';
   }
 
   function simulateDownload() {
@@ -2836,7 +2878,7 @@
     updatePdfToolbar();
     document.getElementById('pdfViewerOverlay').classList.add('open');
     document.getElementById('pdfFilenameBar').textContent =
-      document.getElementById('doneFileName').textContent;
+      document.querySelector('#doneFileList .done-file-name')?.textContent || 'Investigation_Packet_Cosgrove_20260131.pdf';
   }
 
   function closePdfViewer() {
