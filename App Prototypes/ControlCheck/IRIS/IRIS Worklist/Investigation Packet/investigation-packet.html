@@ -1,0 +1,2865 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Investigation Packet | ControlCheck</title>
+  <link rel="preconnect" href="https://use.typekit.net">
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --blue-100:    #e7f4f8;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --red:         #f24335;
+      --red-100:     #FCD9D7;
+      --green:       #16b434;
+      --green-100:   #DBEDD7;
+      --yellow:      #f5dd67;
+      --yellow-100:  #FDF9E5;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #727272;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* ── Custom element display ──────────────────────────── */
+    app-component, navigation, nav-menu, user-menu,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-panel-description,
+    mat-card, mat-card-header, mat-card-title, mat-card-subtitle,
+    mat-selection-card, mat-tab-header, mat-tab-body,
+    mat-drawer, mat-drawer-container, mat-drawer-content,
+    mat-nav-list, mat-icon, user-info, user-score, workflowstate-badge,
+    mat-divider, router-outlet { display: block; }
+    mat-card-title, mat-card-subtitle { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+    mat-icon { display: inline-flex; }
+    mat-divider.mat-divider-vertical { display: inline-block; }
+
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex; align-items: center; border-radius: var(--radius);
+      flex-direction: row; text-decoration: none; flex-shrink: 0;
+    }
+    .navigation {
+      display: inline-flex; flex-direction: row; flex-wrap: nowrap;
+      margin-left: 1rem; padding-top: 0;
+    }
+    .mdc-button.mat-mdc-button {
+      background: none; border: none; font-family: var(--font);
+      font-size: 1rem; font-weight: 500; color: var(--blue-dark);
+      cursor: pointer; padding: 0 12px; height: 48px;
+      border-radius: var(--radius); transition: background .15s;
+      display: inline-flex; align-items: center; gap: 2px;
+      text-decoration: none; white-space: nowrap; letter-spacing: normal;
+      text-transform: none;
+    }
+    span.nav-svg-icon { display: flex; }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    .mdc-button__label { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-link.active .mdc-button__label {
+      color: inherit; box-shadow: 0 2px; align-items: center;
+      display: inline-flex; line-height: 32px; justify-content: center;
+    }
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red); color: #fff; font-size: 9px; font-weight: 700;
+      border-radius: 50%; width: 14px; height: 14px; text-align: center;
+      line-height: 14px; display: inline-flex; align-items: center; justify-content: center;
+      margin-left: -4px;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+
+    /* ── user-menu ──────────────────────────────────────── */
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center; background-color: transparent; border: none;
+      border-radius: 1.5rem; cursor: pointer; display: flex; flex-direction: row;
+      transition: background-color .2s ease-in-out; padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark); font-size: .813rem; letter-spacing: .01rem;
+      line-height: 1.25rem; min-height: 40px; padding-left: 1rem;
+      white-space: normal; text-align: right;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .header-customer-fullName { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark); color: #fff; border-radius: 50%;
+      width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; margin-left: 8px; flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%; background: none; border: none; cursor: pointer;
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s; padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    /* ── #app-view ──────────────────────────────────────── */
+    #app-view { flex: 1 1 auto; display: flex; overflow: hidden; position: relative; }
+
+    /* ── footer ──────────────────────────────────────────── */
+    footer {
+      color: var(--gray-600); display: block; font-size: 11px;
+      padding: 7px 0; text-align: center; width: 100%;
+      border-top: 1px solid var(--gray-300);
+    }
+    footer a { color: var(--gray-600); }
+
+    /* ════════════════════════════════════════════════════════
+       ANALYZE SIDEBAR
+       ════════════════════════════════════════════════════════ */
+    mat-drawer-container {
+      display: flex; flex-direction: row; flex: 1 1 auto;
+      overflow: hidden; position: relative;
+    }
+    mat-drawer-content {
+      display: flex; flex-direction: column; flex: 1 1 auto;
+      overflow: auto; position: relative;
+    }
+    mat-drawer {
+      display: block; position: relative; overflow: visible;
+      background: #fff; border-right: 1px solid var(--gray-300);
+      width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%; height: 100%; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    .mdc-fab.mat-mdc-mini-fab {
+      background-color: #0096b8; color: #fff;
+      height: 24px; width: 24px;
+      position: absolute; right: -12px; top: 10px; z-index: 99;
+      border: none; border-radius: 24px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2), 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12);
+      padding: 0; flex-shrink: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background-color: var(--teal-dark); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon {
+      font-size: 18px; width: 18px; height: 18px; color: #fff;
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    .navigation-accordion mat-expansion-panel { background: #fff; border-radius: 0; box-shadow: none; }
+    .navigation-accordion mat-expansion-panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 45px !important; padding: 0 16px; cursor: pointer; transition: background .15s;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .navigation-accordion mat-panel-title { flex-grow: 1; }
+    .navigation-accordion mat-panel-title.mat-expansion-panel-header-title {
+      color: #9e9e9e; font-size: 12px; font-weight: 700;
+      letter-spacing: .44px; text-transform: uppercase;
+    }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg { width: 24px; height: 24px; fill: var(--gray-600); transition: transform 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px;
+      text-decoration: none; cursor: pointer; position: relative;
+      border-left: 3px solid transparent; transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active { background: rgba(4,74,130,.08); border-left-color: var(--blue-dark); }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon { font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600); }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span[class*="mat-badge"] { display: none; }
+    mat-drawer.collapsed .mdc-list-item__primary-text .mat-icon { margin: 0; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-expansion-panel-header { justify-content: center; padding: 0; }
+
+    /* ════════════════════════════════════════════════════════
+       IRIS WORKLIST PAGE
+       ════════════════════════════════════════════════════════ */
+    .page-content { padding: 1.5rem 2rem; overflow: auto; flex: 1; }
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px;
+    }
+    .page-header h2 { margin: 0; font-size: 24px; line-height: 30px; font-weight: 600; letter-spacing: .2px; color: var(--text-87); }
+    .page-header-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .clear-btn {
+      background: none; border: none; color: var(--teal);
+      font-family: var(--font); font-size: .8125rem; font-weight: 600;
+      letter-spacing: .4px; text-transform: uppercase; cursor: pointer; padding: 0 8px;
+    }
+    .filter-btn {
+      background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 6px 10px; font-family: var(--font); font-size: .8125rem; font-weight: 500;
+      color: var(--text-87); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .filter-btn .material-icons { font-size: 18px; color: var(--gray-600); }
+    .filter-btn.date-btn { color: var(--teal); border-color: var(--teal-light); background: var(--blue-100); }
+    .count-cards-row { display: flex; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap; }
+    mat-card.iris-count-card {
+      background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 18px; min-width: 110px; cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    mat-card.iris-count-card:hover { border-color: var(--teal-light); }
+    mat-card.iris-count-card.active { background: var(--blue-100); border-color: var(--teal); }
+    .count-value { font-size: 1.5rem; font-weight: 700; color: var(--text-87); line-height: 1.2; }
+    .count-label { font-size: .75rem; color: var(--text-54); margin-top: 2px; }
+    .sort-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0; margin-bottom: 12px; border-bottom: 1px solid var(--gray-300);
+    }
+    .sort-bar-left { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .sort-chip {
+      background: none; border: none; color: var(--teal);
+      font-family: var(--font); font-size: .8125rem; font-weight: 600;
+      cursor: pointer; padding: 4px 8px; display: inline-flex; align-items: center; gap: 2px;
+    }
+    .sort-chip .material-icons { font-size: 18px; }
+    .sort-divider { color: var(--gray-300); font-size: 1.25rem; line-height: 1; }
+    .iris-worklist-list { display: flex; flex-direction: column; gap: 8px; }
+    mat-card.iris-worklist-card {
+      display: flex; flex-direction: row; align-items: center;
+      padding: 12px 16px; border: 1px solid var(--border);
+      border-left: 3px solid transparent; border-radius: var(--radius);
+      background: #fff; cursor: pointer; transition: border-left-color .15s, background .15s;
+    }
+    mat-card.iris-worklist-card:hover { border-left-color: var(--teal); }
+    mat-card.iris-worklist-card.selected { border-left-color: var(--teal); background: rgba(0,150,184,.04); }
+    .user-info { display: flex; flex-direction: row; align-items: center; gap: 10px; flex: 0 0 280px; min-width: 0; }
+    .user-score { display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; border-radius: var(--radius); }
+    .user-score.badge-style.lrg { width: 44px; height: 44px; font-size: 1.125rem; color: #fff; }
+    .user-score.badge-style.lrg.mat-danger  { background: var(--red); }
+    .user-score.badge-style.lrg.mat-warning { background: var(--yellow); color: var(--text-87); }
+    .user-score.badge-style.lrg.mat-success { background: var(--green); }
+    .user-score.lrg:not(.badge-style) { font-size: 1.125rem; width: 36px; text-align: center; }
+    .user-score.lrg.mat-danger:not(.badge-style)  { color: var(--red); }
+    .user-score.lrg.mat-warning:not(.badge-style) { color: #c8a200; }
+    .user-score.lrg.mat-success:not(.badge-style) { color: var(--green); }
+    .provider-info--name {
+      font-size: .9375rem; font-weight: 600; color: var(--text-87);
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .provider-info--role { font-size: .75rem; color: var(--text-54); margin-top: 2px; }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 10px; font-size: .6875rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; }
+    .badge.needs-review { background: var(--yellow-100); color: #8a6c00; border: 1px solid var(--yellow); }
+    .mat-icon.mat-icon-xs { font-size: 8px; width: 8px; height: 8px; color: var(--gray-400); }
+    .provider-metric { display: flex; flex-direction: column; margin-left: 16px; min-width: 120px; }
+    .provider-metric--title { font-size: .6875rem; color: var(--text-54); text-transform: uppercase; letter-spacing: .4px; font-weight: 600; }
+    .provider-metric--value { font-size: 1.125rem; font-weight: 700; color: var(--text-87); margin-top: 2px; }
+
+    /* narrower with detail panel open */
+    .with-detail-panel .user-info { flex: 0 0 220px; }
+    .with-detail-panel .provider-metric { display: none; }
+    .with-detail-panel .provider-metric:nth-of-type(2) { display: flex; }
+    .with-detail-panel mat-divider.mat-divider-vertical { display: none; }
+
+    /* ════════════════════════════════════════════════════════
+       USER DETAIL PANEL
+       ════════════════════════════════════════════════════════ */
+    .udp-backdrop {
+      position: fixed; top: 80px; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,.32); z-index: 49;
+    }
+    .user-detail-panel {
+      position: fixed; top: 80px; bottom: 0; right: 0; width: 62%;
+      background: #fff; border-left: 1px solid var(--gray-300);
+      box-shadow: -4px 0 12px rgba(0,0,0,.08); z-index: 50;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .udp-header {
+      padding: 16px 24px; border-bottom: 1px solid var(--gray-300);
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+    .udp-name-block { flex: 1; min-width: 0; }
+    .udp-name { font-size: 1.25rem; font-weight: 700; color: var(--text-87); display: flex; align-items: center; gap: 8px; }
+    .udp-name .material-icons-outlined { font-size: 18px; color: var(--gray-600); cursor: pointer; }
+    .udp-role { font-size: .8125rem; color: var(--text-54); margin-top: 2px; }
+    .udp-status-select {
+      display: inline-flex; align-items: center; background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 6px 10px; font-size: .75rem; font-weight: 700;
+      color: var(--text-87); letter-spacing: .4px; cursor: pointer; text-transform: uppercase;
+    }
+    .udp-status-select .material-icons { font-size: 18px; margin-left: 6px; color: var(--gray-600); }
+    .udp-action-btn {
+      background: none; border: none; padding: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%; transition: background .15s;
+    }
+    .udp-action-btn:hover { background: rgba(0,0,0,.06); }
+    .udp-action-btn .material-icons, .udp-action-btn .material-icons-outlined { font-size: 22px; color: var(--blue-dark); }
+    .udp-close .material-icons { color: var(--gray-600); }
+    .udp-tabs {
+      display: flex; align-items: center; border-bottom: 1px solid var(--gray-300);
+      padding: 0 24px; flex-shrink: 0;
+    }
+    .udp-tab {
+      background: none; border: none; cursor: pointer; padding: 14px 16px;
+      font-family: var(--font); font-size: .9375rem; font-weight: 500;
+      color: var(--text-87); position: relative;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .udp-tab.active { color: var(--blue-dark); font-weight: 600; }
+    .udp-tab.active::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+      height: 2px; background: var(--blue-dark);
+    }
+    .udp-tab .case-dot {
+      background: var(--blue-dark); color: #fff; border-radius: 50%;
+      width: 18px; height: 18px; font-size: .6875rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .udp-body { flex: 1; overflow: auto; padding: 24px; background: #fafafa; }
+
+    /* IRIS summary */
+    .udp-iris-summary {
+      display: flex; gap: 36px; padding: 16px 18px; background: #ffffff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04); margin-bottom: 20px;
+    }
+    .iris-summary-item { display: flex; gap: 14px; align-items: center; }
+    .iris-summary-score { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+    .iris-summary-score.mat-danger { color: var(--red); }
+    .iris-summary-score.mat-warning { color: #c8a200; }
+    .iris-summary-score.badge-style {
+      width: 56px; height: 40px; border-radius: var(--radius);
+      display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 1.5rem;
+    }
+    .iris-summary-score.badge-style.mat-danger  { background: var(--red); color: #fff; }
+    .iris-summary-score.badge-style.mat-warning { background: var(--yellow); color: var(--text-87); }
+    .iris-summary-meta { font-size: .8125rem; }
+    .iris-summary-meta-label { color: var(--blue-dark); font-weight: 700; font-size: 1rem; }
+    .iris-summary-meta-range { color: var(--text-54); font-size: .75rem; margin-top: 2px; }
+    .udp-section-title { font-size: 1rem; font-weight: 600; color: #0a3861; margin: 24px 0 12px; }
+
+    /* Chart */
+    .iris-chart-card {
+      background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 16px 18px; margin-bottom: 20px;
+    }
+    .iris-chart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .iris-chart-title { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    .iris-chart-legend { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; color: var(--text-54); }
+    .legend-swatch { width: 18px; height: 2px; background: var(--text-87); }
+    .iris-chart-canvas { position: relative; padding: 6px 8px 28px 36px; height: 200px; box-sizing: border-box; }
+    .iris-chart-svg { width: 100%; height: 100%; display: block; }
+    .iris-chart-yaxis {
+      position: absolute; left: 0; top: 6px; bottom: 28px; width: 32px;
+      display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
+      color: var(--gray-600); font-size: 12px; line-height: 1; padding-right: 4px;
+    }
+    .iris-chart-xaxis {
+      position: absolute; left: 36px; right: 8px; bottom: 0;
+      display: grid; grid-template-columns: repeat(6, 1fr); color: var(--gray-600);
+      font-size: 12px; text-align: center;
+    }
+    .iris-chart-values { position: absolute; left: 36px; right: 8px; top: 6px; bottom: 28px; pointer-events: none; }
+    .iris-chart-value-label {
+      position: absolute; transform: translate(-50%, -100%);
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+      color: #fff; background: var(--red);
+      padding: 2px 6px; border-radius: 4px;
+      margin-top: -4px;
+    }
+    .iris-chart-value-label.yellow { background: var(--yellow); color: var(--text-87); }
+    .iris-chart-value-label.green  { background: var(--green); }
+    .iris-chart-bar { fill: var(--red); opacity: .7; }
+    .iris-chart-bar-yellow { fill: var(--yellow); opacity: .9; }
+    .iris-chart-bar-green { fill: var(--green); opacity: .7; }
+    .iris-chart-avg-line { stroke: #222; stroke-width: 2; }
+    .iris-disp-title { margin: 18px 0 6px; font-size: .8125rem; font-weight: 600; color: var(--text-87); }
+    .iris-disp-row {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
+      font-size: .8125rem; padding: 6px 0; border-bottom: 1px solid var(--gray-200);
+      text-align: center;
+    }
+    .iris-disp-row.header { font-weight: 600; color: var(--text-54); font-size: .6875rem; text-transform: uppercase; letter-spacing: .4px; }
+    .iris-disp-row.values { color: var(--text-87); font-weight: 600; border-bottom: none; }
+
+    /* DRSA */
+    .drsa-section-header { display: flex; align-items: center; justify-content: space-between; margin: 24px 0 12px; }
+    .drsa-date-range { font-size: .8125rem; color: var(--teal); font-weight: 600; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+    .drsa-date-range .material-icons { font-size: 18px; }
+    .drsa-group-header { display: flex; align-items: center; justify-content: space-between; margin: 18px 0 10px; }
+    .drsa-group-header:first-of-type { margin-top: 4px; }
+    .drsa-group-title { display: inline-flex; align-items: center; gap: 6px; font-size: .9375rem; font-weight: 700; color: var(--text-87); }
+    .drsa-group-title .help-icon { color: var(--gray-400); font-size: 16px; cursor: help; }
+    .tooltip-wrapper { position: relative; display: inline-flex; align-items: center; }
+    .tooltip-wrapper::before, .tooltip-wrapper::after { pointer-events: none; opacity: 0; transition: opacity .15s ease, transform .15s ease; transition-delay: 0s; }
+    .tooltip-wrapper::before {
+      content: attr(data-tooltip); position: absolute; bottom: calc(100% + 10px); left: 50%;
+      transform: translate(-50%, 4px); background: rgba(33,33,33,.95); color: #fff;
+      font-family: var(--font); font-size: .75rem; font-weight: 400; line-height: 1.4;
+      letter-spacing: .2px; padding: 8px 12px; border-radius: var(--radius);
+      width: max-content; max-width: 320px; white-space: normal; text-align: left;
+      z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
+    .tooltip-wrapper::after {
+      content: ''; position: absolute; bottom: calc(100% + 4px); left: 50%;
+      transform: translate(-50%, 4px); border: 6px solid transparent;
+      border-top-color: rgba(33,33,33,.95); z-index: 200;
+    }
+    .tooltip-wrapper:hover::before, .tooltip-wrapper:hover::after { opacity: 1; transform: translate(-50%, 0); transition-delay: .2s; }
+    .drsa-card {
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff; margin-bottom: 8px; overflow: hidden;
+    }
+    .drsa-card-header { display: flex; align-items: flex-start; gap: 12px; padding: 24px; }
+    .metric-score-badge {
+      flex-shrink: 0; width: 36px; height: 24px; border-radius: 3px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .8125rem; font-weight: 700; color: #fff;
+    }
+    .metric-score-badge.mat-danger  { background: var(--red); }
+    .metric-score-badge.mat-warning { background: var(--yellow); color: var(--text-87); }
+    .metric-score-badge.mat-success { background: var(--green); }
+    .drsa-card-content { flex: 1; min-width: 0; }
+    .drsa-card-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; color: var(--blue-darker); }
+    .drsa-card-base-summary { font-size: .8125rem; color: var(--text-87); line-height: 1.4; }
+    .drsa-card-base-bullet {
+      font-size: .8125rem; color: var(--text-87); margin-top: 6px;
+      padding-left: 18px; position: relative; line-height: 1.4;
+    }
+    .drsa-card-base-bullet::before { content: '•'; position: absolute; left: 6px; color: var(--text-54); }
+    .drsa-card-base-bullet .material-icons { font-size: 14px; color: var(--teal); cursor: pointer; vertical-align: middle; margin-left: 4px; }
+
+    /* Toast */
+    .app-toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text-87); color: #fff;
+      padding: 10px 16px; border-radius: var(--radius);
+      font-size: .8125rem; font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      z-index: 9999; opacity: 0;
+      transition: opacity .25s, transform .25s; pointer-events: none;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .app-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ════════════════════════════════════════════════════════
+       GENERATE PACKET BUTTON in UDP header  (Secondary = teal filled)
+       ════════════════════════════════════════════════════════ */
+    .generate-packet-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--teal); color: #fff;
+      border: none; border-radius: var(--radius);
+      padding: 7px 14px; font-family: var(--font);
+      font-size: .8125rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .generate-packet-btn:hover { background: var(--teal-dark); }
+    .generate-packet-btn .material-icons-outlined { font-size: 16px; }
+
+    /* ════════════════════════════════════════════════════════
+       INVESTIGATION PACKET WIZARD MODAL
+       ════════════════════════════════════════════════════════ */
+    .wizard-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.48);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s ease;
+    }
+    .wizard-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .wizard-dialog {
+      background: #fff;
+      border-radius: 6px;
+      width: 600px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 80px);
+      display: flex; flex-direction: column;
+      box-shadow: 0 8px 32px rgba(0,0,0,.22), 0 2px 8px rgba(0,0,0,.12);
+      transform: translateY(12px) scale(.98);
+      transition: transform .22s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+    }
+    .wizard-backdrop.open .wizard-dialog {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Dialog header */
+    .wizard-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .wizard-header-top {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    }
+    .wizard-title {
+      font-size: 1.125rem; font-weight: 700; color: var(--text-87);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .wizard-title .material-icons-outlined { font-size: 22px; color: var(--blue-dark); }
+    .wizard-subtitle { font-size: .8125rem; color: var(--text-54); margin-top: 4px; }
+    .wizard-close {
+      background: none; border: none; cursor: pointer; padding: 4px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: background .15s; flex-shrink: 0;
+    }
+    .wizard-close:hover { background: rgba(0,0,0,.06); }
+    .wizard-close .material-icons { font-size: 20px; color: var(--gray-600); }
+
+    /* Step indicator */
+    .wizard-steps {
+      display: flex; align-items: center; gap: 0;
+      margin-top: 16px;
+    }
+    .wizard-step-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .8125rem; font-weight: 500; color: var(--gray-400);
+      transition: color .2s;
+    }
+    .wizard-step-item.active { color: var(--blue-dark); font-weight: 700; }
+    .wizard-step-item.done { color: var(--teal); }
+    .wizard-step-num {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid currentColor;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .6875rem; font-weight: 700; flex-shrink: 0;
+      transition: background .2s, border-color .2s;
+    }
+    .wizard-step-item.active .wizard-step-num { background: var(--blue-dark); border-color: var(--blue-dark); color: #fff; }
+    .wizard-step-item.done .wizard-step-num { background: var(--teal); border-color: var(--teal); color: #fff; font-size: 0; }
+    .wizard-step-item.done .wizard-step-num::after { content: '✓'; font-size: .625rem; font-weight: 900; color: #fff; }
+    .wizard-step-connector {
+      flex: 1; height: 1px; background: var(--gray-300); margin: 0 8px;
+      min-width: 20px;
+    }
+    .wizard-step-connector.done { background: var(--teal); }
+
+    /* Dialog body */
+    .wizard-body {
+      flex: 1; overflow-y: auto; padding: 24px;
+    }
+
+    /* Step panels */
+    .wizard-step-panel { display: none; }
+    .wizard-step-panel.active { display: block; }
+
+    /* Section label */
+    .wizard-section-label {
+      font-size: .6875rem; font-weight: 700; color: var(--text-54);
+      text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px;
+    }
+
+    /* Date range options */
+    .date-range-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 20px;
+    }
+    .date-range-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; border: 2px solid var(--gray-300);
+      border-radius: var(--radius); cursor: pointer;
+      transition: border-color .15s, background .15s;
+      background: #fff;
+    }
+    .date-range-option:hover { border-color: var(--teal-light); background: var(--blue-100); }
+    .date-range-option.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.05); }
+    .date-range-option input[type="radio"] { display: none; }
+    .date-range-radio {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid var(--gray-400); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .15s;
+    }
+    .date-range-option.selected .date-range-radio { border-color: var(--blue-dark); }
+    .date-range-option.selected .date-range-radio::after {
+      content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-dark);
+    }
+    .date-range-label { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    .date-range-sub { font-size: .75rem; color: var(--text-54); }
+
+    /* Custom date range inputs */
+    .custom-date-row {
+      display: flex; gap: 12px; align-items: center; margin-top: 4px;
+      padding: 12px 14px; border: 2px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff; cursor: pointer; transition: border-color .15s;
+    }
+    .custom-date-row:hover { border-color: var(--teal-light); }
+    .custom-date-row.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.05); }
+    .custom-date-row input[type="radio"] { display: none; }
+    .custom-date-inputs {
+      display: flex; gap: 8px; align-items: center; flex: 1;
+    }
+    .custom-date-field {
+      flex: 1; display: flex; flex-direction: column; gap: 2px;
+    }
+    .custom-date-field label { font-size: .6875rem; font-weight: 600; color: var(--text-54); text-transform: uppercase; letter-spacing: .4px; }
+    .custom-date-field input[type="date"] {
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 6px 8px; font-family: var(--font); font-size: .875rem;
+      color: var(--text-87); background: #fff; outline: none;
+      transition: border-color .15s;
+    }
+    .custom-date-field input[type="date"]:focus { border-color: var(--blue-dark); }
+    .custom-date-sep { color: var(--gray-400); font-size: .875rem; margin-top: 14px; }
+
+    /* Flagged range callout */
+    .flagged-range-note {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--blue-100); border: 1px solid var(--teal-light);
+      border-radius: var(--radius); padding: 8px 12px;
+      font-size: .8125rem; color: var(--blue-dark);
+      margin-bottom: 16px;
+    }
+    .flagged-range-note .material-icons-outlined { font-size: 16px; flex-shrink: 0; }
+    .flagged-range-note strong { font-weight: 700; }
+    .flagged-quick-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #fff; border: 1px solid var(--teal-light);
+      border-radius: 20px; padding: 2px 10px;
+      font-size: .75rem; font-weight: 600; color: var(--teal);
+      cursor: pointer; margin-left: 6px; transition: background .15s;
+    }
+    .flagged-quick-chip:hover { background: var(--blue-100); }
+
+    /* Sections checklist */
+    .sections-list { display: flex; flex-direction: column; gap: 8px; }
+    .section-option {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 14px; border: 2px solid var(--gray-300);
+      border-radius: var(--radius); cursor: pointer;
+      transition: border-color .15s, background .15s; background: #fff;
+    }
+    .section-option:hover { border-color: var(--teal-light); background: rgba(0,150,184,.03); }
+    .section-option.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.04); }
+    .section-option input[type="checkbox"] { display: none; }
+    .section-checkbox {
+      width: 18px; height: 18px; border-radius: 3px; border: 2px solid var(--gray-400);
+      flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, border-color .15s;
+    }
+    .section-option.selected .section-checkbox { background: var(--blue-dark); border-color: var(--blue-dark); }
+    .section-option.selected .section-checkbox::after { content: ''; display: block; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }
+    .section-meta { flex: 1; min-width: 0; }
+    .section-name { font-size: .9375rem; font-weight: 600; color: var(--text-87); display: flex; align-items: center; gap: 6px; }
+    .section-desc { font-size: .75rem; color: var(--text-54); margin-top: 2px; line-height: 1.4; }
+    .section-badge {
+      display: inline-flex; align-items: center; padding: 1px 6px;
+      border-radius: 10px; font-size: .625rem; font-weight: 700;
+      letter-spacing: .4px; text-transform: uppercase;
+    }
+    .section-badge.core { background: var(--green-100); color: #0d7d23; }
+    .section-badge.recommended { background: var(--blue-100); color: var(--blue-dark); }
+
+    /* Select-all bar */
+    .sections-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .sections-select-all {
+      background: none; border: none; color: var(--teal); font-family: var(--font);
+      font-size: .8125rem; font-weight: 600; cursor: pointer; padding: 0;
+    }
+    .sections-count { font-size: .8125rem; color: var(--text-54); }
+
+    /* Step 3 — review */
+    .review-card {
+      background: var(--gray-100); border: 1px solid var(--gray-300);
+      border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
+    }
+    .review-label { font-size: .6875rem; font-weight: 700; color: var(--text-54); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .review-value { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    .review-pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .review-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #fff; border: 1px solid var(--gray-300);
+      border-radius: 20px; padding: 4px 10px;
+      font-size: .8125rem; font-weight: 500; color: var(--text-87);
+    }
+    .review-pill .material-icons-outlined { font-size: 14px; color: var(--teal); }
+    .review-divider { border: none; border-top: 1px solid var(--gray-300); margin: 12px 0; }
+    .review-format-row { display: flex; gap: 8px; margin-top: 6px; }
+    .format-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border: 2px solid var(--gray-300);
+      border-radius: var(--radius); font-size: .875rem; font-weight: 600;
+      color: var(--text-87); cursor: pointer; transition: border-color .15s, background .15s;
+      background: #fff;
+    }
+    .format-chip.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.05); color: var(--blue-dark); }
+    .format-chip .material-icons-outlined { font-size: 18px; }
+    .review-meta-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; font-size: .8125rem; color: var(--text-54); }
+    .review-meta-row .material-icons-outlined { font-size: 14px; }
+
+    /* Generating state */
+    .generating-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 24px; text-align: center; }
+    .generating-icon-wrap {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--blue-100); display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .generating-icon-wrap .material-icons-outlined { font-size: 28px; color: var(--blue-dark); }
+    .generating-title { font-size: 1.125rem; font-weight: 700; color: var(--text-87); margin-bottom: 6px; }
+    .generating-sub { font-size: .875rem; color: var(--text-54); margin-bottom: 24px; }
+    .generating-progress-track {
+      width: 100%; height: 4px; background: var(--gray-300);
+      border-radius: 2px; overflow: hidden; margin-bottom: 10px;
+    }
+    .generating-progress-bar {
+      height: 100%; background: #d4226e;
+      border-radius: 2px; width: 0%;
+      transition: width .4s ease;
+    }
+    .generating-progress-label { font-size: .75rem; color: var(--text-54); min-height: 18px; }
+
+    /* Done state */
+    .done-state { display: flex; flex-direction: column; align-items: center; padding: 40px 24px; text-align: center; }
+    .done-icon-wrap {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--green-100); display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .done-icon-wrap .material-icons { font-size: 28px; color: var(--green); }
+    .done-title { font-size: 1.125rem; font-weight: 700; color: var(--text-87); margin-bottom: 6px; }
+    .done-sub { font-size: .875rem; color: var(--text-54); margin-bottom: 24px; max-width: 360px; }
+    .done-file-preview {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--gray-100); border: 1px solid var(--gray-300);
+      border-radius: var(--radius); padding: 12px 16px; width: 100%; max-width: 420px;
+      margin-bottom: 20px; text-align: left;
+    }
+    .done-file-icon { font-size: 32px; color: var(--blue-dark); flex-shrink: 0; }
+    .done-file-name { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    .done-file-meta { font-size: .75rem; color: var(--text-54); margin-top: 2px; }
+    .done-actions { display: flex; gap: 8px; }
+
+    /* Dialog footer */
+    .wizard-footer {
+      padding: 14px 24px;
+      border-top: 1px solid var(--gray-300);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; background: #fff;
+    }
+    .wizard-footer-left { display: flex; align-items: center; gap: 8px; }
+    .wizard-footer-right { display: flex; align-items: center; gap: 8px; }
+    .btn-ghost {
+      background: none; border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 8px 16px; font-family: var(--font); font-size: .875rem; font-weight: 600;
+      color: var(--text-87); cursor: pointer; transition: background .15s, border-color .15s;
+    }
+    .btn-ghost:hover { background: var(--gray-100); border-color: var(--gray-400); }
+    /* Primary = pink/magenta */
+    .btn-primary {
+      background: #d4226e; color: #fff; border: none; border-radius: var(--radius);
+      padding: 8px 18px; font-family: var(--font); font-size: .875rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { background: #b81d5e; }
+    .btn-primary:active { background: #9c1950; }
+    .btn-primary:disabled { background: #f0a8c8; cursor: not-allowed; }
+    .btn-primary .material-icons-outlined { font-size: 16px; }
+    /* Secondary = teal filled (reuses btn-teal) */
+    .btn-teal, .btn-secondary {
+      background: var(--teal); color: #fff; border: none; border-radius: var(--radius);
+      padding: 8px 18px; font-family: var(--font); font-size: .875rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-teal:hover, .btn-secondary:hover { background: var(--teal-dark); }
+    .btn-teal .material-icons-outlined,
+    .btn-secondary .material-icons-outlined { font-size: 16px; }
+    .btn-back {
+      background: none; border: none; color: var(--gray-600);
+      font-family: var(--font); font-size: .875rem; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px; padding: 8px 0;
+    }
+    .btn-back .material-icons { font-size: 18px; }
+    .btn-back:hover { color: var(--text-87); }
+
+    /* Spinner for generating */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 32px; height: 32px; border: 3px solid var(--gray-300);
+      border-top-color: #d4226e; border-radius: 50%;
+      animation: spin .8s linear infinite; margin-bottom: 16px;
+    }
+
+    /* ════════════════════════════════════════════════════════
+       PDF VIEWER OVERLAY
+       ════════════════════════════════════════════════════════ */
+    .pdf-viewer-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      display: flex; flex-direction: column;
+      background: #404040;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s ease;
+    }
+    .pdf-viewer-overlay.open { opacity: 1; pointer-events: all; }
+
+    /* Toolbar */
+    .pdf-toolbar {
+      height: 48px; background: #323639; border-bottom: 1px solid #1a1a1a;
+      display: flex; align-items: center; padding: 0 8px;
+      flex-shrink: 0; gap: 8px; z-index: 10;
+    }
+    .pdf-toolbar-left { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+    .pdf-toolbar-center { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .pdf-toolbar-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .pdf-tool-btn {
+      background: none; border: none; cursor: pointer; padding: 6px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 3px; transition: background .12s; color: #d0d0d0;
+    }
+    .pdf-tool-btn:hover { background: rgba(255,255,255,.12); }
+    .pdf-tool-btn .material-icons { font-size: 20px; }
+    .pdf-filename-wrap {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.08); border-radius: 3px;
+      padding: 4px 10px; min-width: 0;
+    }
+    .pdf-filename {
+      font-size: .8125rem; color: #e0e0e0; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; max-width: 280px;
+    }
+    .pdf-page-indicator {
+      display: flex; align-items: center; gap: 4px;
+      font-size: .8125rem; color: #d0d0d0;
+    }
+    .pdf-page-input {
+      width: 36px; text-align: center; background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2); border-radius: 3px;
+      color: #e0e0e0; font-size: .8125rem; padding: 3px 4px; outline: none;
+      font-family: var(--font);
+    }
+    .pdf-page-input:focus { border-color: rgba(255,255,255,.5); }
+    .pdf-page-sep { color: #999; }
+    .pdf-zoom-label { font-size: .8125rem; color: #d0d0d0; min-width: 38px; text-align: center; }
+    .pdf-divider { width: 1px; height: 24px; background: rgba(255,255,255,.15); margin: 0 4px; }
+
+    /* Viewport */
+    .pdf-viewport {
+      flex: 1; overflow: auto; display: flex;
+      justify-content: center; padding: 24px 16px;
+      background: #525659;
+    }
+    .pdf-page-wrap { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+
+    /* Page */
+    .pdf-page {
+      background: #fff;
+      width: 760px;
+      min-height: 984px; /* US Letter ~8.5:11 at 96dpi ≈ 816x1056 but trimmed a bit */
+      box-shadow: 0 2px 12px rgba(0,0,0,.35);
+      position: relative;
+      font-family: var(--font);
+      font-size: 13px;
+      color: #222;
+      line-height: 1.45;
+      display: flex; flex-direction: column;
+      transform-origin: top center;
+      transition: transform .2s ease;
+    }
+
+    /* ── COVER PAGE ── */
+    .pdf-cover {
+      display: flex; flex-direction: column;
+      padding: 56px 60px 40px;
+      flex: 1;
+    }
+    .pdf-cover-logo { margin-bottom: 32px; }
+    .pdf-cover-accent-bar {
+      height: 4px; width: 100%;
+      background: linear-gradient(90deg, var(--blue-dark) 0%, var(--teal) 100%);
+      margin-bottom: 40px; border-radius: 2px;
+    }
+    .pdf-cover-doc-type {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--teal);
+      margin-bottom: 12px;
+    }
+    .pdf-cover-name {
+      font-size: 32px; font-weight: 800; color: var(--blue-darker);
+      line-height: 1.15; margin-bottom: 6px;
+    }
+    .pdf-cover-role {
+      font-size: 15px; color: var(--gray-600); margin-bottom: 4px;
+    }
+    .pdf-cover-org {
+      font-size: 13px; color: var(--gray-400); margin-bottom: 36px;
+    }
+    .pdf-cover-meta-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; border: 1px solid var(--gray-300); border-radius: 4px;
+      overflow: hidden; margin-bottom: 32px;
+    }
+    .pdf-cover-meta-item {
+      padding: 12px 16px; border-bottom: 1px solid var(--gray-300);
+      border-right: 1px solid var(--gray-300);
+    }
+    .pdf-cover-meta-item:nth-child(even) { border-right: none; }
+    .pdf-cover-meta-item:nth-last-child(-n+2) { border-bottom: none; }
+    .pdf-cover-meta-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .6px; color: var(--gray-400); margin-bottom: 3px;
+    }
+    .pdf-cover-meta-value { font-size: 13px; font-weight: 600; color: #222; }
+    .pdf-mono { font-family: 'Courier New', monospace; font-size: 12px; }
+
+    /* TOC */
+    .pdf-cover-toc {
+      border: 1px solid var(--gray-300); border-radius: 4px;
+      padding: 16px 20px; margin-bottom: auto;
+    }
+    .pdf-cover-toc-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .6px; color: var(--gray-400); margin-bottom: 10px;
+    }
+    .pdf-cover-toc-row {
+      display: flex; align-items: baseline; gap: 6px;
+      font-size: 13px; padding: 5px 0; border-bottom: 1px solid var(--gray-200);
+      color: #333;
+    }
+    .pdf-cover-toc-row:last-child { border-bottom: none; }
+    .pdf-toc-num { font-weight: 700; color: var(--teal); min-width: 16px; }
+    .pdf-toc-dots { flex: 1; border-bottom: 1px dotted var(--gray-300); margin: 0 4px 3px; }
+    .pdf-toc-pg { font-weight: 600; color: var(--gray-400); min-width: 14px; text-align: right; }
+    .pdf-cover-footer {
+      display: flex; justify-content: space-between;
+      padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--gray-200);
+      font-size: 10px; color: var(--gray-400);
+    }
+
+    /* ── INNER PAGES ── */
+    .pdf-page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px 14px; border-bottom: 2px solid var(--blue-darker);
+      flex-shrink: 0;
+    }
+    .pdf-page-header-left { display: flex; align-items: center; gap: 10px; }
+    .pdf-page-section-num {
+      background: var(--blue-darker); color: #fff;
+      width: 22px; height: 22px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; flex-shrink: 0;
+    }
+    .pdf-page-section-title { font-size: 15px; font-weight: 700; color: var(--blue-darker); }
+    .pdf-page-header-right { font-size: 11px; color: var(--gray-400); }
+    .pdf-section-body { padding: 20px 40px; flex: 1; }
+    .pdf-page-footer {
+      display: flex; justify-content: space-between;
+      padding: 10px 40px; border-top: 1px solid var(--gray-200);
+      font-size: 10px; color: var(--gray-400); flex-shrink: 0;
+    }
+
+    /* Risk summary */
+    .pdf-risk-score-row { display: flex; gap: 12px; margin-bottom: 18px; }
+    .pdf-score-block {
+      flex: 1; padding: 14px 16px; border-radius: 4px; border: 1px solid;
+    }
+    .pdf-score-block.red { background: #fff5f4; border-color: #f9c9c5; }
+    .pdf-score-block.yellow { background: #fffbea; border-color: #f5e6a0; }
+    .pdf-score-block.neutral { background: var(--gray-100); border-color: var(--gray-300); }
+    .pdf-score-value { font-size: 24px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+    .pdf-score-block.red .pdf-score-value { color: var(--red); }
+    .pdf-score-block.yellow .pdf-score-value { color: #a07a00; }
+    .pdf-score-block.neutral .pdf-score-value { color: var(--blue-dark); }
+    .pdf-score-label { font-size: 11px; font-weight: 700; color: #333; }
+    .pdf-score-range { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+
+    .pdf-narrative-box {
+      background: var(--gray-100); border-left: 3px solid var(--blue-dark);
+      padding: 14px 16px; border-radius: 0 4px 4px 0; margin-bottom: 16px;
+    }
+    .pdf-narrative-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-400); margin-bottom: 6px; }
+    .pdf-narrative-text { font-size: 12.5px; color: #333; line-height: 1.55; }
+
+    .pdf-flag-summary-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pdf-flag-item {
+      display: flex; flex-direction: column; align-items: flex-start;
+      padding: 10px 14px; border-radius: 4px; border: 1px solid; min-width: 120px; flex: 1;
+    }
+    .pdf-flag-item.red { background: #fff5f4; border-color: #f9c9c5; }
+    .pdf-flag-item.yellow { background: #fffbea; border-color: #f5e6a0; }
+    .pdf-flag-metric { font-size: 11px; font-weight: 600; color: #333; margin-bottom: 4px; }
+    .pdf-flag-score { font-size: 18px; font-weight: 800; line-height: 1; }
+    .pdf-flag-item.red .pdf-flag-score { color: var(--red); }
+    .pdf-flag-item.yellow .pdf-flag-score { color: #a07a00; }
+    .pdf-flag-tier { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+
+    /* Metric breakdown */
+    .pdf-metric-category-label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .7px;
+      color: var(--gray-400); margin-bottom: 8px; padding-bottom: 4px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .pdf-metric-row {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+    }
+    .pdf-metric-badge {
+      width: 36px; height: 24px; border-radius: 3px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+    }
+    .red-bg { background: var(--red); }
+    .yellow-bg { background: var(--yellow); color: var(--text-87) !important; }
+    .green-bg { background: var(--green); }
+    .pdf-metric-name { font-size: 13px; font-weight: 700; color: #222; margin-bottom: 3px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .pdf-metric-desc { font-size: 11.5px; color: #555; line-height: 1.45; }
+
+    .red-tag { background: #fcd9d7; color: #b92a1e; }
+    .yellow-tag { background: var(--yellow-100); color: #8a6c00; }
+    .green-tag { background: var(--green-100); color: #0d7d23; }
+    .gray-tag { background: var(--gray-200); color: var(--gray-600); }
+    .orange-tag { background: #fff0dc; color: #a85b00; }
+    .pdf-score-legend {
+      display: flex; gap: 12px; padding: 10px 40px;
+      border-top: 1px solid var(--gray-200); font-size: 10px; font-weight: 600;
+    }
+    .pdf-legend-item { padding: 2px 8px; border-radius: 10px; }
+
+    /* Evidence table */
+    .pdf-evidence-note {
+      font-size: 11px; color: var(--gray-600); margin-bottom: 12px;
+      padding: 7px 10px; background: var(--blue-100); border-radius: 3px;
+      border-left: 3px solid var(--teal);
+    }
+    .pdf-table {
+      width: 100%; border-collapse: collapse; font-size: 11.5px;
+    }
+    .pdf-table th {
+      background: var(--blue-darker); color: #fff;
+      padding: 7px 10px; text-align: left; font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .4px;
+    }
+    .pdf-table td { padding: 7px 10px; border-bottom: 1px solid var(--gray-200); vertical-align: top; }
+    .pdf-table tr:last-child td { border-bottom: none; }
+    .pdf-table tr.pdf-row-flag td { background: #fffbf9; }
+    .pdf-ev-tag {
+      display: inline-flex; padding: 1px 6px; border-radius: 10px;
+      font-size: 9px; font-weight: 700; margin-right: 3px; white-space: nowrap;
+    }
+    .pdf-table-sm td, .pdf-table-sm th { padding: 5px 10px; }
+
+    /* Timeline */
+    .pdf-timeline { display: flex; flex-direction: column; gap: 0; }
+    .pdf-tl-group { margin-bottom: 12px; }
+    .pdf-tl-date {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .5px; color: var(--blue-dark);
+      padding: 4px 0 6px; border-bottom: 1px solid var(--gray-200); margin-bottom: 6px;
+    }
+    .pdf-tl-event {
+      display: flex; gap: 10px; align-items: flex-start; padding: 6px 8px;
+      border-radius: 3px; margin-bottom: 3px;
+    }
+    .pdf-tl-event.flag { background: #fff8f7; }
+    .pdf-tl-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px;
+    }
+    .red-dot { background: var(--red); }
+    .yellow-dot { background: var(--yellow); border: 1px solid #c8a200; }
+    .gray-dot { background: var(--gray-400); }
+    .pdf-tl-content { flex: 1; }
+    .pdf-tl-time { font-size: 10px; font-weight: 700; color: var(--gray-400); margin-bottom: 2px; font-family: 'Courier New', monospace; }
+    .pdf-tl-desc { font-size: 11.5px; color: #333; margin-bottom: 4px; }
+    .pdf-tl-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+
+    /* IRIS History */
+    .pdf-history-chart-wrap { margin-bottom: 16px; }
+    .pdf-history-chart-title { font-size: 12px; font-weight: 700; color: #333; margin-bottom: 8px; }
+    .pdf-history-svg { width: 100%; height: auto; display: block; max-height: 200px; }
+    .pdf-history-legend { display: flex; gap: 16px; font-size: 10.5px; color: #555; margin-top: 8px; flex-wrap: wrap; }
+    .pdf-legend-bar-row { display: flex; align-items: center; gap: 5px; }
+    .pdf-lb { display: inline-block; width: 16px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .red-swatch { background: var(--red); opacity: .75; }
+    .yellow-swatch { background: var(--yellow); opacity: .9; }
+    .green-swatch { background: var(--green); opacity: .75; }
+    .pdf-history-table-title { font-size: 11px; font-weight: 700; color: #333; margin-bottom: 6px; }
+
+    /* Traceability box */
+    .pdf-traceability-box {
+      border: 1px solid var(--gray-300); border-radius: 4px;
+      padding: 12px 16px; margin-top: 16px; background: var(--gray-50);
+    }
+    .pdf-trace-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-400); margin-bottom: 8px; }
+    .pdf-trace-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; font-size: 11.5px; }
+    .pdf-trace-key { font-weight: 700; color: #444; margin-right: 6px; }
+  </style>
+</head>
+<body class="mat-typography">
+
+<app-component class="flex-col-100">
+<div class="app-container flex-col-100">
+
+  <!-- ── navigation ──────────────────────────────────────── -->
+  <navigation>
+    <header>
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+        <a class="nav-link" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <g id="ControlCheck_Logo_Color">
+              <path fill="#54c8e7" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path fill="#54c8e7" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path fill="#54c8e7" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path fill="#54c8e7" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path fill="#54c8e7" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path fill="#54c8e7" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path fill="#54c8e7" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path fill="#004e7d" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path fill="#004e7d" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path fill="#004e7d" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path fill="#004e7d" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path fill="#004e7d" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path fill="#004e7d" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path fill="#54c8e7" fill-rule="evenodd" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path fill="#54c8e7" fill-rule="evenodd" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path fill="#004e7d" fill-rule="evenodd" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+            </g>
+          </svg>
+        </a>
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed"><span class="mdc-button__label">Audit</span></button>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed active"><span class="mdc-button__label">Analyze</span></button>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed"><span class="mdc-button__label">Cases</span></button>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed"><span class="mdc-button__label">Report</span></button>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed"><span class="mdc-button__label">Upload</span></button>
+            <button class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed"><span class="mdc-button__label">Manage</span></button>
+          </div>
+        </nav-menu>
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Jon Reischl</div>
+                  <div class="header-customer-hospitalName">[933934024] QA Eastwood Regional Hospital</div>
+                </div>
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">JR</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button help-resources-icon mat-primary">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ── #app-view ─────────────────────────────────────────── -->
+  <div id="app-view">
+    <router-outlet></router-outlet>
+
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── Analyze sidebar ──────────────────────────── -->
+      <mat-drawer id="analyze-drawer" class="mat-drawer">
+        <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" aria-label="Toggle sidebar">
+          <mat-icon class="mat-icon material-icons" aria-hidden="true">chevron_left</mat-icon>
+        </button>
+        <div class="mat-drawer-inner-container">
+          <mat-accordion class="navigation-accordion mat-accordion">
+            <mat-expansion-panel class="mat-expansion-panel">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Health System</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert=""><div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body"></div></div></div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-expanded" style="height: 45px;" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Nursing</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <mat-nav-list class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">dns</mat-icon><span>IRIS Worklist</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">timeline</mat-icon><span>Variance Trends</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">grid_view</mat-icon><span>Dispense Patterns</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">query_stats</mat-icon><span>Med Trends</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">schedule</mat-icon><span>Action Times</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">directions_walk</mat-icon><span>User Mobility</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><mat-icon class="mat-icon material-icons">hub</mat-icon><span>Waste Networks</span></span></span></a>
+                  </mat-nav-list>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <mat-drawer-content class="mat-drawer-content">
+        <div class="page-content with-detail-panel">
+          <div class="page-header">
+            <h2>IRIS Worklist</h2>
+            <div class="page-header-controls">
+              <button class="clear-btn">CLEAR ALL</button>
+              <button class="filter-btn date-btn">02/18/2026 – 03/20/2026 <span class="material-icons">expand_more</span></button>
+              <button class="filter-btn">Department <span class="material-icons">expand_more</span></button>
+              <button class="filter-btn">User <span class="material-icons">expand_more</span></button>
+            </div>
+          </div>
+          <div class="count-cards-row">
+            <mat-card class="iris-count-card"><div class="count-value">3651</div><div class="count-label">All Users</div></mat-card>
+            <mat-card class="iris-count-card active"><div class="count-value">9</div><div class="count-label">Needs Review</div></mat-card>
+          </div>
+          <div class="sort-bar">
+            <div class="sort-bar-left">
+              <button class="sort-chip">Sort By: Flagged IRIS Score <span class="material-icons">expand_more</span></button>
+              <span class="sort-divider">|</span>
+              <button class="sort-chip">Sort By Metric Score: Overall Score <span class="material-icons">expand_more</span></button>
+            </div>
+          </div>
+          <div class="iris-worklist-list">
+            <mat-card class="iris-worklist-card selected">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">6.4</div></user-score>
+                  <user-score><div class="user-score lrg mat-warning">3.1</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">Marlena Cosgrove <span class="badge needs-review">Needs Review</span></div>
+                    <div class="provider-info--role">RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Medical-Surgical Unit</div>
+                  </div>
+                </div>
+              </user-info>
+            </mat-card>
+            <mat-card class="iris-worklist-card">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">5.2</div></user-score>
+                  <user-score><div class="user-score lrg mat-danger">5.1</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">Mary Vaillancourt <span class="badge needs-review">Needs Review</span></div>
+                    <div class="provider-info--role">RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Operating Room</div>
+                  </div>
+                </div>
+              </user-info>
+            </mat-card>
+            <mat-card class="iris-worklist-card">
+              <user-info>
+                <div class="user-info">
+                  <user-score><div class="user-score badge-style lrg mat-danger">5.1</div></user-score>
+                  <user-score><div class="user-score lrg mat-warning">4.4</div></user-score>
+                  <div class="provider-info">
+                    <div class="provider-info--name">Erin Ashley <span class="badge needs-review">Needs Review</span></div>
+                    <div class="provider-info--role">RN <mat-icon class="mat-icon mat-icon-xs material-icons">fiber_manual_record</mat-icon> Operating Room</div>
+                  </div>
+                </div>
+              </user-info>
+            </mat-card>
+          </div>
+        </div>
+      </mat-drawer-content>
+    </mat-drawer-container>
+
+    <!-- ════════════════════════════════════════════════════════
+         USER DETAIL PANEL
+         ════════════════════════════════════════════════════════ -->
+    <div class="udp-backdrop"></div>
+    <aside class="user-detail-panel" id="userDetailPanel">
+      <div class="udp-header">
+        <div class="udp-name-block">
+          <div class="udp-name">
+            Marlena Cosgrove
+            <span class="material-icons-outlined" title="Open in new tab">open_in_new</span>
+          </div>
+          <div class="udp-role">RN &middot; Medical-Surgical Unit</div>
+        </div>
+        <button class="udp-status-select">NEEDS REVIEW <span class="material-icons">expand_more</span></button>
+        <!-- Generate Packet button -->
+        <button class="generate-packet-btn" onclick="openWizard()" title="Generate Investigation Packet">
+          <span class="material-icons-outlined">folder_special</span>
+          Generate Packet
+        </button>
+        <button class="udp-action-btn udp-close" title="Close"><span class="material-icons">close</span></button>
+      </div>
+
+      <div class="udp-tabs">
+        <button class="udp-tab active">IRIS</button>
+        <button class="udp-tab">Custom IRIS</button>
+        <button class="udp-tab">Reviews &amp; Cases <span class="case-dot">1</span></button>
+        <button class="udp-tab">Documentation</button>
+      </div>
+
+      <div class="udp-body">
+
+        <div class="udp-iris-summary">
+          <div class="iris-summary-item">
+            <div class="iris-summary-score badge-style mat-danger">6.4</div>
+            <div class="iris-summary-meta">
+              <div class="iris-summary-meta-label">Flagged IRIS</div>
+              <div class="iris-summary-meta-range">For Jan 31, 2026 – Mar 2, 2026</div>
+            </div>
+          </div>
+          <div class="iris-summary-item">
+            <div class="iris-summary-score mat-warning">3.1</div>
+            <div class="iris-summary-meta">
+              <div class="iris-summary-meta-label">Current IRIS</div>
+              <div class="iris-summary-meta-range">For Apr 16, 2026 – May 16, 2026</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="udp-section-title">6 Month IRIS &amp; Activity History</div>
+
+        <div class="iris-chart-card">
+          <div class="iris-chart-header">
+            <div class="iris-chart-title">IRIS Score</div>
+            <div class="iris-chart-legend"><span class="legend-swatch"></span> Department Average</div>
+          </div>
+          <div class="iris-chart-canvas">
+            <div class="iris-chart-yaxis"><div>8</div><div>4</div><div>0</div></div>
+            <svg class="iris-chart-svg" viewBox="0 0 720 160" preserveAspectRatio="none" id="iris-chart">
+              <line x1="0" y1="158" x2="720" y2="158" stroke="#e5e5e5" stroke-width="1" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="iris-chart-values" id="iris-chart-values"></div>
+            <div class="iris-chart-xaxis" id="iris-chart-xaxis"></div>
+          </div>
+          <div class="iris-disp-title">Average CS Dispenses Per Shift / Department Average</div>
+          <div class="iris-disp-row header"><div>NOV</div><div>DEC</div><div>JAN</div><div>FEB</div><div>MAR</div><div>APR</div></div>
+          <div class="iris-disp-row values"><div>2.1 / 2.6</div><div>1.4 / 2.8</div><div>5.8 / 2.6</div><div>6.3 / 2.3</div><div>4.2 / 2.4</div><div>3.4 / 2.2</div></div>
+        </div>
+
+        <div class="drsa-section-header">
+          <div class="udp-section-title" style="margin: 0;">Detailed Risk Score Analysis</div>
+          <div class="drsa-date-range">Flagged Date Range: 01/31/2026 – 03/02/2026 <span class="material-icons">expand_more</span></div>
+        </div>
+
+        <div id="drsa-cards" class="drsa-cards">
+
+          <div class="drsa-group" data-group="screening">
+            <div class="drsa-group-header">
+              <div class="drsa-group-title">Screening Metrics</div>
+            </div>
+            <div class="drsa-card">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-warning">1.9</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title">Med Trends</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has slightly unusual medication activity patterns.</div>
+                </div>
+              </div>
+            </div>
+            <div class="drsa-card">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-success">1.2</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title">Variance Trends</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has 3 variances.</div>
+                </div>
+              </div>
+            </div>
+            <div class="drsa-card">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-warning">2.4</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title">Full Package Waste</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has wasted 5 full packages.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="drsa-group" data-group="research">
+            <div class="drsa-group-header">
+              <div class="drsa-group-title">Research Metrics</div>
+            </div>
+            <div class="drsa-card">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-danger">4.7</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title">Action Times</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove logged 10 actions with time between events exceeding the threshold.</div>
+                  <div class="drsa-card-base-bullet">6 actions with first dispense and first admin for a patient &gt; 30 mins</div>
+                  <div class="drsa-card-base-bullet">4 actions with last admin and last waste for a patient &gt; 30 mins</div>
+                </div>
+              </div>
+            </div>
+            <div class="drsa-card">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-warning">2.4</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title">Canceled Transactions</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has 22 canceled transactions across departments.</div>
+                </div>
+              </div>
+            </div>
+            <div class="drsa-card">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-danger">6.5</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title">Overrides</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove has 47 overrides across departments.</div>
+                  <div class="drsa-card-base-bullet">Pharmacy: Overrode 47 of 94 total dispenses, with 47 overrides related to fentanyl Inj.</div>
+                </div>
+              </div>
+            </div>
+            <div class="drsa-card">
+              <div class="drsa-card-header">
+                <div class="metric-score-badge mat-success">1.3</div>
+                <div class="drsa-card-content">
+                  <div class="drsa-card-title">Waste Networks</div>
+                  <div class="drsa-card-base-summary">Marlena Cosgrove exhibits no unusual patterns when wasting medications.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /udp-body -->
+    </aside>
+
+  </div>
+
+  <footer>
+    Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help@bluesight.com">help@bluesight.com</a> • All Rights Reserved |
+    <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+  </footer>
+
+</div>
+</app-component>
+
+<!-- ════════════════════════════════════════════════════════
+     INVESTIGATION PACKET WIZARD
+     ════════════════════════════════════════════════════════ -->
+<div class="wizard-backdrop" id="wizardBackdrop" onclick="handleBackdropClick(event)">
+  <div class="wizard-dialog" id="wizardDialog" role="dialog" aria-modal="true" aria-labelledby="wizardTitle">
+
+    <!-- Header -->
+    <div class="wizard-header">
+      <div class="wizard-header-top">
+        <div>
+          <div class="wizard-title" id="wizardTitle">
+            <span class="material-icons-outlined">folder_special</span>
+            Generate Investigation Packet
+          </div>
+          <div class="wizard-subtitle">Marlena Cosgrove &nbsp;·&nbsp; RN, Medical-Surgical Unit</div>
+        </div>
+        <button class="wizard-close" onclick="closeWizard()" aria-label="Close">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <!-- Step indicator -->
+      <div class="wizard-steps" id="wizardSteps">
+        <div class="wizard-step-item active" data-step="1" id="step-indicator-1">
+          <span class="wizard-step-num">1</span>
+          Date Range
+        </div>
+        <div class="wizard-step-connector" id="step-conn-1"></div>
+        <div class="wizard-step-item" data-step="2" id="step-indicator-2">
+          <span class="wizard-step-num">2</span>
+          Sections
+        </div>
+        <div class="wizard-step-connector" id="step-conn-2"></div>
+        <div class="wizard-step-item" data-step="3" id="step-indicator-3">
+          <span class="wizard-step-num">3</span>
+          Review &amp; Generate
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="wizard-body">
+
+      <!-- ── STEP 1: Date Range ── -->
+      <div class="wizard-step-panel active" id="panel-step-1">
+
+        <div class="flagged-range-note">
+          <span class="material-icons-outlined">flag</span>
+          <span>Provider was flagged for <strong>Jan 31 – Mar 2, 2026</strong>.
+            <button class="flagged-quick-chip" onclick="selectFlaggedRange()">Use flagged range</button>
+          </span>
+        </div>
+
+        <div class="wizard-section-label">Select a date range</div>
+
+        <div class="date-range-grid">
+          <label class="date-range-option" onclick="selectDatePreset(this, 'last7')">
+            <input type="radio" name="datePreset" value="last7">
+            <div class="date-range-radio"></div>
+            <div>
+              <div class="date-range-label">Last 7 days</div>
+              <div class="date-range-sub">May 13 – May 20, 2026</div>
+            </div>
+          </label>
+          <label class="date-range-option" onclick="selectDatePreset(this, 'last30')">
+            <input type="radio" name="datePreset" value="last30">
+            <div class="date-range-radio"></div>
+            <div>
+              <div class="date-range-label">Last 30 days</div>
+              <div class="date-range-sub">Apr 20 – May 20, 2026</div>
+            </div>
+          </label>
+          <label class="date-range-option" onclick="selectDatePreset(this, 'last90')">
+            <input type="radio" name="datePreset" value="last90">
+            <div class="date-range-radio"></div>
+            <div>
+              <div class="date-range-label">Last 90 days</div>
+              <div class="date-range-sub">Feb 19 – May 20, 2026</div>
+            </div>
+          </label>
+          <label class="date-range-option selected" id="preset-flagged" onclick="selectDatePreset(this, 'flagged')">
+            <input type="radio" name="datePreset" value="flagged" checked>
+            <div class="date-range-radio"></div>
+            <div>
+              <div class="date-range-label">Flagged period</div>
+              <div class="date-range-sub">Jan 31 – Mar 2, 2026</div>
+            </div>
+          </label>
+        </div>
+
+        <label class="custom-date-row" id="preset-custom" onclick="selectDatePreset(this, 'custom')">
+          <input type="radio" name="datePreset" value="custom">
+          <div class="date-range-radio" style="flex-shrink:0;margin-top:0;"></div>
+          <div class="custom-date-inputs" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
+            <div class="custom-date-field">
+              <label>From</label>
+              <input type="date" id="customFrom" value="2026-01-31" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
+            </div>
+            <div class="custom-date-sep">–</div>
+            <div class="custom-date-field">
+              <label>To</label>
+              <input type="date" id="customTo" value="2026-03-02" onclick="event.stopPropagation(); selectDatePreset(document.getElementById('preset-custom'), 'custom')">
+            </div>
+          </div>
+          <div style="font-size:.9375rem;font-weight:600;color:var(--text-87);flex-shrink:0;margin-left:8px;">Custom range</div>
+        </label>
+
+      </div><!-- /panel-step-1 -->
+
+      <!-- ── STEP 2: Sections ── -->
+      <div class="wizard-step-panel" id="panel-step-2">
+
+        <div class="sections-toolbar">
+          <div class="wizard-section-label" style="margin-bottom:0;">Choose what to include</div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span class="sections-count" id="sectionsCount">5 of 7 selected</span>
+            <button class="sections-select-all" onclick="toggleSelectAll(this)">Deselect all</button>
+          </div>
+        </div>
+
+        <div class="sections-list">
+
+          <label class="section-option selected" onclick="toggleSection(this)">
+            <input type="checkbox" checked>
+            <div class="section-checkbox"></div>
+            <div class="section-meta">
+              <div class="section-name">
+                Risk Summary
+                <span class="section-badge core">Core</span>
+              </div>
+              <div class="section-desc">Overall IRIS score, flagged period, and high-level narrative explaining why this user was flagged.</div>
+            </div>
+          </label>
+
+          <label class="section-option selected" onclick="toggleSection(this)">
+            <input type="checkbox" checked>
+            <div class="section-checkbox"></div>
+            <div class="section-meta">
+              <div class="section-name">
+                Metric Score Breakdown
+                <span class="section-badge core">Core</span>
+              </div>
+              <div class="section-desc">All DRSA metric scores with explanations — screening and research metrics, including thresholds and comparisons.</div>
+            </div>
+          </label>
+
+          <label class="section-option selected" onclick="toggleSection(this)">
+            <input type="checkbox" checked>
+            <div class="section-checkbox"></div>
+            <div class="section-meta">
+              <div class="section-name">
+                Evidence Table
+                <span class="section-badge recommended">Recommended</span>
+              </div>
+              <div class="section-desc">Transaction-level events contributing to elevated risk scores, including medication, department, and timestamp details.</div>
+            </div>
+          </label>
+
+          <label class="section-option selected" onclick="toggleSection(this)">
+            <input type="checkbox" checked>
+            <div class="section-checkbox"></div>
+            <div class="section-meta">
+              <div class="section-name">
+                Activity Timeline
+                <span class="section-badge recommended">Recommended</span>
+              </div>
+              <div class="section-desc">Chronological view of key events during the selected period, surfacing patterns not apparent in aggregate metrics.</div>
+            </div>
+          </label>
+
+          <label class="section-option selected" onclick="toggleSection(this)">
+            <input type="checkbox" checked>
+            <div class="section-checkbox"></div>
+            <div class="section-meta">
+              <div class="section-name">IRIS Score History</div>
+              <div class="section-desc">6-month IRIS score trend chart and dispense activity data, showing context before and after the flagged period.</div>
+            </div>
+          </label>
+
+          <label class="section-option" onclick="toggleSection(this)">
+            <input type="checkbox">
+            <div class="section-checkbox"></div>
+            <div class="section-meta">
+              <div class="section-name">Analyst Notes</div>
+              <div class="section-desc">Any manually entered notes or comments associated with this user's reviews and cases.</div>
+            </div>
+          </label>
+
+          <label class="section-option" onclick="toggleSection(this)">
+            <input type="checkbox">
+            <div class="section-checkbox"></div>
+            <div class="section-meta">
+              <div class="section-name">Raw Data Appendix</div>
+              <div class="section-desc">Full transaction-level export for the selected period. Useful for audit defensibility and external data requests.</div>
+            </div>
+          </label>
+
+        </div>
+      </div><!-- /panel-step-2 -->
+
+      <!-- ── STEP 3: Review & Generate ── -->
+      <div class="wizard-step-panel" id="panel-step-3">
+
+        <div class="review-card">
+          <div class="review-label">Provider</div>
+          <div class="review-value">Marlena Cosgrove &nbsp;<span style="font-size:.8125rem;font-weight:400;color:var(--text-54);">RN · Medical-Surgical Unit</span></div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-label">Date Range</div>
+          <div class="review-value" id="reviewDateRange">Jan 31 – Mar 2, 2026</div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-label">Sections Included</div>
+          <div class="review-pill-row" id="reviewSections"></div>
+        </div>
+
+        <hr class="review-divider">
+
+        <div class="review-card">
+          <div class="review-label">Output Format</div>
+          <div class="review-format-row">
+            <div class="format-chip selected" id="fmt-pdf" onclick="selectFormat('pdf')">
+              <span class="material-icons-outlined">picture_as_pdf</span>
+              PDF
+            </div>
+            <div class="format-chip" id="fmt-docx" onclick="selectFormat('docx')">
+              <span class="material-icons-outlined">article</span>
+              Word (.docx)
+            </div>
+          </div>
+          <div class="review-meta-row" style="margin-top:10px;">
+            <span class="material-icons-outlined">lock_outline</span>
+            Packet metadata (generator, timestamp, data snapshot ID) will be stored for traceability.
+          </div>
+        </div>
+
+      </div><!-- /panel-step-3 -->
+
+      <!-- ── GENERATING STATE ── -->
+      <div class="wizard-step-panel" id="panel-generating">
+        <div class="generating-state">
+          <div class="spinner" id="genSpinner"></div>
+          <div class="generating-title">Building your packet…</div>
+          <div class="generating-sub" id="genSubText">Compiling risk summary and metric breakdowns</div>
+          <div class="generating-progress-track">
+            <div class="generating-progress-bar" id="genProgressBar"></div>
+          </div>
+          <div class="generating-progress-label" id="genProgressLabel">0%</div>
+        </div>
+      </div>
+
+      <!-- ── DONE STATE ── -->
+      <div class="wizard-step-panel" id="panel-done">
+        <div class="done-state">
+          <div class="done-icon-wrap">
+            <span class="material-icons">check</span>
+          </div>
+          <div class="done-title">Packet ready</div>
+          <div class="done-sub">The investigation packet for Marlena Cosgrove has been generated and is ready for download.</div>
+          <div class="done-file-preview">
+            <span class="material-icons done-file-icon">picture_as_pdf</span>
+            <div>
+              <div class="done-file-name" id="doneFileName">Investigation_Packet_Cosgrove_20260120.pdf</div>
+              <div class="done-file-meta" id="doneFileMeta">5 sections &nbsp;·&nbsp; Generated May 20, 2026 at 2:41 PM &nbsp;·&nbsp; by Jon Reischl</div>
+            </div>
+          </div>
+          <div class="done-actions">
+            <button class="btn-primary" onclick="openPdfViewer()">
+              <span class="material-icons-outlined">open_in_new</span>
+              Open
+            </button>
+            <button class="btn-teal" onclick="simulateDownload()">
+              <span class="material-icons-outlined">download</span>
+              Download
+            </button>
+            <button class="btn-ghost" onclick="closeWizard()">Close</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /wizard-body -->
+
+    <!-- Footer -->
+    <div class="wizard-footer" id="wizardFooter">
+      <div class="wizard-footer-left">
+        <button class="btn-back" id="btnBack" onclick="goBack()" style="visibility:hidden;">
+          <span class="material-icons">chevron_left</span> Back
+        </button>
+      </div>
+      <div class="wizard-footer-right">
+        <button class="btn-ghost" onclick="closeWizard()">Cancel</button>
+        <button class="btn-primary" id="btnNext" onclick="goNext()">
+          Next <span class="material-icons-outlined">chevron_right</span>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /wizard-dialog -->
+</div><!-- /wizard-backdrop -->
+
+<div class="app-toast" id="appToast"></div>
+
+<!-- ════════════════════════════════════════════════════════
+     PDF VIEWER OVERLAY
+     ════════════════════════════════════════════════════════ -->
+<div class="pdf-viewer-overlay" id="pdfViewerOverlay">
+
+  <!-- Browser chrome toolbar -->
+  <div class="pdf-toolbar">
+    <div class="pdf-toolbar-left">
+      <button class="pdf-tool-btn" onclick="closePdfViewer()" title="Close">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div class="pdf-filename-wrap">
+        <span class="material-icons" style="font-size:18px;color:#e05a4e;flex-shrink:0;">picture_as_pdf</span>
+        <span class="pdf-filename" id="pdfFilenameBar">Investigation_Packet_Cosgrove_20260131.pdf</span>
+      </div>
+    </div>
+    <div class="pdf-toolbar-center">
+      <button class="pdf-tool-btn" id="btnPrevPage" onclick="changePage(-1)" title="Previous page">
+        <span class="material-icons">navigate_before</span>
+      </button>
+      <span class="pdf-page-indicator">
+        <input class="pdf-page-input" id="pdfPageInput" type="number" min="1" value="1" onchange="jumpToPage(this.value)">
+        <span class="pdf-page-sep">/</span>
+        <span id="pdfTotalPages">6</span>
+      </span>
+      <button class="pdf-tool-btn" id="btnNextPage" onclick="changePage(1)" title="Next page">
+        <span class="material-icons">navigate_next</span>
+      </button>
+    </div>
+    <div class="pdf-toolbar-right">
+      <button class="pdf-tool-btn" onclick="changeZoom(-10)" title="Zoom out"><span class="material-icons">remove</span></button>
+      <span class="pdf-zoom-label" id="pdfZoomLabel">100%</span>
+      <button class="pdf-tool-btn" onclick="changeZoom(10)" title="Zoom in"><span class="material-icons">add</span></button>
+      <div class="pdf-divider"></div>
+      <button class="pdf-tool-btn" onclick="simulateDownload()" title="Download">
+        <span class="material-icons">download</span>
+      </button>
+      <button class="pdf-tool-btn" title="Print">
+        <span class="material-icons">print</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Page viewport -->
+  <div class="pdf-viewport" id="pdfViewport">
+    <div class="pdf-page-wrap" id="pdfPageWrap">
+
+      <!-- ══ PAGE 1: Cover ══ -->
+      <div class="pdf-page" id="pdf-page-1">
+        <div class="pdf-cover">
+          <div class="pdf-cover-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="28" width="240" alt="ControlCheck logo">
+              <g id="ControlCheck_Logo_Color">
+                <path fill="#54c8e7" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+                <path fill="#54c8e7" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+                <path fill="#54c8e7" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+                <path fill="#54c8e7" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+                <path fill="#54c8e7" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+                <path fill="#54c8e7" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+                <path fill="#54c8e7" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+                <path fill="#004e7d" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+                <path fill="#004e7d" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+                <path fill="#004e7d" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+                <path fill="#004e7d" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+                <path fill="#004e7d" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+                <path fill="#004e7d" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+                <path fill="#54c8e7" fill-rule="evenodd" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+                <path fill="#54c8e7" fill-rule="evenodd" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+                <path fill="#004e7d" fill-rule="evenodd" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+              </g>
+            </svg>
+          </div>
+          <div class="pdf-cover-accent-bar"></div>
+          <div class="pdf-cover-doc-type">INVESTIGATION PACKET</div>
+          <div class="pdf-cover-name">Marlena Cosgrove</div>
+          <div class="pdf-cover-role">Registered Nurse &nbsp;·&nbsp; Medical-Surgical Unit</div>
+          <div class="pdf-cover-org">QA Eastwood Regional Hospital &nbsp;·&nbsp; [933934024]</div>
+
+          <div class="pdf-cover-meta-grid">
+            <div class="pdf-cover-meta-item">
+              <div class="pdf-cover-meta-label">Date Range</div>
+              <div class="pdf-cover-meta-value">Jan 31, 2026 – Mar 2, 2026</div>
+            </div>
+            <div class="pdf-cover-meta-item">
+              <div class="pdf-cover-meta-label">Flagged IRIS Score</div>
+              <div class="pdf-cover-meta-value" style="color:#f24335;font-weight:800;">6.4 <span style="font-size:.75rem;font-weight:600;color:#727272;">(Red)</span></div>
+            </div>
+            <div class="pdf-cover-meta-item">
+              <div class="pdf-cover-meta-label">Generated By</div>
+              <div class="pdf-cover-meta-value">Jon Reischl</div>
+            </div>
+            <div class="pdf-cover-meta-item">
+              <div class="pdf-cover-meta-label">Generated On</div>
+              <div class="pdf-cover-meta-value">May 20, 2026 at 2:41 PM</div>
+            </div>
+            <div class="pdf-cover-meta-item">
+              <div class="pdf-cover-meta-label">Snapshot ID</div>
+              <div class="pdf-cover-meta-value pdf-mono">CC-PKT-2026-0520-4471</div>
+            </div>
+            <div class="pdf-cover-meta-item">
+              <div class="pdf-cover-meta-label">Sections Included</div>
+              <div class="pdf-cover-meta-value">5 of 7</div>
+            </div>
+          </div>
+
+          <div class="pdf-cover-toc">
+            <div class="pdf-cover-toc-title">Contents</div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">1</span><span>Risk Summary</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">2</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">2</span><span>Metric Score Breakdown</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">3</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">3</span><span>Evidence Table</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">4</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">4</span><span>Activity Timeline</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">5</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">5</span><span>IRIS Score History</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">6</span></div>
+          </div>
+
+          <div class="pdf-cover-footer">
+            <span>Confidential — For authorized investigative use only</span>
+            <span>Generated by ControlCheck · Bluesight, Inc.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE 2: Risk Summary ══ -->
+      <div class="pdf-page" id="pdf-page-2" style="display:none;">
+        <div class="pdf-page-header">
+          <div class="pdf-page-header-left">
+            <span class="pdf-page-section-num">1</span>
+            <span class="pdf-page-section-title">Risk Summary</span>
+          </div>
+          <div class="pdf-page-header-right">Marlena Cosgrove &nbsp;·&nbsp; Jan 31 – Mar 2, 2026</div>
+        </div>
+
+        <div class="pdf-section-body">
+
+          <div class="pdf-risk-score-row">
+            <div class="pdf-score-block red">
+              <div class="pdf-score-value">6.4</div>
+              <div class="pdf-score-label">Flagged IRIS Score</div>
+              <div class="pdf-score-range">Range: 4.6+ = Red</div>
+            </div>
+            <div class="pdf-score-block yellow">
+              <div class="pdf-score-value">3.1</div>
+              <div class="pdf-score-label">Current IRIS Score</div>
+              <div class="pdf-score-range">Range: 1.4–4.5 = Yellow</div>
+            </div>
+            <div class="pdf-score-block neutral">
+              <div class="pdf-score-value">0.9</div>
+              <div class="pdf-score-label">Dept. Avg (Flagged Period)</div>
+              <div class="pdf-score-range">Medical-Surgical Unit</div>
+            </div>
+          </div>
+
+          <div class="pdf-narrative-box">
+            <div class="pdf-narrative-label">Narrative Summary</div>
+            <div class="pdf-narrative-text">
+              Marlena Cosgrove was flagged during the period January 31 – March 2, 2026 with an IRIS score of <strong>6.4</strong>, placing her in the Red risk tier and significantly above the department average of 0.9 for the same period. Her score is primarily driven by two elevated research metrics: <strong>Overrides (6.5)</strong> and <strong>Action Times (4.7)</strong>.
+            </div>
+            <div class="pdf-narrative-text" style="margin-top:8px;">
+              The Overrides metric is most notable: Cosgrove overrode <strong>47 of 94 total dispenses</strong> in the Pharmacy department during this period, with all 47 overrides tied to fentanyl injections. This override rate (50%) is substantially outside normal threshold behavior and constitutes the primary driver of her flagged IRIS score.
+            </div>
+            <div class="pdf-narrative-text" style="margin-top:8px;">
+              Action Times analysis identified <strong>10 actions</strong> where timing between key events exceeded hospital thresholds — 6 involving dispense-to-admin gaps and 4 involving admin-to-waste gaps, both beyond the 30-minute threshold.
+            </div>
+          </div>
+
+          <div class="pdf-flag-summary-grid">
+            <div class="pdf-flag-item red">
+              <div class="pdf-flag-metric">Overrides</div>
+              <div class="pdf-flag-score">6.5</div>
+              <div class="pdf-flag-tier">Red</div>
+            </div>
+            <div class="pdf-flag-item red">
+              <div class="pdf-flag-metric">Action Times</div>
+              <div class="pdf-flag-score">4.7</div>
+              <div class="pdf-flag-tier">Red</div>
+            </div>
+            <div class="pdf-flag-item yellow">
+              <div class="pdf-flag-metric">Canceled Transactions</div>
+              <div class="pdf-flag-score">2.4</div>
+              <div class="pdf-flag-tier">Yellow</div>
+            </div>
+            <div class="pdf-flag-item yellow">
+              <div class="pdf-flag-metric">Full Package Waste</div>
+              <div class="pdf-flag-score">2.4</div>
+              <div class="pdf-flag-tier">Yellow</div>
+            </div>
+            <div class="pdf-flag-item yellow">
+              <div class="pdf-flag-metric">Med Trends</div>
+              <div class="pdf-flag-score">1.9</div>
+              <div class="pdf-flag-tier">Yellow</div>
+            </div>
+          </div>
+
+        </div>
+        <div class="pdf-page-footer">
+          <span>Confidential — Authorized investigative use only</span>
+          <span>Page 2 of 6</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE 3: Metric Score Breakdown ══ -->
+      <div class="pdf-page" id="pdf-page-3" style="display:none;">
+        <div class="pdf-page-header">
+          <div class="pdf-page-header-left">
+            <span class="pdf-page-section-num">2</span>
+            <span class="pdf-page-section-title">Metric Score Breakdown</span>
+          </div>
+          <div class="pdf-page-header-right">Marlena Cosgrove &nbsp;·&nbsp; Jan 31 – Mar 2, 2026</div>
+        </div>
+
+        <div class="pdf-section-body">
+
+          <div class="pdf-metric-category-label">Screening Metrics</div>
+
+          <div class="pdf-metric-row">
+            <div class="pdf-metric-badge yellow-bg">1.9</div>
+            <div class="pdf-metric-info">
+              <div class="pdf-metric-name">Med Trends</div>
+              <div class="pdf-metric-desc">Cosgrove has slightly unusual medication activity patterns during this period. CS dispenses per shift averaged above the department trend in January and February.</div>
+            </div>
+          </div>
+
+          <div class="pdf-metric-row">
+            <div class="pdf-metric-badge green-bg">1.2</div>
+            <div class="pdf-metric-info">
+              <div class="pdf-metric-name">Variance Trends</div>
+              <div class="pdf-metric-desc">3 variances recorded during this period. No unusual variance pattern detected relative to department baseline.</div>
+            </div>
+          </div>
+
+          <div class="pdf-metric-row">
+            <div class="pdf-metric-badge yellow-bg">2.4</div>
+            <div class="pdf-metric-info">
+              <div class="pdf-metric-name">Full Package Waste</div>
+              <div class="pdf-metric-desc">5 full packages wasted during the flagged period. Rate is moderately elevated compared to peer group median.</div>
+            </div>
+          </div>
+
+          <div class="pdf-metric-category-label" style="margin-top:16px;">Research Metrics</div>
+
+          <div class="pdf-metric-row">
+            <div class="pdf-metric-badge red-bg">4.7</div>
+            <div class="pdf-metric-info">
+              <div class="pdf-metric-name">Action Times</div>
+              <div class="pdf-metric-desc">10 actions flagged for exceeding the 30-minute hospital threshold. 6 dispense-to-admin gaps; 4 admin-to-waste gaps. These gaps may indicate delayed administration or potential diversion windows.</div>
+            </div>
+          </div>
+
+          <div class="pdf-metric-row">
+            <div class="pdf-metric-badge yellow-bg">2.4</div>
+            <div class="pdf-metric-info">
+              <div class="pdf-metric-name">Canceled Transactions</div>
+              <div class="pdf-metric-desc">22 canceled transactions across departments. Medical-Surgical Unit: 20 of 651 dispenses canceled (3.1% rate, above dept. baseline of 1.4%).</div>
+            </div>
+          </div>
+
+          <div class="pdf-metric-row">
+            <div class="pdf-metric-badge red-bg">6.5</div>
+            <div class="pdf-metric-info">
+              <div class="pdf-metric-name">Overrides</div>
+              <div class="pdf-metric-desc">47 overrides out of 94 total dispenses in the Pharmacy department — a 50% override rate. All 47 overrides are associated with <strong>fentanyl Inj.</strong> This is the primary driver of the elevated IRIS score.</div>
+            </div>
+          </div>
+
+          <div class="pdf-metric-row">
+            <div class="pdf-metric-badge green-bg">1.3</div>
+            <div class="pdf-metric-info">
+              <div class="pdf-metric-name">Waste Networks</div>
+              <div class="pdf-metric-desc">No unusual waste witness patterns detected. Waste co-signers within expected network norms for this unit.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pdf-score-legend">
+          <span class="pdf-legend-item green-tag">Green: 0.0 – 1.3</span>
+          <span class="pdf-legend-item yellow-tag">Yellow: 1.4 – 4.5</span>
+          <span class="pdf-legend-item red-tag">Red: 4.6+</span>
+        </div>
+
+        <div class="pdf-page-footer">
+          <span>Confidential — Authorized investigative use only</span>
+          <span>Page 3 of 6</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE 4: Evidence Table ══ -->
+      <div class="pdf-page" id="pdf-page-4" style="display:none;">
+        <div class="pdf-page-header">
+          <div class="pdf-page-header-left">
+            <span class="pdf-page-section-num">3</span>
+            <span class="pdf-page-section-title">Evidence Table</span>
+          </div>
+          <div class="pdf-page-header-right">Marlena Cosgrove &nbsp;·&nbsp; Jan 31 – Mar 2, 2026</div>
+        </div>
+
+        <div class="pdf-section-body">
+          <div class="pdf-evidence-note">Showing 15 of 47 override events (fentanyl Inj., Pharmacy). Full export available in Raw Data Appendix.</div>
+
+          <table class="pdf-table">
+            <thead>
+              <tr>
+                <th>Date / Time</th>
+                <th>Medication</th>
+                <th>Event Type</th>
+                <th>Department</th>
+                <th>Patient ID</th>
+                <th>Flag</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">02/01/2026 07:14</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-8841</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr>
+                <td class="pdf-mono">02/01/2026 07:52</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-8841</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">02/03/2026 14:22</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override + Action Time</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-9203</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing</span></td>
+              </tr>
+              <tr>
+                <td class="pdf-mono">02/05/2026 09:01</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-7710</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">02/07/2026 21:48</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override + Action Time</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-9203</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing</span></td>
+              </tr>
+              <tr>
+                <td class="pdf-mono">02/10/2026 06:33</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-8120</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">02/12/2026 13:15</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Cancel + Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-8120</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag gray-tag">Cancel</span></td>
+              </tr>
+              <tr>
+                <td class="pdf-mono">02/14/2026 08:40</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-6645</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">02/17/2026 22:05</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override + Action Time</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-7710</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing</span></td>
+              </tr>
+              <tr>
+                <td class="pdf-mono">02/19/2026 11:28</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-9901</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">02/21/2026 07:02</td>
+                <td>Hydromorphone 2mg/mL</td>
+                <td>Full Package Waste</td>
+                <td>Med-Surg Unit</td>
+                <td class="pdf-mono">PT-8841</td>
+                <td><span class="pdf-ev-tag yellow-tag">Full Pkg</span></td>
+              </tr>
+              <tr>
+                <td class="pdf-mono">02/22/2026 14:55</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-9203</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">02/25/2026 20:17</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override + Action Time</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-6645</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing</span></td>
+              </tr>
+              <tr>
+                <td class="pdf-mono">02/27/2026 09:44</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-7710</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span></td>
+              </tr>
+              <tr class="pdf-row-flag">
+                <td class="pdf-mono">03/01/2026 05:58</td>
+                <td>Fentanyl Inj 100mcg/2mL</td>
+                <td>Override + Action Time</td>
+                <td>Pharmacy</td>
+                <td class="pdf-mono">PT-8120</td>
+                <td><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pdf-page-footer">
+          <span>Confidential — Authorized investigative use only</span>
+          <span>Page 4 of 6</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE 5: Activity Timeline ══ -->
+      <div class="pdf-page" id="pdf-page-5" style="display:none;">
+        <div class="pdf-page-header">
+          <div class="pdf-page-header-left">
+            <span class="pdf-page-section-num">4</span>
+            <span class="pdf-page-section-title">Activity Timeline</span>
+          </div>
+          <div class="pdf-page-header-right">Marlena Cosgrove &nbsp;·&nbsp; Jan 31 – Mar 2, 2026</div>
+        </div>
+
+        <div class="pdf-section-body">
+          <div class="pdf-evidence-note">Key events during flagged period, ordered chronologically. Highlighted rows indicate events contributing to elevated metric scores.</div>
+
+          <div class="pdf-timeline">
+
+            <div class="pdf-tl-group">
+              <div class="pdf-tl-date">February 1, 2026</div>
+              <div class="pdf-tl-event flag">
+                <div class="pdf-tl-dot red-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">07:14</div>
+                  <div class="pdf-tl-desc">Override dispense — Fentanyl Inj 100mcg/2mL, Pharmacy (PT-8841)</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag red-tag">Override</span></div>
+                </div>
+              </div>
+              <div class="pdf-tl-event flag">
+                <div class="pdf-tl-dot red-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">07:52</div>
+                  <div class="pdf-tl-desc">Override dispense — Fentanyl Inj 100mcg/2mL, Pharmacy (PT-8841) — 38 min after prior dispense for same patient</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing gap: 38m</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pdf-tl-group">
+              <div class="pdf-tl-date">February 3, 2026</div>
+              <div class="pdf-tl-event flag">
+                <div class="pdf-tl-dot red-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">14:22</div>
+                  <div class="pdf-tl-desc">Override dispense + action time flag — Fentanyl Inj 100mcg/2mL, Pharmacy (PT-9203). Dispense to admin gap: 44 minutes (threshold: 30 min)</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing gap: 44m</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pdf-tl-group">
+              <div class="pdf-tl-date">February 7, 2026</div>
+              <div class="pdf-tl-event flag">
+                <div class="pdf-tl-dot red-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">21:48</div>
+                  <div class="pdf-tl-desc">Override dispense — Fentanyl Inj 100mcg/2mL, Pharmacy (PT-9203). Night shift. Last admin to last waste gap: 52 minutes.</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing gap: 52m</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pdf-tl-group">
+              <div class="pdf-tl-date">February 12, 2026</div>
+              <div class="pdf-tl-event">
+                <div class="pdf-tl-dot gray-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">13:15</div>
+                  <div class="pdf-tl-desc">Canceled transaction + override — Fentanyl Inj 100mcg/2mL, Pharmacy (PT-8120). Transaction canceled, immediately re-dispensed via override.</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag gray-tag">Cancel</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pdf-tl-group">
+              <div class="pdf-tl-date">February 17, 2026</div>
+              <div class="pdf-tl-event flag">
+                <div class="pdf-tl-dot red-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">22:05</div>
+                  <div class="pdf-tl-desc">Override dispense — Fentanyl Inj 100mcg/2mL, Pharmacy (PT-7710). Night shift. Dispense-to-admin gap: 61 minutes. Highest recorded gap in period.</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing gap: 61m ↑ highest</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pdf-tl-group">
+              <div class="pdf-tl-date">February 21, 2026</div>
+              <div class="pdf-tl-event">
+                <div class="pdf-tl-dot yellow-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">07:02</div>
+                  <div class="pdf-tl-desc">Full package waste — Hydromorphone 2mg/mL, Med-Surgical Unit (PT-8841). Witnessed by T. Nguyen.</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag yellow-tag">Full Pkg Waste</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pdf-tl-group">
+              <div class="pdf-tl-date">March 1, 2026</div>
+              <div class="pdf-tl-event flag">
+                <div class="pdf-tl-dot red-dot"></div>
+                <div class="pdf-tl-content">
+                  <div class="pdf-tl-time">05:58</div>
+                  <div class="pdf-tl-desc">Override dispense + action time flag — Fentanyl Inj 100mcg/2mL, Pharmacy (PT-8120). Early morning. Last admin to last waste gap: 48 minutes.</div>
+                  <div class="pdf-tl-tags"><span class="pdf-ev-tag red-tag">Override</span> <span class="pdf-ev-tag orange-tag">Timing gap: 48m</span></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="pdf-page-footer">
+          <span>Confidential — Authorized investigative use only</span>
+          <span>Page 5 of 6</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE 6: IRIS Score History ══ -->
+      <div class="pdf-page" id="pdf-page-6" style="display:none;">
+        <div class="pdf-page-header">
+          <div class="pdf-page-header-left">
+            <span class="pdf-page-section-num">5</span>
+            <span class="pdf-page-section-title">IRIS Score History</span>
+          </div>
+          <div class="pdf-page-header-right">Marlena Cosgrove &nbsp;·&nbsp; 6-Month View</div>
+        </div>
+
+        <div class="pdf-section-body">
+
+          <div class="pdf-history-chart-wrap">
+            <div class="pdf-history-chart-title">Monthly IRIS Score vs. Department Average</div>
+            <svg viewBox="0 0 560 180" class="pdf-history-svg">
+              <!-- Grid lines -->
+              <line x1="0" y1="20" x2="560" y2="20" stroke="#e5e5e5" stroke-width="1"/>
+              <line x1="0" y1="65" x2="560" y2="65" stroke="#e5e5e5" stroke-width="1"/>
+              <line x1="0" y1="110" x2="560" y2="110" stroke="#e5e5e5" stroke-width="1"/>
+              <line x1="0" y1="155" x2="560" y2="155" stroke="#e5e5e5" stroke-width="1"/>
+              <!-- Y-axis labels -->
+              <text x="0" y="24" font-size="10" fill="#999">8</text>
+              <text x="0" y="69" font-size="10" fill="#999">4</text>
+              <text x="0" y="114" font-size="10" fill="#999">2</text>
+              <text x="0" y="159" font-size="10" fill="#999">0</text>
+              <!-- Bars (NOV=1.1, DEC=0.4, JAN=5.2, FEB=6.4, MAR=4.1, APR=3.1) scale: 155/8 = 19.375px per unit -->
+              <!-- NOV: 1.1 * 19.375 = 21.3 -->
+              <rect x="28" y="133.7" width="52" height="21.3" fill="#16b434" opacity=".75" rx="2"/>
+              <text x="54" y="128" font-size="10" font-weight="700" fill="#16b434" text-anchor="middle">1.1</text>
+              <!-- DEC: 0.4 * 19.375 = 7.8 -->
+              <rect x="108" y="147.2" width="52" height="7.8" fill="#16b434" opacity=".75" rx="2"/>
+              <text x="134" y="141" font-size="10" font-weight="700" fill="#16b434" text-anchor="middle">0.4</text>
+              <!-- JAN: 5.2 * 19.375 = 100.8 — yellow border to show flagged period start -->
+              <rect x="188" y="54.2" width="52" height="100.8" fill="#f24335" opacity=".7" rx="2"/>
+              <text x="214" y="49" font-size="10" font-weight="700" fill="#f24335" text-anchor="middle">5.2</text>
+              <!-- FEB: 6.4 * 19.375 = 124 -->
+              <rect x="268" y="31" width="52" height="124" fill="#f24335" opacity=".85" rx="2"/>
+              <text x="294" y="26" font-size="10" font-weight="700" fill="#f24335" text-anchor="middle">6.4</text>
+              <!-- MAR: 4.1 * 19.375 = 79.4 -->
+              <rect x="348" y="75.6" width="52" height="79.4" fill="#f5dd67" opacity=".9" rx="2"/>
+              <text x="374" y="70" font-size="10" font-weight="700" fill="#a07a00" text-anchor="middle">4.1</text>
+              <!-- APR: 3.1 * 19.375 = 60.1 -->
+              <rect x="428" y="94.9" width="52" height="60.1" fill="#f5dd67" opacity=".9" rx="2"/>
+              <text x="454" y="89" font-size="10" font-weight="700" fill="#a07a00" text-anchor="middle">3.1</text>
+              <!-- Dept avg segments (one per bar, avg=0.9 → y=137.6) -->
+              <line x1="28" x2="80" y1="137.6" y2="137.6" stroke="#333" stroke-width="1.5"/>
+              <line x1="108" x2="160" y1="137.6" y2="137.6" stroke="#333" stroke-width="1.5"/>
+              <line x1="188" x2="240" y1="137.6" y2="137.6" stroke="#333" stroke-width="1.5"/>
+              <line x1="268" x2="320" y1="137.6" y2="137.6" stroke="#333" stroke-width="1.5"/>
+              <line x1="348" x2="400" y1="137.6" y2="137.6" stroke="#333" stroke-width="1.5"/>
+              <line x1="428" x2="480" y1="137.6" y2="137.6" stroke="#333" stroke-width="1.5"/>
+              <!-- Flagged period shading -->
+              <rect x="188" y="20" width="212" height="135" fill="#f24335" opacity=".04"/>
+              <!-- Flagged period label -->
+              <text x="294" y="175" font-size="9" fill="#f24335" text-anchor="middle" font-weight="600">← Flagged Period →</text>
+              <!-- X labels -->
+              <text x="54" y="170" font-size="10" fill="#999" text-anchor="middle">NOV</text>
+              <text x="134" y="170" font-size="10" fill="#999" text-anchor="middle">DEC</text>
+              <text x="214" y="170" font-size="10" fill="#f24335" text-anchor="middle" font-weight="600">JAN</text>
+              <text x="294" y="170" font-size="10" fill="#f24335" text-anchor="middle" font-weight="600">FEB</text>
+              <text x="374" y="170" font-size="10" fill="#f24335" text-anchor="middle" font-weight="600">MAR</text>
+              <text x="454" y="170" font-size="10" fill="#999" text-anchor="middle">APR</text>
+            </svg>
+            <div class="pdf-history-legend">
+              <div class="pdf-legend-bar-row"><span class="pdf-lb red-swatch"></span> IRIS Score (Red)</div>
+              <div class="pdf-legend-bar-row"><span class="pdf-lb yellow-swatch"></span> IRIS Score (Yellow)</div>
+              <div class="pdf-legend-bar-row"><span class="pdf-lb green-swatch"></span> IRIS Score (Green)</div>
+              <div class="pdf-legend-bar-row"><span style="display:inline-block;width:24px;height:2px;background:#333;border-top:1.5px dashed #333;margin-right:6px;vertical-align:middle;"></span> Dept. Avg (0.9)</div>
+            </div>
+          </div>
+
+          <div class="pdf-history-table-title">Average CS Dispenses Per Shift / Department Average</div>
+          <table class="pdf-table pdf-table-sm">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>NOV</th><th>DEC</th><th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Avg CS Dispenses / Shift</td>
+                <td>2.1</td><td>1.4</td>
+                <td style="background:#fff0ef;font-weight:700;">5.8</td>
+                <td style="background:#fff0ef;font-weight:700;">6.3</td>
+                <td style="background:#fffbea;">4.2</td>
+                <td>3.4</td>
+              </tr>
+              <tr>
+                <td style="color:#727272;">Dept. Average</td>
+                <td style="color:#727272;">2.6</td><td style="color:#727272;">2.8</td>
+                <td style="color:#727272;">2.6</td><td style="color:#727272;">2.3</td>
+                <td style="color:#727272;">2.4</td><td style="color:#727272;">2.2</td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        <div class="pdf-traceability-box">
+          <div class="pdf-trace-title">Traceability &amp; Audit Metadata</div>
+          <div class="pdf-trace-grid">
+            <div><span class="pdf-trace-key">Snapshot ID</span><span class="pdf-mono">CC-PKT-2026-0520-4471</span></div>
+            <div><span class="pdf-trace-key">Generated By</span>Jon Reischl</div>
+            <div><span class="pdf-trace-key">Generated On</span>May 20, 2026 — 14:41:08 UTC</div>
+            <div><span class="pdf-trace-key">Data Source</span>ControlCheck v9.4.1</div>
+            <div><span class="pdf-trace-key">IDN</span>[933934024] QA Eastwood Regional Hospital</div>
+            <div><span class="pdf-trace-key">Provider ID</span><span class="pdf-mono">USR-20044</span></div>
+          </div>
+        </div>
+
+        <div class="pdf-page-footer">
+          <span>Confidential — Authorized investigative use only</span>
+          <span>Page 6 of 6</span>
+        </div>
+      </div>
+
+    </div><!-- /pdf-page-wrap -->
+  </div><!-- /pdf-viewport -->
+
+</div><!-- /pdf-viewer-overlay -->
+
+<script>
+  /* ═══════════════════════════════════════════════════
+     DRAWER / PANEL TOGGLES
+     ═══════════════════════════════════════════════════ */
+  function togglePanel(header) {
+    const panel = header.closest('mat-expansion-panel');
+    const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+    const isOpen = panel.classList.contains('mat-expanded');
+    panel.classList.toggle('mat-expanded', !isOpen);
+    header.classList.toggle('mat-expanded', !isOpen);
+    if (isOpen) wrapper.setAttribute('inert', ''); else wrapper.removeAttribute('inert');
+  }
+  function toggleDrawer() {
+    document.getElementById('analyze-drawer').classList.toggle('collapsed');
+  }
+
+  /* ═══════════════════════════════════════════════════
+     IRIS CHART
+     ═══════════════════════════════════════════════════ */
+  (function() {
+    const data = [
+      { m: 'NOV', iris: 1.1, avg: 1.0 },
+      { m: 'DEC', iris: 0.4, avg: 1.0 },
+      { m: 'JAN', iris: 5.2, avg: 0.9 },
+      { m: 'FEB', iris: 6.4, avg: 0.9 },
+      { m: 'MAR', iris: 4.1, avg: 0.9 },
+      { m: 'APR', iris: 3.1, avg: 0.9 },
+    ];
+    const max = 8;
+    const svg = document.getElementById('iris-chart');
+    const valuesLayer = document.getElementById('iris-chart-values');
+    const xaxisLayer = document.getElementById('iris-chart-xaxis');
+    const vbW = 720, vbH = 158;
+    const colW = vbW / data.length;
+    const barW = colW * 0.42;
+    const barOff = (colW - barW) / 2;
+
+    data.forEach((d, i) => {
+      const x = i * colW;
+      const barH = (d.iris / max) * vbH;
+      const y = vbH - barH;
+      const cls = d.iris >= 4.6 ? 'iris-chart-bar' : d.iris >= 1.4 ? 'iris-chart-bar-yellow' : 'iris-chart-bar-green';
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', x + barOff); rect.setAttribute('y', y);
+      rect.setAttribute('width', barW); rect.setAttribute('height', barH);
+      rect.setAttribute('class', cls);
+      svg.appendChild(rect);
+
+      const lbl = document.createElement('div');
+      const colorCls = d.iris >= 4.6 ? '' : d.iris >= 1.4 ? 'yellow' : 'green';
+      lbl.className = 'iris-chart-value-label' + (colorCls ? ' ' + colorCls : '');
+      lbl.textContent = d.iris;
+      const pct = (x + barOff + barW / 2) / vbW * 100;
+      const topPct = (y / vbH) * 100;
+      lbl.style.cssText = `left:${pct}%;top:${topPct}%`;
+      valuesLayer.appendChild(lbl);
+
+      const avgY = vbH - (d.avg / max) * vbH;
+      const cx = x + colW / 2;
+      // draw a short horizontal segment spanning just the bar width
+      const seg = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      seg.setAttribute('x1', x + barOff);
+      seg.setAttribute('x2', x + barOff + barW);
+      seg.setAttribute('y1', avgY);
+      seg.setAttribute('y2', avgY);
+      seg.setAttribute('class', 'iris-chart-avg-line');
+      svg.appendChild(seg);
+
+      const span = document.createElement('div');
+      span.textContent = d.m;
+      xaxisLayer.appendChild(span);
+    });
+
+
+  })();
+
+  /* ═══════════════════════════════════════════════════
+     WIZARD STATE
+     ═══════════════════════════════════════════════════ */
+  let currentStep = 1;
+  let selectedPreset = 'flagged';
+  let selectedFormat = 'pdf';
+
+  const DATE_LABELS = {
+    last7:   'May 13 – May 20, 2026',
+    last30:  'Apr 20 – May 20, 2026',
+    last90:  'Feb 19 – May 20, 2026',
+    flagged: 'Jan 31 – Mar 2, 2026',
+    custom:  null
+  };
+
+  function openWizard() {
+    currentStep = 1;
+    selectedPreset = 'flagged';
+    renderStep(1);
+    document.getElementById('wizardBackdrop').classList.add('open');
+  }
+
+  function closeWizard() {
+    document.getElementById('wizardBackdrop').classList.remove('open');
+  }
+
+  function handleBackdropClick(e) {
+    if (e.target === document.getElementById('wizardBackdrop')) closeWizard();
+  }
+
+  function renderStep(step) {
+    // Hide all panels
+    document.querySelectorAll('.wizard-step-panel').forEach(p => p.classList.remove('active'));
+
+    // Update step indicators
+    for (let i = 1; i <= 3; i++) {
+      const ind = document.getElementById('step-indicator-' + i);
+      ind.classList.remove('active', 'done');
+      if (i < step) ind.classList.add('done');
+      else if (i === step) ind.classList.add('active');
+    }
+    for (let i = 1; i <= 2; i++) {
+      const conn = document.getElementById('step-conn-' + i);
+      conn.classList.toggle('done', i < step);
+    }
+
+    const footer = document.getElementById('wizardFooter');
+    const btnBack = document.getElementById('btnBack');
+    const btnNext = document.getElementById('btnNext');
+
+    if (step <= 3) {
+      document.getElementById('panel-step-' + step).classList.add('active');
+      footer.style.display = '';
+      btnBack.style.visibility = step > 1 ? 'visible' : 'hidden';
+
+      if (step === 3) {
+        populateReview();
+        btnNext.innerHTML = '<span class="material-icons-outlined" style="font-size:16px;">folder_special</span> Generate Packet';
+      } else {
+        btnNext.innerHTML = 'Next <span class="material-icons-outlined">chevron_right</span>';
+      }
+    }
+  }
+
+  function goNext() {
+    if (currentStep < 3) {
+      currentStep++;
+      renderStep(currentStep);
+    } else {
+      // Start generation
+      startGeneration();
+    }
+  }
+
+  function goBack() {
+    if (currentStep > 1) {
+      currentStep--;
+      renderStep(currentStep);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     STEP 1 — DATE RANGE
+     ═══════════════════════════════════════════════════ */
+  function selectDatePreset(el, preset) {
+    document.querySelectorAll('.date-range-option, .custom-date-row').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPreset = preset;
+  }
+
+  function selectFlaggedRange() {
+    selectDatePreset(document.getElementById('preset-flagged'), 'flagged');
+  }
+
+  /* ═══════════════════════════════════════════════════
+     STEP 2 — SECTIONS
+     ═══════════════════════════════════════════════════ */
+  function toggleSection(el) {
+    el.classList.toggle('selected');
+    const cb = el.querySelector('input[type="checkbox"]');
+    cb.checked = el.classList.contains('selected');
+    updateSectionsCount();
+  }
+
+  function updateSectionsCount() {
+    const total = document.querySelectorAll('#panel-step-2 .section-option').length;
+    const sel = document.querySelectorAll('#panel-step-2 .section-option.selected').length;
+    document.getElementById('sectionsCount').textContent = sel + ' of ' + total + ' selected';
+    const btn = document.querySelector('.sections-select-all');
+    btn.textContent = sel === total ? 'Deselect all' : 'Select all';
+  }
+
+  function toggleSelectAll(btn) {
+    const options = document.querySelectorAll('#panel-step-2 .section-option');
+    const anyDeselected = [...options].some(o => !o.classList.contains('selected'));
+    options.forEach(o => {
+      o.classList.toggle('selected', anyDeselected);
+      o.querySelector('input').checked = anyDeselected;
+    });
+    updateSectionsCount();
+  }
+
+  /* ═══════════════════════════════════════════════════
+     STEP 3 — REVIEW
+     ═══════════════════════════════════════════════════ */
+  function populateReview() {
+    // Date range
+    let rangeLabel;
+    if (selectedPreset === 'custom') {
+      const from = document.getElementById('customFrom').value;
+      const to = document.getElementById('customTo').value;
+      rangeLabel = formatDate(from) + ' – ' + formatDate(to);
+    } else {
+      rangeLabel = DATE_LABELS[selectedPreset];
+    }
+    document.getElementById('reviewDateRange').textContent = rangeLabel;
+
+    // Sections
+    const pillRow = document.getElementById('reviewSections');
+    pillRow.innerHTML = '';
+    document.querySelectorAll('#panel-step-2 .section-option.selected').forEach(opt => {
+      const name = opt.querySelector('.section-name').childNodes[0].textContent.trim();
+      const pill = document.createElement('div');
+      pill.className = 'review-pill';
+      pill.innerHTML = '<span class="material-icons-outlined">check_circle</span>' + name;
+      pillRow.appendChild(pill);
+    });
+  }
+
+  function formatDate(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return months[parseInt(m,10)-1] + ' ' + parseInt(d,10) + ', ' + y;
+  }
+
+  function selectFormat(fmt) {
+    selectedFormat = fmt;
+    document.querySelectorAll('.format-chip').forEach(c => c.classList.remove('selected'));
+    document.getElementById('fmt-' + fmt).classList.add('selected');
+  }
+
+  /* ═══════════════════════════════════════════════════
+     GENERATION SIMULATION
+     ═══════════════════════════════════════════════════ */
+  const GEN_STEPS = [
+    { pct: 15, msg: 'Compiling risk summary and metric breakdowns' },
+    { pct: 32, msg: 'Gathering evidence table transactions' },
+    { pct: 52, msg: 'Building activity timeline' },
+    { pct: 70, msg: 'Generating IRIS score history charts' },
+    { pct: 88, msg: 'Formatting output document' },
+    { pct: 100, msg: 'Finalizing packet' },
+  ];
+
+  function startGeneration() {
+    // Hide step indicators + footer during generation
+    document.querySelectorAll('.wizard-step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-generating').classList.add('active');
+    document.getElementById('wizardFooter').style.display = 'none';
+    document.getElementById('wizardSteps').style.opacity = '0.3';
+
+    const bar = document.getElementById('genProgressBar');
+    const lbl = document.getElementById('genProgressLabel');
+    const sub = document.getElementById('genSubText');
+
+    let stepIdx = 0;
+    function runStep() {
+      if (stepIdx >= GEN_STEPS.length) {
+        setTimeout(showDone, 300);
+        return;
+      }
+      const s = GEN_STEPS[stepIdx++];
+      bar.style.width = s.pct + '%';
+      lbl.textContent = s.pct + '%';
+      sub.textContent = s.msg;
+      setTimeout(runStep, 480 + Math.random() * 220);
+    }
+    runStep();
+  }
+
+  function showDone() {
+    document.querySelectorAll('.wizard-step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-done').classList.add('active');
+    document.getElementById('wizardSteps').style.opacity = '';
+    document.getElementById('wizardFooter').style.display = 'none';
+
+    // Update done file name based on format
+    const ext = selectedFormat === 'docx' ? 'docx' : 'pdf';
+    document.getElementById('doneFileName').textContent = 'Investigation_Packet_Cosgrove_20260131.' + ext;
+
+    const selCount = document.querySelectorAll('#panel-step-2 .section-option.selected').length;
+    document.getElementById('doneFileMeta').textContent =
+      selCount + ' section' + (selCount !== 1 ? 's' : '') +
+      '  ·  Generated May 20, 2026 at 2:41 PM  ·  by Jon Reischl';
+  }
+
+  function simulateDownload() {
+    showToast('Downloading packet…');
+    setTimeout(closeWizard, 400);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     PDF VIEWER
+     ═══════════════════════════════════════════════════ */
+  let pdfCurrentPage = 1;
+  const PDF_TOTAL_PAGES = 6;
+  let pdfZoom = 100;
+
+  function openPdfViewer() {
+    closeWizard();
+    pdfCurrentPage = 1;
+    pdfZoom = 100;
+    renderPdfPage(1);
+    updatePdfToolbar();
+    document.getElementById('pdfViewerOverlay').classList.add('open');
+    document.getElementById('pdfFilenameBar').textContent =
+      document.getElementById('doneFileName').textContent;
+  }
+
+  function closePdfViewer() {
+    document.getElementById('pdfViewerOverlay').classList.remove('open');
+  }
+
+  function renderPdfPage(page) {
+    for (let i = 1; i <= PDF_TOTAL_PAGES; i++) {
+      const el = document.getElementById('pdf-page-' + i);
+      if (el) el.style.display = i === page ? '' : 'none';
+    }
+    // Scroll viewport to top
+    document.getElementById('pdfViewport').scrollTop = 0;
+  }
+
+  function changePage(delta) {
+    const next = pdfCurrentPage + delta;
+    if (next < 1 || next > PDF_TOTAL_PAGES) return;
+    pdfCurrentPage = next;
+    renderPdfPage(pdfCurrentPage);
+    updatePdfToolbar();
+  }
+
+  function jumpToPage(val) {
+    const n = parseInt(val, 10);
+    if (!n || n < 1 || n > PDF_TOTAL_PAGES) {
+      document.getElementById('pdfPageInput').value = pdfCurrentPage;
+      return;
+    }
+    pdfCurrentPage = n;
+    renderPdfPage(n);
+    updatePdfToolbar();
+  }
+
+  function changeZoom(delta) {
+    pdfZoom = Math.min(200, Math.max(50, pdfZoom + delta));
+    applyZoom();
+  }
+
+  function applyZoom() {
+    const scale = pdfZoom / 100;
+    document.querySelectorAll('.pdf-page').forEach(p => {
+      p.style.transform = `scale(${scale})`;
+      p.style.marginBottom = scale < 1 ? `${(scale - 1) * 984}px` : '';
+    });
+    document.getElementById('pdfZoomLabel').textContent = pdfZoom + '%';
+  }
+
+  function updatePdfToolbar() {
+    document.getElementById('pdfPageInput').value = pdfCurrentPage;
+    document.getElementById('pdfTotalPages').textContent = PDF_TOTAL_PAGES;
+    document.getElementById('btnPrevPage').disabled = pdfCurrentPage <= 1;
+    document.getElementById('btnNextPage').disabled = pdfCurrentPage >= PDF_TOTAL_PAGES;
+    document.getElementById('btnPrevPage').style.opacity = pdfCurrentPage <= 1 ? '.35' : '';
+    document.getElementById('btnNextPage').style.opacity = pdfCurrentPage >= PDF_TOTAL_PAGES ? '.35' : '';
+  }
+
+  // Keyboard nav for pdf viewer
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('pdfViewerOverlay').classList.contains('open')) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changePage(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changePage(-1);
+    if (e.key === 'Escape') closePdfViewer();
+  });
+
+  /* ═══════════════════════════════════════════════════
+     TOAST
+     ═══════════════════════════════════════════════════ */
+  function showToast(msg) {
+    const t = document.getElementById('appToast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>
