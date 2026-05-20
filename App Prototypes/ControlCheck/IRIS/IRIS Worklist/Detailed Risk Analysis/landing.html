@@ -542,7 +542,7 @@
     .iris-summary-meta-range { color: var(--text-54); font-size: .75rem; margin-top: 2px; }
 
     .udp-section-title {
-      font-size: .9375rem; font-weight: 600; color: var(--text-87);
+      font-size: 1rem; font-weight: 600; color: #0a3861;
       margin: 24px 0 12px;
     }
 
@@ -550,7 +550,7 @@
     .iris-chart-card {
       background: #fff;
       border: 1px solid var(--gray-300); border-radius: var(--radius);
-      padding: 16px 18px; margin-bottom: 8px;
+      padding: 16px 18px; margin-bottom: 40px;
     }
     .iris-chart-header {
       display: flex; align-items: center; justify-content: space-between;
@@ -562,16 +562,50 @@
       font-size: .75rem; color: var(--text-54);
     }
     .legend-swatch { width: 18px; height: 2px; background: var(--text-87); }
-    .iris-chart-svg { width: 100%; height: auto; display: block; }
-    .iris-chart-axis-label { font-size: 10px; fill: var(--gray-600); }
+    .iris-chart-canvas {
+      position: relative;
+      padding: 6px 8px 28px 36px;
+      height: 200px;
+      box-sizing: border-box;
+    }
+    .iris-chart-svg { width: 100%; height: 100%; display: block; }
+    .iris-chart-yaxis {
+      position: absolute;
+      left: 0; top: 6px; bottom: 28px;
+      width: 32px;
+      display: flex; flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      color: var(--gray-600);
+      font-size: 12px;
+      line-height: 1;
+      padding-right: 4px;
+    }
+    .iris-chart-xaxis {
+      position: absolute;
+      left: 36px; right: 8px; bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      color: var(--gray-600);
+      font-size: 12px;
+      text-align: center;
+    }
+    .iris-chart-values {
+      position: absolute;
+      left: 36px; right: 8px; top: 6px; bottom: 28px;
+      pointer-events: none;
+    }
+    .iris-chart-value-label {
+      position: absolute;
+      transform: translate(-50%, 0);
+      font-size: 12px; font-weight: 700;
+      white-space: nowrap;
+    }
+    .iris-chart-value-label.inside { color: #fff; }
+    .iris-chart-value-label.outside { color: var(--text-87); }
     .iris-chart-bar { fill: var(--red); opacity: .7; }
     .iris-chart-bar-yellow { fill: var(--yellow); opacity: .9; }
     .iris-chart-bar-green { fill: var(--green); opacity: .7; }
-    .iris-chart-bar-value {
-      font-size: 10px; font-weight: 700;
-      fill: #fff; text-anchor: middle;
-    }
-    .iris-chart-bar-value.outside { fill: var(--text-87); }
     .iris-chart-avg-line { stroke: #222; stroke-width: 2; }
 
     .iris-disp-title {
@@ -612,6 +646,59 @@
       color: var(--gray-400);
       font-size: 16px;
       cursor: help;
+    }
+
+    /* Custom tooltip — replaces native title for snappier feedback */
+    .tooltip-wrapper {
+      position: relative;
+      display: inline-flex; align-items: center;
+    }
+    .tooltip-wrapper::before,
+    .tooltip-wrapper::after {
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .15s ease, transform .15s ease;
+      transition-delay: 0s;
+    }
+    .tooltip-wrapper::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translate(-50%, 4px);
+      background: rgba(33, 33, 33, .95);
+      color: #fff;
+      font-family: var(--font);
+      font-size: .75rem;
+      font-weight: 400;
+      line-height: 1.4;
+      letter-spacing: .2px;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      width: max-content;
+      max-width: 320px;
+      white-space: normal;
+      text-align: left;
+      z-index: 200;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
+    .tooltip-wrapper::after {
+      content: '';
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 50%;
+      transform: translate(-50%, 4px);
+      border: 6px solid transparent;
+      border-top-color: rgba(33, 33, 33, .95);
+      z-index: 200;
+    }
+    .tooltip-wrapper:hover::before,
+    .tooltip-wrapper:hover::after,
+    .tooltip-wrapper:focus-within::before,
+    .tooltip-wrapper:focus-within::after {
+      opacity: 1;
+      transform: translate(-50%, 0);
+      transition-delay: .2s;
     }
     .drsa-toolbar {
       display: flex; align-items: center; justify-content: space-between;
@@ -670,7 +757,7 @@
     .drsa-card.enhanced { border-color: var(--prism-pink-l); }
     .drsa-card-header {
       display: flex; align-items: flex-start; gap: 12px;
-      padding: 14px 18px;
+      padding: 24px;
     }
     .metric-score-badge {
       flex-shrink: 0;
@@ -990,7 +1077,7 @@
       border: 1px solid var(--prism-border);
       border-radius: var(--radius);
       padding: 10px 14px;
-      margin-bottom: 12px;
+      margin-bottom: 24px;
     }
     .prism-banner-icon { flex-shrink: 0; }
     .prism-banner-text {
@@ -1353,15 +1440,20 @@
               <span class="legend-swatch"></span> Department Average
             </div>
           </div>
-          <svg class="iris-chart-svg" viewBox="0 0 720 180" id="iris-chart">
-            <!-- y-axis ticks -->
-            <line x1="40" y1="20" x2="40" y2="150" stroke="#e5e5e5" stroke-width="1"/>
-            <line x1="40" y1="150" x2="710" y2="150" stroke="#e5e5e5" stroke-width="1"/>
-            <text class="iris-chart-axis-label" x="32" y="24" text-anchor="end">8</text>
-            <text class="iris-chart-axis-label" x="32" y="88" text-anchor="end">4</text>
-            <text class="iris-chart-axis-label" x="32" y="153" text-anchor="end">0</text>
-            <!-- Bars + dept avg lines populated via JS -->
-          </svg>
+          <div class="iris-chart-canvas">
+            <div class="iris-chart-yaxis">
+              <div>8</div>
+              <div>4</div>
+              <div>0</div>
+            </div>
+            <svg class="iris-chart-svg" viewBox="0 0 720 160" preserveAspectRatio="none" id="iris-chart">
+              <!-- baseline -->
+              <line x1="0" y1="158" x2="720" y2="158" stroke="#e5e5e5" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              <!-- Bars + dept avg lines populated via JS -->
+            </svg>
+            <div class="iris-chart-values" id="iris-chart-values"></div>
+            <div class="iris-chart-xaxis" id="iris-chart-xaxis"></div>
+          </div>
 
           <div class="iris-disp-title">Average CS Dispenses Per Shift / Department Average</div>
           <div class="iris-disp-row header">
@@ -1425,7 +1517,9 @@
             <div class="drsa-group-header">
               <div class="drsa-group-title">
                 Screening Metrics
-                <span class="material-icons-outlined help-icon" title="High-weight metrics that screen for the strongest diversion signals">help_outline</span>
+                <span class="tooltip-wrapper" data-tooltip="Primary behavioral indicators used to identify potential diversion. Screening metrics surface the strongest signals of concern and are prioritized ahead of research metrics in the IRIS scoring workflow." tabindex="0">
+                  <span class="material-icons-outlined help-icon">help_outline</span>
+                </span>
               </div>
             </div>
 
@@ -1503,7 +1597,9 @@
             <div class="drsa-group-header">
               <div class="drsa-group-title">
                 Research Metrics
-                <span class="material-icons-outlined help-icon" title="Lower-weight metrics that add context and corroborate screening signals">help_outline</span>
+                <span class="tooltip-wrapper" data-tooltip="Contextual indicators used to refine and explain a concern once a potential diversion signal has already been identified. Research metrics provide supporting detail — such as timing behaviors, dispense patterns, and access context — to help investigators understand the nature and scope of a flagged individual's activity." tabindex="0">
+                  <span class="material-icons-outlined help-icon">help_outline</span>
+                </span>
               </div>
             </div>
 
@@ -1691,18 +1787,26 @@
       { m: 'MAR', iris: 4.1, avg: 0.9 },
       { m: 'APR', iris: 3.1, avg: 0.9 },
     ];
-    const svg = document.getElementById('iris-chart');
-    const x0 = 60, x1 = 700, y0 = 20, y1 = 150;
     const max = 8;
-    const colW = (x1 - x0) / data.length;
+    const svg = document.getElementById('iris-chart');
+    const valuesLayer = document.getElementById('iris-chart-values');
+    const xaxisLayer = document.getElementById('iris-chart-xaxis');
+
+    // SVG viewBox is 720 x 160; bars occupy 0..720 horizontally, 0..158 vertically (baseline at 158)
+    const vbWidth = 720;
+    const vbHeight = 158;
+    const colW = vbWidth / data.length;       // 120
+    const barW = colW * 0.42;                  // ~50
+    const barOffset = (colW - barW) / 2;
+
     data.forEach((d, i) => {
-      const cx = x0 + colW * i;
-      const barW = 50;
-      const barX = cx + (colW - barW) / 2;
-      // bar
-      const h = (d.iris / max) * (y1 - y0);
-      const barY = y1 - h;
+      const cx = colW * i;
+      const barX = cx + barOffset;
+      const h = (d.iris / max) * vbHeight;
+      const barY = vbHeight - h;
       const cls = d.iris >= 4.6 ? 'iris-chart-bar' : (d.iris >= 1.4 ? 'iris-chart-bar-yellow' : 'iris-chart-bar-green');
+
+      // bar
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
       rect.setAttribute('x', barX);
       rect.setAttribute('y', barY);
@@ -1711,30 +1815,39 @@
       rect.setAttribute('class', cls);
       rect.setAttribute('rx', '2');
       svg.appendChild(rect);
-      // value
-      const val = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      val.setAttribute('x', barX + barW / 2);
-      val.setAttribute('y', h > 14 ? barY + 12 : barY - 4);
-      val.setAttribute('class', h > 14 ? 'iris-chart-bar-value' : 'iris-chart-bar-value outside');
-      val.textContent = d.iris.toFixed(1);
-      svg.appendChild(val);
-      // avg tick
-      const avgY = y1 - (d.avg / max) * (y1 - y0);
+
+      // dept avg line
+      const avgY = vbHeight - (d.avg / max) * vbHeight;
       const avgLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       avgLine.setAttribute('x1', barX - 4);
       avgLine.setAttribute('x2', barX + barW + 4);
       avgLine.setAttribute('y1', avgY);
       avgLine.setAttribute('y2', avgY);
       avgLine.setAttribute('class', 'iris-chart-avg-line');
+      avgLine.setAttribute('vector-effect', 'non-scaling-stroke');
       svg.appendChild(avgLine);
-      // x label
-      const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      label.setAttribute('x', cx + colW / 2);
-      label.setAttribute('y', 170);
-      label.setAttribute('text-anchor', 'middle');
-      label.setAttribute('class', 'iris-chart-axis-label');
-      label.textContent = d.m;
-      svg.appendChild(label);
+
+      // value label (HTML, positioned via percentages within #iris-chart-values)
+      const valuePct = ((barX + barW / 2) / vbWidth) * 100;
+      const heightPct = (h / vbHeight) * 100;
+      const inside = heightPct > 14; // enough room for 12px label inside
+      const val = document.createElement('div');
+      val.className = 'iris-chart-value-label ' + (inside ? 'inside' : 'outside');
+      val.textContent = d.iris.toFixed(1);
+      val.style.left = valuePct + '%';
+      if (inside) {
+        // place just below the bar's top edge inside the bar
+        val.style.top = `calc(${100 - heightPct}% + 4px)`;
+      } else {
+        // place just above the bar's top edge
+        val.style.top = `calc(${100 - heightPct}% - 20px)`;
+      }
+      valuesLayer.appendChild(val);
+
+      // x-axis month label (HTML, one cell per month in a 6-col grid)
+      const xLabel = document.createElement('div');
+      xLabel.textContent = d.m;
+      xaxisLayer.appendChild(xLabel);
     });
   })();
 
