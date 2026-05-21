@@ -64,6 +64,8 @@
     mat-icon { display: inline-flex; }
     mat-divider.mat-divider-vertical { display: inline-block; }
 
+    .material-icons-outlined { font-family: 'Material Icons'; }
+
     .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
 
     /* ── mat-toolbar / navbar ────────────────────────────── */
@@ -651,8 +653,8 @@
       transition: border-color .15s, background .15s;
       background: #fff;
     }
-    .date-range-option:hover { border-color: var(--teal-light); background: var(--blue-100); }
-    .date-range-option.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.05); }
+    .date-range-option:hover { border-color: var(--teal-light); background: rgba(0,150,184,.05); }
+    .date-range-option.selected { border-color: var(--teal); background: rgba(0,150,184,.08); }
     .date-range-option input[type="radio"] { display: none; }
     .date-range-radio {
       width: 16px; height: 16px; border-radius: 50%;
@@ -660,9 +662,9 @@
       display: flex; align-items: center; justify-content: center;
       transition: border-color .15s;
     }
-    .date-range-option.selected .date-range-radio { border-color: var(--blue-dark); }
+    .date-range-option.selected .date-range-radio { border-color: var(--teal); }
     .date-range-option.selected .date-range-radio::after {
-      content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--blue-dark);
+      content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--teal);
     }
     .date-range-label { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
     .date-range-sub { font-size: .75rem; color: var(--text-54); }
@@ -674,7 +676,7 @@
       background: #fff; cursor: pointer; transition: border-color .15s;
     }
     .custom-date-row:hover { border-color: var(--teal-light); }
-    .custom-date-row.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.05); }
+    .custom-date-row.selected { border-color: var(--teal); background: rgba(0,150,184,.08); }
     .custom-date-row input[type="radio"] { display: none; }
     .custom-date-inputs {
       display: flex; gap: 8px; align-items: center; flex: 1;
@@ -711,48 +713,50 @@
     }
     .flagged-quick-chip:hover { background: var(--blue-100); }
 
-    /* Sections checklist */
-    .sections-list { display: flex; flex-direction: column; gap: 8px; }
-    .section-option {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 14px; border: 2px solid var(--gray-300);
-      border-radius: var(--radius); cursor: pointer;
-      transition: border-color .15s, background .15s; background: #fff;
+    /* Section chips */
+    .section-chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .section-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px 5px 12px;
+      border: 1.5px solid var(--gray-300); border-radius: 20px;
+      background: #fff; font-family: var(--font);
+      font-size: .8125rem; font-weight: 500; color: var(--text-54);
+      cursor: pointer; transition: border-color .15s, background .15s, color .15s;
+      position: relative;
     }
-    .section-option:hover { border-color: var(--teal-light); background: rgba(0,150,184,.03); }
-    .section-option.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.04); }
-    .section-option input[type="checkbox"] { display: none; }
-    .section-checkbox {
-      width: 18px; height: 18px; border-radius: 3px; border: 2px solid var(--gray-400);
-      flex-shrink: 0; margin-top: 1px;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .15s, border-color .15s;
+    .section-chip:hover { border-color: var(--gray-400); color: var(--text-87); }
+    .section-chip.selected {
+      border-color: var(--teal); background: var(--teal);
+      color: #fff; font-weight: 600;
     }
-    .section-option.selected .section-checkbox { background: var(--blue-dark); border-color: var(--blue-dark); }
-    .section-option.selected .section-checkbox::after { content: ''; display: block; width: 10px; height: 6px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translateY(-1px); }
-    .section-meta { flex: 1; min-width: 0; }
-    .section-name { font-size: .9375rem; font-weight: 600; color: var(--text-87); display: flex; align-items: center; gap: 6px; }
-    .section-desc { font-size: .75rem; color: var(--text-54); margin-top: 2px; line-height: 1.4; }
-    .section-badge {
-      display: inline-flex; align-items: center; padding: 1px 6px;
-      border-radius: 10px; font-size: .625rem; font-weight: 700;
-      letter-spacing: .4px; text-transform: uppercase;
+    .section-chip.selected::before {
+      content: 'check';
+      font-family: 'Material Icons';
+      font-size: 14px;
+      line-height: 1;
+      color: #fff;
     }
-    .section-badge.core { background: var(--green-100); color: #0d7d23; }
-    .section-badge.recommended { background: var(--blue-100); color: var(--blue-dark); }
+    .section-chip-info {
+      display: inline-flex; align-items: center;
+      color: var(--gray-400); position: relative;
+    }
+    .section-chip.selected .section-chip-info { color: #fff; }
+    .section-chip-info .material-icons-outlined { font-size: 14px; }
+    .section-chip-info:hover .section-chip-tooltip,
+    .section-chip-info:focus-within .section-chip-tooltip { opacity: 1; pointer-events: all; transform: translateX(-50%) translateY(0); }
+    .section-chip-tooltip {
+      position: absolute; bottom: calc(100% + 8px); left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background: rgba(33,33,33,.95); color: #fff;
+      font-size: .6875rem; font-weight: 400; line-height: 1.4;
+      padding: 6px 10px; border-radius: var(--radius);
+      width: 200px; white-space: normal; text-align: left;
+      z-index: 300; pointer-events: none; opacity: 0;
+      transition: opacity .15s ease, transform .15s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
 
-    /* Select-all bar */
-    .sections-toolbar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .sections-select-all {
-      background: none; border: none; color: var(--teal); font-family: var(--font);
-      font-size: .8125rem; font-weight: 600; cursor: pointer; padding: 0;
-    }
-    .sections-count { font-size: .8125rem; color: var(--text-54); }
-
-    /* Step 3 — review */
+    /* Step 2 — review */
     .review-card {
       background: var(--gray-100); border: 1px solid var(--gray-300);
       border-radius: var(--radius); padding: 16px; margin-bottom: 12px;
@@ -776,7 +780,7 @@
       color: var(--text-87); cursor: pointer; transition: border-color .15s, background .15s;
       background: #fff;
     }
-    .format-chip.selected { border-color: var(--blue-dark); background: rgba(4,74,130,.05); color: var(--blue-dark); }
+    .format-chip.selected { border-color: var(--teal); background: rgba(0,150,184,.08); color: var(--teal); }
     .format-chip .material-icons-outlined { font-size: 18px; }
     .review-meta-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; font-size: .8125rem; color: var(--text-54); }
     .review-meta-row .material-icons-outlined { font-size: 14px; }
@@ -823,7 +827,7 @@
     }
     .done-file-icon { font-size: 28px; flex-shrink: 0; color: var(--gray-400); }
     .done-file-info { flex: 1; min-width: 0; }
-    .done-file-name { font-size: .875rem; font-weight: 600; color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .done-file-name { font-size: .875rem; font-weight: 600; color: var(--text-87); word-break: break-all; }
     .done-file-meta { font-size: .6875rem; color: var(--text-54); margin-top: 2px; }
     .done-file-open {
       background: none; border: none; cursor: pointer; padding: 4px;
@@ -1076,7 +1080,25 @@
     .pdf-narrative-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-400); margin-bottom: 6px; }
     .pdf-narrative-text { font-size: 12.5px; color: #333; line-height: 1.55; }
 
-    .pdf-flag-summary-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pdf-flag-summary-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .pdf-distribution-wrap {
+      border: 1px solid var(--gray-300); border-radius: 4px;
+      padding: 12px 16px; background: var(--gray-50);
+    }
+    .pdf-distribution-title {
+      font-size: 11.5px; font-weight: 700; color: #222; margin-bottom: 10px;
+    }
+    .pdf-distribution-sub {
+      font-size: 10px; font-weight: 400; color: var(--gray-400); margin-left: 6px;
+    }
+    .pdf-distribution-chart { margin-bottom: 8px; }
+    .pdf-distribution-legend {
+      display: flex; gap: 16px; font-size: 10px; color: #555;
+    }
+    .pdf-dist-legend-item { display: flex; align-items: center; gap: 4px; }
+    .pdf-dist-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+    .gray-dot-sm { background: #ccc; }
+    .red-dot-sm  { background: var(--red); }
     .pdf-flag-item {
       display: flex; flex-direction: column; align-items: flex-start;
       padding: 10px 14px; border-radius: 4px; border: 1px solid; min-width: 120px; flex: 1;
@@ -1569,12 +1591,12 @@
         <div class="wizard-step-connector" id="step-conn-1"></div>
         <div class="wizard-step-item" data-step="2" id="step-indicator-2">
           <span class="wizard-step-num">2</span>
-          Sections
+          Format
         </div>
         <div class="wizard-step-connector" id="step-conn-2"></div>
         <div class="wizard-step-item" data-step="3" id="step-indicator-3">
           <span class="wizard-step-num">3</span>
-          Review &amp; Generate
+          Generate
         </div>
       </div>
     </div>
@@ -1646,110 +1668,59 @@
       <!-- ── STEP 2: Sections ── -->
       <div class="wizard-step-panel" id="panel-step-2">
 
-        <div class="sections-toolbar">
-          <div class="wizard-section-label" style="margin-bottom:0;">Choose what to include</div>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <span class="sections-count" id="sectionsCount">5 of 7 selected</span>
-            <button class="sections-select-all" onclick="toggleSelectAll(this)">Deselect all</button>
+        <div class="review-card">
+          <div class="review-label" style="margin-bottom:10px;">Sections Included</div>
+          <div class="section-chip-grid" id="sectionChipGrid">
+            <button class="section-chip selected" data-desc="Overall IRIS score, flagged period, and high-level narrative explaining why this user was flagged." onclick="toggleSectionChip(this)">
+              Risk Summary
+              <span class="section-chip-info" onclick="event.stopPropagation()" tabindex="0">
+                <span class="material-icons-outlined">info_outline</span>
+                <span class="section-chip-tooltip">Overall IRIS score, flagged period, and high-level narrative explaining why this user was flagged.</span>
+              </span>
+            </button>
+            <button class="section-chip selected" data-desc="All DRSA metric scores with explanations — screening and research metrics, including thresholds and comparisons." onclick="toggleSectionChip(this)">
+              Metric Score Breakdown
+              <span class="section-chip-info" onclick="event.stopPropagation()" tabindex="0">
+                <span class="material-icons-outlined">info_outline</span>
+                <span class="section-chip-tooltip">All DRSA metric scores with explanations — screening and research metrics, including thresholds and comparisons.</span>
+              </span>
+            </button>
+            <button class="section-chip selected" data-desc="Transaction-level events contributing to elevated risk scores, including medication, department, and timestamp details." onclick="toggleSectionChip(this)">
+              Evidence Table
+              <span class="section-chip-info" onclick="event.stopPropagation()" tabindex="0">
+                <span class="material-icons-outlined">info_outline</span>
+                <span class="section-chip-tooltip">Transaction-level events contributing to elevated risk scores, including medication, department, and timestamp details.</span>
+              </span>
+            </button>
+            <button class="section-chip selected" data-desc="Chronological view of key events during the selected period, surfacing patterns not apparent in aggregate metrics." onclick="toggleSectionChip(this)">
+              Activity Timeline
+              <span class="section-chip-info" onclick="event.stopPropagation()" tabindex="0">
+                <span class="material-icons-outlined">info_outline</span>
+                <span class="section-chip-tooltip">Chronological view of key events during the selected period, surfacing patterns not apparent in aggregate metrics.</span>
+              </span>
+            </button>
+            <button class="section-chip selected" data-desc="6-month IRIS score trend chart and dispense activity data, showing context before and after the flagged period." onclick="toggleSectionChip(this)">
+              IRIS Score History
+              <span class="section-chip-info" onclick="event.stopPropagation()" tabindex="0">
+                <span class="material-icons-outlined">info_outline</span>
+                <span class="section-chip-tooltip">6-month IRIS score trend chart and dispense activity data, showing context before and after the flagged period.</span>
+              </span>
+            </button>
+            <button class="section-chip selected" data-desc="Any manually entered notes or comments associated with this user's reviews and cases." onclick="toggleSectionChip(this)">
+              Analyst Notes
+              <span class="section-chip-info" onclick="event.stopPropagation()" tabindex="0">
+                <span class="material-icons-outlined">info_outline</span>
+                <span class="section-chip-tooltip">Any manually entered notes or comments associated with this user's reviews and cases.</span>
+              </span>
+            </button>
+            <button class="section-chip selected" data-desc="Full transaction-level export for the selected period. Useful for audit defensibility and external data requests." onclick="toggleSectionChip(this)">
+              Raw Data Appendix
+              <span class="section-chip-info" onclick="event.stopPropagation()" tabindex="0">
+                <span class="material-icons-outlined">info_outline</span>
+                <span class="section-chip-tooltip">Full transaction-level export for the selected period. Useful for audit defensibility and external data requests.</span>
+              </span>
+            </button>
           </div>
-        </div>
-
-        <div class="sections-list">
-
-          <label class="section-option selected">
-            <input type="checkbox" checked onchange="toggleSection(this)">
-            <div class="section-checkbox"></div>
-            <div class="section-meta">
-              <div class="section-name">
-                Risk Summary
-                <span class="section-badge core">Core</span>
-              </div>
-              <div class="section-desc">Overall IRIS score, flagged period, and high-level narrative explaining why this user was flagged.</div>
-            </div>
-          </label>
-
-          <label class="section-option selected">
-            <input type="checkbox" checked onchange="toggleSection(this)">
-            <div class="section-checkbox"></div>
-            <div class="section-meta">
-              <div class="section-name">
-                Metric Score Breakdown
-                <span class="section-badge core">Core</span>
-              </div>
-              <div class="section-desc">All DRSA metric scores with explanations — screening and research metrics, including thresholds and comparisons.</div>
-            </div>
-          </label>
-
-          <label class="section-option selected">
-            <input type="checkbox" checked onchange="toggleSection(this)">
-            <div class="section-checkbox"></div>
-            <div class="section-meta">
-              <div class="section-name">
-                Evidence Table
-                <span class="section-badge recommended">Recommended</span>
-              </div>
-              <div class="section-desc">Transaction-level events contributing to elevated risk scores, including medication, department, and timestamp details.</div>
-            </div>
-          </label>
-
-          <label class="section-option selected">
-            <input type="checkbox" checked onchange="toggleSection(this)">
-            <div class="section-checkbox"></div>
-            <div class="section-meta">
-              <div class="section-name">
-                Activity Timeline
-                <span class="section-badge recommended">Recommended</span>
-              </div>
-              <div class="section-desc">Chronological view of key events during the selected period, surfacing patterns not apparent in aggregate metrics.</div>
-            </div>
-          </label>
-
-          <label class="section-option selected">
-            <input type="checkbox" checked onchange="toggleSection(this)">
-            <div class="section-checkbox"></div>
-            <div class="section-meta">
-              <div class="section-name">IRIS Score History</div>
-              <div class="section-desc">6-month IRIS score trend chart and dispense activity data, showing context before and after the flagged period.</div>
-            </div>
-          </label>
-
-          <label class="section-option">
-            <input type="checkbox" onchange="toggleSection(this)">
-            <div class="section-checkbox"></div>
-            <div class="section-meta">
-              <div class="section-name">Analyst Notes</div>
-              <div class="section-desc">Any manually entered notes or comments associated with this user's reviews and cases.</div>
-            </div>
-          </label>
-
-          <label class="section-option">
-            <input type="checkbox" onchange="toggleSection(this)">
-            <div class="section-checkbox"></div>
-            <div class="section-meta">
-              <div class="section-name">Raw Data Appendix</div>
-              <div class="section-desc">Full transaction-level export for the selected period. Useful for audit defensibility and external data requests.</div>
-            </div>
-          </label>
-
-        </div>
-      </div><!-- /panel-step-2 -->
-
-      <!-- ── STEP 3: Review & Generate ── -->
-      <div class="wizard-step-panel" id="panel-step-3">
-
-        <div class="review-card">
-          <div class="review-label">Provider</div>
-          <div class="review-value">Marlena Cosgrove &nbsp;<span style="font-size:.8125rem;font-weight:400;color:var(--text-54);">RN · Medical-Surgical Unit</span></div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-label">Date Range</div>
-          <div class="review-value" id="reviewDateRange">Jan 31 – Mar 2, 2026</div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-label">Sections Included</div>
-          <div class="review-pill-row" id="reviewSections"></div>
         </div>
 
         <hr class="review-divider">
@@ -1772,7 +1743,7 @@
           </div>
         </div>
 
-      </div><!-- /panel-step-3 -->
+      </div><!-- /panel-step-2 -->
 
       <!-- ── GENERATING STATE ── -->
       <div class="wizard-step-panel" id="panel-generating">
@@ -2009,20 +1980,64 @@
               <div class="pdf-flag-score">4.7</div>
               <div class="pdf-flag-tier">Red</div>
             </div>
-            <div class="pdf-flag-item yellow">
-              <div class="pdf-flag-metric">Canceled Transactions</div>
-              <div class="pdf-flag-score">2.4</div>
-              <div class="pdf-flag-tier">Yellow</div>
+          </div>
+
+          <!-- Peer distribution chart -->
+          <div class="pdf-distribution-wrap">
+            <div class="pdf-distribution-title">Override Rate — Peer Distribution <span class="pdf-distribution-sub">Medical-Surgical Unit · Jan 31 – Mar 2, 2026</span></div>
+            <div class="pdf-distribution-chart">
+              <!-- SVG dot-plot: x-axis = override rate 0–55%, peers as gray dots, Cosgrove as red dot -->
+              <svg viewBox="0 0 560 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+                <!-- Axis line -->
+                <line x1="24" y1="62" x2="544" y2="62" stroke="#d0d0d0" stroke-width="1"/>
+                <!-- Axis ticks & labels -->
+                <line x1="24"  y1="62" x2="24"  y2="68" stroke="#aaa" stroke-width="1"/>
+                <line x1="142" y1="62" x2="142" y2="68" stroke="#aaa" stroke-width="1"/>
+                <line x1="260" y1="62" x2="260" y2="68" stroke="#aaa" stroke-width="1"/>
+                <line x1="378" y1="62" x2="378" y2="68" stroke="#aaa" stroke-width="1"/>
+                <line x1="496" y1="62" x2="496" y2="68" stroke="#aaa" stroke-width="1"/>
+                <text x="24"  y="78" text-anchor="middle" font-size="9" fill="#999">0%</text>
+                <text x="142" y="78" text-anchor="middle" font-size="9" fill="#999">15%</text>
+                <text x="260" y="78" text-anchor="middle" font-size="9" fill="#999">25%</text>
+                <text x="378" y="78" text-anchor="middle" font-size="9" fill="#999">35%</text>
+                <text x="496" y="78" text-anchor="middle" font-size="9" fill="#999">50%+</text>
+                <!-- Peer dots (gray) — spread around low end 2–18% range, x = 24 + (pct/55)*520 -->
+                <!-- 2%  → 43 -->  <circle cx="43"  cy="54" r="5" fill="#ccc"/>
+                <!-- 3%  → 52 -->  <circle cx="52"  cy="46" r="5" fill="#ccc"/>
+                <!-- 4%  → 62 -->  <circle cx="62"  cy="54" r="5" fill="#ccc"/>
+                <!-- 5%  → 71 -->  <circle cx="71"  cy="40" r="5" fill="#ccc"/>
+                <!-- 5%  → 71 -->  <circle cx="80"  cy="54" r="5" fill="#ccc"/>
+                <!-- 6%  → 81 -->  <circle cx="81"  cy="46" r="5" fill="#ccc"/>
+                <!-- 7%  → 90 -->  <circle cx="90"  cy="54" r="5" fill="#ccc"/>
+                <!-- 8%  → 99 -->  <circle cx="99"  cy="46" r="5" fill="#ccc"/>
+                <!-- 8%  → 99 -->  <circle cx="107" cy="54" r="5" fill="#ccc"/>
+                <!-- 9%  → 109 --> <circle cx="109" cy="40" r="5" fill="#ccc"/>
+                <!-- 10% → 118 --> <circle cx="118" cy="54" r="5" fill="#ccc"/>
+                <!-- 10% → 118 --> <circle cx="126" cy="46" r="5" fill="#ccc"/>
+                <!-- 11% → 128 --> <circle cx="128" cy="54" r="5" fill="#ccc"/>
+                <!-- 12% → 137 --> <circle cx="137" cy="46" r="5" fill="#ccc"/>
+                <!-- 13% → 147 --> <circle cx="147" cy="54" r="5" fill="#ccc"/>
+                <!-- 14% → 156 --> <circle cx="156" cy="40" r="5" fill="#ccc"/>
+                <!-- 14% → 156 --> <circle cx="165" cy="54" r="5" fill="#ccc"/>
+                <!-- 15% → 166 --> <circle cx="166" cy="46" r="5" fill="#ccc"/>
+                <!-- 16% → 175 --> <circle cx="175" cy="54" r="5" fill="#ccc"/>
+                <!-- 17% → 184 --> <circle cx="184" cy="46" r="5" fill="#ccc"/>
+                <!-- 18% → 194 --> <circle cx="194" cy="54" r="5" fill="#ccc"/>
+                <!-- Dept avg line at ~10% → x=118 -->
+                <line x1="118" y1="20" x2="118" y2="62" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
+                <text x="118" y="17" text-anchor="middle" font-size="8.5" fill="#555" font-weight="600">Dept avg 10%</text>
+                <!-- Cosgrove dot at 50% → x = 24 + (50/55)*520 = 496 -->
+                <circle cx="496" cy="54" r="6.5" fill="#f24335"/>
+                <!-- Callout label -->
+                <line x1="496" y1="47" x2="496" y2="30" stroke="#f24335" stroke-width="1"/>
+                <rect x="448" y="18" width="96" height="16" rx="3" fill="#f24335"/>
+                <text x="496" y="29" text-anchor="middle" font-size="8.5" fill="#fff" font-weight="700">Cosgrove 50%</text>
+              </svg>
             </div>
-            <div class="pdf-flag-item yellow">
-              <div class="pdf-flag-metric">Full Package Waste</div>
-              <div class="pdf-flag-score">2.4</div>
-              <div class="pdf-flag-tier">Yellow</div>
-            </div>
-            <div class="pdf-flag-item yellow">
-              <div class="pdf-flag-metric">Med Trends</div>
-              <div class="pdf-flag-score">1.9</div>
-              <div class="pdf-flag-tier">Yellow</div>
+            <div class="pdf-distribution-legend">
+              <span class="pdf-dist-legend-item"><span class="pdf-dist-dot gray-dot-sm"></span>Peer (n=21)</span>
+              <span class="pdf-dist-legend-item"><span class="pdf-dist-dot red-dot-sm"></span>Marlena Cosgrove</span>
+              <span class="pdf-dist-legend-item"><span style="display:inline-block;width:18px;border-top:1.5px dashed #555;vertical-align:middle;margin-right:4px;"></span>Dept. Average</span>
             </div>
           </div>
 
@@ -2634,45 +2649,38 @@
   }
 
   function renderStep(step) {
-    // Hide all panels
     document.querySelectorAll('.wizard-step-panel').forEach(p => p.classList.remove('active'));
 
-    // Update step indicators
     for (let i = 1; i <= 3; i++) {
       const ind = document.getElementById('step-indicator-' + i);
       ind.classList.remove('active', 'done');
       if (i < step) ind.classList.add('done');
       else if (i === step) ind.classList.add('active');
     }
-    for (let i = 1; i <= 2; i++) {
-      const conn = document.getElementById('step-conn-' + i);
-      conn.classList.toggle('done', i < step);
-    }
+    document.getElementById('step-conn-1').classList.toggle('done', step > 1);
+    document.getElementById('step-conn-2').classList.toggle('done', step > 2);
 
     const footer = document.getElementById('wizardFooter');
     const btnBack = document.getElementById('btnBack');
     const btnNext = document.getElementById('btnNext');
 
-    if (step <= 3) {
-      document.getElementById('panel-step-' + step).classList.add('active');
-      footer.style.display = '';
-      btnBack.style.visibility = step > 1 ? 'visible' : 'hidden';
+    document.getElementById('panel-step-' + step)?.classList.add('active');
+    footer.style.display = '';
+    btnBack.style.visibility = step > 1 ? 'visible' : 'hidden';
 
-      if (step === 3) {
-        populateReview();
-        btnNext.innerHTML = '<span class="material-icons-outlined" style="font-size:16px;">folder_special</span> Generate Packet';
-      } else {
-        btnNext.innerHTML = 'Next <span class="material-icons-outlined">chevron_right</span>';
-      }
+    if (step === 2) {
+      populateReview();
+      btnNext.innerHTML = '<span class="material-icons-outlined" style="font-size:16px;">folder_special</span> Generate Packet';
+    } else {
+      btnNext.innerHTML = 'Next <span class="material-icons-outlined">chevron_right</span>';
     }
   }
 
   function goNext() {
-    if (currentStep < 3) {
+    if (currentStep < 2) {
       currentStep++;
       renderStep(currentStep);
     } else {
-      // Start generation
       startGeneration();
     }
   }
@@ -2693,42 +2701,21 @@
     selectedPreset = preset;
   }
 
-  function selectFlaggedRange() {
-    selectDatePreset(document.getElementById('preset-flagged'), 'flagged');
-  }
-
   /* ═══════════════════════════════════════════════════
-     STEP 2 — SECTIONS
+     STEP 2 — SECTION CHIPS
      ═══════════════════════════════════════════════════ */
-  function toggleSection(cb) {
-    const label = cb.closest('.section-option');
-    label.classList.toggle('selected', cb.checked);
-    updateSectionsCount();
+  function toggleSectionChip(btn) {
+    btn.classList.toggle('selected');
   }
 
-  function updateSectionsCount() {
-    const total = document.querySelectorAll('#panel-step-2 .section-option').length;
-    const sel = document.querySelectorAll('#panel-step-2 .section-option.selected').length;
-    document.getElementById('sectionsCount').textContent = sel + ' of ' + total + ' selected';
-    const btn = document.querySelector('.sections-select-all');
-    btn.textContent = sel === total ? 'Deselect all' : 'Select all';
-  }
-
-  function toggleSelectAll(btn) {
-    const options = document.querySelectorAll('#panel-step-2 .section-option');
-    const anyDeselected = [...options].some(o => !o.classList.contains('selected'));
-    options.forEach(o => {
-      o.classList.toggle('selected', anyDeselected);
-      o.querySelector('input').checked = anyDeselected;
-    });
-    updateSectionsCount();
+  function getSelectedChips() {
+    return [...document.querySelectorAll('#sectionChipGrid .section-chip.selected')];
   }
 
   /* ═══════════════════════════════════════════════════
-     STEP 3 — REVIEW
+     STEP 2 — REVIEW POPULATION
      ═══════════════════════════════════════════════════ */
   function populateReview() {
-    // Date range
     let rangeLabel;
     if (selectedPreset === 'custom') {
       const from = document.getElementById('customFrom').value;
@@ -2737,18 +2724,8 @@
     } else {
       rangeLabel = DATE_LABELS[selectedPreset];
     }
-    document.getElementById('reviewDateRange').textContent = rangeLabel;
-
-    // Sections
-    const pillRow = document.getElementById('reviewSections');
-    pillRow.innerHTML = '';
-    document.querySelectorAll('#panel-step-2 .section-option.selected').forEach(opt => {
-      const name = opt.querySelector('.section-name').childNodes[0].textContent.trim();
-      const pill = document.createElement('div');
-      pill.className = 'review-pill';
-      pill.innerHTML = '<span class="material-icons-outlined">check_circle</span>' + name;
-      pillRow.appendChild(pill);
-    });
+    const el = document.getElementById('reviewDateRange');
+    if (el) el.textContent = rangeLabel;
   }
 
   function formatDate(iso) {
@@ -2777,11 +2754,19 @@
   ];
 
   function startGeneration() {
-    // Hide step indicators + footer during generation
     document.querySelectorAll('.wizard-step-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-generating').classList.add('active');
     document.getElementById('wizardFooter').style.display = 'none';
-    document.getElementById('wizardSteps').style.opacity = '0.3';
+
+    // Mark step 3 as active in the indicator
+    for (let i = 1; i <= 3; i++) {
+      const ind = document.getElementById('step-indicator-' + i);
+      ind.classList.remove('active', 'done');
+      if (i < 3) ind.classList.add('done');
+      else ind.classList.add('active');
+    }
+    document.getElementById('step-conn-1').classList.add('done');
+    document.getElementById('step-conn-2').classList.add('done');
 
     const bar = document.getElementById('genProgressBar');
     const lbl = document.getElementById('genProgressLabel');
@@ -2805,18 +2790,19 @@
   function showDone() {
     document.querySelectorAll('.wizard-step-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-done').classList.add('active');
-    document.getElementById('wizardSteps').style.opacity = '';
     document.getElementById('wizardFooter').style.display = 'none';
 
     const ext = selectedFormat === 'docx' ? 'docx' : 'pdf';
     const pdfName = 'Investigation_Packet_Cosgrove_20260131.' + ext;
-    const selCount = document.querySelectorAll('#panel-step-2 .section-option.selected').length;
+    const chips = getSelectedChips();
+    const selCount = chips.length;
     const meta = selCount + ' section' + (selCount !== 1 ? 's' : '') +
       '  ·  Generated May 20, 2026 at 2:41 PM  ·  by Alex Morrow';
 
-    // Check if Raw Data Appendix is selected (last section option)
-    const allSections = document.querySelectorAll('#panel-step-2 .section-option');
-    const rawDataSelected = allSections[allSections.length - 1].classList.contains('selected');
+    // Check if Raw Data Appendix chip is selected
+    const rawDataSelected = [...document.querySelectorAll('#sectionChipGrid .section-chip')]
+      .find(c => c.textContent.trim().startsWith('Raw Data'))
+      ?.classList.contains('selected') ?? false;
 
     const list = document.getElementById('doneFileList');
     list.innerHTML = '';
@@ -2835,7 +2821,7 @@
       </button>`;
     list.appendChild(pdfRow);
 
-    // CSV row — only if Raw Data Appendix is selected
+    // CSV row — only if Raw Data Appendix chip is selected
     if (rawDataSelected) {
       const csvRow = document.createElement('div');
       csvRow.className = 'done-file-row';
