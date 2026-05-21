@@ -29,6 +29,7 @@
       --gray-400:    #adadad;
       --gray-600:    #727272;
       --gray-700:    #555;
+      --gray-900:    #222222;
       --border:      rgba(0,0,0,.12);
       --text-87:     rgba(0,0,0,.87);
       --text-54:     rgba(0,0,0,.54);
@@ -507,6 +508,210 @@
     }
 
     .udp-body { flex: 1; overflow: auto; padding: 24px; background: #fafafa; }
+
+    /* Tab panes */
+    .udp-pane { display: none; }
+    .udp-pane.active { display: block; }
+
+    /* ── Documentation tab ─────────────────────────────── */
+    .doc-header {
+      display: flex; justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+    .doc-header-meta { text-align: right; }
+    .doc-header-label {
+      font-size: 12px; font-weight: 700;
+      color: var(--gray-600);
+    }
+    .doc-header-range {
+      font-size: 14px; font-weight: 600;
+      color: var(--text-87);
+    }
+
+    .doc-editor {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .doc-editor-toolbar {
+      display: flex; align-items: center; gap: 2px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .doc-toolbar-group {
+      display: inline-flex; gap: 0;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 2px;
+      margin-right: 6px;
+    }
+    .doc-toolbar-btn {
+      width: 28px; height: 28px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: none; border: none; border-radius: 3px;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .doc-toolbar-btn:hover { background: var(--gray-100); }
+    .doc-toolbar-btn .material-icons-outlined,
+    .doc-toolbar-btn .material-icons { font-size: 18px; }
+    .doc-toolbar-spacer { flex: 1; }
+
+    .doc-input-wrap { padding: 12px 16px 8px; }
+    .doc-input {
+      width: 100%;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 12px;
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--text-87);
+      resize: vertical;
+      min-height: 60px;
+    }
+    .doc-input:focus { outline: none; border-color: var(--teal); }
+    .doc-input::placeholder { color: var(--gray-400); }
+
+    .doc-tags-row {
+      padding: 4px 16px 8px;
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .doc-tag-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--gray-100);
+      border: none;
+      border-radius: 16px;
+      padding: 4px 12px 4px 8px;
+      font-family: var(--font); font-size: 13px; font-weight: 500;
+      color: var(--text-87);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .doc-tag-chip:hover { background: var(--gray-300); }
+    .doc-tag-chip .material-icons-outlined { font-size: 16px; }
+
+    .doc-input-footer {
+      display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+      padding: 8px 16px 12px;
+    }
+    .doc-attach-btn {
+      background: none; border: none; padding: 6px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--gray-600);
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .doc-attach-btn:hover { background: var(--gray-100); }
+    .doc-attach-btn .material-icons-outlined { font-size: 20px; }
+    .doc-submit {
+      background: var(--prism-pink-l);
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 22px;
+      font-family: var(--font); font-size: 14px; font-weight: 600;
+      color: #fff;
+      cursor: not-allowed;
+      letter-spacing: .4px;
+    }
+
+    /* Documentation feed cards */
+    .doc-feed { display: flex; flex-direction: column; gap: 12px; }
+    .doc-card {
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 18px 22px;
+    }
+    .doc-card-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 24px;
+      align-items: flex-start;
+    }
+    .doc-card-left { display: flex; flex-direction: column; gap: 6px; }
+    .doc-card-title-row {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text-87);
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .doc-card-title-row .material-icons-outlined,
+    .doc-card-title-row .material-icons { color: var(--gray-700); font-size: 20px; }
+    .doc-card-meta {
+      font-size: 12px;
+      color: var(--gray-600);
+      padding-left: 28px;
+    }
+    .doc-card-body {
+      font-size: 14px;
+      color: var(--text-87);
+      line-height: 1.5;
+    }
+    .doc-card-body strong { font-weight: 700; }
+    .doc-card-prism-icon { display: inline-flex; align-items: center; }
+
+    /* Prism analysis snapshot in documentation feed */
+    .doc-prism-card { border-color: var(--prism-border); }
+    .doc-prism-card .doc-card-title-row .doc-card-prism-icon svg { display: block; }
+    .doc-prism-snapshot {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .doc-prism-snapshot .prism-enhanced-headline {
+      font-size: 14px; color: var(--text-87);
+      line-height: 1.45; font-weight: 500;
+      margin: 0;
+    }
+    .doc-prism-snapshot .prism-stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin: 0;
+    }
+    .doc-prism-snapshot .prism-finding-list {
+      display: flex; flex-direction: column; gap: 6px;
+      font-size: 13px; line-height: 1.45;
+    }
+    .doc-prism-card .doc-card-actions {
+      display: flex; align-items: center; justify-content: flex-end;
+      margin-top: 12px;
+      gap: 8px;
+    }
+    .doc-prism-remove {
+      background: none; border: none;
+      font-family: var(--font); font-size: 13px; font-weight: 600;
+      color: var(--gray-600);
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 6px 10px;
+      border-radius: var(--radius);
+      transition: background .15s, color .15s;
+    }
+    .doc-prism-remove:hover { background: var(--red-100); color: var(--red); }
+    .doc-prism-remove .material-icons-outlined { font-size: 16px; }
+
+    /* Empty-state hint for Documentation tab */
+    .doc-empty-prism {
+      padding: 16px;
+      background: var(--gray-100);
+      border-radius: var(--radius);
+      font-size: 13px;
+      color: var(--gray-700);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    /* Toast with action link */
+    .prism-toast-action {
+      display: inline-block;
+      margin-left: 12px;
+      color: var(--prism-pink-l);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .prism-toast-action:hover { color: #fff; }
 
     /* IRIS summary row */
     .udp-iris-summary {
@@ -1080,6 +1285,7 @@
     .prism-banner-text {
       flex: 1;
       font-size: 14px;
+      color: var(--gray-900);
       line-height: 1.4;
     }
     .prism-banner-text strong { font-weight: 700; }
@@ -1115,6 +1321,7 @@
     }
     .prism-toast.show {
       opacity: 1; transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
     }
   </style>
 </head>
@@ -1196,11 +1403,11 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">
                 <div class="header-customer-name">
-                  <div class="header-customer-fullName">Jon Reischl</div>
-                  <div class="header-customer-hospitalName">[933934024] QA Eastwood Regional Hospital</div>
+                  <div class="header-customer-fullName">Alex Morrow</div>
+                  <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
                 </div>
                 <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
-                  <div class="user-circle mat-primary">JR</div>
+                  <div class="user-circle mat-primary">AM</div>
                 </button>
               </span>
             </button>
@@ -1402,13 +1609,16 @@
       </div>
 
       <div class="udp-tabs">
-        <button class="udp-tab active">IRIS</button>
-        <button class="udp-tab">Custom IRIS</button>
-        <button class="udp-tab">Reviews &amp; Cases <span class="case-dot">1</span></button>
-        <button class="udp-tab">Documentation</button>
+        <button class="udp-tab active" data-tab="iris" onclick="switchTab(this)">IRIS</button>
+        <button class="udp-tab" data-tab="custom" onclick="switchTab(this)">Custom IRIS</button>
+        <button class="udp-tab" data-tab="reviews" onclick="switchTab(this)">Reviews &amp; Cases <span class="case-dot">1</span></button>
+        <button class="udp-tab" data-tab="documentation" onclick="switchTab(this)">Documentation</button>
       </div>
 
       <div class="udp-body">
+
+        <!-- ═══ IRIS PANE ═══ -->
+        <div class="udp-pane active" data-pane="iris">
 
         <!-- IRIS summary -->
         <div class="udp-iris-summary">
@@ -1736,6 +1946,91 @@
           </div>
 
         </div><!-- /drsa-cards -->
+
+        </div><!-- /pane: iris -->
+
+        <!-- ═══ DOCUMENTATION PANE ═══ -->
+        <div class="udp-pane" data-pane="documentation">
+
+          <div class="doc-header">
+            <div class="doc-header-meta">
+              <div class="doc-header-label">Flagged Date Range</div>
+              <div class="doc-header-range">Jan 31, 2026 – Mar 2, 2026</div>
+            </div>
+          </div>
+
+          <div class="doc-editor">
+            <div class="doc-editor-toolbar">
+              <div class="doc-toolbar-group">
+                <button class="doc-toolbar-btn" title="Bold"><span class="material-icons-outlined">format_bold</span></button>
+                <button class="doc-toolbar-btn" title="Italic"><span class="material-icons-outlined">format_italic</span></button>
+                <button class="doc-toolbar-btn" title="Strikethrough"><span class="material-icons-outlined">strikethrough_s</span></button>
+                <button class="doc-toolbar-btn" title="Link"><span class="material-icons-outlined">link</span></button>
+              </div>
+              <div class="doc-toolbar-group">
+                <button class="doc-toolbar-btn" title="Heading"><span class="material-icons-outlined">title</span></button>
+                <button class="doc-toolbar-btn" title="Quote"><span class="material-icons-outlined">format_quote</span></button>
+                <button class="doc-toolbar-btn" title="Code"><span class="material-icons-outlined">code</span></button>
+                <button class="doc-toolbar-btn" title="Bulleted list"><span class="material-icons-outlined">format_list_bulleted</span></button>
+                <button class="doc-toolbar-btn" title="Numbered list"><span class="material-icons-outlined">format_list_numbered</span></button>
+                <button class="doc-toolbar-btn" title="Decrease indent"><span class="material-icons-outlined">format_indent_decrease</span></button>
+                <button class="doc-toolbar-btn" title="Increase indent"><span class="material-icons-outlined">format_indent_increase</span></button>
+              </div>
+              <div class="doc-toolbar-spacer"></div>
+              <button class="doc-toolbar-btn" title="Undo"><span class="material-icons-outlined">undo</span></button>
+              <button class="doc-toolbar-btn" title="Redo"><span class="material-icons-outlined">redo</span></button>
+            </div>
+            <div class="doc-input-wrap">
+              <textarea class="doc-input" placeholder="Provide an update…"></textarea>
+            </div>
+            <div class="doc-tags-row">
+              <button class="doc-tag-chip">
+                <span class="material-icons-outlined">add</span>
+                Add Tag
+              </button>
+            </div>
+            <div class="doc-input-footer">
+              <button class="doc-attach-btn" title="Attach file"><span class="material-icons-outlined">attach_file</span></button>
+              <button class="doc-submit" disabled>Submit</button>
+            </div>
+          </div>
+
+          <div class="doc-feed" id="doc-feed">
+
+            <!-- Existing Status Update entries -->
+            <div class="doc-card">
+              <div class="doc-card-row">
+                <div class="doc-card-left">
+                  <div class="doc-card-title-row">
+                    <span class="material-icons-outlined">subject</span>
+                    Status Update
+                  </div>
+                  <div class="doc-card-meta">ControlCheck · Mar 16, 2026 13:53</div>
+                </div>
+                <div class="doc-card-body">
+                  Changed status from <strong>Needs Review</strong> to <strong>In Review</strong>.
+                </div>
+              </div>
+            </div>
+
+            <div class="doc-card">
+              <div class="doc-card-row">
+                <div class="doc-card-left">
+                  <div class="doc-card-title-row">
+                    <span class="material-icons-outlined">subject</span>
+                    Status Update
+                  </div>
+                  <div class="doc-card-meta">ControlCheck · Mar 16, 2026 13:53</div>
+                </div>
+                <div class="doc-card-body">
+                  Changed status to <strong>Needs Review</strong>.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div><!-- /pane: documentation -->
 
       </div><!-- /udp-body -->
     </aside>
@@ -2166,12 +2461,115 @@
     showToast('Creating session in Prism Assistant');
   }
 
+  function switchTab(tabBtn) {
+    const target = tabBtn.dataset.tab;
+    document.querySelectorAll('.udp-tab').forEach(t => t.classList.toggle('active', t === tabBtn));
+    document.querySelectorAll('.udp-pane').forEach(p => p.classList.toggle('active', p.dataset.pane === target));
+    // Scroll the udp-body back to top when switching
+    const body = document.querySelector('.udp-body');
+    if (body) body.scrollTop = 0;
+  }
+
+  // Metric key → display label
+  const METRIC_LABELS = {
+    action_times: 'Action Times',
+    canceled_transactions: 'Canceled Transactions',
+    full_package_waste: 'Full Package Waste',
+    overrides: 'Overrides',
+    med_trends: 'Med Trends',
+    dispense_no_admin: 'Dispense Patterns',
+    waste_networks: 'Waste Networks',
+    variance_count: 'Variance Trends',
+    mobility: 'User Mobility'
+  };
+
   function addToReview(metricKey, btn) {
-    const label = metricKey.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const label = METRIC_LABELS[metricKey] || metricKey;
+    // Grab the rendered analysis snapshot from the card
+    const card = btn.closest('.drsa-card');
+    const headline = card.querySelector('.prism-enhanced-headline')?.outerHTML || '';
+    const statGrid = card.querySelector('.prism-stat-grid')?.outerHTML || '';
+    const findings = card.querySelector('.prism-finding-list')?.outerHTML || '';
+
+    // Build a unique id so we can target this entry for removal
+    const docId = 'prism-doc-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+    const now = new Date();
+    const ts = now.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
+
+    const docCard = document.createElement('div');
+    docCard.className = 'doc-card doc-prism-card';
+    docCard.id = docId;
+    docCard.dataset.metric = metricKey;
+    docCard.innerHTML = `
+      <div class="doc-card-row">
+        <div class="doc-card-left">
+          <div class="doc-card-title-row">
+            <span class="doc-card-prism-icon">
+              <svg width="18" height="15" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/>
+                <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/>
+                <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/>
+                <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/>
+                <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/>
+                <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/>
+              </svg>
+            </span>
+            Prism Analysis
+          </div>
+          <div class="doc-card-meta">${label} · ${ts}</div>
+        </div>
+        <div class="doc-card-body">
+          <div class="doc-prism-snapshot">
+            ${headline}
+            ${statGrid}
+            ${findings}
+          </div>
+          <div class="doc-card-actions">
+            <button class="doc-prism-remove" onclick="removePrismDoc('${docId}', '${metricKey}')">
+              <span class="material-icons-outlined">close</span>
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const feed = document.getElementById('doc-feed');
+    feed.insertBefore(docCard, feed.firstChild);
+
+    // Update the source button to show "added" state
     btn.innerHTML = `<span class="material-icons" style="font-size: 16px; color: var(--green);">check_circle</span> Added to Review`;
     btn.disabled = true;
+    btn.dataset.docId = docId;
     btn.style.cursor = 'default';
-    showToast(`${label} analysis added to Review`);
+
+    showToastWithAction(`${label} analysis added to Review`, 'View', () => {
+      // switch to documentation tab and scroll to the new card
+      const docTab = document.querySelector('.udp-tab[data-tab="documentation"]');
+      if (docTab) switchTab(docTab);
+      setTimeout(() => {
+        const el = document.getElementById(docId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 80);
+    });
+  }
+
+  function removePrismDoc(docId, metricKey) {
+    const card = document.getElementById(docId);
+    if (card) card.remove();
+    // Restore the source Add to Review button if it matches this docId
+    const sourceCard = document.querySelector(`.drsa-card[data-metric="${metricKey}"]`);
+    if (sourceCard) {
+      sourceCard.querySelectorAll('.prism-action-btn').forEach(b => {
+        if (b.dataset.docId === docId) {
+          b.innerHTML = '<span class="material-icons-outlined">note_add</span> Add to Review';
+          b.disabled = false;
+          b.style.cursor = '';
+          delete b.dataset.docId;
+        }
+      });
+    }
+    showToast('Removed from Review');
   }
 
   function showToast(msg) {
@@ -2180,6 +2578,20 @@
     t.classList.add('show');
     clearTimeout(window._toastT);
     window._toastT = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function showToastWithAction(msg, actionLabel, onClick) {
+    const t = document.getElementById('prismToast');
+    t.innerHTML = '';
+    t.appendChild(document.createTextNode(msg));
+    const link = document.createElement('span');
+    link.className = 'prism-toast-action';
+    link.textContent = actionLabel;
+    link.onclick = () => { onClick(); t.classList.remove('show'); };
+    t.appendChild(link);
+    t.classList.add('show');
+    clearTimeout(window._toastT);
+    window._toastT = setTimeout(() => t.classList.remove('show'), 3500);
   }
 
   function toggleLowScores(label) {
