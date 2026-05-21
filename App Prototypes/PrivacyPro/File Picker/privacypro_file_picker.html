@@ -5,182 +5,322 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PrivacyPro — File Picker Iteration</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* ============================================================
+       PRIVACYPRO DESIGN TOKENS (from styleguide)
+       ============================================================ */
+    :root {
+      --color-primary-100: #DCE4F4;
+      --color-primary-300: #7097BB;
+      --color-primary-500: #044A82;
+      --color-primary-700: #0A3861;
+      --color-primary-900: #021E35;
+
+      --color-secondary-100: #E7F4F8;
+      --color-secondary-300: #74C5D8;
+      --color-secondary-500: #0096B8;
+      --color-secondary-700: #00718A;
+      --color-secondary-900: #003E4B;
+
+      --color-danger-100: #FCD9D7;
+      --color-danger-300: #F78E86;
+      --color-danger-500: #F24335;
+      --color-danger-700: #B53228;
+
+      --color-success-100: #DBEDD7;
+      --color-success-300: #79D186;
+      --color-success-500: #16B434;
+      --color-success-700: #0E7221;
+
+      --color-warning-100: #FDF9E5;
+      --color-warning-300: #FAEEB3;
+      --color-warning-500: #F5DD67;
+      --color-warning-700: #B5A031;
+
+      --color-pink-100: #FBDAEB;
+      --color-pink-300: #F390C2;
+      --color-pink-500: #EB4699;
+      --color-pink-700: #AB336F;
+
+      --color-grey-100: #E5E5E5;
+      --color-grey-200: #EFEEF4;
+      --color-grey-300: #9E9E9E;
+      --color-grey-500: #757575;
+      --color-grey-700: #555555;
+      --color-grey-900: #222222;
+
+      --color-white:     #FFFFFF;
+      --color-off-white: #FAFAFA;
+      --color-bg-subtle: #F4F4F8;
+
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                     "Oxygen-Sans", Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      --font-size-xs:  0.7rem;
+      --font-size-sm:  0.85rem;
+      --font-size-md:  1rem;
+      --font-size-lg:  1.125rem;
+      --font-size-xl:  1.4375rem;
+      --font-size-2xl: 1.5rem;
+      --font-weight-normal: 400;
+      --font-weight-semi:   600;
+      --font-weight-bold:   700;
+
+      --space-1:  4px;
+      --space-2:  8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      --radius-sm:  4px;
+      --radius-md:  8px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+
+      --focus-ring: 0 0 0 2px var(--color-secondary-100), 0 0 0 4px var(--color-secondary-500);
+    }
+
+    /* ============================================================
+       RESET / BASE
+       ============================================================ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      /* PrivacyPro shell tokens */
-      --nav-bg:        #0096b8;
-      --nav-hover:     rgba(255,255,255,0.15);
-      --surface:       #F4F6F8;
-      --surface-alt:   #FAFBFC;
-      --border:        #E2E6EA;
-      --border-strong: #C8D0D7;
-      --text-primary:  #1A2A35;
-      --text-muted:    #6B7C8D;
-      --text-faint:    #94A3AE;
-
-      /* Accents (from Bluesight palette) */
-      --teal-500:      #0096b8;
-      --teal-100:      #E0F4F8;
-      --teal-50:       #F0FAFC;
-
-      /* States */
-      --success-500:   #16B434;
-      --success-100:   #DBEDD7;
-      --danger-500:    #F24335;
-      --danger-100:    #FCD9D7;
-      --warning-500:   #F5DD67;
-      --warning-100:   #FDF9E5;
-
-      /* Focus ring */
-      --focus-ring:    0 0 0 3px rgba(0, 150, 184, 0.25);
-    }
-
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--surface);
-      color: var(--text-primary);
+      font-family: var(--font-family);
+      font-size: var(--font-size-md);
+      color: var(--color-grey-700);
+      background: var(--color-bg-subtle);
+      line-height: 1.5;
       min-height: 100vh;
-      font-size: 14px;
-      line-height: 1.45;
     }
 
-    /* ── Top bar (just for context) ─────────────────────────── */
+    /* ============================================================
+       APP CHROME (top navbar — teal, matches shell)
+       ============================================================ */
     .navbar {
-      background: var(--nav-bg);
+      background: var(--color-secondary-500);
       height: 62.5px;
       display: flex;
       align-items: center;
-      padding: 0 20px;
-      gap: 8px;
+      padding: 0 var(--space-5);
+      gap: var(--space-2);
+    }
+    .navbar__icon {
+      color: var(--color-white);
+      font-size: 22px !important;
     }
     .navbar__title {
-      color: rgba(255,255,255,0.95);
-      font-weight: 600;
-      font-size: 15px;
-      letter-spacing: 0.01em;
+      color: var(--color-white);
+      font-weight: var(--font-weight-semi);
+      font-size: var(--font-size-md);
     }
     .navbar__crumb {
-      color: rgba(255,255,255,0.7);
-      font-size: 13px;
-      margin-left: 12px;
+      color: rgba(255,255,255,0.75);
+      font-size: var(--font-size-sm);
+      margin-left: var(--space-3);
     }
 
-    /* ── Page header ────────────────────────────────────────── */
+    /* ============================================================
+       DEMO STATE SWITCHER (prototype-only chrome)
+       ============================================================ */
+    .demo-bar {
+      background: var(--color-primary-900);
+      color: var(--color-white);
+      padding: var(--space-2) var(--space-8);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xs);
+      flex-wrap: wrap;
+    }
+    .demo-bar__label {
+      color: rgba(255,255,255,0.65);
+      font-weight: var(--font-weight-semi);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-right: var(--space-1);
+    }
+    .demo-chip {
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      background: rgba(255,255,255,0.08);
+      color: var(--color-white);
+      cursor: pointer;
+      border: 1px solid transparent;
+      font-size: var(--font-size-xs);
+      font-family: inherit;
+      font-weight: var(--font-weight-semi);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .demo-chip:hover { background: rgba(255,255,255,0.16); }
+    .demo-chip.active {
+      background: var(--color-secondary-500);
+      border-color: var(--color-secondary-300);
+    }
+    .demo-bar__note {
+      margin-left: auto;
+      color: rgba(255,255,255,0.45);
+      font-size: var(--font-size-xs);
+    }
+
+    /* ============================================================
+       PAGE HEADER
+       ============================================================ */
     .page-header {
-      padding: 22px 36px 16px;
-      background: white;
-      border-bottom: 1px solid var(--border);
+      padding: var(--space-5) var(--space-8) var(--space-4);
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-grey-100);
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: var(--space-3);
     }
-    .page-header .case-icon {
-      width: 32px; height: 32px;
-      border-radius: 6px;
-      background: var(--teal-100);
-      color: var(--teal-500);
+    .page-header__icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--color-secondary-100);
+      color: var(--color-secondary-500);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
+    .page-header__icon .material-icons { font-size: 20px; }
+    .page-header__label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semi);
+      color: var(--color-grey-500);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-1);
+    }
     .page-header h1 {
-      font-size: 17px;
-      font-weight: 600;
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semi);
+      color: var(--color-primary-700);
       line-height: 1.3;
     }
-    .page-header .case-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      font-weight: 500;
-      margin-bottom: 2px;
-    }
 
-    /* ── Tabs ───────────────────────────────────────────────── */
+    /* ============================================================
+       TABS
+       ============================================================ */
     .tabs {
       display: flex;
-      gap: 6px;
-      padding: 12px 36px 0;
-      background: white;
-      border-bottom: 1px solid var(--border);
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-8) 0;
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-grey-100);
     }
     .tab {
-      padding: 10px 16px;
-      border-radius: 6px 6px 0 0;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-muted);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semi);
+      color: var(--color-grey-500);
       cursor: pointer;
       border: 1px solid transparent;
       border-bottom: none;
-      display: flex; align-items: center; gap: 8px;
+      display: inline-flex; align-items: center; gap: var(--space-2);
       position: relative;
       top: 1px;
-      background: var(--surface-alt);
+      background: var(--color-off-white);
     }
-    .tab.active {
-      background: white;
-      color: var(--teal-500);
-      border-color: var(--border);
-      font-weight: 600;
+    .tab--active {
+      background: var(--color-white);
+      color: var(--color-secondary-500);
+      border-color: var(--color-grey-100);
     }
-    .tab .count {
-      background: var(--surface);
-      color: var(--text-muted);
-      font-size: 11px;
+    .tab__count {
+      background: var(--color-grey-200);
+      color: var(--color-grey-700);
+      font-size: var(--font-size-xs);
       padding: 1px 7px;
-      border-radius: 100px;
-      font-weight: 600;
+      border-radius: var(--radius-full);
+      font-weight: var(--font-weight-bold);
     }
-    .tab.active .count {
-      background: var(--teal-100);
-      color: var(--teal-500);
+    .tab--active .tab__count {
+      background: var(--color-secondary-100);
+      color: var(--color-secondary-700);
     }
 
-    /* ── Main layout ────────────────────────────────────────── */
+    /* ============================================================
+       LAYOUT
+       ============================================================ */
     .layout {
       display: grid;
       grid-template-columns: 1fr 360px;
       gap: 0;
-      max-width: 1400px;
+      max-width: 1440px;
     }
-    .main-col { padding: 28px 36px; }
+    .main-col { padding: var(--space-6) var(--space-8); }
     .side-col {
-      padding: 28px 32px;
-      border-left: 1px solid var(--border);
-      background: white;
-      min-height: calc(100vh - 168px);
+      padding: var(--space-6) var(--space-6);
+      border-left: 1px solid var(--color-grey-100);
+      background: var(--color-white);
+      min-height: calc(100vh - 230px);
     }
 
-    /* ── Add attachments dropdown (visual only) ─────────────── */
-    .attach-select {
+    /* ============================================================
+       SECTION LABEL
+       ============================================================ */
+    .section-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-grey-500);
+      margin-bottom: var(--space-3);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 9px 14px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 6px;
+      gap: var(--space-2);
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-grey-100);
+    }
+
+    /* ============================================================
+       ATTACHMENT TYPE SELECT (uses styleguide select)
+       ============================================================ */
+    .pp-select {
+      font-family: var(--font-family);
+      font-size: var(--font-size-md);
+      color: var(--color-grey-700);
+      background: var(--color-white);
+      border: 1px solid var(--color-grey-300);
+      border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-4);
       width: 100%;
       max-width: 320px;
-      font-size: 13px;
-      color: var(--text-primary);
-      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
       cursor: pointer;
+      margin-bottom: var(--space-4);
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%23757575' d='M6 8L0 0h12z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: var(--space-8);
     }
-    .attach-select:hover { border-color: var(--border-strong); }
-    .attach-select .material-icons { font-size: 18px; color: var(--text-muted); }
+    .pp-select:hover { border-color: var(--color-secondary-700); }
+    .pp-select:focus {
+      border-color: var(--color-secondary-700);
+      box-shadow: 0 0 0 2px var(--color-secondary-100);
+    }
 
-    /* ─────────────────────────────────────────────────────────
-       ✦ THE NEW FILE PICKER ✦
-       ───────────────────────────────────────────────────────── */
+    /* ============================================================
+       FILE PICKER — drop zone + list
+       ============================================================ */
     .filepicker {
-      background: white;
-      border-radius: 8px;
-      border: 1px solid var(--border);
+      background: var(--color-white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-grey-100);
+      box-shadow: var(--shadow-sm);
       overflow: hidden;
     }
 
@@ -188,43 +328,43 @@
     .dropzone {
       position: relative;
       display: block;
-      padding: 28px 24px;
-      border: 2px dashed var(--border-strong);
-      border-radius: 8px;
-      background: var(--surface-alt);
+      padding: var(--space-8) var(--space-6);
+      border: 2px dashed var(--color-grey-300);
+      border-radius: var(--radius-md);
+      background: var(--color-off-white);
       text-align: center;
       cursor: pointer;
-      transition: all 0.18s ease;
-      margin: 16px;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+      margin: var(--space-4);
     }
 
     .dropzone:hover {
-      border-color: var(--teal-500);
-      background: var(--teal-50);
+      border-color: var(--color-secondary-500);
+      background: var(--color-secondary-100);
     }
 
     .dropzone:focus-within {
       outline: none;
       box-shadow: var(--focus-ring);
-      border-color: var(--teal-500);
+      border-color: var(--color-secondary-500);
     }
 
-    .dropzone.is-dragover {
-      border-color: var(--teal-500);
+    .dropzone--dragover {
+      border-color: var(--color-secondary-500);
       border-style: solid;
-      background: var(--teal-100);
-      transform: scale(1.005);
+      background: var(--color-secondary-100);
+      transform: scale(1.003);
     }
 
-    .dropzone.is-dragover .dropzone__icon {
-      transform: translateY(-2px) scale(1.08);
-      color: var(--teal-500);
+    .dropzone--dragover .dropzone__icon {
+      color: var(--color-secondary-500);
+      border-color: var(--color-secondary-500);
+      transform: translateY(-2px);
     }
 
-    .dropzone.has-files {
-      padding: 18px 20px;
-      margin-bottom: 0;
-      background: var(--surface-alt);
+    .dropzone--has-files {
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-off-white);
     }
 
     .dropzone__input {
@@ -239,263 +379,180 @@
 
     .dropzone__icon {
       width: 44px; height: 44px;
-      margin: 0 auto 10px;
-      border-radius: 50%;
-      background: white;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
+      margin: 0 auto var(--space-3);
+      border-radius: var(--radius-full);
+      background: var(--color-white);
+      border: 1px solid var(--color-grey-100);
+      color: var(--color-grey-500);
       display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s ease;
+      transition: transform 0.2s ease, color 0.2s, border-color 0.2s;
     }
     .dropzone__icon .material-icons { font-size: 22px; }
 
-    .dropzone.has-files .dropzone__icon {
-      width: 32px; height: 32px;
-      margin-bottom: 0;
+    .dropzone--has-files .dropzone__icon {
+      width: 28px; height: 28px;
+      margin: 0 var(--space-2) 0 0;
       display: inline-flex;
       vertical-align: middle;
-      margin-right: 10px;
     }
-    .dropzone.has-files .dropzone__icon .material-icons { font-size: 18px; }
+    .dropzone--has-files .dropzone__icon .material-icons { font-size: 16px; }
 
     .dropzone__primary {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 4px;
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-semi);
+      color: var(--color-grey-900);
+      margin-bottom: var(--space-1);
     }
     .dropzone__primary .link {
-      color: var(--teal-500);
+      color: var(--color-secondary-500);
       text-decoration: underline;
-      text-underline-offset: 2px;
+      text-underline-offset: 3px;
+      font-weight: var(--font-weight-bold);
     }
 
     .dropzone__secondary {
-      font-size: 12px;
-      color: var(--text-muted);
+      font-size: var(--font-size-sm);
+      color: var(--color-grey-500);
     }
 
-    .dropzone.has-files .dropzone__compact {
+    .dropzone__compact {
       display: inline-flex;
       align-items: center;
-      font-size: 13px;
-      color: var(--text-primary);
-      font-weight: 500;
+      font-size: var(--font-size-sm);
+      color: var(--color-grey-700);
+      font-weight: var(--font-weight-semi);
     }
-    .dropzone.has-files .dropzone__compact .link {
-      color: var(--teal-500);
+    .dropzone__compact .link {
+      color: var(--color-secondary-500);
       text-decoration: underline;
-      text-underline-offset: 2px;
-      margin-left: 4px;
+      text-underline-offset: 3px;
+      margin-left: var(--space-1);
+      font-weight: var(--font-weight-bold);
     }
 
-    /* ── File list ──────────────────────────────────────────── */
+    /* File list */
     .file-list {
       list-style: none;
-      padding: 0 16px 8px;
+      padding: 0 var(--space-4) var(--space-2);
     }
 
     .file-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      border-radius: 6px;
-      background: white;
-      border: 1px solid var(--border);
-      margin-bottom: 6px;
-      transition: border-color 0.15s;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-sm);
+      background: var(--color-white);
+      border: 1px solid var(--color-grey-100);
+      margin-bottom: var(--space-2);
+      transition: border-color 0.15s, background 0.15s;
     }
-    .file-row:hover { border-color: var(--border-strong); }
-    .file-row.is-error { border-color: var(--danger-500); background: #FEF7F6; }
-    .file-row.is-success { border-color: var(--success-500); background: #F5FBF3; }
+    .file-row:hover { border-color: var(--color-grey-300); }
+    .file-row--error {
+      border-color: var(--color-danger-500);
+      background: var(--color-danger-100);
+    }
+    .file-row--success {
+      border-color: var(--color-success-300);
+      background: var(--color-success-100);
+    }
 
     .file-icon {
       width: 36px; height: 36px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       font-size: 10px;
-      font-weight: 700;
-      color: white;
-      letter-spacing: 0.02em;
+      font-weight: var(--font-weight-bold);
+      color: var(--color-white);
+      letter-spacing: 0.04em;
     }
-    .file-icon.is-img { background: #6447F2; }
-    .file-icon.is-pdf { background: #E03E3E; }
-    .file-icon.is-doc { background: #2B6CB0; }
-    .file-icon.is-xls { background: #2D7D45; }
-    .file-icon.is-generic { background: #6B7C8D; }
+    .file-icon--img { background: var(--color-pink-500); }
+    .file-icon--pdf { background: var(--color-danger-500); }
+    .file-icon--doc { background: var(--color-primary-500); }
+    .file-icon--xls { background: var(--color-success-700); }
+    .file-icon--generic { background: var(--color-grey-500); }
 
-    .file-info {
-      flex: 1;
-      min-width: 0;
-    }
+    .file-info { flex: 1; min-width: 0; }
+
     .file-name {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semi);
+      color: var(--color-grey-900);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       margin-bottom: 2px;
     }
     .file-meta {
-      font-size: 12px;
-      color: var(--text-muted);
+      font-size: var(--font-size-xs);
+      color: var(--color-grey-500);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: var(--space-2);
     }
-    .file-meta .dot {
+    .file-meta__dot {
       width: 3px; height: 3px;
       border-radius: 50%;
-      background: var(--text-faint);
+      background: var(--color-grey-300);
     }
-    .file-meta .status-success { color: var(--success-500); font-weight: 500; display: inline-flex; align-items: center; gap: 3px; }
-    .file-meta .status-error { color: var(--danger-500); font-weight: 500; }
-    .file-meta .material-icons { font-size: 13px; }
+    .file-meta__status--success {
+      color: var(--color-success-700);
+      font-weight: var(--font-weight-semi);
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .file-meta__status--success .material-icons {
+      font-size: 13px;
+      color: var(--color-success-500);
+    }
+    .file-meta__status--error {
+      color: var(--color-danger-700);
+      font-weight: var(--font-weight-semi);
+    }
 
-    /* Progress bar */
     .progress-track {
       height: 4px;
-      background: var(--border);
-      border-radius: 100px;
+      background: var(--color-grey-100);
+      border-radius: var(--radius-full);
       overflow: hidden;
-      margin-top: 6px;
+      margin-top: var(--space-1);
     }
     .progress-fill {
       height: 100%;
-      background: var(--teal-500);
-      border-radius: 100px;
+      background: var(--color-secondary-500);
+      border-radius: var(--radius-full);
       transition: width 0.3s ease;
     }
-    .progress-fill.is-success { background: var(--success-500); }
 
-    .file-action {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
+    .file-action { display: flex; align-items: center; gap: var(--space-1); flex-shrink: 0; }
+
     .icon-btn {
       width: 30px; height: 30px;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       border: none;
       background: transparent;
-      color: var(--text-muted);
+      color: var(--color-grey-500);
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: background 0.15s, color 0.15s;
     }
     .icon-btn:hover {
-      background: var(--surface);
-      color: var(--text-primary);
+      background: var(--color-grey-200);
+      color: var(--color-grey-700);
     }
     .icon-btn:focus-visible {
       outline: none;
       box-shadow: var(--focus-ring);
     }
-    .icon-btn.is-danger:hover {
-      background: var(--danger-100);
-      color: var(--danger-500);
+    .icon-btn--danger:hover {
+      background: var(--color-danger-100);
+      color: var(--color-danger-700);
     }
     .icon-btn .material-icons { font-size: 18px; }
 
-    /* ── Optional note & actions (kept from original layout) ── */
-    .note-area {
-      margin-top: 14px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      overflow: hidden;
-    }
-    .note-area textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: none;
-      resize: vertical;
-      min-height: 80px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      color: var(--text-primary);
-      background: white;
-    }
-    .note-area textarea:focus {
-      outline: none;
-      box-shadow: inset 0 0 0 2px var(--teal-500);
-    }
-    .note-area textarea::placeholder { color: var(--text-faint); }
-
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 16px;
-    }
-    .btn {
-      padding: 8px 18px;
-      border-radius: 6px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.15s;
-    }
-    .btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-    .btn--ghost {
-      background: transparent;
-      color: var(--text-muted);
-      border-color: var(--border);
-    }
-    .btn--ghost:hover {
-      background: var(--surface);
-      color: var(--text-primary);
-    }
-    .btn--primary {
-      background: var(--teal-500);
-      color: white;
-    }
-    .btn--primary:hover { background: #007A98; }
-    .btn--primary:disabled {
-      background: var(--border-strong);
-      cursor: not-allowed;
-    }
-
-    /* ── Section labels & demo notes ────────────────────────── */
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* Side panel — keeps right rail context */
-    .side-col h3 {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-    }
-    .field { margin-bottom: 14px; }
-    .field-label { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; }
-    .field-value { font-size: 13px; color: var(--text-primary); }
-    .field-value a { color: var(--teal-500); text-decoration: none; }
-    .field-value a:hover { text-decoration: underline; }
-
-    /* Live region for SR announcements (visually hidden) */
+    /* Live region for SR announcements */
     .sr-only {
       position: absolute;
       width: 1px; height: 1px;
@@ -506,87 +563,178 @@
       border: 0;
     }
 
-    /* Demo state switcher */
-    .demo-bar {
-      background: #1A2A35;
-      color: white;
-      padding: 10px 36px;
-      display: flex;
+    /* ============================================================
+       NOTE AREA
+       ============================================================ */
+    .pp-textarea {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-family);
+      font-size: var(--font-size-md);
+      color: var(--color-grey-700);
+      background: var(--color-white);
+      border: 1px solid var(--color-grey-300);
+      border-radius: var(--radius-sm);
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-top: var(--space-4);
+    }
+    .pp-textarea:hover { border-color: var(--color-secondary-700); }
+    .pp-textarea:focus {
+      border-color: var(--color-secondary-700);
+      box-shadow: 0 0 0 2px var(--color-secondary-100);
+    }
+    .pp-textarea::placeholder { color: var(--color-grey-300); }
+
+    /* ============================================================
+       BUTTONS (from styleguide)
+       ============================================================ */
+    .pp-btn {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      flex-wrap: wrap;
-    }
-    .demo-bar__label {
-      color: rgba(255,255,255,0.7);
-      font-weight: 500;
-      margin-right: 4px;
-    }
-    .demo-chip {
-      padding: 4px 10px;
-      border-radius: 100px;
-      background: rgba(255,255,255,0.1);
-      color: white;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-family);
+      font-size: var(--font-size-md);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.2px;
+      border-radius: var(--radius-sm);
+      border: none;
       cursor: pointer;
-      border: 1px solid transparent;
-      font-size: 12px;
-      font-family: inherit;
-      transition: all 0.15s;
+      text-decoration: none;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+      line-height: 1;
     }
-    .demo-chip:hover { background: rgba(255,255,255,0.18); }
-    .demo-chip.active {
-      background: var(--teal-500);
-      border-color: var(--teal-500);
+    .pp-btn:focus-visible {
+      outline: none;
+      box-shadow: var(--focus-ring);
+    }
+    .pp-btn-default {
+      background: var(--color-secondary-500);
+      color: var(--color-white);
+    }
+    .pp-btn-default:hover { background: var(--color-secondary-700); }
+    .pp-btn-default:disabled {
+      background: rgba(0,113,138,0.3);
+      cursor: not-allowed;
+    }
+    .pp-btn-muted {
+      background: var(--color-white);
+      color: var(--color-secondary-500);
+      border: 1px solid var(--color-secondary-500);
+    }
+    .pp-btn-muted:hover {
+      background: var(--color-secondary-100);
+      border-color: var(--color-secondary-700);
+      color: var(--color-secondary-700);
     }
 
-    .a11y-callout {
-      margin-top: 20px;
-      padding: 12px 14px;
-      background: var(--teal-50);
-      border-left: 3px solid var(--teal-500);
-      border-radius: 0 6px 6px 0;
-      font-size: 12px;
-      color: var(--text-primary);
-      line-height: 1.5;
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
     }
-    .a11y-callout strong { color: var(--teal-500); }
-    .a11y-callout ul { margin: 6px 0 0 18px; }
-    .a11y-callout li { margin-bottom: 2px; }
+
+    /* ============================================================
+       SIDE PANEL
+       ============================================================ */
+    .side-col h3 {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-primary-700);
+      margin-bottom: var(--space-4);
+    }
+    .field { margin-bottom: var(--space-4); }
+    .field__label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semi);
+      color: var(--color-grey-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-1);
+    }
+    .field__value { font-size: var(--font-size-sm); color: var(--color-grey-700); }
+    .field__value a { color: var(--color-secondary-500); text-decoration: none; }
+    .field__value a:hover { text-decoration: underline; }
+
+    /* ============================================================
+       ACCESSIBILITY CALLOUT (info alert from styleguide)
+       ============================================================ */
+    .a11y-callout {
+      display: flex;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-radius: var(--radius-sm);
+      background: var(--color-secondary-100);
+      color: var(--color-secondary-700);
+      margin-top: var(--space-6);
+      font-size: var(--font-size-sm);
+      align-items: flex-start;
+    }
+    .a11y-callout__icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      line-height: 1.3;
+    }
+    .a11y-callout__title {
+      font-weight: var(--font-weight-semi);
+      margin-bottom: var(--space-1);
+      color: var(--color-secondary-900);
+    }
+    .a11y-callout ul {
+      margin: var(--space-2) 0 0 var(--space-4);
+    }
+    .a11y-callout li { margin-bottom: var(--space-1); }
+    .a11y-callout code {
+      background: var(--color-white);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: var(--font-size-xs);
+      font-family: "SF Mono", "Fira Code", Consolas, monospace;
+      color: var(--color-primary-700);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top bar (context only) -->
+  <!-- Top bar -->
   <nav class="navbar">
-    <span class="material-icons" style="color:white;font-size:22px;">folder</span>
+    <span class="material-icons navbar__icon">folder</span>
     <span class="navbar__title">Case 541</span>
     <span class="navbar__crumb">/ Caseflow / Add Attachments</span>
   </nav>
 
   <!-- Demo state switcher -->
-  <div class="demo-bar" role="region" aria-label="Demo state switcher">
+  <div class="demo-bar" role="region" aria-label="Prototype state switcher">
     <span class="demo-bar__label">Preview state:</span>
     <button class="demo-chip active" data-state="empty">Empty</button>
-    <button class="demo-chip" data-state="dragover">Drag-over (simulated)</button>
+    <button class="demo-chip" data-state="dragover">Drag-over</button>
     <button class="demo-chip" data-state="uploading">Uploading</button>
     <button class="demo-chip" data-state="mixed">Files + error</button>
-    <span style="margin-left:auto;color:rgba(255,255,255,0.5);font-size:11.5px;">Real drag-drop also works ↓</span>
+    <span class="demo-bar__note">Real drag-and-drop also works ↓</span>
   </div>
 
   <!-- Page header -->
   <div class="page-header">
-    <div class="case-icon"><span class="material-icons" style="font-size:18px;">folder</span></div>
+    <div class="page-header__icon"><span class="material-icons">folder</span></div>
     <div>
-      <div class="case-label">Case 541</div>
+      <div class="page-header__label">Case 541</div>
       <h1>Sadie Glen Emmerich V accessed Bette Paris Monahan on 3/3/2026</h1>
     </div>
   </div>
 
   <!-- Tabs -->
   <div class="tabs">
-    <div class="tab active">Caseflow</div>
+    <div class="tab tab--active">Caseflow</div>
     <div class="tab">Accesses</div>
-    <div class="tab">Assessments <span class="count">1</span></div>
+    <div class="tab">Assessments <span class="tab__count">1</span></div>
     <div class="tab">User &amp; Patient Details</div>
   </div>
 
@@ -594,19 +742,21 @@
   <div class="layout">
     <div class="main-col">
 
-      <!-- Section: Add Attachments -->
       <div class="section-label">Add attachments</div>
 
       <!-- Attachment type selector -->
-      <button class="attach-select" type="button">
-        <span>Choose attachment type…</span>
-        <span class="material-icons">expand_more</span>
-      </button>
+      <select class="pp-select" aria-label="Attachment type">
+        <option>Choose attachment type…</option>
+        <option>Email correspondence</option>
+        <option>Manager response</option>
+        <option>Screenshot</option>
+        <option>Investigation note</option>
+        <option>Other</option>
+      </select>
 
       <!-- ✦ THE FILE PICKER ✦ -->
       <div class="filepicker" id="filepicker">
 
-        <!-- Drop zone (also the label that wraps the input) -->
         <label class="dropzone" id="dropzone" for="fileInput">
           <input
             class="dropzone__input"
@@ -635,60 +785,57 @@
           </div>
         </label>
 
-        <!-- File list -->
         <ul class="file-list" id="fileList" aria-label="Attached files"></ul>
 
-        <!-- Screen reader live region -->
         <div class="sr-only" aria-live="polite" id="srStatus"></div>
       </div>
 
-      <!-- Optional note (kept from original layout) -->
-      <div class="note-area">
-        <textarea placeholder="Optional note (visible to anyone viewing this case)"></textarea>
-      </div>
+      <textarea class="pp-textarea" placeholder="Optional note (visible to anyone viewing this case)"></textarea>
 
-      <!-- Form actions -->
       <div class="form-actions">
-        <button class="btn btn--ghost" type="button">Cancel</button>
-        <button class="btn btn--primary" type="button" id="saveBtn">Save attachment</button>
+        <button class="pp-btn pp-btn-muted" type="button">Cancel</button>
+        <button class="pp-btn pp-btn-default" type="button" id="saveBtn">Save attachment</button>
       </div>
 
-      <!-- Accessibility callout -->
-      <div class="a11y-callout">
-        <strong>Accessibility notes</strong>
-        <ul>
-          <li><strong>Native:</strong> the drop zone is a <code>&lt;label&gt;</code> wrapping a real <code>&lt;input type="file"&gt;</code>, so it's Tab-focusable, Enter/Space opens the picker, and screen readers announce it as a file input.</li>
-          <li><strong>Focus ring:</strong> visible 3px teal ring on keyboard focus (not on click).</li>
-          <li><strong>Live region:</strong> upload progress and errors are announced via <code>aria-live="polite"</code>.</li>
-          <li><strong>Remove buttons:</strong> each has an <code>aria-label</code> naming the file being removed.</li>
-          <li><strong>Drop zone help text</strong> is linked via <code>aria-describedby</code> so SRs hear the constraints alongside the control.</li>
-        </ul>
+      <!-- Accessibility callout (uses styleguide pp-alert-info pattern) -->
+      <div class="a11y-callout" role="note">
+        <span class="material-icons a11y-callout__icon">info</span>
+        <div>
+          <div class="a11y-callout__title">Accessibility notes</div>
+          <ul>
+            <li><strong>Native control:</strong> the drop zone is a <code>&lt;label&gt;</code> wrapping a real <code>&lt;input type="file"&gt;</code>, so it's Tab-focusable, Enter/Space opens the picker, and screen readers announce it as a file input.</li>
+            <li><strong>Focus ring:</strong> 2-layer ring (teal-100 + teal-500) appears only on keyboard focus.</li>
+            <li><strong>Live region:</strong> upload progress, completion, and errors announced via <code>aria-live="polite"</code>.</li>
+            <li><strong>Per-file actions</strong> carry <code>aria-label</code>s naming the file (e.g. "Remove IRIS Worklist.png").</li>
+            <li><strong>Help text</strong> linked to the input via <code>aria-describedby</code>.</li>
+          </ul>
+        </div>
       </div>
 
     </div>
 
-    <!-- Side rail (preserved from original case detail) -->
+    <!-- Side rail -->
     <aside class="side-col">
       <h3>Case Information</h3>
       <div class="field">
-        <div class="field-label">EMR User</div>
-        <div class="field-value"><a href="#">Sadie Glen Emmerich V</a></div>
+        <div class="field__label">EMR User</div>
+        <div class="field__value"><a href="#">Sadie Glen Emmerich V</a></div>
       </div>
       <div class="field">
-        <div class="field-label">Patient</div>
-        <div class="field-value"><a href="#">Bette Paris Monahan</a></div>
+        <div class="field__label">Patient</div>
+        <div class="field__value"><a href="#">Bette Paris Monahan</a></div>
       </div>
       <div class="field">
-        <div class="field-label">Case Type</div>
-        <div class="field-value">Privacy UNI: Self Access</div>
+        <div class="field__label">Case Type</div>
+        <div class="field__value">Privacy UNI: Self Access</div>
       </div>
       <div class="field">
-        <div class="field-label">Created</div>
-        <div class="field-value">Mar 10, 2026  4:00 AM CDT</div>
+        <div class="field__label">Created</div>
+        <div class="field__value">Mar 10, 2026  4:00 AM CDT</div>
       </div>
       <div class="field">
-        <div class="field-label">Owner</div>
-        <div class="field-value">Unassigned · <a href="#">Assign To Me</a></div>
+        <div class="field__label">Owner</div>
+        <div class="field__value">Unassigned · <a href="#">Assign To Me</a></div>
       </div>
     </aside>
   </div>
@@ -697,28 +844,28 @@
     /* ─────────────────────────────────────────────────────────
        File picker behavior
        ───────────────────────────────────────────────────────── */
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
+    const dropzone   = document.getElementById('dropzone');
+    const fileInput  = document.getElementById('fileInput');
+    const fileList   = document.getElementById('fileList');
     const defaultView = dropzone.querySelector('.dropzone__default');
     const compactView = dropzone.querySelector('.dropzone__compact');
-    const srStatus = document.getElementById('srStatus');
-    const saveBtn = document.getElementById('saveBtn');
+    const srStatus   = document.getElementById('srStatus');
+    const saveBtn    = document.getElementById('saveBtn');
 
-    let files = []; // { id, name, size, type, progress, status: 'uploading'|'success'|'error', error? }
+    let files = [];
     let uid = 0;
 
     const TYPE_MAP = {
-      pdf:  { cls: 'is-pdf',     label: 'PDF' },
-      png:  { cls: 'is-img',     label: 'PNG' },
-      jpg:  { cls: 'is-img',     label: 'JPG' },
-      jpeg: { cls: 'is-img',     label: 'JPG' },
-      doc:  { cls: 'is-doc',     label: 'DOC' },
-      docx: { cls: 'is-doc',     label: 'DOC' },
-      xls:  { cls: 'is-xls',     label: 'XLS' },
-      xlsx: { cls: 'is-xls',     label: 'XLS' },
-      txt:  { cls: 'is-generic', label: 'TXT' },
-      csv:  { cls: 'is-generic', label: 'CSV' },
+      pdf:  { cls: 'file-icon--pdf',     label: 'PDF' },
+      png:  { cls: 'file-icon--img',     label: 'PNG' },
+      jpg:  { cls: 'file-icon--img',     label: 'JPG' },
+      jpeg: { cls: 'file-icon--img',     label: 'JPG' },
+      doc:  { cls: 'file-icon--doc',     label: 'DOC' },
+      docx: { cls: 'file-icon--doc',     label: 'DOC' },
+      xls:  { cls: 'file-icon--xls',     label: 'XLS' },
+      xlsx: { cls: 'file-icon--xls',     label: 'XLS' },
+      txt:  { cls: 'file-icon--generic', label: 'TXT' },
+      csv:  { cls: 'file-icon--generic', label: 'CSV' },
     };
 
     function getExt(name) {
@@ -726,7 +873,7 @@
       return i === -1 ? '' : name.slice(i + 1).toLowerCase();
     }
     function getTypeMeta(name) {
-      return TYPE_MAP[getExt(name)] || { cls: 'is-generic', label: 'FILE' };
+      return TYPE_MAP[getExt(name)] || { cls: 'file-icon--generic', label: 'FILE' };
     }
     function formatSize(bytes) {
       if (bytes < 1024) return bytes + ' B';
@@ -735,30 +882,28 @@
     }
 
     function render() {
-      // Toggle compact vs default drop zone
       const hasFiles = files.length > 0;
-      dropzone.classList.toggle('has-files', hasFiles);
+      dropzone.classList.toggle('dropzone--has-files', hasFiles);
       defaultView.hidden = hasFiles;
       compactView.hidden = !hasFiles;
 
-      // Render rows
       fileList.innerHTML = '';
       files.forEach(f => {
         const meta = getTypeMeta(f.name);
         const li = document.createElement('li');
         li.className = 'file-row';
-        if (f.status === 'success') li.classList.add('is-success');
-        if (f.status === 'error')   li.classList.add('is-error');
+        if (f.status === 'success') li.classList.add('file-row--success');
+        if (f.status === 'error')   li.classList.add('file-row--error');
 
         let metaLine = '';
         if (f.status === 'uploading') {
-          metaLine = `${formatSize(f.size)} <span class="dot"></span> Uploading ${f.progress}%`;
+          metaLine = `${formatSize(f.size)} <span class="file-meta__dot"></span> Uploading ${Math.round(f.progress)}%`;
         } else if (f.status === 'success') {
-          metaLine = `${formatSize(f.size)} <span class="dot"></span>
-            <span class="status-success"><span class="material-icons">check_circle</span> Uploaded</span>`;
+          metaLine = `${formatSize(f.size)} <span class="file-meta__dot"></span>
+            <span class="file-meta__status--success"><span class="material-icons">check_circle</span> Uploaded</span>`;
         } else if (f.status === 'error') {
-          metaLine = `${formatSize(f.size)} <span class="dot"></span>
-            <span class="status-error">${f.error || 'Upload failed'}</span>`;
+          metaLine = `${formatSize(f.size)} <span class="file-meta__dot"></span>
+            <span class="file-meta__status--error">${f.error || 'Upload failed'}</span>`;
         }
 
         const progressBar = (f.status === 'uploading')
@@ -778,7 +923,7 @@
                    <span class="material-icons">refresh</span>
                  </button>`
               : ''}
-            <button class="icon-btn is-danger" type="button" aria-label="Remove ${f.name}" data-action="remove" data-id="${f.id}">
+            <button class="icon-btn icon-btn--danger" type="button" aria-label="Remove ${f.name}" data-action="remove" data-id="${f.id}">
               <span class="material-icons">close</span>
             </button>
           </div>
@@ -786,22 +931,18 @@
         fileList.appendChild(li);
       });
 
-      // Disable Save if anything is uploading or no files
       const uploading = files.some(f => f.status === 'uploading');
       const validCount = files.filter(f => f.status === 'success').length;
       saveBtn.disabled = uploading || validCount === 0;
     }
 
-    function announce(msg) {
-      srStatus.textContent = msg;
-    }
+    function announce(msg) { srStatus.textContent = msg; }
 
     function addFiles(fileObjs) {
       Array.from(fileObjs).forEach(file => {
         const id = ++uid;
-        // Simple validation
         const tooBig = file.size > 25 * 1024 * 1024;
-        const entry = {
+        files.push({
           id,
           name: file.name,
           size: file.size,
@@ -809,11 +950,8 @@
           progress: 0,
           status: tooBig ? 'error' : 'uploading',
           error: tooBig ? 'File exceeds 25 MB limit' : null
-        };
-        files.push(entry);
-
+        });
         if (!tooBig) {
-          // Simulate upload
           simulateUpload(id);
           announce(`Uploading ${file.name}`);
         } else {
@@ -838,18 +976,18 @@
       }, 220);
     }
 
-    /* ── Drag & drop wiring ─────────────────────────────────── */
+    /* Drag & drop */
     ['dragenter', 'dragover'].forEach(evt => {
       dropzone.addEventListener(evt, e => {
         e.preventDefault();
-        dropzone.classList.add('is-dragover');
+        dropzone.classList.add('dropzone--dragover');
       });
     });
     ['dragleave', 'drop'].forEach(evt => {
       dropzone.addEventListener(evt, e => {
         e.preventDefault();
         if (evt === 'dragleave' && dropzone.contains(e.relatedTarget)) return;
-        dropzone.classList.remove('is-dragover');
+        dropzone.classList.remove('dropzone--dragover');
       });
     });
     dropzone.addEventListener('drop', e => {
@@ -857,13 +995,13 @@
       if (dropped && dropped.length) addFiles(dropped);
     });
 
-    /* ── Native file input ──────────────────────────────────── */
+    /* Native input */
     fileInput.addEventListener('change', e => {
       if (e.target.files.length) addFiles(e.target.files);
-      e.target.value = ''; // allow re-selecting the same file
+      e.target.value = '';
     });
 
-    /* ── Row actions (remove / retry) ───────────────────────── */
+    /* Row actions */
     fileList.addEventListener('click', e => {
       const btn = e.target.closest('button[data-action]');
       if (!btn) return;
@@ -886,40 +1024,34 @@
       }
     });
 
-    /* ─────────────────────────────────────────────────────────
-       Demo state switcher (for stakeholder review)
-       ───────────────────────────────────────────────────────── */
+    /* Demo state switcher */
     document.querySelectorAll('.demo-chip').forEach(chip => {
       chip.addEventListener('click', () => {
         document.querySelectorAll('.demo-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         const state = chip.dataset.state;
 
-        // Reset
         files = [];
-        dropzone.classList.remove('is-dragover');
+        dropzone.classList.remove('dropzone--dragover');
 
-        if (state === 'empty') {
-          // nothing
-        } else if (state === 'dragover') {
-          dropzone.classList.add('is-dragover');
+        if (state === 'dragover') {
+          dropzone.classList.add('dropzone--dragover');
         } else if (state === 'uploading') {
           files = [
-            { id: ++uid, name: 'IRIS Worklist.png',         size: 248320,  status: 'uploading', progress: 64 },
-            { id: ++uid, name: 'access_log_3-3-2026.csv',   size: 14200,   status: 'success',   progress: 100 },
+            { id: ++uid, name: 'IRIS Worklist.png',       size: 248320, status: 'uploading', progress: 64 },
+            { id: ++uid, name: 'access_log_3-3-2026.csv', size: 14200,  status: 'success',   progress: 100 },
           ];
         } else if (state === 'mixed') {
           files = [
-            { id: ++uid, name: 'IRIS Worklist.png',           size: 248320,    status: 'success', progress: 100 },
-            { id: ++uid, name: 'Manager email.pdf',           size: 184500,    status: 'success', progress: 100 },
-            { id: ++uid, name: 'Full system export.xlsx',     size: 31457280,  status: 'error',   error: 'File exceeds 25 MB limit' },
+            { id: ++uid, name: 'IRIS Worklist.png',       size: 248320,    status: 'success', progress: 100 },
+            { id: ++uid, name: 'Manager email.pdf',       size: 184500,    status: 'success', progress: 100 },
+            { id: ++uid, name: 'Full system export.xlsx', size: 31457280,  status: 'error',   error: 'File exceeds 25 MB limit' },
           ];
         }
         render();
       });
     });
 
-    // Initial render
     render();
   </script>
 
