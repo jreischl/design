@@ -657,8 +657,21 @@
     /* Prism analysis snapshot in documentation feed */
     .doc-prism-card { border-color: var(--prism-border); }
     .doc-prism-card .doc-card-title-row .doc-card-prism-icon svg { display: block; }
+    .doc-prism-metric-heading {
+      font-size: 16px; font-weight: 700;
+      color: var(--blue-darker);
+      margin-bottom: 10px;
+    }
     .doc-prism-snapshot {
       display: flex; flex-direction: column; gap: 10px;
+    }
+    .doc-prism-disclosure {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--prism-border);
+      font-size: 12px;
+      color: var(--gray-600);
+      line-height: 1.4;
     }
     .doc-prism-snapshot .prism-enhanced-headline {
       font-size: 14px; color: var(--text-87);
@@ -673,23 +686,20 @@
       display: flex; flex-direction: column; gap: 6px;
       font-size: 13px; line-height: 1.45;
     }
-    .doc-prism-card .doc-card-actions {
-      display: flex; align-items: center; justify-content: flex-end;
-      margin-top: 12px;
-      gap: 8px;
+    .doc-meta-sep {
+      margin: 0 2px;
+      color: var(--gray-400);
     }
-    .doc-prism-remove {
+    .doc-prism-remove-link {
       background: none; border: none;
-      font-family: var(--font); font-size: 13px; font-weight: 600;
+      font-family: var(--font);
+      font-size: 12px;
       color: var(--gray-600);
       cursor: pointer;
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 6px 10px;
-      border-radius: var(--radius);
-      transition: background .15s, color .15s;
+      padding: 0;
+      transition: color .15s;
     }
-    .doc-prism-remove:hover { background: var(--red-100); color: var(--red); }
-    .doc-prism-remove .material-icons-outlined { font-size: 16px; }
+    .doc-prism-remove-link:hover { color: var(--red); }
 
     /* Empty-state hint for Documentation tab */
     .doc-empty-prism {
@@ -2421,7 +2431,7 @@
         </div>
         <div class="prism-footnote">
           <div class="prism-footnote-text">
-            Generated from this provider's IRIS payload for the flagged date range. Medication and department names shown for clarity — confirm specifics in the linked reports.
+            This content is only visible to you unless added to the Review as documentation. Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided.
           </div>
           <div class="prism-footnote-actions">
             <button class="prism-icon-btn" title="Helpful" onclick="rate(this, 'up')"><span class="material-icons-outlined">thumb_up</span></button>
@@ -2516,20 +2526,20 @@
             </span>
             Prism Analysis
           </div>
-          <div class="doc-card-meta">${label} · ${ts}</div>
+          <div class="doc-card-meta">
+            Alex Morrow · ${ts}
+            <span class="doc-meta-sep">·</span>
+            <button class="doc-prism-remove-link" onclick="removePrismDoc('${docId}', '${metricKey}')">Remove</button>
+          </div>
         </div>
         <div class="doc-card-body">
+          <div class="doc-prism-metric-heading">${label}</div>
           <div class="doc-prism-snapshot">
             ${headline}
             ${statGrid}
             ${findings}
           </div>
-          <div class="doc-card-actions">
-            <button class="doc-prism-remove" onclick="removePrismDoc('${docId}', '${metricKey}')">
-              <span class="material-icons-outlined">close</span>
-              Remove
-            </button>
-          </div>
+          <div class="doc-prism-disclosure">Generated from this provider's IRIS payload for the flagged date range.</div>
         </div>
       </div>
     `;
