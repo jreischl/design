@@ -960,13 +960,16 @@
       justify-content: center; padding: 24px 16px;
       background: #525659;
     }
-    .pdf-page-wrap { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    .pdf-page-wrap {
+      display: block;
+      position: relative;
+    }
 
     /* Page */
     .pdf-page {
       background: #fff;
       width: 760px;
-      min-height: 984px; /* US Letter ~8.5:11 at 96dpi ≈ 816x1056 but trimmed a bit */
+      min-height: 984px;
       box-shadow: 0 2px 12px rgba(0,0,0,.35);
       position: relative;
       font-family: var(--font);
@@ -976,6 +979,7 @@
       display: flex; flex-direction: column;
       transform-origin: top center;
       transition: transform .2s ease;
+      overflow: hidden;
     }
 
     /* ── COVER PAGE ── */
@@ -1110,6 +1114,58 @@
     .pdf-dist-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
     .gray-dot-sm { background: #ccc; }
     .red-dot-sm  { background: var(--red); }
+
+    /* Peer comparison table */
+    .pdf-peer-table-wrap { margin-top: 16px; }
+    .pdf-peer-table-title { font-size: 11.5px; font-weight: 700; color: #222; margin-bottom: 8px; }
+
+    /* Documentation page */
+    .pdf-doc-entry { display: flex; gap: 16px; padding: 14px 0; }
+    .pdf-doc-entry-sidebar { flex: 0 0 110px; font-size: 10px; }
+    .pdf-doc-entry-type {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .4px; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .pdf-doc-entry-type.prism { color: var(--teal); }
+    .pdf-doc-entry-type.status { color: var(--gray-600); }
+    .pdf-doc-entry-meta { color: var(--gray-400); line-height: 1.5; }
+    .pdf-doc-entry-body { flex: 1; min-width: 0; }
+    .pdf-doc-section-title { font-size: 13px; font-weight: 700; color: var(--teal); margin-bottom: 6px; }
+    .pdf-doc-text { font-size: 11.5px; color: #333; line-height: 1.55; margin-bottom: 10px; }
+    .pdf-doc-comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+    .pdf-doc-comparison-col { border: 1px solid var(--gray-300); border-radius: 3px; overflow: hidden; }
+    .pdf-doc-comparison-header {
+      background: var(--gray-200); padding: 5px 8px;
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .4px; color: var(--gray-600);
+    }
+    .pdf-doc-stat-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 4px 8px; border-bottom: 1px solid var(--gray-100); font-size: 11px;
+    }
+    .pdf-doc-stat-row:last-child { border-bottom: none; }
+    .pdf-doc-stat-val { font-weight: 700; }
+    .pdf-doc-stat-val.red { color: var(--red); }
+    .pdf-doc-alert {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 7px 10px; border-radius: 3px; margin-bottom: 6px;
+      font-size: 11px; line-height: 1.45;
+    }
+    .pdf-doc-alert-icon {
+      font-size: 11px; font-weight: 900; flex-shrink: 0;
+      width: 16px; height: 16px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    }
+    .red-alert { background: #fff5f4; border: 1px solid #f9c9c5; }
+    .red-alert .pdf-doc-alert-icon { background: var(--red); color: #fff; }
+    .yellow-alert { background: var(--yellow-100); border: 1px solid #f5e6a0; }
+    .yellow-alert .pdf-doc-alert-icon { background: var(--yellow); color: var(--text-87); font-size: 13px; }
+    .blue-alert { background: var(--blue-100); border: 1px solid var(--teal-light); }
+    .blue-alert .pdf-doc-alert-icon { background: var(--teal); color: #fff; font-size: 10px; }
+    .pdf-doc-generated-note { font-size: 10px; color: var(--gray-400); margin-top: 8px; font-style: italic; }
+    .pdf-doc-entry-body--status { font-size: 12px; color: #333; padding-top: 2px; }
+    .pdf-doc-divider { border: none; border-top: 1px solid var(--gray-200); margin: 0; }
     .pdf-flag-item {
       display: flex; flex-direction: column; align-items: flex-start;
       padding: 10px 14px; border-radius: 4px; border: 1px solid; min-width: 120px; flex: 1;
@@ -1149,7 +1205,8 @@
     .gray-tag { background: var(--gray-200); color: var(--gray-600); }
     .orange-tag { background: #fff0dc; color: #a85b00; }
     .pdf-score-legend {
-      display: flex; gap: 12px; padding: 10px 40px;
+      display: flex; gap: 12px;
+      padding: 10px 0 0; margin-top: auto;
       border-top: 1px solid var(--gray-200); font-size: 10px; font-weight: 600;
     }
     .pdf-legend-item { padding: 2px 8px; border-radius: 10px; }
@@ -1913,17 +1970,19 @@
             </div>
             <div class="pdf-cover-meta-item">
               <div class="pdf-cover-meta-label">Sections Included</div>
-              <div class="pdf-cover-meta-value">5 of 7</div>
+              <div class="pdf-cover-meta-value">6 of 7</div>
             </div>
           </div>
 
           <div class="pdf-cover-toc">
             <div class="pdf-cover-toc-title">Contents</div>
             <div class="pdf-cover-toc-row"><span class="pdf-toc-num">1</span><span>Risk Summary</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">2</span></div>
-            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">2</span><span>Metric Score Breakdown</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">3</span></div>
-            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">3</span><span>Evidence Table</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">4</span></div>
-            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">4</span><span>Activity Timeline</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">5</span></div>
-            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">5</span><span>IRIS Score History</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">6</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num" style="color:var(--gray-400);font-weight:400;">1b</span><span style="color:var(--gray-600);">Peer Comparison</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">3</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">2</span><span>Metric Score Breakdown</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">4</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">3</span><span>Evidence Table</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">5</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">4</span><span>Activity Timeline</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">6</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">5</span><span>IRIS Score History</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">7</span></div>
+            <div class="pdf-cover-toc-row"><span class="pdf-toc-num">6</span><span>Documentation</span><span class="pdf-toc-dots"></span><span class="pdf-toc-pg">8</span></div>
           </div>
 
           <div class="pdf-cover-footer">
@@ -1989,15 +2048,31 @@
             </div>
           </div>
 
+        </div>
+        <div class="pdf-page-footer">
+          <span>Confidential — Authorized investigative use only</span>
+          <span>Page 2 of 8</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE 3: Risk Summary — Peer Comparison ══ -->
+      <div class="pdf-page" id="pdf-page-3" style="display:none;">
+        <div class="pdf-page-header">
+          <div class="pdf-page-header-left">
+            <span class="pdf-page-section-num">1</span>
+            <span class="pdf-page-section-title">Risk Summary — Peer Comparison</span>
+          </div>
+          <div class="pdf-page-header-right">Marlena Cosgrove &nbsp;·&nbsp; Jan 31 – Mar 2, 2026</div>
+        </div>
+
+        <div class="pdf-section-body">
+
           <!-- Peer distribution chart -->
           <div class="pdf-distribution-wrap">
             <div class="pdf-distribution-title">Override Rate — Peer Distribution <span class="pdf-distribution-sub">Medical-Surgical Unit · Jan 31 – Mar 2, 2026</span></div>
             <div class="pdf-distribution-chart">
-              <!-- SVG dot-plot: x-axis = override rate 0–55%, peers as gray dots, Cosgrove as red dot -->
               <svg viewBox="0 0 560 90" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
-                <!-- Axis line -->
                 <line x1="24" y1="62" x2="544" y2="62" stroke="#d0d0d0" stroke-width="1"/>
-                <!-- Axis ticks & labels -->
                 <line x1="24"  y1="62" x2="24"  y2="68" stroke="#aaa" stroke-width="1"/>
                 <line x1="142" y1="62" x2="142" y2="68" stroke="#aaa" stroke-width="1"/>
                 <line x1="260" y1="62" x2="260" y2="68" stroke="#aaa" stroke-width="1"/>
@@ -2008,34 +2083,30 @@
                 <text x="260" y="78" text-anchor="middle" font-size="9" fill="#999">25%</text>
                 <text x="378" y="78" text-anchor="middle" font-size="9" fill="#999">35%</text>
                 <text x="496" y="78" text-anchor="middle" font-size="9" fill="#999">50%+</text>
-                <!-- Peer dots (gray) — spread around low end 2–18% range, x = 24 + (pct/55)*520 -->
-                <!-- 2%  → 43 -->  <circle cx="43"  cy="54" r="5" fill="#ccc"/>
-                <!-- 3%  → 52 -->  <circle cx="52"  cy="46" r="5" fill="#ccc"/>
-                <!-- 4%  → 62 -->  <circle cx="62"  cy="54" r="5" fill="#ccc"/>
-                <!-- 5%  → 71 -->  <circle cx="71"  cy="40" r="5" fill="#ccc"/>
-                <!-- 5%  → 71 -->  <circle cx="80"  cy="54" r="5" fill="#ccc"/>
-                <!-- 6%  → 81 -->  <circle cx="81"  cy="46" r="5" fill="#ccc"/>
-                <!-- 7%  → 90 -->  <circle cx="90"  cy="54" r="5" fill="#ccc"/>
-                <!-- 8%  → 99 -->  <circle cx="99"  cy="46" r="5" fill="#ccc"/>
-                <!-- 8%  → 99 -->  <circle cx="107" cy="54" r="5" fill="#ccc"/>
-                <!-- 9%  → 109 --> <circle cx="109" cy="40" r="5" fill="#ccc"/>
-                <!-- 10% → 118 --> <circle cx="118" cy="54" r="5" fill="#ccc"/>
-                <!-- 10% → 118 --> <circle cx="126" cy="46" r="5" fill="#ccc"/>
-                <!-- 11% → 128 --> <circle cx="128" cy="54" r="5" fill="#ccc"/>
-                <!-- 12% → 137 --> <circle cx="137" cy="46" r="5" fill="#ccc"/>
-                <!-- 13% → 147 --> <circle cx="147" cy="54" r="5" fill="#ccc"/>
-                <!-- 14% → 156 --> <circle cx="156" cy="40" r="5" fill="#ccc"/>
-                <!-- 14% → 156 --> <circle cx="165" cy="54" r="5" fill="#ccc"/>
-                <!-- 15% → 166 --> <circle cx="166" cy="46" r="5" fill="#ccc"/>
-                <!-- 16% → 175 --> <circle cx="175" cy="54" r="5" fill="#ccc"/>
-                <!-- 17% → 184 --> <circle cx="184" cy="46" r="5" fill="#ccc"/>
-                <!-- 18% → 194 --> <circle cx="194" cy="54" r="5" fill="#ccc"/>
-                <!-- Dept avg line at ~10% → x=118 -->
+                <circle cx="43"  cy="54" r="5" fill="#ccc"/>
+                <circle cx="52"  cy="46" r="5" fill="#ccc"/>
+                <circle cx="62"  cy="54" r="5" fill="#ccc"/>
+                <circle cx="71"  cy="40" r="5" fill="#ccc"/>
+                <circle cx="80"  cy="54" r="5" fill="#ccc"/>
+                <circle cx="81"  cy="46" r="5" fill="#ccc"/>
+                <circle cx="90"  cy="54" r="5" fill="#ccc"/>
+                <circle cx="99"  cy="46" r="5" fill="#ccc"/>
+                <circle cx="107" cy="54" r="5" fill="#ccc"/>
+                <circle cx="109" cy="40" r="5" fill="#ccc"/>
+                <circle cx="118" cy="54" r="5" fill="#ccc"/>
+                <circle cx="126" cy="46" r="5" fill="#ccc"/>
+                <circle cx="128" cy="54" r="5" fill="#ccc"/>
+                <circle cx="137" cy="46" r="5" fill="#ccc"/>
+                <circle cx="147" cy="54" r="5" fill="#ccc"/>
+                <circle cx="156" cy="40" r="5" fill="#ccc"/>
+                <circle cx="165" cy="54" r="5" fill="#ccc"/>
+                <circle cx="166" cy="46" r="5" fill="#ccc"/>
+                <circle cx="175" cy="54" r="5" fill="#ccc"/>
+                <circle cx="184" cy="46" r="5" fill="#ccc"/>
+                <circle cx="194" cy="54" r="5" fill="#ccc"/>
                 <line x1="118" y1="20" x2="118" y2="62" stroke="#555" stroke-width="1" stroke-dasharray="3,2"/>
                 <text x="118" y="17" text-anchor="middle" font-size="8.5" fill="#555" font-weight="600">Dept avg 10%</text>
-                <!-- Cosgrove dot at 50% → x = 24 + (50/55)*520 = 496 -->
                 <circle cx="496" cy="54" r="6.5" fill="#f24335"/>
-                <!-- Callout label -->
                 <line x1="496" y1="47" x2="496" y2="30" stroke="#f24335" stroke-width="1"/>
                 <rect x="448" y="18" width="96" height="16" rx="3" fill="#f24335"/>
                 <text x="496" y="29" text-anchor="middle" font-size="8.5" fill="#fff" font-weight="700">Cosgrove 50%</text>
@@ -2048,15 +2119,97 @@
             </div>
           </div>
 
+          <!-- Peer Comparison Table -->
+          <div class="pdf-peer-table-wrap">
+            <div class="pdf-peer-table-title">Peer Comparison — Override Rate &amp; IRIS Score <span class="pdf-distribution-sub">Medical-Surgical Unit · Jan 31 – Mar 2, 2026 · Identities obfuscated</span></div>
+            <table class="pdf-table" style="font-size:11px;">
+              <thead>
+                <tr>
+                  <th>Provider</th>
+                  <th style="text-align:center;">IRIS Score</th>
+                  <th style="text-align:center;">Override Rate</th>
+                  <th style="text-align:center;">Overrides / Dispenses</th>
+                  <th style="text-align:center;">Avg Action Time</th>
+                  <th style="text-align:center;">Flagged</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background:#fff5f4;font-weight:700;">
+                  <td>Marlena Cosgrove <span style="font-size:9px;background:#f24335;color:#fff;padding:1px 5px;border-radius:3px;margin-left:4px;">Subject</span></td>
+                  <td style="text-align:center;color:#f24335;font-weight:800;">6.4</td>
+                  <td style="text-align:center;color:#f24335;font-weight:800;">50%</td>
+                  <td style="text-align:center;">47 / 94</td>
+                  <td style="text-align:center;color:#f24335;">42.3 min</td>
+                  <td style="text-align:center;"><span style="background:#fcd9d7;color:#b92a1e;padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;">YES</span></td>
+                </tr>
+                <tr>
+                  <td style="color:#999;font-style:italic;">Peer RN-004</td>
+                  <td style="text-align:center;">1.1</td><td style="text-align:center;">18%</td>
+                  <td style="text-align:center;">14 / 78</td><td style="text-align:center;">8.2 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr style="background:#fafafa;">
+                  <td style="color:#999;font-style:italic;">Peer RN-011</td>
+                  <td style="text-align:center;">0.8</td><td style="text-align:center;">15%</td>
+                  <td style="text-align:center;">12 / 80</td><td style="text-align:center;">7.1 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr>
+                  <td style="color:#999;font-style:italic;">Peer RN-017</td>
+                  <td style="text-align:center;">1.3</td><td style="text-align:center;">14%</td>
+                  <td style="text-align:center;">11 / 79</td><td style="text-align:center;">9.4 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr style="background:#fafafa;">
+                  <td style="color:#999;font-style:italic;">Peer RN-002</td>
+                  <td style="text-align:center;">0.6</td><td style="text-align:center;">12%</td>
+                  <td style="text-align:center;">9 / 75</td><td style="text-align:center;">6.8 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr>
+                  <td style="color:#999;font-style:italic;">Peer RN-019</td>
+                  <td style="text-align:center;">0.9</td><td style="text-align:center;">11%</td>
+                  <td style="text-align:center;">8 / 73</td><td style="text-align:center;">7.5 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr style="background:#fafafa;">
+                  <td style="color:#999;font-style:italic;">Peer RN-008</td>
+                  <td style="text-align:center;">1.0</td><td style="text-align:center;">10%</td>
+                  <td style="text-align:center;">8 / 80</td><td style="text-align:center;">8.9 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr>
+                  <td style="color:#999;font-style:italic;">Peer RN-013</td>
+                  <td style="text-align:center;">0.4</td><td style="text-align:center;">5%</td>
+                  <td style="text-align:center;">4 / 80</td><td style="text-align:center;">6.2 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr style="background:#fafafa;">
+                  <td style="color:#999;font-style:italic;">Peer RN-006</td>
+                  <td style="text-align:center;">0.5</td><td style="text-align:center;">4%</td>
+                  <td style="text-align:center;">3 / 75</td><td style="text-align:center;">5.9 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+                <tr>
+                  <td style="color:#999;font-style:italic;">Peer RN-021</td>
+                  <td style="text-align:center;">0.3</td><td style="text-align:center;">3%</td>
+                  <td style="text-align:center;">2 / 67</td><td style="text-align:center;">5.4 min</td>
+                  <td style="text-align:center;color:#aaa;">—</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="font-size:10px;color:#aaa;margin-top:6px;">Peer identities are obfuscated per privacy policy. Full peer roster available to authorized compliance officers only.</div>
+          </div>
+
         </div>
         <div class="pdf-page-footer">
           <span>Confidential — Authorized investigative use only</span>
-          <span>Page 2 of 6</span>
+          <span>Page 3 of 8</span>
         </div>
       </div>
 
-      <!-- ══ PAGE 3: Metric Score Breakdown ══ -->
-      <div class="pdf-page" id="pdf-page-3" style="display:none;">
+      <!-- ══ PAGE 4: Metric Score Breakdown ══ -->
+      <div class="pdf-page" id="pdf-page-4" style="display:none;">
         <div class="pdf-page-header">
           <div class="pdf-page-header-left">
             <span class="pdf-page-section-num">2</span>
@@ -2127,22 +2280,21 @@
             </div>
           </div>
 
-        </div>
+          <div class="pdf-score-legend">
+            <span class="pdf-legend-item green-tag">Green: 0.0 – 1.3</span>
+            <span class="pdf-legend-item yellow-tag">Yellow: 1.4 – 4.5</span>
+            <span class="pdf-legend-item red-tag">Red: 4.6+</span>
+          </div>
 
-        <div class="pdf-score-legend">
-          <span class="pdf-legend-item green-tag">Green: 0.0 – 1.3</span>
-          <span class="pdf-legend-item yellow-tag">Yellow: 1.4 – 4.5</span>
-          <span class="pdf-legend-item red-tag">Red: 4.6+</span>
         </div>
-
         <div class="pdf-page-footer">
           <span>Confidential — Authorized investigative use only</span>
-          <span>Page 3 of 6</span>
+          <span>Page 4 of 8</span>
         </div>
       </div>
 
       <!-- ══ PAGE 4: Evidence Table ══ -->
-      <div class="pdf-page" id="pdf-page-4" style="display:none;">
+      <div class="pdf-page" id="pdf-page-5" style="display:none;">
         <div class="pdf-page-header">
           <div class="pdf-page-header-left">
             <span class="pdf-page-section-num">3</span>
@@ -2292,12 +2444,12 @@
 
         <div class="pdf-page-footer">
           <span>Confidential — Authorized investigative use only</span>
-          <span>Page 4 of 6</span>
+          <span>Page 5 of 8</span>
         </div>
       </div>
 
       <!-- ══ PAGE 5: Activity Timeline ══ -->
-      <div class="pdf-page" id="pdf-page-5" style="display:none;">
+      <div class="pdf-page" id="pdf-page-6" style="display:none;">
         <div class="pdf-page-header">
           <div class="pdf-page-header-left">
             <span class="pdf-page-section-num">4</span>
@@ -2408,12 +2560,12 @@
 
         <div class="pdf-page-footer">
           <span>Confidential — Authorized investigative use only</span>
-          <span>Page 5 of 6</span>
+          <span>Page 6 of 8</span>
         </div>
       </div>
 
       <!-- ══ PAGE 6: IRIS Score History ══ -->
-      <div class="pdf-page" id="pdf-page-6" style="display:none;">
+      <div class="pdf-page" id="pdf-page-7" style="display:none;">
         <div class="pdf-page-header">
           <div class="pdf-page-header-left">
             <span class="pdf-page-section-num">5</span>
@@ -2525,7 +2677,100 @@
 
         <div class="pdf-page-footer">
           <span>Confidential — Authorized investigative use only</span>
-          <span>Page 6 of 6</span>
+          <span>Page 7 of 8</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE 7: Documentation ══ -->
+      <div class="pdf-page" id="pdf-page-8" style="display:none;">
+        <div class="pdf-page-header">
+          <div class="pdf-page-header-left">
+            <span class="pdf-page-section-num">6</span>
+            <span class="pdf-page-section-title">Documentation</span>
+          </div>
+          <div class="pdf-page-header-right">Marlena Cosgrove &nbsp;·&nbsp; Jan 31 – Mar 2, 2026</div>
+        </div>
+
+        <div class="pdf-section-body">
+
+          <!-- Prism Analysis entry -->
+          <div class="pdf-doc-entry">
+            <div class="pdf-doc-entry-sidebar">
+              <div class="pdf-doc-entry-type prism">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#0096b8" stroke-width="2"><polygon points="12 2 22 20 2 20"/></svg>
+                Prism Analysis
+              </div>
+              <div class="pdf-doc-entry-meta">Alex Morrow</div>
+              <div class="pdf-doc-entry-meta">May 22, 2026 · 14:30</div>
+            </div>
+            <div class="pdf-doc-entry-body">
+              <div class="pdf-doc-section-title">Action Times</div>
+              <div class="pdf-doc-text">Of <strong>10 threshold-exceeding actions</strong>, 6 are <strong>First Dispense → First Admin</strong> (FDFA) events averaging <strong>42.3 min</strong> — over 5× the hospital mean. The remaining 4 are <strong>Last Admin → Last Waste</strong> (LALW) events averaging <strong>78.4 min</strong>. Pattern is consistent and well above outlier threshold.</div>
+
+              <div class="pdf-doc-comparison-grid">
+                <div class="pdf-doc-comparison-col">
+                  <div class="pdf-doc-comparison-header">FIRST DISPENSE → FIRST ADMIN (FDFA)</div>
+                  <div class="pdf-doc-stat-row"><span>Provider avg</span><span class="pdf-doc-stat-val red">42.3 min</span></div>
+                  <div class="pdf-doc-stat-row"><span>Hospital mean</span><span class="pdf-doc-stat-val">7.7 min</span></div>
+                  <div class="pdf-doc-stat-row"><span>Threshold events</span><span class="pdf-doc-stat-val">6 of 10</span></div>
+                </div>
+                <div class="pdf-doc-comparison-col">
+                  <div class="pdf-doc-comparison-header">LAST ADMIN → LAST WASTE (LALW)</div>
+                  <div class="pdf-doc-stat-row"><span>Provider avg</span><span class="pdf-doc-stat-val red">78.4 min</span></div>
+                  <div class="pdf-doc-stat-row"><span>Hospital mean</span><span class="pdf-doc-stat-val">31.9 min</span></div>
+                  <div class="pdf-doc-stat-row"><span>Threshold events</span><span class="pdf-doc-stat-val">4 of 10</span></div>
+                </div>
+              </div>
+
+              <div class="pdf-doc-alert red-alert">
+                <span class="pdf-doc-alert-icon">!</span>
+                <span><strong>FDFA delays of 30+ minutes</strong> are the strongest signal — medication is leaving the cabinet well before it reaches the patient. Cross-reference with witness logs and patient acuity at dispense time.</span>
+              </div>
+              <div class="pdf-doc-alert yellow-alert">
+                <span class="pdf-doc-alert-icon">!</span>
+                <span>LALW delays compound the concern — controlled substance remains unaccounted for between last admin and final waste. <strong>Both subreasons point to the same window of time.</strong></span>
+              </div>
+              <div class="pdf-doc-alert blue-alert">
+                <span class="pdf-doc-alert-icon">i</span>
+                <span>Action Times is the top driver of the flagged IRIS score alongside Dispense Patterns and Overrides.</span>
+              </div>
+
+              <div class="pdf-doc-generated-note">Generated from this provider's IRIS payload for the flagged date range.</div>
+            </div>
+          </div>
+
+          <div class="pdf-doc-divider"></div>
+
+          <!-- Status Update entries -->
+          <div class="pdf-doc-entry">
+            <div class="pdf-doc-entry-sidebar">
+              <div class="pdf-doc-entry-type status">Status Update</div>
+              <div class="pdf-doc-entry-meta">ControlCheck</div>
+              <div class="pdf-doc-entry-meta">Mar 16, 2026 · 13:53</div>
+            </div>
+            <div class="pdf-doc-entry-body pdf-doc-entry-body--status">
+              Changed status from <strong>Needs Review</strong> to <strong>In Review</strong>.
+            </div>
+          </div>
+
+          <div class="pdf-doc-divider"></div>
+
+          <div class="pdf-doc-entry">
+            <div class="pdf-doc-entry-sidebar">
+              <div class="pdf-doc-entry-type status">Status Update</div>
+              <div class="pdf-doc-entry-meta">ControlCheck</div>
+              <div class="pdf-doc-entry-meta">Mar 16, 2026 · 13:53</div>
+            </div>
+            <div class="pdf-doc-entry-body pdf-doc-entry-body--status">
+              Changed status to <strong>Needs Review</strong>.
+            </div>
+          </div>
+
+        </div>
+
+        <div class="pdf-page-footer">
+          <span>Confidential — Authorized investigative use only</span>
+          <span>Page 8 of 8</span>
         </div>
       </div>
 
@@ -2853,14 +3098,13 @@
 
   function simulateDownload() {
     showToast('Downloading packet…');
-    setTimeout(closeWizard, 400);
   }
 
   /* ═══════════════════════════════════════════════════
      PDF VIEWER
      ═══════════════════════════════════════════════════ */
   let pdfCurrentPage = 1;
-  const PDF_TOTAL_PAGES = 6;
+  const PDF_TOTAL_PAGES = 8;
   let pdfZoom = 100;
 
   function openPdfViewer() {
