@@ -233,6 +233,7 @@
     border-bottom: 1px solid var(--bs-border);
     padding: 14px 24px;
     display: flex; align-items: center; justify-content: space-between;
+    overflow: visible;
   }
   .chat-header-left { display: flex; align-items: center; gap: 12px; }
   .chat-header-title-wrap {
@@ -255,6 +256,21 @@
   .chat-header-eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--bs-text-muted); margin-bottom: 1px; }
   .chat-header-title { font-size: 15px; font-weight: 600; color: var(--bs-text); }
   .chat-header-sub { font-size: 12px; color: var(--bs-text-muted); }
+  .chat-header-right {
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  }
+  .chat-header-meta { font-size: 11px; color: var(--bs-text-muted); text-align: right; }
+  .chat-header-download-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 6px;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--bs-text-muted);
+    transition: color 0.15s, background 0.15s;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 18px; line-height: 1; text-transform: none; letter-spacing: normal;
+    position: relative;
+  }
+  .chat-header-download-btn:hover { color: #0096B8; background: #E7F4F8; }
 
   .chat-messages {
     flex: 1;
@@ -359,14 +375,57 @@
     border-radius: 12px; overflow: hidden;
     max-width: 90%;
   }
-  .ai-response-header {
-    padding: 12px 16px;
-    background: #FAFAFA;
-    border-bottom: 1px solid var(--bs-border);
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12px; font-weight: 600; color: var(--bs-text-muted);
-  }
   .ai-response-body { padding: 16px; }
+  .ai-response-title {
+    font-size: 12px; font-weight: 600; color: var(--bs-text-muted);
+    margin-bottom: 12px;
+  }
+
+  /* ─── RESPONSE FOOTER CONTROLS ──────────────────────────── */
+  .ai-response-footer {
+    display: flex; align-items: center;
+    gap: 2px;
+    padding: 6px 10px;
+    border-top: 1px solid var(--bs-border);
+    background: #FAFAFA;
+    overflow: visible;
+  }
+  .ai-response-footer-label {
+    font-size: 11px; font-weight: 600; color: var(--bs-text-muted);
+    margin-right: auto;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 60%;
+  }
+  .ai-ctrl-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 6px;
+    background: transparent; border: none; cursor: pointer;
+    color: #9E9E9E;
+    transition: color 0.15s, background 0.15s;
+    position: relative;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 17px; line-height: 1; text-transform: none; letter-spacing: normal;
+  }
+  .ai-ctrl-btn:hover { color: #555555; background: #EEEEEE; }
+  .ai-ctrl-btn.active-thumb-up   { color: #0096B8; }
+  .ai-ctrl-btn.active-thumb-down { color: #B53228; }
+  /* Shared floating tooltip — appended to body, position:fixed */
+  #prism-tooltip {
+    position: fixed;
+    background: #181F25; color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 400;
+    padding: 4px 8px; border-radius: 5px;
+    white-space: nowrap; pointer-events: none;
+    z-index: 9999;
+    opacity: 0; transition: opacity 0.12s;
+  }
+  #prism-tooltip.visible { opacity: 1; }
+  .ai-ctrl-sep {
+    width: 1px; height: 16px;
+    background: var(--bs-border);
+    margin: 0 4px; flex-shrink: 0;
+  }
   .ai-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0; }
   .ai-table th { background: var(--bs-navy); color: white; padding: 6px 10px; text-align: left; font-weight: 600; font-size: 11px; }
   .ai-table td { padding: 6px 10px; border-bottom: 1px solid #FAFAFA; }
@@ -1098,7 +1157,10 @@
                 </div>
               </div>
             </div>
-            <div style="font-size:11px;color:var(--bs-text-muted);">Session: Sarah Chen · Mar 13, 2026</div>
+            <div class="chat-header-right">
+              <div class="chat-header-meta">Session: Sarah Chen · Mar 13, 2026</div>
+              <button class="chat-header-download-btn" onclick="downloadSession('chat')" title="Download session">download</button>
+            </div>
           </div>
 
           <div class="chat-messages" id="chatMessages">
@@ -1901,12 +1963,18 @@
               <svg width="28" height="24" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/></svg>
               <div>
                 <div class="chat-header-eyebrow">Prism Assistant</div>
-                <div class="chat-header-title">Taylor Swift VIP Investigation</div>
+                <div class="chat-header-title-wrap">
+                  <div class="chat-header-title" id="prevSessionTitle">Taylor Swift VIP Investigation</div>
+                  <button class="chat-header-rename-btn" onclick="startRename('prevSessionTitle')" title="Rename session">edit</button>
+                </div>
               </div>
             </div>
-            <div style="font-size:11px;color:var(--bs-text-muted);text-align:right;">
-              <div>Session: Sarah Chen</div>
-              <div style="margin-top:2px;">Mar 10, 2026 · Read-only</div>
+            <div class="chat-header-right">
+              <div class="chat-header-meta" style="text-align:right;">
+                <div>Session: Sarah Chen</div>
+                <div style="margin-top:2px;">Mar 10, 2026 · Read-only</div>
+              </div>
+              <button class="chat-header-download-btn" onclick="downloadSession('prev-session')" title="Download session">download</button>
             </div>
           </div>
 
@@ -1922,11 +1990,9 @@
             <div class="msg ai fade-in" style="align-items:flex-start">
               <div class="msg-avatar" style="margin-top:4px"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:white">assistant</i></div>
               <div style="max-width:88%">
-                <div class="ai-response-card">
-                  <div class="ai-response-header">
-                    Reactive Case · VIP Patient Search Report <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-                  </div>
+                <div class="ai-response-card" data-label="Reactive Case · VIP Patient Search Report">
                   <div class="ai-response-body">
+                    <div class="ai-response-title">Reactive Case · VIP Patient Search Report</div>
                     <div class="ai-section-title">Search Activity: "Taylor Swift" (PT-39817, VIP) — Last 6 Months</div>
                     <div style="margin-bottom:10px">
                       <span class="chip red"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:inherit;font-size:11px">gpp_bad</i> 4 users accessed this VIP patient</span>
@@ -1962,11 +2028,9 @@
             <div class="msg ai fade-in" style="align-items:flex-start">
               <div class="msg-avatar" style="margin-top:4px"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:white">assistant</i></div>
               <div style="max-width:88%">
-                <div class="ai-response-card">
-                  <div class="ai-response-header">
-                    Reactive Cases Opened <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-                  </div>
+                <div class="ai-response-card" data-label="Reactive Cases Opened">
                   <div class="ai-response-body">
+                    <div class="ai-response-title">Reactive Cases Opened</div>
                     <div class="ai-section-title">4 Cases Created · VIP Protocol</div>
                     <table class="ai-table">
                       <thead><tr><th>Case</th><th>User</th><th>Priority</th><th>Status</th></tr></thead>
@@ -2089,6 +2153,79 @@
     if (aiBtn) aiBtn.classList.add('active');
   }
 
+  // ─── RESPONSE FOOTER ────────────────────────────────────
+  // Returns the HTML string for the feedback/export footer
+  function responseFooterHTML() {
+    const label = window.__aiTooltipText || '';
+    return `
+      <div class="ai-response-footer">
+        ${label ? `<span class="ai-response-footer-label">${label}</span>` : ''}
+        <button class="ai-ctrl-btn" data-tip="Not helpful" onclick="thumbDown(this)">thumb_down</button>
+        <button class="ai-ctrl-btn" data-tip="Helpful" onclick="thumbUp(this)">thumb_up</button>
+        <div class="ai-ctrl-sep"></div>
+        <button class="ai-ctrl-btn" data-tip="Copy response" onclick="copyResponse(this)">content_copy</button>
+        <button class="ai-ctrl-btn" data-tip="Export as PDF" onclick="exportPDF(this)">download</button>
+      </div>`;
+  }
+
+  // Append footer to every .ai-response-card inside a container (or doc)
+  function attachResponseFooters(root) {
+    (root || document).querySelectorAll('.ai-response-card').forEach(card => {
+      if (!card.querySelector('.ai-response-footer')) {
+        card.insertAdjacentHTML('beforeend', responseFooterHTML());
+      }
+    });
+  }
+
+  function thumbUp(btn) {
+    const card = btn.closest('.ai-response-card');
+    const down = card.querySelector('[data-tip="Not helpful"]');
+    const alreadyOn = btn.classList.contains('active-thumb-up');
+    btn.classList.toggle('active-thumb-up', !alreadyOn);
+    if (down) down.classList.remove('active-thumb-down');
+    btn.setAttribute('data-tip', alreadyOn ? 'Helpful' : 'Thanks for the feedback!');
+    setTimeout(() => btn.setAttribute('data-tip', 'Helpful'), 2000);
+  }
+
+  function thumbDown(btn) {
+    const card = btn.closest('.ai-response-card');
+    const up = card.querySelector('[data-tip="Helpful"], [data-tip="Thanks for the feedback!"]');
+    const alreadyOn = btn.classList.contains('active-thumb-down');
+    btn.classList.toggle('active-thumb-down', !alreadyOn);
+    if (up) up.classList.remove('active-thumb-up');
+    btn.setAttribute('data-tip', alreadyOn ? 'Not helpful' : 'Thanks for the feedback!');
+    setTimeout(() => btn.setAttribute('data-tip', 'Not helpful'), 2000);
+  }
+
+  function copyResponse(btn) {
+    const card = btn.closest('.ai-response-card');
+    const body = card.querySelector('.ai-response-body');
+    const text = body ? body.innerText.replace(/\n{3,}/g, '\n\n').trim() : '';
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'check';
+      btn.style.color = '#0E7221';
+      btn.setAttribute('data-tip', 'Copied!');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.color = '';
+        btn.setAttribute('data-tip', 'Copy response');
+      }, 2000);
+    });
+  }
+
+  function exportPDF(btn) {
+    // Prototype feedback only
+    btn.textContent = 'check';
+    btn.style.color = '#0E7221';
+    btn.setAttribute('data-tip', 'Export started');
+    setTimeout(() => {
+      btn.textContent = 'download';
+      btn.style.color = '';
+      btn.setAttribute('data-tip', 'Export as PDF');
+    }, 2000);
+  }
+
   // ─── ASSESSMENT TOGGLE ──────────────────────────────────
   // Populate AI tooltip timestamps
   (function() {
@@ -2154,8 +2291,9 @@
     }
   };
 
-  function startRename() {
-    const titleEl = document.getElementById('sessionTitle');
+  function startRename(titleId) {
+    const id = titleId || 'sessionTitle';
+    const titleEl = document.getElementById(id);
     if (!titleEl) return;
     const current = titleEl.textContent.trim();
     const input = document.createElement('input');
@@ -2170,12 +2308,17 @@
       const newName = input.value.trim() || current;
       const newTitle = document.createElement('div');
       newTitle.className = 'chat-header-title';
-      newTitle.id = 'sessionTitle';
+      newTitle.id = id;
       newTitle.textContent = newName;
       wrap.replaceChild(newTitle, input);
-      // Update sidebar label too
-      const sidebarLabel = document.querySelector('#sidebar-current .sidebar-chat-label');
-      if (sidebarLabel) sidebarLabel.textContent = newName;
+      // Update sidebar label for the matching session
+      if (id === 'sessionTitle') {
+        const sidebarLabel = document.querySelector('#sidebar-current .sidebar-chat-label');
+        if (sidebarLabel) sidebarLabel.textContent = newName;
+      } else if (id === 'prevSessionTitle') {
+        const sidebarLabel = document.querySelector('#sidebar-prev .sidebar-prev-title');
+        if (sidebarLabel) sidebarLabel.textContent = newName;
+      }
     }
     input.addEventListener('blur', commit);
     input.addEventListener('keydown', function(e) {
@@ -2183,6 +2326,60 @@
       if (e.key === 'Escape') { input.value = current; input.blur(); }
     });
   }
+
+  function downloadSession(screen) {
+    // Prototype feedback — flash the button
+    const btn = document.querySelector('#screen-' + screen + ' .chat-header-download-btn');
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = 'check';
+    btn.style.color = '#0E7221';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.color = '';
+    }, 2000);
+  }
+
+  // ─── FLOATING TOOLTIP ───────────────────────────────────
+  (function() {
+    const tip = document.createElement('div');
+    tip.id = 'prism-tooltip';
+    document.body.appendChild(tip);
+    let hideTimer;
+
+    function showTip(el, text) {
+      clearTimeout(hideTimer);
+      const rect = el.getBoundingClientRect();
+      tip.textContent = text;
+      tip.classList.add('visible');
+      // Position below center of element
+      const tipW = tip.offsetWidth;
+      let left = rect.left + rect.width / 2 - tipW / 2;
+      // Keep within viewport
+      left = Math.max(8, Math.min(left, window.innerWidth - tipW - 8));
+      tip.style.left = left + 'px';
+      tip.style.top = (rect.bottom + 6) + 'px';
+    }
+
+    function hideTip() {
+      hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
+    }
+
+    // Attach to buttons with data-tip or title="Download session"
+    document.addEventListener('mouseover', function(e) {
+      const btn = e.target.closest('[data-tip], .chat-header-download-btn');
+      if (!btn) return;
+      const text = btn.dataset.tip || btn.title || '';
+      if (text) showTip(btn, text);
+    });
+    document.addEventListener('mouseout', function(e) {
+      const btn = e.target.closest('[data-tip], .chat-header-download-btn');
+      if (btn) hideTip();
+    });
+    // Hide on scroll/click
+    document.addEventListener('scroll', hideTip, true);
+    document.addEventListener('click', hideTip, true);
+  })();
 
   function filterSessions(query) {
     const items = document.querySelectorAll('.sidebar-item[id="sidebar-prev"], .sidebar-item:not(#sidebar-current)');
@@ -2321,6 +2518,8 @@
     if (window.__aiTooltipText) {
       wrapper.querySelectorAll('[data-ai-tooltip]').forEach(el => el.textContent = window.__aiTooltipText);
     }
+    // Attach feedback/export footer to any new response cards
+    attachResponseFooters(wrapper);
     msgs.scrollTop = msgs.scrollHeight;
   }
 
@@ -2328,11 +2527,9 @@
 
   function buildReactiveResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Reactive Case · VIP Patient Search Report <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Reactive Case · VIP Patient Search Report">
         <div class="ai-response-body">
+          <div class="ai-response-title">Reactive Case · VIP Patient Search Report</div>
           <div class="ai-section-title">Search Activity: "Taylor Swift" (PT-39817, VIP) — Last 6 Months</div>
           <div style="margin-bottom:10px">
             <span class="chip red"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:inherit;font-size:11px">gpp_bad</i> 4 users accessed this VIP patient</span>
@@ -2367,11 +2564,9 @@
 
   function buildCoverageResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Risk Coverage Report · February 2026 <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Risk Coverage Report · February 2026">
         <div class="ai-response-body">
+          <div class="ai-response-title">Risk Coverage Report · February 2026</div>
           <div class="ai-section-title">Coverage Summary</div>
           <div class="ai-metric-row">
             <div class="ai-metric"><div class="ai-metric-val">847</div><div class="ai-metric-label">Alerts triggered</div></div>
@@ -2410,11 +2605,9 @@
 
   function buildReportResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Q1 2026 Executive Summary <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Q1 2026 Executive Summary">
         <div class="ai-response-body">
+          <div class="ai-response-title">Q1 2026 Executive Summary</div>
           <div class="ai-metric-row">
             <div class="ai-metric"><div class="ai-metric-val">143</div><div class="ai-metric-label">Total Cases</div><div class="ai-metric-change up"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#EF4444;font-size:13px">trending_up</i> +11.7% vs Q4</div></div>
             <div class="ai-metric"><div class="ai-metric-val">21</div><div class="ai-metric-label">Violations</div><div class="ai-metric-change down"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#00AE8D;font-size:13px">trending_down</i> Rate improved 2.1pp</div></div>
@@ -2534,11 +2727,9 @@
 
   function buildInvestigateSummaryResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Case PP-2847 · Access Summary <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Case PP-2847 · Access Summary">
         <div class="ai-response-body">
+          <div class="ai-response-title">Case PP-2847 · Access Summary</div>
           <div class="risk-banner">
             <span><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#B53228;font-size:20px">gpp_bad</i></span>
             <div><strong>High risk · Case open 38 days</strong> — Manager responded but no corrective action taken. Escalation warranted.</div>
@@ -2576,11 +2767,9 @@
 
   function buildEscalationEmailResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Draft Escalation Email · Case PP-2847 <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Draft Escalation Email · Case PP-2847">
         <div class="ai-response-body">
+          <div class="ai-response-title">Draft Escalation Email · Case PP-2847</div>
           <div style="background:#FAFAFA;border:1px solid var(--bs-border);border-radius:8px;padding:14px;font-size:12px;line-height:1.7;font-family:'DM Mono',monospace">
             <div style="margin-bottom:6px"><strong>To:</strong> [Manager M-304, Pediatric ICU]</div>
             <div style="margin-bottom:12px"><strong>Subject:</strong> Follow-Up Required — Privacy Case PP-2847, Emily Torres</div>
@@ -2666,6 +2855,7 @@
   setView('new'); // default to AI view
   setAINavActive(); // AI icon active on load
   document.querySelector('.sidebar').style.display = 'flex'; // show sidebar on load
+  attachResponseFooters(); // attach footers to any pre-rendered response cards
 
 </script>
 </body>
