@@ -119,6 +119,39 @@
     }
     .mat-badge-hidden .mat-badge-content { display: none; }
 
+    /* Analyze dropdown menu in the top nav.
+       Pattern matches the in-page .menu wrapper but with a slightly
+       larger visual register since these are page-level destinations
+       rather than filter options. Currently-active destination gets
+       a teal-50 fill + bold text + left accent rail. */
+    .nav-menu-wrapper { display: inline-block; position: relative; }
+    .nav-menu {
+      /* override .menu width default and align with the trigger */
+      top: calc(100% + 4px);
+      left: 0;
+    }
+    .nav-menu-option {
+      height: 40px;
+      padding: 0 16px;
+      font-size: .875rem;
+      color: var(--blue-dark);
+      text-decoration: none;
+      position: relative;
+    }
+    .nav-menu-option:hover { background: var(--gray-100); }
+    .nav-menu-option-active {
+      background: var(--teal-50);
+      font-weight: 600;
+    }
+    .nav-menu-option-active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 8px; width: 3px;
+      background: var(--teal);
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-menu-option-active:hover { background: #d3ecf3; }
+
     /* ── user-menu ──────────────────────────────────────── */
     .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
     .header-user-button {
@@ -1557,11 +1590,23 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">Audit</span>
             </button>
-            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active">
-              <span class="mdc-button__label">Analyze</span>
-            </button>
+            <div class="menu-wrapper nav-menu-wrapper" id="mw-analyze">
+              <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active" onclick="toggleMenu('mw-analyze', event)">
+                <span class="mdc-button__label">Analyze</span>
+              </button>
+              <div class="menu nav-menu" style="width: 220px;">
+                <div class="menu-options">
+                  <a class="menu-option nav-menu-option nav-menu-option-active" href="#">
+                    Manual Adjustments
+                  </a>
+                  <a class="menu-option nav-menu-option" href="#">
+                    Inventory Discrepancies
+                  </a>
+                </div>
+              </div>
+            </div>
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
-              <span class="mdc-button__label">Reviews &amp; Cases</span>
+              <span class="mdc-button__label">Cases</span>
             </button>
             <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
               <span class="mdc-button__label">

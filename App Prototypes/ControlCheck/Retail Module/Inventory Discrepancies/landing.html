@@ -321,7 +321,7 @@
         <button class="mdc-button mat-mdc-button"><span class="mdc-button__label">Audit</span></button>
         <div class="nav-dropdown" id="analyze-dropdown">
           <a class="mdc-button mat-mdc-button nav-link active" href="#" onclick="toggleAnalyzeMenu(event)">
-            <span class="mdc-button__label">Analyze <span class="material-icons" style="font-size:16px;margin-left:2px">arrow_drop_down</span></span>
+            <span class="mdc-button__label">Analyze <span class="material-icons" style="font-size:16px;margin-left:2px;display:none">arrow_drop_down</span></span>
           </a>
           <div class="nav-dropdown-menu" id="analyze-menu">
             <button class="nav-dropdown-item" onclick="closeAnalyzeMenu();showToast('Opening Manual Adjustments…','info')">
@@ -334,6 +334,8 @@
         </div>
         <button class="mdc-button mat-mdc-button"><span class="mdc-button__label">Cases</span></button>
         <button class="mdc-button mat-mdc-button"><span class="mdc-button__label">Report</span></button>
+        <button class="mdc-button mat-mdc-button"><span class="mdc-button__label">Upload</span></button>
+        <button class="mdc-button mat-mdc-button"><span class="mdc-button__label">Manage</span></button>
       </div></nav-menu>
       <user-menu><div class="header-info">
         <button class="mdc-button mat-mdc-button header-user-button">
