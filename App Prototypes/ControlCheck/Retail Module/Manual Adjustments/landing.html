@@ -822,9 +822,12 @@
       transition: color .12s;
     }
     .adj-type-label:hover {
-      text-decoration: underline;
+      color: var(--teal-900);
     }
-    .adj-type-label:hover .drill-icon { transform: translateX(2px); }
+    .adj-type-label:hover .drill-icon {
+      color: var(--teal-900);
+      transform: translateX(2px);
+    }
     .adj-type-label .drill-icon {
       font-size: 16px;
       color: var(--teal);                /* match the label color */
@@ -837,27 +840,46 @@
       font-size: .8125rem;
     }
 
-    /* User row label — two-line stack: user name on top, pharmacy
-       subtext below. Used as the row-label cell in the By User view
-       where each row represents one (user, pharmacy) pairing. The
-       subtext shares the size of the .pharmacy-name baseline but
-       uses gray-600 to recede behind the bold name above. */
-    .user-row-label {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: flex-start;
-      line-height: 1.25;
-      gap: 1px;
-    }
-    .user-row-name {
-      font-weight: 500;
-      color: var(--gray-700);
+    /* Pharmacy row drill — the canonical pharmacy view's row label is
+       a drill target into that pharmacy's users × drugs. Styled to
+       match .adj-type-label so the two "click the row label to drill"
+       affordances read consistently: always-visible teal text + bold
+       weight + always-visible trailing chevron, underline on hover.
+       The nested .pharmacy-name span inherits all that, since the JS
+       still references that class for the label substring. */
+    .pharmacy-row-drill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; padding: 4px 0;
+      font: inherit;
+      font-weight: 700;
+      color: var(--teal);
       font-size: .8125rem;
+      cursor: pointer;
+      transition: color .12s;
+      text-align: left;
     }
-    .user-row-pharm {
-      font-weight: 400;
-      color: var(--gray-600, #757575);
-      font-size: .75rem;
+    .pharmacy-row-drill .pharmacy-name {
+      /* Override the default gray .pharmacy-name styling — when the
+         name lives inside the drill button, it inherits the button's
+         teal color + bold weight so the affordance is unmistakable. */
+      color: inherit;
+      font-weight: inherit;
+      font-size: inherit;
+    }
+    .pharmacy-row-drill:hover { color: var(--teal-900); }
+    .pharmacy-row-drill:hover .pharmacy-row-drill-icon {
+      color: var(--teal-900);
+      transform: translateX(2px);
+    }
+    .pharmacy-row-drill-icon {
+      font-size: 16px !important;
+      color: var(--teal);
+      transition: transform .12s;
+    }
+    .pharmacy-row-drill:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+      border-radius: 2px;
     }
 
     /* Heat-map cells */
@@ -1303,52 +1325,25 @@
       white-space: nowrap;
       vertical-align: bottom;
     }
-    /* Type columns — narrow, centered, wrap headings so a long label
-       like "Returned to Vendor" can break across two lines instead
-       of forcing horizontal scroll. */
+    /* Type column — single column in the pharm-list table. Sized to
+       fit its label naturally (no forced width or wrapping since the
+       cross-tab layout is no longer in use). */
     table.pharm-list-table th.type-col {
-      max-width: 84px;
-      width: 84px;
       text-align: center;
       text-transform: none;
       letter-spacing: 0;
       font-weight: 600;
-      white-space: normal;
-      line-height: 1.25;
+      white-space: nowrap;
       vertical-align: bottom;
-      /* Allow long single words ("Contaminated") to wrap and
-         hyphenate inside the 84px column rather than forcing
-         horizontal scroll. */
-      overflow-wrap: break-word;
-      word-break: normal;
-      hyphens: auto;
-      -webkit-hyphens: auto;
     }
     table.pharm-list-table td.type-col {
-      max-width: 84px;
-      width: 84px;
       text-align: center;
-      padding: 8px 4px;
+      padding: 8px 12px;
     }
     table.pharm-list-table th.num,
     table.pharm-list-table td.num {
       text-align: right;
       font-variant-numeric: tabular-nums;
-    }
-    /* Focus-type column — visually emphasized so the badge-value
-       reconciliation (sum of this column = badge value) reads at
-       a glance. Header gets a teal underline + teal-50 background;
-       cells get a teal-50 background. */
-    table.pharm-list-table th.focus-col {
-      color: var(--teal-900);
-      border-bottom: 2px solid var(--teal);
-      background: var(--teal-50);
-    }
-    table.pharm-list-table td.focus-col {
-      background: var(--teal-50);
-    }
-    table.pharm-list-table tbody tr:hover td.focus-col {
-      background: #d3ecf3;
     }
     table.pharm-list-table td {
       padding: 12px;
@@ -1372,6 +1367,14 @@
     }
     table.pharm-list-table tbody tr:hover .pharm-list-drill {
       color: var(--teal);
+    }
+    /* Cycle count cell — plain text, tabular-nums. Slightly muted vs
+       the colored focus-type badge so the eye stays on the focus
+       column when scanning. */
+    table.pharm-list-table .cc-count {
+      font-weight: 600;
+      color: var(--gray-700);
+      font-variant-numeric: tabular-nums;
     }
 
     /* Type chip inline */
@@ -1675,7 +1678,6 @@
                   <nav class="mat-mdc-nav-list">
                     <a class="mat-mdc-list-item active" id="nav-manual-adjustments-by-pharmacy" href="#" onclick="setPage('by-pharmacy');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">store</span>By Retail Pharmacy</span></span></a>
                     <a class="mat-mdc-list-item" id="nav-manual-adjustments-by-type" href="#" onclick="setPage('by-type');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">edit_note</span>By Adjustment Type</span></span></a>
-                    <a class="mat-mdc-list-item" id="nav-manual-adjustments-by-user" href="#" onclick="setPage('by-user');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">person</span>By User</span></span></a>
                   </nav>
                 </div></div>
               </div>
@@ -1826,29 +1828,6 @@
                users). Drives off the same row set the heatmap is actually
                rendering, so search + filter narrowing are reflected. -->
           <span class="row-count" id="row-count"></span>
-          <!-- Retail Pharmacy filter — only visible in By User view.
-               Multi-select. Chip has two shapes:
-                 • Default (everything selected, the canonical null state):
-                     "Retail Pharmacy: All Retail Pharmacies"
-                 • Active narrower selection (0, 1, or 2+ pharmacies):
-                     "[N] Retail Pharmacies"     ← teal badge + plural noun
-               updatePharmFilterLabel rewrites the chip's contents per
-               render to match. Internally, VIEW_BY.pharmFilter is null
-               when everything is selected and a Set<number> otherwise,
-               so the "all selected" state is a single representation
-               rather than "Set of every index". -->
-          <div class="menu-wrapper" id="mw-pharmfilter" style="display:none;">
-            <button class="chip chip-secondary" type="button" id="pharmfilter-chip" onclick="toggleMenu('mw-pharmfilter', event)">
-              <!-- contents written by updatePharmFilterLabel -->
-            </button>
-            <div class="menu" style="width: 280px;">
-              <div class="menu-actions">
-                <button class="link-btn" type="button" onclick="pharmFilterSelectAll()">Select all</button>
-                <button class="link-btn" type="button" onclick="pharmFilterClear()">Clear</button>
-              </div>
-              <div class="menu-options" id="pharmfilter-options"></div>
-            </div>
-          </div>
         </div>
         <div class="toolbar-right">
           <div class="heatmap-search">
@@ -2124,25 +2103,24 @@ const HEATMAP = [
    mode: 'pharmacy' (default) — Y axis is pharmacies, the canonical view.
          'adj_type'           — Y axis is adjustment types (cycle_count
                                 excluded; not part of the cell totals).
-         'user'               — Y axis is users; cells are user × drug
-                                counts derived from each user's pharmacy
-                                assignments. pharmFilter (below) narrows
-                                the user-set to a single pharmacy.
    drillType: null            — top-level view of the current mode.
               <typeKey>       — drilled into a specific adjustment type
                                 inside the adj_type view. Heat-map renders
                                 pharmacies × drugs scoped to that type,
                                 with a breadcrumb showing the way back.
-   pharmFilter: null          — By-User mode shows all users across all
-                                pharmacies they work at.
-                <pharmIdx>    — By-User mode narrows to users assigned
-                                to that one pharmacy. Reset on any view
-                                switch.
+   drillPharm: null           — top-level view of the current mode.
+               <pharmIdx>     — drilled into a specific pharmacy inside
+                                the pharmacy view. Heat-map renders that
+                                pharmacy's (user × drug) detail, with a
+                                breadcrumb showing the way back.
+                                Mutually exclusive with drillType — the
+                                two drills belong to different parent
+                                modes.
 
-   Switching mode always clears drillType and pharmFilter. Drilling does
-   NOT touch the user-owned Adjustment Type filter chip or the View By
+   Switching mode always clears both drill states. Drilling does NOT
+   touch the user-owned Adjustment Type filter chip or the View By
    selection. */
-const VIEW_BY = { mode: 'pharmacy', drillType: null, pharmFilter: null };
+const VIEW_BY = { mode: 'pharmacy', drillType: null, drillPharm: null };
 
 /* Row search — case-insensitive substring match against the Y-axis
    label of each row (pharmacy name in pharmacy and drilled views;
@@ -2280,12 +2258,10 @@ function getColTotals() {
         }
       }
     }
-  } else if (VIEW_BY.mode === 'user') {
-    // Sum across the visible (user, pharmacy) rows for each drug
-    // column. Each row contributes its own pharmacy's share of that
-    // drug — i.e. one cell value per row, no cross-pharmacy summing
-    // (multi-pharm users get two separate rows that each contribute
-    // independently).
+  } else if (VIEW_BY.mode === 'pharmacy' && VIEW_BY.drillPharm !== null) {
+    // Pharmacy drilled: sum across users at the drilled pharmacy for
+    // each drug. Equivalent to the un-drilled pharmacy row total, since
+    // every adjustment at this pharmacy is owned by some user there.
     const visibleRows = getSortedUserRows();
     for (let j = 0; j < DRUGS.length; j++) {
       for (const r of visibleRows) {
@@ -2442,44 +2418,30 @@ function getSortedTypes() {
   return types;
 }
 
-/* Sorted-order list of user-row indices for the By-User view. Each
-   entry indexes USER_ROWS, which is a flat (user, pharmacy) list —
-   multi-pharmacy users appear as separate rows with different
-   pharmIdx values. Filtered by:
-     - pharmFilter (drop rows whose pharmacy isn't selected)
-     - row-search query (matches user name OR pharmacy name —
-       since both are visible in the row label, both should be
-       searchable)
-   Sort key:
-     - 'user' → user name asc, with pharmacy name as tiebreaker so
-                a multi-pharm user's two rows sit next to each other
+/* Sorted-order list of user-row indices for the pharmacy-drilled view.
+   The drilled view is always scoped to one specific pharmacy
+   (VIEW_BY.drillPharm), so this returns only the USER_ROWS entries
+   whose pharmIdx matches. Search filters against user name only
+   (pharmacy is fixed and shown in the breadcrumb, not in row labels
+   for this view). Sort key:
+     - 'user' → user name asc
      - numeric → column j (the cell's adjustment count) */
 function getSortedUserRows() {
-  let rowIdxs = USER_ROWS.map((_, i) => i);
-  // Pharmacy filter
-  const f = VIEW_BY.pharmFilter;
-  if (f && typeof f.has === 'function') {
-    rowIdxs = rowIdxs.filter(r => f.has(USER_ROWS[r].pharmIdx));
-  } else if (typeof f === 'number') {
-    rowIdxs = rowIdxs.filter(r => USER_ROWS[r].pharmIdx === f);
-  }
-  // Search filter — matches name or pharmacy
+  const pIdx = VIEW_BY.drillPharm;
+  let rowIdxs = USER_ROWS
+    .map((_, i) => i)
+    .filter(r => USER_ROWS[r].pharmIdx === pIdx);
+  // Search — user name only, since the pharmacy is fixed in this view
   if (HEATMAP_SEARCH.query) {
     const q = HEATMAP_SEARCH.query;
-    rowIdxs = rowIdxs.filter(r => {
-      const row = USER_ROWS[r];
-      return USERS[row.userIdx].toLowerCase().includes(q) ||
-             PHARMACIES[row.pharmIdx].toLowerCase().includes(q);
-    });
+    rowIdxs = rowIdxs.filter(r => USERS[USER_ROWS[r].userIdx].toLowerCase().includes(q));
   }
   // Sort
   if (SORT.key === null) return rowIdxs;
   if (SORT.key === 'user') {
-    rowIdxs.sort((a, b) => {
-      const rA = USER_ROWS[a], rB = USER_ROWS[b];
-      const cmp = USERS[rA.userIdx].localeCompare(USERS[rB.userIdx]);
-      return cmp !== 0 ? cmp : PHARMACIES[rA.pharmIdx].localeCompare(PHARMACIES[rB.pharmIdx]);
-    });
+    rowIdxs.sort((a, b) =>
+      USERS[USER_ROWS[a].userIdx].localeCompare(USERS[USER_ROWS[b].userIdx])
+    );
   } else if (SORT.key === 'pharmacy' || SORT.key === 'adj_type') {
     return rowIdxs;  // not meaningful for this view
   } else {
@@ -2528,16 +2490,25 @@ function updatePageChrome(isDrilled) {
   const titleGroupEl = document.getElementById('page-title-group');
   if (!breadcrumbEl || !titleGroupEl) return;
 
-  if (isDrilled) {
-    const label = TYPE_BY_KEY[VIEW_BY.drillType]?.label || VIEW_BY.drillType;
+  // Two drill paths share the same chrome shape (back-arrow title +
+  // breadcrumb with the way back). The mode determines which back
+  // handler + label to plug in.
+  const isTypeDrill  = VIEW_BY.mode === 'adj_type' && !!VIEW_BY.drillType;
+  const isPharmDrill = VIEW_BY.mode === 'pharmacy' && VIEW_BY.drillPharm !== null;
+
+  if (isTypeDrill || isPharmDrill) {
+    const label = isTypeDrill
+      ? (TYPE_BY_KEY[VIEW_BY.drillType]?.label || VIEW_BY.drillType)
+      : PHARMACIES[VIEW_BY.drillPharm];
+    const clearFn = isTypeDrill ? 'clearDrillType()' : 'clearDrillPharm()';
     breadcrumbEl.innerHTML =
       '<button class="bc-parent" type="button">Analyze</button>'
       + '<span class="bc-sep">›</span>'
-      + '<button class="bc-parent" type="button" onclick="clearDrillType()">Manual Adjustments</button>'
+      + '<button class="bc-parent" type="button" onclick="' + clearFn + '">Manual Adjustments</button>'
       + '<span class="bc-sep">›</span>'
       + '<span class="bc-current">' + label + '</span>';
     titleGroupEl.innerHTML =
-      '<button class="page-back-btn" type="button" aria-label="Back to Manual Adjustments" onclick="clearDrillType()">'
+      '<button class="page-back-btn" type="button" aria-label="Back to Manual Adjustments" onclick="' + clearFn + '">'
       +   '<span class="material-icons">arrow_back</span>'
       + '</button>'
       + '<h1 class="page-title">' + label + '</h1>';
@@ -2546,11 +2517,9 @@ function updatePageChrome(isDrilled) {
     // (the indicator names the active sub-page — "By Retail Pharmacy" or
     // "By Adjustment Type" — and is intentionally suppressed in the
     // drilled state, since the title there already names the specific
-    // adjustment type the viewer is inspecting.)
+    // type / pharmacy the viewer is inspecting.)
     const sectionLabel = (VIEW_BY.mode === 'adj_type')
       ? 'By Adjustment Type'
-      : (VIEW_BY.mode === 'user')
-      ? 'By User'
       : 'By Retail Pharmacy';
     breadcrumbEl.innerHTML =
       '<button class="bc-parent" type="button">Analyze</button>'
@@ -2572,14 +2541,16 @@ function renderHeatmap() {
   const body = document.getElementById('heatmap-body');
 
   // Four render cases share most of the table structure:
-  //   A. pharmacy view (canonical)
-  //   B. adj_type top-level (Y axis = types)
-  //   C. adj_type drilled (Y axis = pharmacies, scoped to one type)
-  //   D. user view (Y axis = users; secondary pharmFilter scopes the
-  //                 user-set to one pharmacy)
-  const isDrilled  = VIEW_BY.mode === 'adj_type' && !!VIEW_BY.drillType;
-  const isTypeTop  = VIEW_BY.mode === 'adj_type' && !VIEW_BY.drillType;
-  const isUserView = VIEW_BY.mode === 'user';
+  //   A. pharmacy top-level (canonical)        Y=pharmacies
+  //   B. adj_type top-level                    Y=types
+  //   C. adj_type drilled into one type        Y=pharmacies (scoped to type)
+  //   D. pharmacy drilled into one pharmacy    Y=users (scoped to pharmacy)
+  const isTypeDrilled  = VIEW_BY.mode === 'adj_type' && !!VIEW_BY.drillType;
+  const isTypeTop      = VIEW_BY.mode === 'adj_type' && !VIEW_BY.drillType;
+  const isPharmDrilled = VIEW_BY.mode === 'pharmacy' && VIEW_BY.drillPharm !== null;
+  // Either kind of drill triggers the page-chrome change (breadcrumb +
+  // back link). updatePageChrome distinguishes them internally by mode.
+  const isDrilled = isTypeDrilled || isPharmDrilled;
 
   // Drilled-state surfacing now lives in the page-level breadcrumb +
   // page title (rather than an in-card breadcrumb above the heatmap).
@@ -2587,13 +2558,11 @@ function renderHeatmap() {
   updatePageChrome(isDrilled);
 
   // Header — Y-axis column + drug columns. Each th is a sort trigger.
-  // In the drilled child view, the Y axis is pharmacies again (filtered
-  // to the drilled type), so use the pharmacy sort key.
   let yAxisLabel, yAxisSortKey;
   if (isTypeTop) {
     yAxisLabel   = 'Adjustment Type';
     yAxisSortKey = 'adj_type';
-  } else if (isUserView) {
+  } else if (isPharmDrilled) {
     yAxisLabel   = 'User';
     yAxisSortKey = 'user';
   } else {
@@ -2616,11 +2585,10 @@ function renderHeatmap() {
 
   // Compute σ-based severity bands once per render. Population
   // depends on which view we're showing:
-  //   - pharmacy view: all pharmacy × drug cell values
-  //   - adj_type top:  all type × drug aggregated values
-  //   - adj_type drill: cells of the drilled type across pharmacies × drugs
-  //   - user view:     all user × drug values for the currently-visible
-  //                    user-set (respects pharmFilter)
+  //   - pharmacy top:    all pharmacy × drug cell values
+  //   - adj_type top:    all type × drug aggregated values
+  //   - adj_type drill:  cells of the drilled type across pharmacies × drugs
+  //   - pharmacy drill:  user × drug values for users at the drilled pharmacy
   // The bands are then passed to severityClass() for each cell.
   let bandPopulation;
   if (isTypeTop) {
@@ -2628,23 +2596,22 @@ function renderHeatmap() {
     ADJ_TYPES_FOR_HEATMAP.forEach(t => {
       for (let j = 0; j < DRUGS.length; j++) bandPopulation.push(getTypeCellValue(t.key, j));
     });
-  } else if (isDrilled) {
+  } else if (isTypeDrilled) {
     bandPopulation = [];
     for (let i = 0; i < HEATMAP.length; i++) {
       for (let j = 0; j < DRUGS.length; j++) {
         bandPopulation.push(getDrilledCellValue(i, j, VIEW_BY.drillType));
       }
     }
-  } else if (isUserView) {
-    // Bands use all (user, pharmacy) rows matching the pharm filter
-    // (not the search filter — search is a UI narrow, the population
-    // shouldn't shrink with each keystroke).
+  } else if (isPharmDrilled) {
+    // Bands use every (user × drug) cell for users at the drilled pharmacy.
+    // Not affected by search (search is a UI narrow; population shouldn't
+    // shrink with each keystroke).
     bandPopulation = [];
-    const f = VIEW_BY.pharmFilter;
+    const pIdx = VIEW_BY.drillPharm;
     for (let r = 0; r < USER_ROWS.length; r++) {
       const row = USER_ROWS[r];
-      if (f && typeof f.has === 'function' && !f.has(row.pharmIdx)) continue;
-      if (typeof f === 'number' && row.pharmIdx !== f) continue;
+      if (row.pharmIdx !== pIdx) continue;
       for (let j = 0; j < DRUGS.length; j++) {
         bandPopulation.push(getUserPharmDrugCount(row.userIdx, row.pharmIdx, j));
       }
@@ -2668,7 +2635,7 @@ function renderHeatmap() {
   if (isTypeTop) {
     rowCount = getSortedTypes().length;
     rowNoun = rowCount === 1 ? 'adjustment type' : 'adjustment types';
-  } else if (isUserView) {
+  } else if (isPharmDrilled) {
     rowCount = getSortedUserRows().length;
     rowNoun = rowCount === 1 ? 'user' : 'users';
   } else {
@@ -2709,7 +2676,7 @@ function renderHeatmap() {
       });
       html += '</tr>';
     });
-  } else if (isDrilled) {
+  } else if (isTypeDrilled) {
     // ─── Case C: adj_type drilled — pharmacies × drugs, scoped
     //                                 to VIEW_BY.drillType. ─────
     const drillKey = VIEW_BY.drillType;
@@ -2733,24 +2700,20 @@ function renderHeatmap() {
       });
       html += '</tr>';
     });
-  } else if (isUserView) {
-    // ─── Case D: user view ─────────────────────────────────────
-    // Y axis = (user, pharmacy) rows. Each cell value comes from
-    // getUserPharmDrugCount for the row's specific (user, pharm)
-    // pair, not summed across pharmacies. Multi-pharm users appear
-    // as two consecutive rows with different pharmacy subtext.
+  } else if (isPharmDrilled) {
+    // ─── Case D: pharmacy drilled — users × drugs, scoped to
+    //                                 VIEW_BY.drillPharm. ───────────
+    // Y axis = users at the drilled pharmacy. Each cell value is
+    // getUserPharmDrugCount for that (user, pharm, drug). Pharmacy
+    // name is fixed for this view (shown in the breadcrumb above),
+    // so row labels are single-line user names.
     const order = getSortedUserRows();
     order.forEach(rowIdx => {
       const { userIdx, pharmIdx } = USER_ROWS[rowIdx];
       const userName  = USERS[userIdx];
       const pharmName = PHARMACIES[pharmIdx];
       html += `<tr class="pharmacy-row">
-        <td>
-          <span class="user-row-label">
-            <span class="user-row-name">${userName}</span>
-            <span class="user-row-pharm">${pharmName}</span>
-          </span>
-        </td>`;
+        <td><span class="pharmacy-name">${userName}</span></td>`;
       DRUGS.forEach((d, j) => {
         const v = getUserPharmDrugCount(userIdx, pharmIdx, j);
         const sev = severityClass(v, bands);
@@ -2768,10 +2731,20 @@ function renderHeatmap() {
       html += '</tr>';
     });
   } else {
+    // ─── Case A: pharmacy top-level (canonical) ────────────────
+    // Y axis = pharmacies. Each pharmacy row label is clickable —
+    // drills to that pharmacy's (user × drug) detail in case D.
     const order = getSortedIndices();
     order.forEach(i => {
       const row = HEATMAP[i];
-      html += `<tr class="pharmacy-row"><td><span class="pharmacy-name">${PHARMACIES[i]}</span></td>`;
+      html += `<tr class="pharmacy-row"><td>
+        <button class="pharmacy-row-drill" type="button"
+          onclick="drillIntoPharm(${i})"
+          aria-label="View ${PHARMACIES[i]} users in detail">
+          <span class="pharmacy-name">${PHARMACIES[i]}</span>
+          <span class="material-icons pharmacy-row-drill-icon" aria-hidden="true">chevron_right</span>
+        </button>
+      </td>`;
       row.forEach((cell, j) => {
         const v = getFilteredCellValue(i, j);
         const sev = severityClass(v, bands);
@@ -2828,198 +2801,36 @@ function toggleDrawer() {
   document.getElementById('analyze-drawer')?.classList.toggle('collapsed');
 }
 
-/* ─── Secondary Retail Pharmacy filter — By User view ─────────────
-   VIEW_BY.pharmFilter is the source of truth:
-     null            → every pharmacy selected (canonical default;
-                       avoids two equivalent representations for "all")
-     Set<number>     → the specific subset that's currently selected
-                       (an empty Set is the "nothing selected" state)
-   The chip label is derived from this state; the menu checkboxes are
-   kept in sync with it via syncPharmFilterMenu(). ─────────────────── */
-
-/* setPharmFilter — replace the whole filter set in one go. Pass null
-   for "all"; pass a Set<number> for a specific subset. Use this when
-   you want to set the state from outside the menu (e.g. on view
-   switch). For incremental checkbox updates, togglePharmFilter is
-   cheaper because it doesn't rebuild the menu. */
-function setPharmFilter(value) {
-  if (value === null || value === undefined) {
-    VIEW_BY.pharmFilter = null;
-  } else if (value && typeof value.has === 'function' && value.size === PHARMACIES.length) {
-    // Canonicalize "all selected" Set to null so the chip + downstream
-    // logic don't see two equivalent representations of the same state.
-    VIEW_BY.pharmFilter = null;
-  } else {
-    VIEW_BY.pharmFilter = value;
-  }
-  // Reset row sort — the user-set just changed shape.
-  SORT.key = null;
-  SORT.dir = 'desc';
-  syncPharmFilterMenu();
-  updatePharmFilterLabel();
-  renderHeatmap();
-}
-
-/* togglePharmFilter — flip the checked state of one pharmacy from
-   inside the menu without closing it. The first un-check on a fresh
-   "all selected" state materializes the Set with every pharmacy minus
-   the one being un-checked. */
-function togglePharmFilter(pharmIdx, checked) {
-  // Materialize the Set on first interaction from the "all" state.
-  if (VIEW_BY.pharmFilter === null) {
-    VIEW_BY.pharmFilter = new Set(PHARMACIES.map((_, i) => i));
-  }
-  if (checked) VIEW_BY.pharmFilter.add(pharmIdx);
-  else         VIEW_BY.pharmFilter.delete(pharmIdx);
-  // Collapse back to the canonical "all" representation when the user
-  // re-checks every pharmacy — keeps label + downstream logic simple.
-  if (VIEW_BY.pharmFilter.size === PHARMACIES.length) {
-    VIEW_BY.pharmFilter = null;
-  }
-  // Reset row sort — the user-set may have changed shape.
-  SORT.key = null;
-  SORT.dir = 'desc';
-  updatePharmFilterLabel();
-  renderHeatmap();
-}
-
-function pharmFilterSelectAll() {
-  setPharmFilter(null);
-}
-
-function pharmFilterClear() {
-  setPharmFilter(new Set());
-}
-
-/* Re-render the chip's contents from the current filter state.
-   Two shapes:
-     null (filter inactive — the canonical default) →
-       "Retail Pharmacy"   ← plain label, no badge, no fill
-     Set (any active selection, including 0) →
-       "[N] Retail Pharmacies"   ← teal badge + plural noun
-   An inactive filter is functionally equivalent to "all selected"
-   (nothing gets filtered out), so showing the noun on its own keeps
-   the chip quiet until the user actually narrows the scope.
-   The chip's .selected class is toggled so the active narrower state
-   gets the same teal-50 fill the other primary pillters use to signal
-   an applied filter. */
-function updatePharmFilterLabel() {
-  const chip = document.getElementById('pharmfilter-chip');
-  if (!chip) return;
-  const f = VIEW_BY.pharmFilter;
-  if (f === null || f === undefined) {
-    // Default — filter inactive, plain label, no badge or fill.
-    chip.classList.remove('selected');
-    chip.innerHTML = '<span id="pharmfilter-label">Retail Pharmacy</span>';
-  } else {
-    // Active — badge with count + plural noun. f.size can be 0,
-    // 1, or 2+ here; "Retail Pharmacies" plural reads naturally in
-    // all three since the count itself is the singular/plural cue
-    // (matches the reference pattern's "2 Review Statuses").
-    chip.classList.add('selected');
-    chip.innerHTML =
-      `<span class="chip-badge">${f.size}</span>` +
-      '<span id="pharmfilter-label">Retail Pharmacies</span>';
-  }
-}
-
-/* Render a filter value as a label string. Same shape as the chip
-   text, used wherever else the filter needs to be described (panel
-   subtitle, aria labels, etc.). */
-function pharmFilterLabel(f) {
-  if (f === null || f === undefined) return 'All Retail Pharmacies';
-  if (typeof f === 'number') return PHARMACIES[f];
-  // Set
-  if (f.size === 0) return 'No Retail Pharmacies';
-  if (f.size === 1) return PHARMACIES[[...f][0]];
-  if (f.size === PHARMACIES.length) return 'All Retail Pharmacies';
-  return `${f.size} of ${PHARMACIES.length} Retail Pharmacies`;
-}
-
-/* Scope phrasing for inline use (aria labels on heatmap cells).
-   Slightly different wording than the chip label so it reads
-   naturally inside a sentence. */
-function pharmFilterScopeText(f) {
-  if (f === null || f === undefined) return 'all Retail Pharmacies';
-  if (typeof f === 'number') return PHARMACIES[f];
-  if (f.size === 0) return 'no Retail Pharmacies';
-  if (f.size === 1) return PHARMACIES[[...f][0]];
-  if (f.size === PHARMACIES.length) return 'all Retail Pharmacies';
-  return `${f.size} selected Retail Pharmacies`;
-}
-
-/* Sync the menu's checkbox states to VIEW_BY.pharmFilter.
-   Called when setPharmFilter is invoked programmatically (e.g. by the
-   Select all / Clear buttons or by a view switch). Per-checkbox
-   onchange calls don't need to call this — they're already in sync. */
-function syncPharmFilterMenu() {
-  const f = VIEW_BY.pharmFilter;
-  document.querySelectorAll('#pharmfilter-options input[type="checkbox"]').forEach(cb => {
-    const idx = Number(cb.value);
-    cb.checked = (f === null) ? true : f.has(idx);
-  });
-}
-
-/* Populate the pharmacy-filter menu with one checkbox per pharmacy.
-   Called once on DOMContentLoaded so the menu reflects PHARMACIES
-   without hardcoding the list in markup. */
-function populatePharmFilterMenu() {
-  const list = document.getElementById('pharmfilter-options');
-  if (!list) return;
-  list.innerHTML = PHARMACIES.map((name, i) =>
-    `<label class="menu-option">
-       <input type="checkbox" value="${i}" checked onchange="togglePharmFilter(${i}, this.checked)">
-       ${name}
-     </label>`).join('');
-}
-document.addEventListener('DOMContentLoaded', () => {
-  populatePharmFilterMenu();
-  updatePharmFilterLabel();
-});
 
 /* setPage — sidebar entry point. Wraps setViewBy so the two nav links
    ("By Retail Pharmacy" / "By Adjustment Type") drive the same view-mode
    state that the old in-toolbar View By pillter used to control. Also
    bails out cleanly if the same page is clicked again. */
 function setPage(page) {
-  if (page !== 'by-pharmacy' && page !== 'by-type' && page !== 'by-user') return;
-  const mode = (page === 'by-type')   ? 'adj_type'
-             : (page === 'by-user')   ? 'user'
-             :                          'pharmacy';
-  // setViewBy handles drill-reset + pharmFilter-reset + sidebar active
-  // toggling + re-render.
+  if (page !== 'by-pharmacy' && page !== 'by-type') return;
+  const mode = (page === 'by-type') ? 'adj_type' : 'pharmacy';
+  // setViewBy handles drill-reset + sidebar active toggling + re-render.
   setViewBy(mode);
 }
 
-/* setViewBy — switch between Retail Pharmacy, Adjustment Type, and User
-   views. Switching always clears any drilled state AND the secondary
-   pharmacy filter (which is meaningful only inside the user view).
-   Drilling within adj_type does NOT switch the view mode — adj_type
-   top-level and adj_type-drilled-into-a-type are both inside the
-   adj_type view (parent vs child). */
+/* setViewBy — switch between Retail Pharmacy and Adjustment Type views.
+   Switching always clears any drilled state (both drillType and
+   drillPharm). Drilling within a mode does NOT switch the mode —
+   the drilled child view is still inside the same parent mode. */
 function setViewBy(mode) {
-  if (VIEW_BY.mode === mode && VIEW_BY.drillType === null && VIEW_BY.pharmFilter === null) return;
+  if (VIEW_BY.mode === mode && VIEW_BY.drillType === null && VIEW_BY.drillPharm === null) return;
   VIEW_BY.mode = mode;
   VIEW_BY.drillType = null;
-  VIEW_BY.pharmFilter = null;
+  VIEW_BY.drillPharm = null;
   // Reset sort — column indices still work, but row-axis sort keys
   // ('pharmacy' / 'adj_type' / 'user') only apply to their own view.
   SORT.key = null;
   SORT.dir = 'desc';
-  // Sidebar nav-item active state mirrors VIEW_BY.mode (3-way).
+  // Sidebar nav-item active state mirrors VIEW_BY.mode.
   const byPharm = document.getElementById('nav-manual-adjustments-by-pharmacy');
   const byType  = document.getElementById('nav-manual-adjustments-by-type');
-  const byUser  = document.getElementById('nav-manual-adjustments-by-user');
   if (byPharm) byPharm.classList.toggle('active', mode === 'pharmacy');
   if (byType)  byType .classList.toggle('active', mode === 'adj_type');
-  if (byUser)  byUser .classList.toggle('active', mode === 'user');
-  // Secondary Retail Pharmacy pillter is visible only in user mode.
-  // (Reset its label + checkbox state to "all selected" in case the
-  // user just switched away from user mode with a partial selection.)
-  const pharmPill = document.getElementById('mw-pharmfilter');
-  if (pharmPill) pharmPill.style.display = (mode === 'user') ? '' : 'none';
-  updatePharmFilterLabel();
-  syncPharmFilterMenu();
   closeAllMenus();
   renderHeatmap();
 }
@@ -3043,6 +2854,28 @@ function drillIntoType(typeKey) {
    top-level adj_type view. Called from the breadcrumb's back button. */
 function clearDrillType() {
   VIEW_BY.drillType = null;
+  SORT.key = null;
+  SORT.dir = 'desc';
+  renderHeatmap();
+}
+
+/* drillIntoPharm — invoked when a user clicks a pharmacy row label in
+   the top-level pharmacy view. Drills into a child view that shows
+   that pharmacy's (user × drug) detail. Does NOT change the View By
+   selection — the drilled view is still inside the pharmacy mode,
+   one level deeper. The way back is the breadcrumb at the top. */
+function drillIntoPharm(pharmIdx) {
+  VIEW_BY.drillPharm = pharmIdx;
+  // Reset sort — we're now looking at a fresh set of rows.
+  SORT.key = null;
+  SORT.dir = 'desc';
+  renderHeatmap();
+}
+
+/* clearDrillPharm — pop back from the drilled (user × drug) view to
+   the top-level pharmacy view. Called from the breadcrumb's back button. */
+function clearDrillPharm() {
+  VIEW_BY.drillPharm = null;
   SORT.key = null;
   SORT.dir = 'desc';
   renderHeatmap();
@@ -3133,19 +2966,20 @@ function clearAllFilters() {
              a back link can return them exactly there. Null otherwise. */
 /* Panel state.
    scope:
-     'cell'      — opened from a (pharmacy, drug) cell in the pharmacy
-                   view or the drilled child view. Standard layout.
+     'cell'      — opened from a (pharmacy, drug) cell. Standard layout.
+                   Includes cells in the top-level pharmacy view, the
+                   adj_type drilled view, and the pharmacy drilled
+                   (users × drugs) view. In the last case, a
+                   highlightUserIdx is set so the events table
+                   surfaces that user's rows.
      'aggregate' — opened from a (type, drug) cell badge in the
                    adj_type top-level view. Data is aggregated across
                    all pharmacies and pre-scoped to one adjustment type.
-     'user'      — opened from a (user, drug) cell badge in the user view.
-                   Shows that user's contribution for the drug. Scoped to
-                   one pharmacy when VIEW_BY.pharmFilter is set, otherwise
-                   summed across the pharmacies the user works at.
-   pharm: pharmacy index in 'cell' scope; -1 in 'aggregate' and 'user'
-          scope (or the active pharmFilter in 'user' scope — see below).
+   pharm: pharmacy index in 'cell' scope; -1 in 'aggregate' scope.
    drug:  drug index (used in all scopes).
-   userIdx: user index — only meaningful in 'user' scope. */
+   highlightUserIdx: when entering from the pharmacy-drilled view,
+                     the user whose events should be visually
+                     highlighted; null otherwise. */
 const PANEL_STATE = { pharm: 0, drug: 0, total: 0, scope: 'cell', typeKey: null, userIdx: null, highlightUserIdx: null, cameFrom: null };
 
 /* openPanel — opens the standard (pharmacy, drug) cell detail panel.
@@ -3455,13 +3289,20 @@ function withSoftHyphens(label) {
        the table from being mostly empty.
      - Row click drills to the standard cell panel via openPanel. */
 function renderPharmList(typeKey, drugIdx) {
-  // Build candidate rows with full breakdowns
+  // Build candidate rows — only pharmacies with non-zero counts of
+  // the focus adjustment type for this drug. For each, capture the
+  // cycle-count for the same (pharm, drug) as parallel context: cycle
+  // counts aren't adjustments, but they tell you how active that
+  // pharmacy was at verifying the medication's on-hand quantity over
+  // the same window, which is useful for interpreting whether a high
+  // adjustment count reflects diligence or a problem. Sort by focus
+  // count desc with pharmacy name as tiebreaker.
   const rows = [];
   for (let i = 0; i < PHARMACIES.length; i++) {
     const focusCount = getDrilledCellValue(i, drugIdx, typeKey);
     if (focusCount <= 0) continue;
-    const breakdown = getCellBreakdown(i, drugIdx);
-    rows.push({ pharmIdx: i, name: PHARMACIES[i], focusCount, breakdown });
+    const cycleCount = getCellCycleCount(i, drugIdx);
+    rows.push({ pharmIdx: i, name: PHARMACIES[i], focusCount, cycleCount });
   }
   rows.sort((a, b) => b.focusCount - a.focusCount || a.name.localeCompare(b.name));
 
@@ -3469,72 +3310,51 @@ function renderPharmList(typeKey, drugIdx) {
   const body = document.getElementById('pharm-list-body');
   if (!head || !body) return;
 
+  const focusType = TYPE_BY_KEY[typeKey];
+  const focusLabel = focusType?.label || typeKey;
+
   if (rows.length === 0) {
     head.innerHTML = '';
     body.innerHTML = `
-      <tr><td colspan="3" style="text-align:center; padding: 24px; color: var(--gray-600);">
-        No pharmacies have ${TYPE_BY_KEY[typeKey]?.label || typeKey} adjustments for this drug in the selected range.
+      <tr><td colspan="4" style="text-align:center; padding: 24px; color: var(--gray-600);">
+        No pharmacies have ${focusLabel} adjustments for this drug in the selected range.
       </td></tr>
     `;
     return;
   }
 
-  // Determine which type columns to render. Focus type always.
-  // Other types: only if at least one row has a non-zero count.
-  // Column order: focus type first, then others sorted by total desc
-  // across rows (most relevant non-focus types first).
-  const typeTotals = {};
-  ADJ_TYPES_FOR_HEATMAP.forEach(t => { typeTotals[t.key] = 0; });
-  rows.forEach(r => {
-    ADJ_TYPES_FOR_HEATMAP.forEach(t => { typeTotals[t.key] += r.breakdown[t.key] || 0; });
-  });
-  const others = ADJ_TYPES_FOR_HEATMAP
-    .filter(t => t.key !== typeKey && typeTotals[t.key] > 0)
-    .sort((a, b) => typeTotals[b.key] - typeTotals[a.key] || a.label.localeCompare(b.label));
-  const columns = [TYPE_BY_KEY[typeKey], ...others];
+  // Compute σ-based severity bands across the visible focus-count
+  // population. Small + uniform set, so the static-fallback branch
+  // typically fires here — expected. Cycle counts render as plain
+  // text rather than a heatmap badge so visual emphasis stays on the
+  // focus-type column (cycle counts are context, not the signal).
+  const bands = computeBands(rows.map(r => r.focusCount));
 
-  // Compute σ-based severity bands for the cross-tab population:
-  // every (visible row × active column) value. Smaller, more uniform
-  // population than the main heatmap, so the static-fallback branch
-  // will fire often here — that's expected behavior.
-  const bandPopulation = [];
-  rows.forEach(r => columns.forEach(t => bandPopulation.push(r.breakdown[t.key] || 0)));
-  const bands = computeBands(bandPopulation);
-
-  // Header — Retail Pharmacy + one column per active type + drill spacer.
-  // Long single-word labels get soft hyphens inserted at syllable
-  // boundaries so they break with a visible hyphen mark inside the
-  // 84px column. The `title` attribute keeps the unbroken label as
-  // a tooltip on hover for accessibility.
-  const headHtml = `
+  // Header: pharmacy column + focus-type column + cycle counts
+  // column + drill chevron spacer.
+  head.innerHTML = `
     <tr>
       <th>Retail Pharmacy</th>
-      ${columns.map(t => {
-        const focusCls = (t.key === typeKey) ? ' focus-col' : '';
-        return `<th class="type-col${focusCls}" title="${t.label}">${withSoftHyphens(t.label)}</th>`;
-      }).join('')}
+      <th class="type-col num">${focusLabel}</th>
+      <th class="type-col num">Cycle Counts</th>
       <th></th>
     </tr>
   `;
-  head.innerHTML = headHtml;
 
-  // Body — one row per pharmacy; each type cell hosts a heatmap-style
-  // badge so the visual encoding of magnitude/severity is consistent
-  // with the main heat-map.
+  // Body — one row per pharmacy. Click drills into the pharmacy cell
+  // panel pre-scoped to this (type, drug) view. Cycle counts render
+  // as plain text (no heatmap badge) to keep visual emphasis on the
+  // focus-type column — they're context, not the primary signal.
   body.innerHTML = rows.map(r => {
-    const cells = columns.map(t => {
-      const v = r.breakdown[t.key] || 0;
-      const focusCls = (t.key === typeKey) ? ' focus-col' : '';
-      if (v === 0) {
-        return `<td class="type-col${focusCls}"><span class="hm-zero">0</span></td>`;
-      }
-      const sev = severityClass(v, bands);
-      return `<td class="type-col${focusCls}"><span class="hm-cell ${sev}">${v}</span></td>`;
-    }).join('');
+    const sev = severityClass(r.focusCount, bands);
+    const cc  = r.cycleCount > 0
+      ? `<span class="cc-count">${r.cycleCount}</span>`
+      : `<span class="hm-zero">0</span>`;
     return `
       <tr onclick="openPanel(${r.pharmIdx}, ${drugIdx}, { typeKey: '${typeKey}', drugIdx: ${drugIdx} })">
         <td><span class="pharm-list-name">${r.name}</span></td>
-        ${cells}
+        <td class="type-col num"><span class="hm-cell ${sev}">${r.focusCount}</span></td>
+        <td class="type-col num">${cc}</td>
         <td class="pharm-list-drill"><span class="material-icons">chevron_right</span></td>
       </tr>
     `;
