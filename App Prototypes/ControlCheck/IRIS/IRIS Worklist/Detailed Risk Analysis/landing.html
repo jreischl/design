@@ -1198,6 +1198,50 @@
     .prism-finding-text strong { font-weight: 700; }
     .prism-finding-text .muted { color: var(--text-54); font-size: .75rem; display: block; margin-top: 2px; }
 
+    /* Recommendations */
+    .prism-section-heading {
+      margin: 16px 0 8px;
+      font-size: 12px; font-weight: 700;
+      color: var(--prism-pink-d);
+      letter-spacing: .4px; text-transform: uppercase;
+    }
+    .prism-rec-list {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .prism-rec-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--teal-light);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-87);
+      line-height: 1.4;
+      text-align: left;
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    .prism-rec-item:hover {
+      background: var(--blue-100);
+      border-color: var(--teal);
+    }
+    .prism-rec-item:focus {
+      outline: none;
+      background: var(--blue-100);
+      border-color: var(--teal);
+    }
+    .prism-rec-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--teal);
+    }
+    .prism-rec-icon .material-icons-outlined { font-size: 18px; }
+    .prism-rec-text { flex: 1; }
+    .prism-rec-text strong { font-weight: 700; }
+
     .prism-actions-row {
       display: flex; align-items: center; justify-content: flex-end; gap: 8px;
       margin-top: 14px;
@@ -2171,6 +2215,11 @@
         { tone: 'warn', icon: 'priority_high', text: '<strong>FDFA delays of 30+ minutes</strong> are the strongest signal — medication is leaving the cabinet well before it reaches the patient. Cross-reference with witness logs and patient acuity at dispense time.' },
         { tone: 'warn', icon: 'warning_amber', text: 'LALW delays compound the concern — controlled substance remains unaccounted for between last admin and final waste. <strong>Both subreasons point to the same window of time</strong>.' },
         { tone: 'info', icon: 'info', text: 'Action Times is the top driver of the flagged IRIS score alongside Dispense Patterns and Overrides.' }
+      ],
+      recommendations: [
+        { type: 'navigate', text: 'Pull the dispense records for the 6 FDFA threshold events and confirm patient acuity, scanning workflow, or unit delays at each timestamp', destination: 'Action Times report' },
+        { type: 'chat', text: 'Cross-reference witness logs for the LALW windows — identify whether the same witness recurs across multiple long-duration events' },
+        { type: 'chat', text: 'Compare shift-by-shift FDFA averages to see whether the pattern concentrates on specific shifts or is consistent across the flagged window' }
       ]
     },
 
@@ -2186,6 +2235,10 @@
       findings: [
         { tone: 'warn', icon: 'priority_high', text: '<strong>20 of 22 cancels</strong> are in the home department (Medical-Surgical). Cancel rate there is 3.1% (20/651) vs. a department peer rate of 3.1% (1,571/51,300) — <strong>in line with peers</strong>, not above them. The overall elevation is driven by activity outside the home dept.' },
         { tone: 'info', icon: 'info', text: 'In Operating Room (Surgical Services), 2 of 18 dispenses were canceled (11.1%) — a small denominator but well above the 1.4% peer rate there.' }
+      ],
+      recommendations: [
+        { type: 'chat', text: 'Investigate the 2 Operating Room cancels — the small denominator means this could be incidental or could be the start of a pattern outside the home unit' },
+        { type: 'navigate', text: 'Review the HYDROmorphone Inj. cancels specifically in Patient Care Audit', destination: 'Patient Care Audit' }
       ]
     },
 
@@ -2197,6 +2250,9 @@
       ],
       findings: [
         { tone: 'success', icon: 'check_circle', text: 'No peer-group outliers flagged. The score is elevated by raw count alone, not by an unusual pattern.' }
+      ],
+      recommendations: [
+        { type: 'chat', text: 'Monitor full-package waste counts over the next 1–2 IRIS cycles to confirm the count remains in the normal range' }
       ]
     },
 
@@ -2213,6 +2269,12 @@
         { tone: 'warn', icon: 'priority_high', text: '<strong>A 50% override rate on a single Schedule II medication</strong> is well outside any benign explanation. This warrants immediate review of dispense records, clinical justification, and witness documentation.' },
         { tone: 'warn', icon: 'warning_amber', text: 'Same medication (<strong>fentanyl Inj.</strong>) also appears in Med Trends as an outlier. The cross-metric corroboration strengthens the signal.' },
         { tone: 'info', icon: 'info', text: 'Pharmacy is the home department here, not a unit floor — context matters for interpreting "override" in this setting.' }
+      ],
+      recommendations: [
+        { type: 'navigate', text: 'Pull all 47 fentanyl Inj. override records in Patient Care Audit to review documented clinical justification', destination: 'Patient Care Audit' },
+        { type: 'chat', text: 'Identify the witnesses for the 47 overrides — concentration on a small set may indicate coordinated activity' },
+        { type: 'chat', text: 'Review Pharmacy override protocols to confirm whether 50% on a single Schedule II med is procedurally explainable in this setting' },
+        { type: 'chat', text: 'Escalate to compliance lead — this pattern crosses the threshold for immediate intervention regardless of other metrics' }
       ]
     },
 
@@ -2225,6 +2287,10 @@
       findings: [
         { tone: 'info', icon: 'query_stats', text: '<strong>HYDROmorphone Inj.</strong> also appears as the top driver in Canceled Transactions — the same medication is flagged across two metrics, which strengthens the signal.' },
         { tone: 'info', icon: 'info', text: 'Use the Med Trends report to see exact dispense/admin counts and the peer distribution.' }
+      ],
+      recommendations: [
+        { type: 'chat', text: 'Compare this provider\'s HYDROmorphone and oxyCODONE activity to peer averages across both administering and dispensing event types' },
+        { type: 'navigate', text: 'Review dispense records for the two flagged medications during the flagged window', destination: 'Med Trends report' }
       ]
     },
 
@@ -2241,6 +2307,12 @@
         { tone: 'warn', icon: 'priority_high', text: '<strong>72 unaccounted dispenses</strong> is the highest-stakes finding in this profile. Each one represents a controlled substance that was removed but never tied to a patient administration or formal return.' },
         { tone: 'warn', icon: 'warning_amber', text: 'The volume here makes this the single largest contributor to the IRIS score — it accounts for the majority of the 6.4 flagged value.' },
         { tone: 'info', icon: 'info', text: 'Cross-reference with the Variance Trends and Action Times findings to identify whether the same time windows and medications recur.' }
+      ],
+      recommendations: [
+        { type: 'navigate', text: 'Pull the 42 transactions tied to the 77 dispenses and reconcile each against the eMAR', destination: 'Patient Care Audit' },
+        { type: 'chat', text: 'Identify which medications account for the 72 unaccounted dispenses — overlap with fentanyl Inj. or HYDROmorphone Inj. would tie this metric to Overrides and Med Trends' },
+        { type: 'chat', text: 'Map the unaccounted dispenses to shifts and time-of-day to identify whether they cluster with the Action Times threshold events' },
+        { type: 'chat', text: 'Escalate to compliance lead — the volume of unaccounted dispenses requires immediate review independent of other metrics' }
       ]
     },
 
@@ -2263,6 +2335,9 @@
       ],
       findings: [
         { tone: 'warn', icon: 'warning_amber', text: 'Both open variances are in the home department. <strong>Review and triage</strong> before this provider\'s next IRIS cycle.' }
+      ],
+      recommendations: [
+        { type: 'navigate', text: 'View the 2 open variances in Patient Care Audit', destination: 'Patient Care Audit' }
       ]
     },
 
@@ -2401,6 +2476,21 @@
       findingsHTML += '</div>';
     }
 
+    let recommendationsHTML = '';
+    if (content.recommendations && content.recommendations.length) {
+      recommendationsHTML = '<div class="prism-rec-section"><div class="prism-section-heading">Recommendations</div><div class="prism-rec-list">';
+      content.recommendations.forEach((r, i) => {
+        const iconName = r.type === 'navigate' ? 'open_in_new' : 'chat_bubble_outline';
+        const handler = r.type === 'navigate' ? 'navigateRec' : 'continueWithAssistantRec';
+        recommendationsHTML += `
+          <button class="prism-rec-item" onclick="${handler}('${metricKey}', ${i})">
+            <span class="prism-rec-icon"><span class="material-icons-outlined">${iconName}</span></span>
+            <span class="prism-rec-text">${r.text}</span>
+          </button>`;
+      });
+      recommendationsHTML += '</div></div>';
+    }
+
     wrap.innerHTML = `
       <button class="prism-enhanced-label" onclick="toggleEnhanced(this)" aria-expanded="true">
         <svg width="12" height="10" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2418,6 +2508,7 @@
         <div class="prism-enhanced-headline">${content.headline}</div>
         ${statsHTML}
         ${findingsHTML}
+        ${recommendationsHTML}
         <div class="prism-actions-row">
           <button class="prism-action-btn" onclick="addToReview('${metricKey}', this)">
             <span class="material-icons-outlined">note_add</span>
@@ -2470,6 +2561,30 @@
     showToast('Creating session in Prism Assistant');
   }
 
+  function continueWithAssistantRec(metricKey, recIndex) {
+    const content = PRISM_CONTENT[metricKey];
+    if (!content || !content.recommendations || !content.recommendations[recIndex]) {
+      showToast('Creating session in Prism Assistant');
+      return;
+    }
+    // Strip any HTML tags from the recommendation text for the toast
+    const tmp = document.createElement('div');
+    tmp.innerHTML = content.recommendations[recIndex].text;
+    const plain = tmp.textContent.trim();
+    const preview = plain.length > 60 ? plain.slice(0, 60) + '…' : plain;
+    showToast(`Creating Prism session: "${preview}"`);
+  }
+
+  function navigateRec(metricKey, recIndex) {
+    const content = PRISM_CONTENT[metricKey];
+    if (!content || !content.recommendations || !content.recommendations[recIndex]) {
+      showToast('Opening in ControlCheck');
+      return;
+    }
+    const dest = content.recommendations[recIndex].destination || 'ControlCheck';
+    showToast(`Opening ${dest}…`);
+  }
+
   function switchTab(tabBtn) {
     const target = tabBtn.dataset.tab;
     document.querySelectorAll('.udp-tab').forEach(t => t.classList.toggle('active', t === tabBtn));
@@ -2499,6 +2614,7 @@
     const headline = card.querySelector('.prism-enhanced-headline')?.outerHTML || '';
     const statGrid = card.querySelector('.prism-stat-grid')?.outerHTML || '';
     const findings = card.querySelector('.prism-finding-list')?.outerHTML || '';
+    const recs = card.querySelector('.prism-rec-section')?.outerHTML || '';
 
     // Build a unique id so we can target this entry for removal
     const docId = 'prism-doc-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
@@ -2537,6 +2653,7 @@
             ${headline}
             ${statGrid}
             ${findings}
+            ${recs}
           </div>
           <div class="doc-prism-disclosure">Generated from this provider's IRIS payload for the flagged date range.</div>
         </div>
