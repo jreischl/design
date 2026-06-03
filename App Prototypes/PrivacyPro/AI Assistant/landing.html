@@ -875,6 +875,103 @@
   }
   .ai-gen-tag:hover .ai-tooltip { display: block; }
 
+  /* ─── FEEDBACK MODAL ─────────────────────────────────────── */
+  .feedback-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(2, 30, 53, 0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+  .feedback-modal-overlay.open {
+    opacity: 1; pointer-events: all;
+  }
+  .feedback-modal {
+    background: white; border-radius: 12px;
+    width: 100%; max-width: 440px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    transform: translateY(10px) scale(0.98);
+    transition: transform 0.18s ease;
+    overflow: hidden;
+  }
+  .feedback-modal-overlay.open .feedback-modal {
+    transform: translateY(0) scale(1);
+  }
+  .feedback-modal-header {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--bs-border);
+  }
+  .feedback-modal-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 20px; line-height: 1; text-transform: none; letter-spacing: normal;
+  }
+  .feedback-modal-icon.up   { background: #E7F4F8; color: #0096B8; }
+  .feedback-modal-icon.down { background: #FCD9D7; color: #B53228; }
+  .feedback-modal-title {
+    font-size: 15px; font-weight: 700; color: var(--bs-text);
+    margin-bottom: 2px;
+  }
+  .feedback-modal-sub {
+    font-size: 12px; color: var(--bs-text-muted); line-height: 1.4;
+  }
+  .feedback-modal-close {
+    margin-left: auto; flex-shrink: 0;
+    background: none; border: none; cursor: pointer;
+    color: var(--bs-text-muted); border-radius: 6px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 18px; line-height: 1; text-transform: none; letter-spacing: normal;
+    transition: color 0.15s, background 0.15s;
+  }
+  .feedback-modal-close:hover { color: var(--bs-text); background: #F0F0F0; }
+  .feedback-modal-body { padding: 16px 20px; }
+  .feedback-modal-label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--bs-text); margin-bottom: 8px;
+  }
+  .feedback-modal-textarea {
+    width: 100%; border: 1.5px solid var(--bs-border);
+    border-radius: 8px; padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--bs-text); resize: none; outline: none;
+    line-height: 1.5; transition: border-color 0.15s;
+  }
+  .feedback-modal-textarea:focus { border-color: #0096B8; }
+  .feedback-modal-textarea::placeholder { color: var(--bs-text-muted); }
+  .feedback-modal-char {
+    font-size: 11px; color: var(--bs-text-muted);
+    text-align: right; margin-top: 4px;
+  }
+  .feedback-modal-footer {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding: 12px 20px 16px;
+  }
+  .feedback-modal-btn-cancel {
+    background: white; border: 1.5px solid var(--bs-border);
+    border-radius: 6px; padding: 7px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 600; color: var(--bs-text-muted);
+    cursor: pointer; transition: border-color 0.15s, color 0.15s;
+  }
+  .feedback-modal-btn-cancel:hover { border-color: #9E9E9E; color: var(--bs-text); }
+  .feedback-modal-btn-submit {
+    background: #0096B8; border: none; border-radius: 6px;
+    padding: 7px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 700; color: white;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .feedback-modal-btn-submit:hover { background: #00718A; }
+  .feedback-modal-btn-submit.submitted {
+    background: #16B434; pointer-events: none;
+  }
+
   /* ─── UTILS ───────────────────────────────────────────────── */
   .hidden { display: none !important; }
   .flex-center { display: flex; align-items: center; justify-content: center; }
@@ -2177,24 +2274,107 @@
     });
   }
 
+  // ─── FEEDBACK MODAL ─────────────────────────────────────
+  let _feedbackBtn = null;
+  let _feedbackType = null; // 'up' | 'down'
+
+  function openFeedbackModal(btn, type) {
+    _feedbackBtn = btn;
+    _feedbackType = type;
+
+    const icon    = document.getElementById('feedbackModalIcon');
+    const title   = document.getElementById('feedbackModalTitle');
+    const sub     = document.getElementById('feedbackModalSub');
+    const label   = document.getElementById('feedbackModalLabel');
+    const textarea = document.getElementById('feedbackText');
+    const submitBtn = document.getElementById('feedbackSubmitBtn');
+    const charCount = document.getElementById('feedbackCharCount');
+
+    if (type === 'up') {
+      icon.className = 'feedback-modal-icon up';
+      icon.textContent = 'thumb_up';
+      title.textContent = 'What did we get right?';
+      sub.textContent = 'Your feedback helps us improve Prism Assistant.';
+      label.textContent = 'What was helpful about this response?';
+    } else {
+      icon.className = 'feedback-modal-icon down';
+      icon.textContent = 'thumb_down';
+      title.textContent = 'What went wrong?';
+      sub.textContent = 'Your feedback helps us improve Prism Assistant.';
+      label.textContent = 'What could this response have done better?';
+    }
+
+    textarea.value = '';
+    charCount.textContent = '0';
+    submitBtn.textContent = 'Submit feedback';
+    submitBtn.classList.remove('submitted');
+
+    const overlay = document.getElementById('feedbackModal');
+    overlay.classList.add('open');
+    setTimeout(() => textarea.focus(), 180);
+  }
+
+  function closeFeedbackModal(e) {
+    // If called from overlay click, only close if clicking the backdrop itself
+    if (e && e.target !== document.getElementById('feedbackModal')) return;
+    document.getElementById('feedbackModal').classList.remove('open');
+    _feedbackBtn = null;
+    _feedbackType = null;
+  }
+
+  function submitFeedback() {
+    const submitBtn = document.getElementById('feedbackSubmitBtn');
+    submitBtn.textContent = 'Submitted ✓';
+    submitBtn.classList.add('submitted');
+
+    // Apply the active state to the originating button
+    if (_feedbackBtn && _feedbackType === 'up') {
+      const card = _feedbackBtn.closest('.ai-response-card');
+      const down = card && card.querySelector('[data-tip="Not helpful"]');
+      _feedbackBtn.classList.add('active-thumb-up');
+      if (down) down.classList.remove('active-thumb-down');
+    } else if (_feedbackBtn && _feedbackType === 'down') {
+      const card = _feedbackBtn.closest('.ai-response-card');
+      const up = card && card.querySelector('[data-tip="Helpful"]');
+      _feedbackBtn.classList.add('active-thumb-down');
+      if (up) up.classList.remove('active-thumb-up');
+    }
+
+    setTimeout(() => {
+      document.getElementById('feedbackModal').classList.remove('open');
+      _feedbackBtn = null;
+      _feedbackType = null;
+    }, 1000);
+  }
+
+  // Character counter
+  document.addEventListener('DOMContentLoaded', function() {
+    const ta = document.getElementById('feedbackText');
+    if (ta) ta.addEventListener('input', function() {
+      document.getElementById('feedbackCharCount').textContent = ta.value.length;
+    });
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') document.getElementById('feedbackModal').classList.remove('open');
+    });
+  });
+
   function thumbUp(btn) {
-    const card = btn.closest('.ai-response-card');
-    const down = card.querySelector('[data-tip="Not helpful"]');
-    const alreadyOn = btn.classList.contains('active-thumb-up');
-    btn.classList.toggle('active-thumb-up', !alreadyOn);
-    if (down) down.classList.remove('active-thumb-down');
-    btn.setAttribute('data-tip', alreadyOn ? 'Helpful' : 'Thanks for the feedback!');
-    setTimeout(() => btn.setAttribute('data-tip', 'Helpful'), 2000);
+    // If already active, toggle off without modal
+    if (btn.classList.contains('active-thumb-up')) {
+      btn.classList.remove('active-thumb-up');
+      return;
+    }
+    openFeedbackModal(btn, 'up');
   }
 
   function thumbDown(btn) {
-    const card = btn.closest('.ai-response-card');
-    const up = card.querySelector('[data-tip="Helpful"], [data-tip="Thanks for the feedback!"]');
-    const alreadyOn = btn.classList.contains('active-thumb-down');
-    btn.classList.toggle('active-thumb-down', !alreadyOn);
-    if (up) up.classList.remove('active-thumb-up');
-    btn.setAttribute('data-tip', alreadyOn ? 'Not helpful' : 'Thanks for the feedback!');
-    setTimeout(() => btn.setAttribute('data-tip', 'Not helpful'), 2000);
+    // If already active, toggle off without modal
+    if (btn.classList.contains('active-thumb-down')) {
+      btn.classList.remove('active-thumb-down');
+      return;
+    }
+    openFeedbackModal(btn, 'down');
   }
 
   function copyResponse(btn) {
@@ -2858,5 +3038,34 @@
   attachResponseFooters(); // attach footers to any pre-rendered response cards
 
 </script>
+<!-- ═══════════════════════ FEEDBACK MODAL ═══════════════════════ -->
+<div id="feedbackModal" class="feedback-modal-overlay" onclick="closeFeedbackModal(event)">
+  <div class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle">
+    <div class="feedback-modal-header">
+      <div class="feedback-modal-icon" id="feedbackModalIcon"></div>
+      <div>
+        <div class="feedback-modal-title" id="feedbackModalTitle">Share your feedback</div>
+        <div class="feedback-modal-sub" id="feedbackModalSub"></div>
+      </div>
+      <button class="feedback-modal-close" onclick="closeFeedbackModal()" aria-label="Close">close</button>
+    </div>
+    <div class="feedback-modal-body">
+      <label class="feedback-modal-label" for="feedbackText" id="feedbackModalLabel"></label>
+      <textarea
+        id="feedbackText"
+        class="feedback-modal-textarea"
+        placeholder="Tell us more…"
+        rows="4"
+        maxlength="1000"
+      ></textarea>
+      <div class="feedback-modal-char"><span id="feedbackCharCount">0</span> / 1000</div>
+    </div>
+    <div class="feedback-modal-footer">
+      <button class="feedback-modal-btn-cancel" onclick="closeFeedbackModal()">Cancel</button>
+      <button class="feedback-modal-btn-submit" id="feedbackSubmitBtn" onclick="submitFeedback()">Submit feedback</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
