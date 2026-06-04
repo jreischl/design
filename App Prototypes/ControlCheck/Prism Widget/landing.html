@@ -1741,6 +1741,8 @@
       align-items: flex-end;
       gap: 10px;
     }
+    #prismFabRoot.hidden { display: none !important; }
+    body.prism-page-active #prismFabRoot { display: none !important; }
 
     @keyframes fabSpin {
       from { transform: rotate(0deg); }
@@ -2992,15 +2994,16 @@
     closePrismPanel();
     // reset nav active states
     document.querySelectorAll('.navigation .nav-link').forEach(l => l.classList.remove('nav-link-active'));
+    document.body.classList.remove('prism-page-active');
     if (page === 'dashboard') {
       showView('view-dashboard');
       const cl = document.getElementById('prismContextLabel'); if (cl) cl.textContent = 'Dashboard';
-      document.getElementById('prismFabRoot').style.display = '';
+      document.getElementById('prismFabRoot').classList.remove('hidden');
       document.getElementById('prismNavBtn').classList.remove('dropdown-open');
     } else if (page === 'audit') {
       showView('view-audit');
       const cl2 = document.getElementById('prismContextLabel'); if (cl2) cl2.textContent = 'Patient Care Audit';
-      document.getElementById('prismFabRoot').style.display = '';
+      document.getElementById('prismFabRoot').classList.remove('hidden');
     }
   }
 
@@ -3008,13 +3011,14 @@
     closePrismDropdown();
     if (sub === 'new') {
       showView('view-prism-new');
-      // update sidebar active states
       document.querySelectorAll('#view-prism-new .prism-sidebar-item').forEach((btn, i) => {
         btn.classList.toggle('active', i === 0);
       });
     } else {
       showView('view-prism-history');
     }
+    document.getElementById('prismFabRoot').classList.add('hidden');
+    document.body.classList.add('prism-page-active');
     updateNavActive();
   }
 
@@ -3081,6 +3085,8 @@
     transcript.appendChild(assistantMsg);
 
     showView('view-prism-session');
+    document.getElementById('prismFabRoot').classList.add('hidden');
+    document.body.classList.add('prism-page-active');
     updateNavActive();
     dismissResponse();
 
@@ -3098,10 +3104,11 @@
 
   function updateNavActive() {
     const btn = document.getElementById('prismNavBtn');
-    const isOnPrism = !document.getElementById('view-dashboard').classList.contains('active');
+    const activeView = document.querySelector('.view.active');
+    const isOnPrism = activeView && ['view-prism-new','view-prism-session','view-prism-history'].includes(activeView.id);
     btn.classList.toggle('dropdown-open', isOnPrism);
-    // Hide FAB and close side panel when on the full Prism Assistant pages
-    document.getElementById('prismFabRoot').style.display = isOnPrism ? 'none' : '';
+    // Hide FAB on full Prism Assistant pages, show on all others
+    document.getElementById('prismFabRoot').classList.toggle('hidden', isOnPrism);
     if (isOnPrism) closePrismPanel();
   }
 
@@ -3228,7 +3235,7 @@
 
   function openPrismPanel() {
     document.getElementById('prismSidePanel').classList.add('open');
-    document.getElementById('prismFabRoot').style.display = 'none';
+    document.getElementById('prismFabRoot').classList.add('hidden');
   }
 
   function openPrismPanelWithResponse() {
@@ -3240,7 +3247,7 @@
     document.getElementById('prismSidePanel').classList.remove('open');
     document.getElementById('prismThumbUp').classList.remove('active-up');
     document.getElementById('prismThumbDown').classList.remove('active-down');
-    document.getElementById('prismFabRoot').style.display = '';
+    document.getElementById('prismFabRoot').classList.remove('hidden');
   }
 
   function dismissResponse() { closePrismPanel(); }
