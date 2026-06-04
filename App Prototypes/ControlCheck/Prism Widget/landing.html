@@ -3152,20 +3152,36 @@
   });
 
   /* Simulated inline responses keyed by loose keyword */
-  const responseMap = [
-    { keys: ['variance', 'variances', 'documentation', 'accuracy'],
-      text: 'Your <strong>Documentation Accuracy</strong> is strong. <strong>93.2%</strong> of variances are closed by Bluesight, with only <strong>0.0% open</strong> and <strong>1.0% closed-unreconciled</strong>. The average time to close a variance is <strong>2.1 days</strong>. The highest-volume locations are ANW HH H4200 (2,765), ANW OR/SURG (3,398), and ANW HH CV/EP LAB (1,145) — most flagged as medium priority.' },
-    { keys: ['iris', 'review', 'reviews'],
-      text: 'There are currently <strong>0 open IRIS reviews</strong> in both the Nursing and OR worklists — nothing requires immediate action. You can visit the Worklist or the Review Oversight dashboard to monitor trends over time.' },
-    { keys: ['case', 'cases'],
-      text: 'There are <strong>6 open cases</strong> and <strong>1 case closed in the last 30 days</strong>. Navigate to Case Oversight for a full breakdown by status, assignee, and priority.' },
-    { keys: ['data', 'recency', 'updated', 'last'],
-      text: 'Data on this dashboard was <strong>last received on Jun 04, 2026 at 07:42</strong>. All metrics reflect this most recent upload.' },
-    { keys: ['bar', 'chart', 'department', 'departments', 'location', 'locations', 'priority'],
-      text: 'The variance bar chart shows open variances by location. <strong>ANW OR/SURG</strong> (3,398) and <strong>ANW HH H4200</strong> (2,765) carry the highest volume, both flagged as medium priority. <strong>Controlled substances</strong> (465) is the only high-priority location currently. Most others are medium or closed by Bluesight.' },
-    { keys: [''],
-      text: 'This dashboard shows data for <strong>St. Cloud General Hospital</strong> as of Jun 04, 2026. Documentation accuracy is at <strong>93.2%</strong> closed by Bluesight with a 2.1-day average close time. There are <strong>6 open cases</strong>, <strong>0 open IRIS reviews</strong> in both Nursing and OR worklists, and the highest-volume variance locations are ANW OR/SURG and ANW HH H4200.' },
-  ];
+  const responseMap = {
+    dashboard: [
+      { keys: ['variance', 'variances', 'documentation', 'accuracy'],
+        text: 'Your <strong>Documentation Accuracy</strong> is strong. <strong>93.2%</strong> of variances are closed by Bluesight, with only <strong>0.0% open</strong> and <strong>1.0% closed-unreconciled</strong>. The average time to close a variance is <strong>2.1 days</strong>. The highest-volume locations are ANW HH H4200 (2,765), ANW OR/SURG (3,398), and ANW HH CV/EP LAB (1,145) — most flagged as medium priority.' },
+      { keys: ['iris', 'review', 'reviews'],
+        text: 'There are currently <strong>0 open IRIS reviews</strong> in both the Nursing and OR worklists — nothing requires immediate action. You can visit the Worklist or the Review Oversight dashboard to monitor trends over time.' },
+      { keys: ['case', 'cases'],
+        text: 'There are <strong>6 open cases</strong> and <strong>1 case closed in the last 30 days</strong>. Navigate to Case Oversight for a full breakdown by status, assignee, and priority.' },
+      { keys: ['data', 'recency', 'updated', 'last'],
+        text: 'Data on this dashboard was <strong>last received on Jun 04, 2026 at 07:42</strong>. All metrics reflect this most recent upload.' },
+      { keys: ['bar', 'chart', 'department', 'departments', 'location', 'locations', 'priority'],
+        text: 'The variance bar chart shows open variances by location. <strong>ANW OR/SURG</strong> (3,398) and <strong>ANW HH H4200</strong> (2,765) carry the highest volume, both flagged as medium priority. <strong>Controlled substances</strong> (465) is the only high-priority location currently. Most others are medium or closed by Bluesight.' },
+      { keys: [''],
+        text: 'This dashboard shows data for <strong>St. Cloud General Hospital</strong> as of Jun 04, 2026. Documentation accuracy is at <strong>93.2%</strong> closed by Bluesight with a 2.1-day average close time. There are <strong>6 open cases</strong>, <strong>0 open IRIS reviews</strong> in both Nursing and OR worklists, and the highest-volume variance locations are ANW OR/SURG and ANW HH H4200.' },
+    ],
+    audit: [
+      { keys: ['cavalier', 'hydromorphone', 'es id 583329', '583329'],
+        text: '<strong>Cavalier, Aida (XM10962)</strong> has an open event summary (ES ID 583329) flagged for <strong>HYDROmorphone 1 mg/mL Inj</strong>. <strong>10 mg</strong> was dispensed with no recorded administration or return, leaving <strong>-9.2 mg unaccounted</strong>. This is your highest-priority open variance in the current view. Consider reviewing the related event summary for witness records and wastage documentation.' },
+      { keys: ['slover', 'morphine', '586115'],
+        text: '<strong>Slover, Floy (XF25500)</strong> has a morphine variance on ES ID 586115. <strong>8 mg dispensed</strong>, <strong>4 mg administered</strong>, with <strong>-4 mg missing</strong>. No waste or return was recorded. This may indicate an undocumented waste event — recommend reviewing shift records for the dispensing nurse.' },
+      { keys: ['missing', 'unaccounted', 'variance', 'variances', 'open'],
+        text: 'Across the <strong>7 open event summaries</strong> currently visible, the most significant missing amounts are: <strong>Corker, Dino</strong> (-14 mg morphine), <strong>Cavalier, Aida</strong> (-9.2 mg hydromorphone), and <strong>Loftin, Ashli</strong> (-100 mcg fentaNYL). Matas and Montanez show positive discrepancies (+1 mg and +0.5 mg respectively), suggesting possible over-documentation or administration recording errors.' },
+      { keys: ['fentanyl', 'fenta', 'loftin', '561424'],
+        text: '<strong>Loftin, Ashli (XF11611)</strong> has the most concerning fentaNYL variance on ES ID 561424. <strong>300 mcg dispensed</strong>, <strong>100 mcg administered</strong>, <strong>100 mcg returned</strong>, leaving <strong>-100 mcg unaccounted</strong>. This level of fentaNYL discrepancy warrants priority review and may require escalation per your facility\'s diversion protocols.' },
+      { keys: ['emergency', 'loraze', 'lorazepam'],
+        text: 'Two Emergency department patients — <strong>Matas, Nancey</strong> and <strong>Montanez, Lorelei</strong> — both have LORazepam discrepancies. Matas shows <strong>+1 mg</strong> (admin exceeds dispense) and Montanez shows <strong>+0.5 mg</strong>. Positive variances like these often indicate administration documentation that doesn\'t reconcile with dispense records and should be reviewed for entry errors.' },
+      { keys: [''],
+        text: 'You\'re viewing <strong>7 open event summaries</strong> in the Patient Care Audit for <strong>St. Cloud General Hospital</strong>, sorted by date created (newest first). The most critical variances are <strong>Corker, Dino</strong> (-14 mg morphine), <strong>Cavalier, Aida</strong> (-9.2 mg hydromorphone), and <strong>Loftin, Ashli</strong> (-100 mcg fentaNYL). Two Emergency department cases show positive discrepancies that may reflect documentation errors. Click any row to review the full event history.' },
+    ]
+  };
 
   function sendPrismQuery() {
     const q = quickInput.value.trim();
@@ -3179,14 +3195,19 @@
       typing.classList.remove('visible');
       closePrismDropdown();
 
-      // Make sure dashboard is visible
-      showView('view-dashboard');
+      // Only navigate to dashboard if no other content view is active
+      const activeView = document.querySelector('.view.active');
+      if (!activeView || activeView.id === 'view-dashboard') {
+        showView('view-dashboard');
+      }
       document.getElementById('prismNavBtn').classList.remove('dropdown-open');
 
-      // Pick response
+      // Pick context-aware response
       const lower = q.toLowerCase();
-      let answer = responseMap[responseMap.length - 1].text;
-      for (const r of responseMap.slice(0, -1)) {
+      const context = activeView && activeView.id === 'view-audit' ? 'audit' : 'dashboard';
+      const map = responseMap[context];
+      let answer = map[map.length - 1].text;
+      for (const r of map.slice(0, -1)) {
         if (r.keys.some(k => lower.includes(k))) { answer = r.text; break; }
       }
 
