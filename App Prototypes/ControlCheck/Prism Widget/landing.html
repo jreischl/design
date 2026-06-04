@@ -1,0 +1,3354 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Template | ControlCheck</title>
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --red:         #f24335;
+      --green:       #16b434;
+      --yellow:      #f5dd67;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #727272;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body { display: flex; flex-direction: column; }
+
+    /* ── Custom element display ──────────────────────────── */
+    app-component, navigation, nav-menu, user-menu,
+    bcs-dashboard, page-title, dashboard-card-title,
+    dashboard-nursing-variances-panel, dashboard-iris-worklist,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-panel-description,
+    mat-card, mat-card-header, mat-card-title, mat-card-subtitle,
+    mat-selection-card, mat-tab-header, mat-tab-body,
+    router-outlet { display: block; }
+    mat-card-title, mat-card-subtitle { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex;
+      align-items: center;
+      border-radius: var(--radius);
+      flex-direction: row;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    /* ── nav-menu .navigation ───────────────────────────── */
+    .navigation {
+      display: inline-flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      margin-left: 1rem;
+      padding-top: 0;
+    }
+    .mdc-button.mat-mdc-button {
+      background: none;
+      border: none;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--blue-dark);
+      cursor: pointer;
+      padding: .5rem 1rem;
+      height: 48px;
+      border-radius: var(--radius);
+      transition: background .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      text-decoration: none;
+      white-space: nowrap;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+	span.nav-svg-icon {
+    	display: flex;
+	}
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    .mdc-button__label { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+    .nav-chevron { font-size: 18px; opacity: .65; }
+
+    /* active */	  
+    .nav-link.active .mdc-button__label {
+		color: inherit;
+		box-shadow: 0 2px;
+		align-items: center;
+		display: inline-flex;
+	    line-height: 32px;		
+		justify-content: center;
+	}
+    /* badge */
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      border-radius: 50%;
+      width: 14px; height: 14px;
+      text-align: center;
+      line-height: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+		margin-left: -4px;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+
+    /* ── user-menu ──────────────────────────────────────── */
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center;
+      background-color: transparent;
+      border: none;
+      border-radius: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      transition: background-color .2s ease-in-out;
+      padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark);
+      font-size: .813rem;
+      letter-spacing: .01rem;
+      line-height: 1.25rem;
+      min-height: 40px;
+      padding-left: 1rem;
+      white-space: normal;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .header-customer-fullName  { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark);
+      color: #fff;
+      border-radius: 50%;
+      width: 24px; height: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .15s;
+      padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    /* inline icon button (user avatar wrapper) */
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    /* ── #app-view ──────────────────────────────────────── */
+    #body-wrap {
+      display: flex;
+      flex: 1 1 auto;
+      overflow: hidden;
+      min-height: 0;
+    }
+    #app-view { flex: 1 1 auto; position: relative; overflow-y: auto; }
+
+    /* ── Prism Response Side Panel ───────────────────────── */
+    #prismSidePanel {
+      z-index: 20;
+      width: 0;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #fff;
+      border-left: 0px solid var(--gray-300);
+      display: flex;
+      flex-direction: column;
+      transition: width .28s cubic-bezier(.4,0,.2,1), border-left-width .28s;
+    }
+    #prismSidePanel.open {
+      width: 440px;
+      border-left-width: 1px;
+    }
+    .prism-panel-inner {
+      width: 440px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    #panelAskMode {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    #panelResponseMode {
+      flex: 1;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+    /* ── Ask mode input box ─────────────────────────────── */
+    .prism-input-box {
+      background: #fff;
+      overflow: hidden;
+    }
+    .prism-textarea-wrap-tall {
+      border: 1px solid var(--gray-400);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .15s, box-shadow .15s;
+      background: #fff;
+      margin-bottom: 6px;
+    }
+    .prism-textarea-wrap-tall:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(0,150,184,.15);
+    }
+    .prism-textarea-tall {
+      width: 100%;
+      resize: none;
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: .875rem;
+      color: var(--text-87);
+      padding: 12px 12px 4px;
+      line-height: 1.5;
+      min-height: 90px;
+      background: transparent;
+      display: block;
+    }
+    .prism-input-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px 8px;
+    }
+    .prism-toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .prism-toolbar-right {
+      display: flex;
+      align-items: center;
+    }
+    .prism-toolbar-btn {
+      background: none;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--gray-600);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      transition: background .15s, color .15s;
+    }
+    .prism-toolbar-btn:hover { background: var(--gray-100); color: var(--blue-dark); }
+    .prism-toolbar-btn .material-icons,
+    .prism-toolbar-btn .material-icons-outlined { font-size: 18px; }
+    /* Override send btn for toolbar context */
+    .prism-input-toolbar .prism-send-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #e96eaa;
+    }
+    .prism-input-toolbar .prism-send-btn:hover:not(:disabled) {
+      background: #d45e96;
+    }
+    .prism-input-toolbar .prism-send-btn:disabled {
+      background: var(--gray-300);
+    }
+    .prism-input-toolbar .prism-send-btn .material-icons { font-size: 18px; }
+
+    .prism-ask-disclosure {
+      font-size: .6875rem;
+      line-height: 1.5;
+      color: var(--text-54);
+      font-style: italic;
+      display: flex;
+      align-items: flex-end;
+      height: 100%;
+    }
+    .prism-panel-ask-body {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .prism-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .prism-panel-header-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .prism-panel-header-title {
+      font-size: .875rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+    .prism-panel-header-right {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .prism-panel-close-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-600);
+      display: inline-flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color .15s, background .15s;
+    }
+    .prism-panel-close-btn:hover { color: var(--blue-dark); background: var(--gray-100); }
+    .prism-panel-close-btn .material-icons,
+    .prism-panel-close-btn .material-icons-outlined { font-size: 16px; }
+
+    .prism-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    .prism-panel-q {
+      font-size: .75rem;
+      font-style: italic;
+      color: var(--text-54);
+      margin-bottom: 8px;
+    }
+    .prism-panel-text {
+      font-size: .875rem;
+      line-height: 1.6;
+      color: var(--text-87);
+    }
+
+    .prism-panel-footer {
+      flex-shrink: 0;
+      padding: 10px 16px 12px;
+      border-top: 1px solid var(--gray-300);
+    }
+    .prism-panel-disclosure {
+      font-size: .6875rem;
+      line-height: 1.5;
+      color: var(--text-54);
+      margin-bottom: 8px;
+    }
+    .prism-panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .prism-panel-continue-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e96eaa;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 7px 12px;
+      font-family: var(--font);
+      font-size: .8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+      margin-right: auto;
+    }
+    .prism-panel-continue-btn:hover { background: #d45e96; }
+    .prism-panel-save-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      color: var(--teal-dark);
+      border: 1.5px solid var(--teal);
+      border-radius: 4px;
+      padding: 7px 12px;
+      font-family: var(--font);
+      font-size: .8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .prism-panel-save-btn:hover { background: rgba(0,150,184,.06); }
+    .prism-panel-feedback-row {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 10px;
+    }
+    .prism-panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .prism-panel-continue-btn .material-icons-outlined { font-size: 15px; }
+
+    /* ── .page-content ──────────────────────────────────── */
+    .page-content { padding: 1.5rem 2rem; }
+
+    /* ── page-title h2 ──────────────────────────────────── */
+    h2 {
+      display: inline-block;
+      font-size: 24px;
+      line-height: 30px;
+      font-weight: 600;
+      letter-spacing: .2px;
+      color: var(--text-87);
+    }
+
+    /* ── mat-tab-group ──────────────────────────────────── */
+    .mat-mdc-tab-group { display: flex; flex-direction: column; max-width: 100%; }
+    mat-tab-header { display: flex; overflow: hidden; position: relative; flex-shrink: 0; }
+    .mat-mdc-tab-header-pagination { display: none; }
+    .mat-mdc-tab-label-container {
+      display: flex;
+      flex-grow: 1;
+      overflow: hidden;
+      z-index: 1;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .mat-mdc-tab-list { flex-grow: 1; position: relative; }
+    .mat-mdc-tab-labels { display: flex; flex: 1 0 auto; }
+
+    .mdc-tab {
+      min-width: 90px;
+      padding: 0 24px;
+      display: inline-flex;
+      flex: 1 0 auto;
+      justify-content: center;
+      border: none;
+      background: none;
+      outline: none;
+      white-space: nowrap;
+      cursor: pointer;
+      height: 48px;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-87);
+      position: relative;
+    }
+    .mdc-tab.mat-mdc-tab { flex-grow: 0; }
+    .mdc-tab__content { display: flex; align-items: center; justify-content: center; height: 100%; pointer-events: none; }
+    .mdc-tab__text-label { display: inline-block; line-height: 1; }
+    .mdc-tab-indicator { display: flex; position: absolute; top: 0; left: 0; justify-content: center; width: 100%; height: 100%; pointer-events: none; }
+    .mdc-tab-indicator__content--underline {
+      align-self: flex-end;
+      width: 100%;
+      border-top-style: solid;
+      border-top-width: 2px;
+      border-color: var(--blue-dark);
+      transform: scaleX(0);
+      transition: transform 250ms cubic-bezier(.4,0,.2,1);
+      opacity: 0;
+    }
+    .mdc-tab-indicator--active .mdc-tab-indicator__content--underline { transform: scaleX(1); opacity: 1; }
+
+    .mat-mdc-tab-body-wrapper { position: relative; display: flex; }
+    mat-tab-body { flex-basis: 100%; display: block; overflow: hidden; }
+    mat-tab-body.mat-mdc-tab-body-active { position: relative; overflow: visible; z-index: 1; flex-grow: 1; }
+    .mat-mdc-tab-body-content { overflow: auto; }
+
+    /* ── .title-background ──────────────────────────────── */
+    .title-background {
+      background-color: var(--gray-200);
+      color: var(--gray-700);
+      margin: 0 -1.5rem;
+      padding: 1.5rem;
+      transform: translateY(-1.5rem);
+    }
+
+    /* ── dashboard-card-title ───────────────────────────── */
+    .card-title {
+      display: flex;
+      flex-direction: row;
+      place-content: stretch space-between;
+      align-items: stretch;
+    }
+    .card-title h4 { color: var(--blue-dark); margin: 0; }
+    .card-title a { font-size: .875rem; color: var(--blue-dark); text-decoration: none; }
+    .card-title a:hover { text-decoration: underline; }
+    dashboard-card-title em {
+      display: block;
+      font-size: .75rem;
+      color: var(--gray-600);
+      font-style: italic;
+      margin-bottom: 1rem;
+    }
+
+    /* ── figures ────────────────────────────────────────── */
+    figure { margin: 0; }
+    figure .percentage {
+      cursor: pointer;
+      font-size: 36px;
+      line-height: 36px;
+      padding-top: 10px;
+      font-weight: 600;
+      color: var(--text-87);
+      transition: color .15s;
+      display: block;
+    }
+    figure .percentage:hover { color: var(--teal); }
+    figure figcaption { font-size: .75rem; max-width: 102px; text-align: center; width: 100%; margin-top: 6px; }
+    .average-days-to-close { font-size: .75rem; padding-top: 1em; display: flex; align-items: center; gap: 4px; }
+    .average-days-to-close > span { font-weight: 600; margin-right: .25em; }
+
+    /* ── nursing variances panel ─────────────────────────── */
+    figure.legend {
+      display: flex;
+      flex-direction: row;
+      place-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 12px 24px 4px;
+      margin-bottom: 0;
+    }
+    .legend > div { display: inline-block; font-size: 11px; font-weight: 600; vertical-align: baseline; }
+    .legend > div .swatch {
+      border-radius: 3px;
+      display: inline-block;
+      height: 1.6em;
+      position: relative;
+      top: -2px;
+      vertical-align: middle;
+      width: 1.6em;
+      margin-right: 4px;
+    }
+    .swatch.high   { background: var(--red); }
+    .swatch.medium { background: var(--yellow); }
+    .swatch.low    { background: var(--green); }
+    .swatch.closed { background: var(--gray-400); border: 1px solid var(--gray-700); }
+
+    svg g rect         { cursor: pointer; }
+    svg g rect.medium  { fill: var(--yellow); }
+    svg g rect.low     { fill: var(--green); }
+    svg g rect.other   { fill: var(--gray-400); }
+    svg g text         { font-size: .75rem; font-weight: 600; font-family: var(--font); fill: var(--gray-700); }
+    svg g text tspan   { font-weight: 500; }
+
+    /* ── mat-card ─────────────────────────────────────────── */
+    mat-card.mat-mdc-card {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      position: relative;
+      background: #fff;
+      border-style: solid;
+      border-width: 0;
+    }
+    mat-card.mat-mdc-card-outlined { border-width: 1px; border-color: var(--border); border-radius: var(--radius); }
+    mat-card.with-spacing { margin-bottom: 1.5rem; }
+
+    mat-card-header { display: flex; padding: 0; }
+    .mat-mdc-card-header-text { flex: 1; }
+    mat-card-title.mat-mdc-card-title  { font-size: 2rem; font-weight: 600; margin-bottom: 4px; color: var(--text-87); }
+    mat-card-subtitle.mat-mdc-card-subtitle { font-size: 1rem; font-weight: 600; margin: 0; color: var(--gray-700); }
+
+    /* selection-card styles */
+    mat-card.selection-card-inner {
+      border-left: 4px solid transparent;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2), 0 2px 1px -1px rgba(0,0,0,.12), 0 1px 1px rgba(0,0,0,.14);
+      cursor: pointer;
+      padding: 1rem .5rem;
+      transition: border-left-color .3s;
+    }
+    mat-card.selection-card-inner.mat-gray:not(.icon-card):hover { border-left-color: var(--teal-dark); }
+    mat-card.selection-card-inner.mat-disabled { cursor: not-allowed; }
+    mat-card.selection-card-inner.mat-disabled mat-card-title,
+    mat-card.selection-card-inner.mat-disabled mat-card-subtitle { color: var(--gray-400); }
+    mat-card.selection-card-inner.icon-card {
+      background: var(--teal);
+      box-shadow: none;
+      border: none;
+      transition: background .3s;
+    }
+    mat-card.selection-card-inner.icon-card:hover { background: var(--teal-dark); }
+    mat-card.selection-card-inner.icon-card mat-card-title,
+    mat-card.selection-card-inner.icon-card mat-card-subtitle { color: #fff; }
+    .material-icons-outlined.secondary-icon { color: #fff; margin-top: auto; margin-left: auto; margin-right: 0; }
+
+    /* ── accordion / expansion panel ─────────────────────── */
+    mat-accordion { display: block; margin-bottom: 1rem; }
+    mat-expansion-panel {
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    }
+    mat-expansion-panel-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0 24px;
+      height: 64px;
+      cursor: default;
+      border-radius: inherit;
+    }
+    .mat-content { display: flex; flex: 1; flex-direction: row; overflow: hidden; }
+    .mat-content.mat-content-hide-toggle { margin-right: 8px; }
+    mat-panel-title {
+      display: flex;
+      flex-grow: 1;
+      align-items: center;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+    }
+    mat-panel-description {
+      display: flex;
+      flex-grow: 2;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 1rem;
+      font-weight: 500;
+      margin: 0;
+      gap: 6px;
+      color: var(--gray-700);
+    }
+    mat-panel-description .text-danger { color: var(--red); }
+    mat-panel-description mat-icon { font-size: 18px; color: var(--gray-600); }
+
+    /* ── .case-trending ──────────────────────────────────── */
+    .case-trending { display: flex; flex-direction: column; width: 100%; }
+    mat-card.widget { }
+
+    /* ── distribution-card-container ─────────────────────── */
+    .distribution-card-container {
+      display: flex;
+      flex-direction: row;
+      width: auto;
+      margin: 0 1rem;
+    }
+    .distribution-card-container mat-selection-card { margin: 1rem .5rem; flex: 1 1 0%; }
+
+    /* ── count-card-container (IRIS) ─────────────────────── */
+    .count-card-container { width: auto; margin: 0 1rem; }
+
+    /* ── footer ──────────────────────────────────────────── */
+    footer {
+      color: var(--gray-600);
+      display: block;
+      font-size: 11px;
+      padding: 7px 0;
+      text-align: center;
+      width: 100%;
+      border-top: 1px solid var(--gray-300);
+    }
+    footer a { color: var(--gray-600); }
+
+	/* —— a11y —————————————————————————————————————————————— */
+	  :focus-visible {
+ 	   	outline: var(--teal) auto 1px;
+	  }
+	  
+    /* ── Animations ──────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    mat-card.with-spacing       { animation: fadeUp .3s .05s ease both; }
+    mat-accordion               { animation: fadeUp .3s .08s ease both; }
+    .case-trending mat-card:nth-of-type(1) { animation: fadeUp .3s .13s ease both; }
+    .case-trending mat-card:nth-of-type(2) { animation: fadeUp .3s .18s ease both; }
+
+    /* ── Prism Assistant Nav Item ────────────────────────── */
+    .prism-nav-wrapper {
+      position: relative;
+    }
+    .prism-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .prism-nav-btn.dropdown-open {
+      background: rgba(4,74,130,.06);
+    }
+
+    /* ── Prism Assistant Dropdown ────────────────────────── */
+    .prism-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 480px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.14), 0 2px 8px rgba(0,0,0,.08);
+      border: 1px solid var(--gray-300);
+      z-index: 999;
+      overflow: hidden;
+      display: none;
+      animation: dropdownIn .18s ease both;
+    }
+    .prism-dropdown.open { display: block; }
+
+    @keyframes dropdownIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .prism-dropdown-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .prism-dropdown-header-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .prism-dropdown-title {
+      font-size: .875rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      letter-spacing: .01em;
+    }
+
+    /* Input area */
+    .prism-input-area {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .prism-input-label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .prism-input-label-row .prism-context-pill { margin-top: 0; }
+    .prism-input-label {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--text-54);
+    }
+    .prism-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+    .prism-textarea-wrap {
+      flex: 1;
+      border: 1px solid var(--gray-400);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .15s, box-shadow .15s;
+      background: #fff;
+    }
+    .prism-textarea-wrap:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(0,150,184,.15);
+    }
+    .prism-textarea {
+      width: 100%;
+      resize: none;
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: .875rem;
+      color: var(--text-87);
+      padding: 8px 10px;
+      line-height: 1.4;
+      min-height: 56px;
+      max-height: 120px;
+      background: transparent;
+    }
+    .prism-send-btn {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s;
+      color: #fff;
+    }
+    .prism-send-btn:hover { background: var(--teal-dark); }
+    .prism-send-btn:disabled {
+      background: var(--gray-300);
+      cursor: default;
+    }
+    .prism-send-btn .material-icons { font-size: 18px; }
+
+    /* Context pill */
+    .prism-context-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: .7rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      background: rgba(0,150,184,.08);
+      border-radius: 12px;
+      padding: 2px 8px 2px 6px;
+      margin-top: 6px;
+    }
+    .prism-context-pill .material-icons { font-size: 12px; }
+
+    /* Nav links at bottom */
+    .prism-nav-links {
+      display: flex;
+      flex-direction: row;
+    }
+    .prism-nav-link {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      font-size: .8125rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: var(--font);
+      transition: background .15s;
+    }
+    .prism-nav-link:first-child {}
+    .prism-nav-link:hover { background: var(--gray-100); }
+    .prism-nav-link .material-icons,
+    .prism-nav-link .material-icons-outlined { font-size: 18px; color: var(--teal); }
+    .prism-nav-link-text { display: flex; flex-direction: column; align-items: flex-start; }
+    .prism-nav-link-desc {
+      font-size: .7rem;
+      font-weight: 400;
+      color: var(--text-54);
+      margin-top: 1px;
+    }
+    .prism-nav-link .link-arrow {
+      margin-left: auto;
+      color: var(--gray-400);
+      font-size: 16px;
+    }
+
+    /* ── Inline AI Response ────────────────────────── */
+    .prism-response-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(0,150,184,.04) 0%, rgba(0,150,184,.08) 100%);
+      border-left: 3px solid var(--teal);
+      border-radius: 0 4px 4px 0;
+      margin: 1rem 0 0;
+      padding: 14px 16px;
+      animation: fadeUp .25s ease both;
+    }
+    .prism-response-banner.visible { display: block; }
+    .prism-response-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .prism-response-label {
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .prism-response-close {
+      margin-left: auto;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-400);
+      display: inline-flex;
+      align-items: center;
+      padding: 2px;
+      border-radius: 50%;
+      transition: color .15s, background .15s;
+    }
+    .prism-response-close:hover { color: var(--text-87); background: rgba(0,0,0,.06); }
+    .prism-response-close .material-icons { font-size: 16px; }
+    .prism-response-text {
+      font-size: .875rem;
+      line-height: 1.55;
+      color: var(--text-87);
+    }
+    .prism-response-q {
+      font-size: .75rem;
+      font-style: italic;
+      color: var(--text-54);
+      margin-bottom: 6px;
+    }
+    .prism-response-body {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .prism-response-body .prism-response-text { flex: 1; }
+    .prism-continue-btn {
+      flex-shrink: 0;
+      align-self: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #e96eaa;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 7px 14px;
+      font-family: var(--font);
+      font-size: .8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .prism-continue-btn:hover { background: #d45e96; }
+    .prism-continue-btn .material-icons-outlined { font-size: 16px; }
+    .prism-response-footer {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0,150,184,.15);
+    }
+    .prism-disclosure {
+      flex: 1;
+      font-size: .6875rem;
+      line-height: 1.5;
+      color: var(--text-54);
+    }
+    .prism-feedback-btns {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .prism-feedback-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-400);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      transition: color .15s, background .15s;
+    }
+    .prism-feedback-btn:hover { color: var(--blue-dark); background: rgba(0,0,0,.05); }
+    .prism-feedback-btn.active-up { color: var(--teal-dark); }
+    .prism-feedback-btn.active-down { color: var(--red); }
+    .prism-feedback-btn .material-icons-outlined { font-size: 16px; }
+
+    /* typing indicator */
+    .prism-typing {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 0 0;
+    }
+    .prism-typing.visible { display: flex; }
+    .prism-typing-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: typingBounce 1.2s infinite;
+    }
+    .prism-typing-dot:nth-child(2) { animation-delay: .2s; }
+    .prism-typing-dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    /* ── Prism Assistant Full Page ───────────────────────── */
+    .prism-page { display: flex; height: 100%; min-height: calc(100vh - 80px); }
+
+    /* sidebar */
+    .prism-sidebar {
+      width: 220px;
+      min-width: 220px;
+      background: #fff;
+      border-right: 1px solid var(--gray-300);
+      padding: 16px 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .prism-sidebar-label {
+      font-size: .6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-54);
+      padding: 0 16px 10px;
+    }
+    .prism-sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--blue-dark);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: var(--font);
+      width: 100%;
+      text-align: left;
+      transition: background .15s;
+      border-radius: 0;
+      text-decoration: none;
+    }
+    .prism-sidebar-item:hover { background: var(--gray-100); }
+    .prism-sidebar-item.active { background: rgba(0,150,184,.08); font-weight: 600; }
+    .prism-sidebar-item .material-icons,
+    .prism-sidebar-item .material-icons-outlined { font-size: 18px; color: var(--teal); }
+
+    /* sidebar collapse btn */
+    .prism-sidebar-collapse {
+      position: absolute;
+      top: 20px;
+      right: -14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      color: var(--blue-dark);
+      transition: background .15s;
+    }
+    .prism-sidebar-collapse:hover { background: var(--gray-100); }
+    .prism-sidebar-collapse .material-icons { font-size: 16px; }
+    .prism-sidebar-rel { position: relative; }
+
+    /* main content */
+    .prism-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    /* new session content */
+    .prism-new-session {
+      width: 100%;
+      max-width: 680px;
+    }
+    .prism-new-session-prompt {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .prism-new-session-prompt h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+      margin-bottom: 0;
+    }
+    .prism-full-input-wrap {
+      border: 1.5px solid var(--teal);
+      border-radius: var(--radius);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(0,150,184,.1);
+    }
+    .prism-full-textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: .9375rem;
+      color: var(--text-87);
+      padding: 14px 16px;
+      line-height: 1.5;
+      min-height: 56px;
+      background: transparent;
+      resize: none;
+    }
+    .prism-disclaimer {
+      font-size: .75rem;
+      color: var(--text-54);
+      font-style: italic;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* sessions table */
+    .prism-sessions-page { padding: 1.5rem 2rem; width: 100%; }
+    .prism-sessions-header {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+    .prism-search-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 6px 12px;
+      background: #fff;
+      width: 280px;
+    }
+    .prism-search-input .material-icons { font-size: 18px; color: var(--gray-600); }
+    .prism-search-input input {
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: .875rem;
+      color: var(--text-87);
+      flex: 1;
+      background: transparent;
+    }
+    .prism-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .prism-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: .8125rem;
+      font-weight: 600;
+      color: var(--text-54);
+      border-bottom: 1px solid var(--gray-300);
+      background: #fff;
+    }
+    .prism-table th.sortable { cursor: pointer; white-space: nowrap; }
+    .prism-table th.sortable .material-icons { font-size: 14px; vertical-align: middle; margin-left: 2px; }
+    .prism-table td {
+      padding: 14px 16px;
+      font-size: .875rem;
+      color: var(--text-87);
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .prism-table tr:last-child td { border-bottom: none; }
+    .prism-table tr:hover td { background: var(--gray-50); }
+    .session-arrow-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      transition: background .15s;
+    }
+    .session-arrow-btn:hover { background: var(--teal-dark); }
+    .session-arrow-btn .material-icons { font-size: 16px; }
+    .prism-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      padding: 12px 16px;
+      font-size: .8125rem;
+      color: var(--text-54);
+      border-top: 1px solid var(--gray-300);
+    }
+    .prism-pagination button {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-600);
+      transition: background .15s;
+    }
+    .prism-pagination button:hover:not(:disabled) { background: var(--gray-200); }
+    .prism-pagination button:disabled { opacity: .35; cursor: default; }
+    .prism-pagination .material-icons { font-size: 16px; }
+
+    /* breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .8125rem;
+      color: var(--teal);
+      margin-bottom: 8px;
+    }
+    .breadcrumb span { color: var(--text-54); }
+    .breadcrumb a { color: var(--teal); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    /* page views */
+    .view { display: none; }
+    .view.active { display: flex; flex: 1; flex-direction: column; }
+
+    /* ── Dashboard ──────────────────────────────────────── */
+    .dashboard-page { padding: 1.25rem 2rem 2rem; }
+
+    /* Tabs */
+    .dash-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--gray-300);
+      margin-top: 1.25rem;
+      margin-bottom: 1.125rem;
+    }
+    .dash-tab {
+      padding: 8px 16px 10px;
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text-54);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font);
+      transition: color .15s;
+    }
+    .dash-tab.active {
+      color: var(--blue-dark);
+      font-weight: 600;
+      border-bottom-color: var(--blue-dark);
+    }
+
+    /* Main two-col layout */
+    .dash-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    .dash-left { display: flex; flex-direction: column; gap: 1rem; }
+    .dash-right { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* Card base */
+    .dash-card {
+      background: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 1.125rem 1.25rem;
+      --mat-card-outlined-container-elevation: 0px 1px 3px 0px #0003, 0px 2px 1px -1px #0000001F, 0px 1px 1px 0px #00000024;
+      box-shadow: var(--mat-card-outlined-container-elevation);
+    }
+    .dash-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 2px;
+    }
+    .dash-card-title {
+      font-size: .9375rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+    .dash-card-link {
+      font-size: .8125rem;
+      color: var(--teal);
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .dash-card-sub {
+      font-size: .75rem;
+      color: var(--text-54);
+      margin-bottom: 1rem;
+    }
+
+    /* Documentation Accuracy metrics */
+    .dash-doc-metrics {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .dash-metric-val {
+      font-size: 2rem;
+      font-weight: 300;
+      color: var(--text-54);
+      line-height: 1.1;
+    }
+    .dash-metric-val.large {
+      font-size: 2.75rem;
+      color: var(--text-87);
+    }
+    .dash-metric-label {
+      font-size: .75rem;
+      color: var(--text-54);
+      margin-top: 1px;
+    }
+    .dash-avg-close {
+      font-size: .8125rem;
+      color: var(--text-54);
+      text-align: center;
+      border-top: 1px solid var(--gray-200);
+      padding-top: .75rem;
+      margin-top: .25rem;
+    }
+    .dash-avg-close strong { color: var(--text-87); }
+
+    /* Bar chart */
+    .dash-legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: .875rem;
+    }
+    .dash-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .75rem;
+      color: var(--text-54);
+    }
+    .dash-legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .legend-red    { background: #d64040; }
+    .legend-yellow { background: #f5c842; }
+    .legend-green  { background: #4caf50; }
+    .legend-gray   { background: #bdbdbd; }
+
+    .dash-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .dash-bar-swatch {
+      width: 10px;
+      flex-shrink: 0;
+      border-radius: 2px;
+    }
+    .dash-bar-track {
+      flex: 1;
+      height: 22px;
+      background: var(--gray-200);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+    .dash-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+    }
+    .dash-bar-label {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: .7rem;
+      color: var(--text-54);
+      white-space: nowrap;
+    }
+    .dash-bar-count {
+      font-size: .75rem;
+      color: var(--text-54);
+      width: 36px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Data Recency */
+    .dash-recency-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .dash-recency-time {
+      font-size: .8125rem;
+      color: var(--text-54);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dash-recency-time .material-icons {
+      font-size: 16px;
+      color: var(--teal);
+    }
+    .dash-recency-divider {
+      border: none;
+      border-top: 1px solid var(--gray-200);
+      margin: .75rem 0;
+    }
+
+    /* Case status / IRIS panels */
+    .dash-panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 4px;
+    }
+    .dash-panel-sub {
+      font-size: .75rem;
+      color: var(--text-54);
+      margin-bottom: .875rem;
+    }
+    .dash-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: .625rem;
+      align-items: stretch;
+    }
+    .dash-stat-box {
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .dash-stat-num {
+      font-size: 1.75rem;
+      font-weight: 300;
+      color: var(--text-54);
+      line-height: 1.1;
+    }
+    .dash-stat-label {
+      font-size: .75rem;
+      color: var(--text-54);
+      margin-top: 2px;
+    }
+    .dash-cta-btn {
+      background: var(--teal);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      min-width: 130px;
+      transition: background .15s;
+      font-family: var(--font);
+    }
+    .dash-cta-btn:hover { background: var(--teal-dark); }
+    .dash-cta-btn-label {
+      font-size: .875rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dash-cta-btn .material-icons { font-size: 18px; }
+    .dash-cta-btn-arrow { margin-left: auto; }
+
+    /* IRIS tabs */
+    .dash-inner-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: .875rem;
+    }
+    .dash-inner-tab {
+      padding: 6px 12px 8px;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-54);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--font);
+    }
+    .dash-inner-tab.active {
+      color: var(--blue-dark);
+      font-weight: 600;
+      border-bottom-color: var(--blue-dark);
+    }
+
+    /* ── Prism Session View ──────────────────────────────── */
+    .prism-session-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .prism-session-header {
+      padding: 1.25rem 2rem 0;
+      flex-shrink: 0;
+    }
+    .prism-session-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-87);
+      margin: 4px 0 0;
+    }
+    .prism-session-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: .75rem 2rem 0;
+      flex-shrink: 0;
+    }
+    .prism-session-tool-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--teal);
+      display: inline-flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background .15s;
+    }
+    .prism-session-tool-btn:hover { background: rgba(0,150,184,.08); }
+    .prism-session-tool-btn .material-icons-outlined { font-size: 20px; }
+
+    /* scrollable transcript */
+    .prism-session-transcript {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 2rem 1.5rem;
+    }
+
+    /* user bubble */
+    .prism-msg-user {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1.25rem;
+    }
+    .prism-msg-user-bubble {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      max-width: 72%;
+    }
+    .prism-msg-user-text {
+      background: var(--gray-200);
+      border-radius: 18px 18px 4px 18px;
+      padding: 10px 14px;
+      font-size: .9375rem;
+      color: var(--text-87);
+      line-height: 1.5;
+    }
+    .prism-msg-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: var(--blue-dark);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .6875rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* assistant response card */
+    .prism-msg-assistant {
+      margin-bottom: 1.5rem;
+    }
+    .prism-session-card {
+      background: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      position: relative;
+    }
+    .prism-session-card-dl-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--teal);
+      display: inline-flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background .15s;
+    }
+    .prism-session-card-dl-btn:hover { background: rgba(0,150,184,.08); }
+    .prism-session-card-dl-btn .material-icons-outlined { font-size: 18px; }
+    .prism-session-card h4 {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+      margin: 0 0 6px;
+    }
+    .prism-session-card p {
+      font-size: .9rem;
+      color: var(--text-87);
+      line-height: 1.6;
+      margin: 0 0 4px;
+    }
+    .prism-session-card p strong { color: var(--text-87); }
+
+    /* scroll-to-bottom fab */
+    .prism-scroll-fab {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: none;
+      cursor: pointer;
+      color: #fff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.2);
+      transition: background .15s;
+      z-index: 10;
+    }
+    .prism-scroll-fab.visible { display: flex; }
+    .prism-scroll-fab:hover { background: var(--teal-dark); }
+    .prism-scroll-fab .material-icons { font-size: 20px; }
+
+    /* bottom input bar */
+    .prism-session-input-bar {
+      flex-shrink: 0;
+      padding: .875rem 2rem 1rem;
+      border-top: 1px solid var(--gray-300);
+      background: #fff;
+    }
+    .prism-session-input-wrap {
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 8px 0 14px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .prism-session-input-wrap:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(0,150,184,.12);
+    }
+    .prism-session-textarea {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: .9375rem;
+      color: var(--text-87);
+      padding: 10px 0;
+      resize: none;
+      line-height: 1.5;
+      background: transparent;
+    }
+    .prism-session-disclaimer {
+      font-size: .75rem;
+      color: var(--text-54);
+      font-style: italic;
+      text-align: center;
+      margin-top: 8px;
+    }
+
+    /* ── Prism FAB ───────────────────────────────────────── */
+    #prismFabRoot {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    @keyframes fabSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    .prism-fab {
+      width: 56px;
+      height: 52px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+      padding: 0;
+    }
+    .prism-fab:hover {
+      animation: fabSpin .5s cubic-bezier(.4,0,.2,1) forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.22));
+    }
+
+    /* Tooltip */
+    .prism-fab-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      right: 0;
+      background: var(--blue-dark);
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      padding: 5px 10px;
+      border-radius: 4px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .15s .5s, transform .15s .5s;
+    }
+    .prism-fab-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 18px;
+      border: 5px solid transparent;
+      border-top-color: var(--blue-dark);
+    }
+    .prism-fab:hover .prism-fab-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .prism-fab-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,.18)) drop-shadow(0 1px 3px rgba(0,0,0,.1));
+    }
+    .prism-fab-icon {
+      position: relative;
+      z-index: 1;
+      display: block;
+      margin-top: -2px;
+    }
+
+    /* ── Prism Widget Panel ──────────────────────────────── */
+    .prism-widget {
+      width: 440px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.16), 0 2px 8px rgba(0,0,0,.08);
+      border: 1px solid var(--gray-300);
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+      transform-origin: bottom right;
+      animation: widgetIn .2s ease both;
+    }
+    .prism-widget.open {
+      display: flex;
+    }
+    @keyframes widgetIn {
+      from { opacity: 0; transform: scale(.94) translateY(8px); }
+      to   { opacity: 1; transform: scale(1)  translateY(0); }
+    }
+
+    .prism-widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+    .prism-widget-header-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .prism-widget-title {
+      font-size: .875rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+    .prism-widget-header-right {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .prism-widget-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-600);
+      display: inline-flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color .15s, background .15s;
+    }
+    .prism-widget-icon-btn:hover { color: var(--blue-dark); background: var(--gray-100); }
+    .prism-widget-icon-btn .material-icons,
+    .prism-widget-icon-btn .material-icons-outlined { font-size: 16px; }
+
+    .prism-widget-body {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--gray-300);
+    }
+
+    .prism-widget-footer {
+      display: flex;
+    }
+    .prism-widget-footer .prism-nav-link:first-child {
+      border-right: 1px solid var(--gray-300);
+    }
+
+    /* ── Audit view ──────────────────────────────────────── */
+    .audit-layout {
+      display: flex;
+      height: 100%;
+      min-height: calc(100vh - 56px);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* List pane — full width */
+    .audit-list-pane {
+      flex: 1;
+      background: var(--gray-100);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    .audit-list-header {
+      padding: 1.25rem 1.5rem .75rem;
+      background: #fff;
+      flex-shrink: 0;
+    }
+
+    .audit-list-header {
+      padding: 1.25rem 1.25rem .75rem;
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .audit-list-title { font-size: 1.25rem; font-weight: 700; color: var(--text-87); }
+
+    /* Filter bar */
+    .audit-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .audit-filter-bar-left { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .audit-reset-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: .8125rem; font-weight: 600; color: var(--teal); font-family: var(--font);
+    }
+    .audit-filter-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      border: none; border-radius: 20px;
+      padding: 6px 12px; font-size: .8125rem; font-family: var(--font);
+      cursor: pointer; font-weight: 500; white-space: nowrap;
+      transition: background .15s;
+    }
+    .audit-filter-chip.outlined {
+      background: #fff; border: 1px solid var(--gray-300); color: var(--text-87);
+    }
+    .audit-filter-chip.filled {
+      background: var(--teal); color: #fff;
+    }
+    .audit-filter-chip .badge {
+      background: #fff; color: var(--teal);
+      border-radius: 50%; width: 18px; height: 18px;
+      font-size: .6875rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .audit-filter-chip .material-icons { font-size: 16px; }
+    .audit-apply-btn {
+      padding: 6px 16px; border-radius: 20px;
+      background: var(--gray-200); border: none;
+      font-size: .8125rem; font-weight: 600; color: var(--text-54);
+      font-family: var(--font); cursor: default;
+    }
+
+    /* Sort/group row */
+    .audit-sort-row {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 16px; padding: .5rem 1.5rem .75rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .audit-sort-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; cursor: pointer;
+      font-size: .8125rem; color: var(--text-54); font-family: var(--font);
+    }
+    .audit-sort-btn .material-icons { font-size: 16px; }
+
+    /* Full-width list rows */
+    .audit-list-item {
+      display: grid;
+      grid-template-columns: 32px 1fr 2fr auto;
+      align-items: start;
+      gap: 0 16px;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+      background: #fff;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .audit-list-item:hover { background: var(--gray-50); }
+    .audit-list-item.active { background: #e8f4f8; }
+    .audit-list-sub { display: flex; align-items: center; gap: 8px; }
+    .audit-list-checkbox { width: 14px; height: 14px; border: 1.5px solid var(--gray-400); border-radius: 2px; flex-shrink: 0; }
+    .audit-list-sub-label { font-size: .8125rem; color: var(--text-54); }
+    .audit-list-sub-icon { width: 14px; height: 14px; background: var(--gray-300); border-radius: 50%; flex-shrink: 0; }
+
+    .audit-list-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: .875rem 1.25rem;
+      border-bottom: 1px solid var(--gray-300);
+      background: #fff;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .audit-list-item:hover { background: var(--gray-50); }
+    .audit-list-item.active { background: #e8f4f8; border-left: 3px solid var(--teal); }
+    .audit-item-check { width: 14px; height: 14px; border: 1.5px solid var(--gray-400); border-radius: 2px; flex-shrink: 0; margin-top: 3px; }
+    .audit-item-body { flex: 1; min-width: 0; }
+    .audit-item-name { font-size: .875rem; font-weight: 600; color: var(--teal-dark); margin-bottom: 2px; }
+    .audit-item-date { font-size: .75rem; color: var(--text-54); margin-bottom: 2px; }
+    .audit-item-dept { font-size: .75rem; color: var(--text-54); }
+    .audit-item-drug { text-align: right; flex-shrink: 0; }
+    .audit-item-drug-name { font-size: .8125rem; font-weight: 600; color: var(--text-87); margin-bottom: 4px; }
+    .audit-item-amounts { display: flex; gap: 16px; }
+    .audit-item-amount-col { display: flex; flex-direction: column; align-items: flex-end; }
+    .audit-item-amount-label { font-size: .6875rem; color: var(--text-54); }
+    .audit-item-amount-val { font-size: .75rem; color: var(--text-87); }
+
+    /* Detail pane scrim */
+    .audit-detail-scrim {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.25);
+      z-index: 15;
+      cursor: pointer;
+    }
+    .audit-layout.detail-open .audit-detail-scrim { display: block; }
+
+    /* Detail pane — absolutely positioned overlay */
+    .audit-detail-pane {
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: calc(100% - 320px);
+      max-width: 1100px;
+      min-width: 760px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 20;
+      box-shadow: -4px 0 20px rgba(0,0,0,.14);
+      transform: translateX(100%);
+      transition: transform .4s cubic-bezier(.25,0,.25,1);
+    }
+    .audit-layout.detail-open .audit-detail-pane {
+      transform: translateX(0);
+    }
+    .audit-detail-pane.hidden {
+      display: none;
+    }
+    .audit-detail-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 1.125rem 1.5rem .75rem;
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    .audit-detail-name { font-size: 1.25rem; font-weight: 700; color: var(--text-87); margin-bottom: 2px; }
+    .audit-detail-close {
+      background: none; border: none; cursor: pointer; color: var(--gray-600);
+      display: inline-flex; align-items: center; padding: 4px; border-radius: 4px;
+      transition: background .15s;
+    }
+    .audit-detail-close:hover { background: var(--gray-100); }
+    .audit-detail-close .material-icons { font-size: 20px; }
+
+    /* detail tabs */
+    .audit-detail-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--gray-300);
+      padding: 0 1.5rem;
+      flex-shrink: 0;
+    }
+    .audit-detail-tab {
+      padding: 10px 0 11px;
+      margin-right: 24px;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-54);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      background: none; border-top: none; border-left: none; border-right: none;
+      font-family: var(--font);
+      margin-bottom: -1px;
+    }
+    .audit-detail-tab.active { color: var(--blue-dark); font-weight: 600; border-bottom-color: var(--blue-dark); }
+
+    /* detail toolbar */
+    .audit-detail-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: .625rem 1.5rem;
+      border-bottom: 1px solid var(--gray-200);
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+    .audit-filter-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      border: 1px solid var(--gray-300); border-radius: 20px;
+      padding: 4px 10px; font-size: .75rem; color: var(--text-87);
+      background: #fff; cursor: pointer; font-family: var(--font);
+      transition: background .15s;
+    }
+    .audit-filter-pill.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .audit-filter-pill .material-icons { font-size: 13px; }
+
+    /* detail table */
+    .audit-detail-body { flex: 1; overflow-y: auto; }
+    .audit-detail-table { width: 100%; border-collapse: collapse; }
+    .audit-detail-table th {
+      text-align: left; padding: 10px 16px; font-size: .75rem; font-weight: 600;
+      color: var(--text-54); border-bottom: 1px solid var(--gray-200); white-space: nowrap;
+      position: sticky; top: 0; background: #fff; z-index: 1;
+    }
+    .audit-detail-table th.sort-active { color: var(--blue-dark); }
+    .audit-detail-table th .material-icons { font-size: 13px; vertical-align: middle; }
+    .audit-detail-table td {
+      padding: 14px 16px; font-size: .875rem; color: var(--text-87);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .audit-detail-table tr:last-child td { border-bottom: none; }
+    .audit-detail-table tr:hover td { background: var(--gray-50); }
+    .audit-event-type { font-weight: 500; }
+    .audit-event-canceled { color: var(--red); }
+  </style>
+</head>
+<body class="mat-typography">
+
+<app-component class="flex-col-100">
+<div class="app-container flex-col-100">
+
+  <!-- ── navigation ──────────────────────────────────────── -->
+  <navigation>
+    <header>
+
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+
+        <!-- Logo -->
+        <a class="nav-link" href="#" onclick="navigateTo('dashboard');return false;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
+            <g><g><g id="ControlCheck_Logo_Color">
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
+              <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
+              <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
+              <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
+            </g></g></g>
+          </svg>
+        </a>
+
+        <!-- nav-menu -->
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed" onclick="navigateTo('audit')">
+              <span class="mdc-button__label">Audit</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Analyze</span>
+            </button>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Cases</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/report">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small mat-badge-hidden">
+                  Report
+                </span>
+              </span>
+            </a>
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">Upload</span>
+            </button>
+            <a class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" href="/manage">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-overlap mat-badge-above mat-badge-before mat-badge-small">
+                  Manage&nbsp;<span id="mat-badge-content-0" aria-hidden="true" class="mat-badge-content mat-badge-active">!</span>
+                </span>
+              </span>
+            </a>
+            <!-- Prism Assistant nav link (direct) -->
+            <button id="prismNavBtn" class="mdc-button mat-mdc-button-base nav-link mat-mdc-button mat-unthemed" onclick="navigatePrism('new')">
+              <span class="mdc-button__label">
+                <span class="nav-svg-icon"><svg width="19" height="16" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg></span><strong>Prism Assistant</strong>
+              </span>
+            </button>
+          </div>
+        </nav-menu>
+
+        <!-- user-menu -->
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Alex Morrow</div>
+                  <div class="header-customer-hospitalName">St. Cloud General Hospital</div>
+                </div>
+                <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
+                  <div class="user-circle mat-primary">JR</div>
+                </button>
+              </span>
+            </button>
+            <button class="mdc-icon-button mat-mdc-icon-button mat-mdc-button-base mat-mdc-menu-trigger help-resources-icon nav-link mat-unthemed">
+              <span class="material-icons text-primary">help</span>
+            </button>
+          </div>
+        </user-menu>
+
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <!-- ── body wrap: app-view + prism side panel ─────────── -->
+  <div id="body-wrap">
+  <!-- ── #app-view ─────────────────────────────────────────── -->
+  <div id="app-view">
+    <router-outlet></router-outlet>
+
+    <!-- ── VIEW: Audit ────────────────────────────────────── -->
+    <div class="view" id="view-audit">
+      <div class="audit-layout" id="auditLayout">
+
+        <!-- List pane -->
+        <div class="audit-list-pane">
+          <!-- Header row -->
+          <div class="audit-list-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:1.25rem 1.5rem .875rem;border-bottom:1px solid var(--gray-200)">
+            <div class="audit-list-title">Patient Care Audit</div>
+            <div class="audit-filter-bar">
+              <button class="audit-reset-btn">RESET ALL</button>
+              <button class="audit-filter-chip filled">Date Created: Last 7 days <span class="material-icons">expand_more</span></button>
+              <button class="audit-filter-chip filled"><span class="badge">1</span> Status <span class="material-icons">expand_more</span></button>
+              <button class="audit-filter-chip outlined">Departments <span class="material-icons">expand_more</span></button>
+              <button class="audit-filter-chip outlined"><span class="material-icons">expand_more</span></button>
+              <button class="audit-apply-btn">Apply</button>
+            </div>
+          </div>
+
+          <!-- Sort/group row -->
+          <div style="display:flex;align-items:center;gap:12px;padding:.625rem 1.5rem;border-bottom:1px solid var(--gray-200)">
+            <div class="audit-list-sub" style="margin-right:auto">
+              <div class="audit-item-check" style="width:16px;height:16px;border:1.5px solid var(--gray-400);border-radius:2px;flex-shrink:0"></div>
+              <span style="font-size:.8125rem;color:var(--text-54);margin-left:10px">Select 7 of 7 Open Event Summaries</span>
+              <span class="material-icons" style="font-size:16px;color:var(--text-54);margin-left:4px">help_outline</span>
+            </div>
+            <button class="audit-sort-btn">Group By: No Group <span class="material-icons">expand_more</span></button>
+            <button class="audit-sort-btn">Sort By: Date Created: Newest to Oldest <span class="material-icons">expand_more</span></button>
+          </div>
+
+          <!-- Row macro -->
+          <div class="audit-list-item" onclick="openAuditDetail('Cavalier, Aida')">
+            <div class="audit-item-check" style="width:16px;height:16px;border:1.5px solid var(--gray-400);border-radius:2px;margin-top:4px"></div>
+            <div class="audit-item-body">
+              <div class="audit-item-name"><span style="color:var(--teal-dark);font-weight:600">Cavalier, Aida</span> <span style="color:var(--text-54);font-weight:400;font-size:.8125rem">XM10962</span></div>
+              <div class="audit-item-date">Jun 2, 2026</div>
+              <div class="audit-item-dept">Department: <strong>Multiple Departments</strong></div>
+            </div>
+            <div>
+              <div class="audit-item-drug-name">HYDROmorphone 1 mg/mL Inj</div>
+              <div style="display:grid;grid-template-columns:repeat(5,80px);gap:4px;margin-top:4px">
+                <div><div class="audit-item-amount-label">Dispense</div><div class="audit-item-amount-val">10 mg</div></div>
+                <div><div class="audit-item-amount-label">Admin</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Waste</div><div class="audit-item-amount-val">0.8 mg</div></div>
+                <div><div class="audit-item-amount-label">Return</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Missing</div><div class="audit-item-amount-val" style="color:var(--red);font-weight:600">-9.2 mg</div></div>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:.8125rem">
+              <div style="font-weight:600;color:var(--text-54);margin-bottom:4px">ES ID 583329</div>
+              <div style="color:var(--teal);cursor:pointer">&#128193; Open</div>
+              <div style="color:var(--teal);cursor:pointer;margin-top:2px">&#128100; Assign</div>
+            </div>
+          </div>
+
+          <div class="audit-list-item" onclick="openAuditDetail('Slover, Floy')">
+            <div class="audit-item-check" style="width:16px;height:16px;border:1.5px solid var(--gray-400);border-radius:2px;margin-top:4px"></div>
+            <div class="audit-item-body">
+              <div class="audit-item-name"><span style="color:var(--teal-dark);font-weight:600">Slover, Floy</span> <span style="color:var(--text-54);font-weight:400;font-size:.8125rem">XF25500 , XM25499</span></div>
+              <div class="audit-item-date">May 29, 2026</div>
+              <div class="audit-item-dept">Department: <strong>Multiple Departments</strong></div>
+            </div>
+            <div>
+              <div class="audit-item-drug-name">Morphine 4 mg/mL Inj</div>
+              <div style="display:grid;grid-template-columns:repeat(5,80px);gap:4px;margin-top:4px">
+                <div><div class="audit-item-amount-label">Dispense</div><div class="audit-item-amount-val">8 mg</div></div>
+                <div><div class="audit-item-amount-label">Admin</div><div class="audit-item-amount-val">4 mg</div></div>
+                <div><div class="audit-item-amount-label">Waste</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Return</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Missing</div><div class="audit-item-amount-val" style="color:var(--red);font-weight:600">-4 mg</div></div>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:.8125rem">
+              <div style="font-weight:600;color:var(--text-54);margin-bottom:4px">ES ID 586115</div>
+              <div style="color:var(--teal);cursor:pointer">&#128193; Open</div>
+              <div style="color:var(--teal);cursor:pointer;margin-top:2px">&#128100; Assign</div>
+            </div>
+          </div>
+
+          <div class="audit-list-item" onclick="openAuditDetail('Corker, Dino')">
+            <div class="audit-item-check" style="width:16px;height:16px;border:1.5px solid var(--gray-400);border-radius:2px;margin-top:4px"></div>
+            <div class="audit-item-body">
+              <div class="audit-item-name"><span style="color:var(--teal-dark);font-weight:600">Corker, Dino</span> <span style="color:var(--text-54);font-weight:400;font-size:.8125rem">XF10092 , XM10086</span></div>
+              <div class="audit-item-date">May 29, 2026</div>
+              <div class="audit-item-dept">Department: <strong>Multiple Departments</strong></div>
+            </div>
+            <div>
+              <div class="audit-item-drug-name">Morphine 4 mg/mL Inj</div>
+              <div style="display:grid;grid-template-columns:repeat(5,80px);gap:4px;margin-top:4px">
+                <div><div class="audit-item-amount-label">Dispense</div><div class="audit-item-amount-val">16 mg</div></div>
+                <div><div class="audit-item-amount-label">Admin</div><div class="audit-item-amount-val">2 mg</div></div>
+                <div><div class="audit-item-amount-label">Waste</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Return</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Missing</div><div class="audit-item-amount-val" style="color:var(--red);font-weight:600">-14 mg</div></div>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:.8125rem">
+              <div style="font-weight:600;color:var(--text-54);margin-bottom:4px">ES ID 585256</div>
+              <div style="color:var(--teal);cursor:pointer">&#128193; Open</div>
+              <div style="color:var(--teal);cursor:pointer;margin-top:2px">&#128100; Assign</div>
+            </div>
+          </div>
+
+          <div class="audit-list-item" onclick="openAuditDetail('Matas, Nancey')">
+            <div class="audit-item-check" style="width:16px;height:16px;border:1.5px solid var(--gray-400);border-radius:2px;margin-top:4px"></div>
+            <div class="audit-item-body">
+              <div class="audit-item-name"><span style="color:var(--teal-dark);font-weight:600">Matas, Nancey</span> <span style="color:var(--text-54);font-weight:400;font-size:.8125rem">XF24712 , XM24711</span></div>
+              <div class="audit-item-date">May 29, 2026</div>
+              <div class="audit-item-dept">Department: <strong>Emergency</strong></div>
+            </div>
+            <div>
+              <div class="audit-item-drug-name">LORazepam 2 mg/mL Inj</div>
+              <div style="display:grid;grid-template-columns:repeat(5,80px);gap:4px;margin-top:4px">
+                <div><div class="audit-item-amount-label">Dispense</div><div class="audit-item-amount-val">2 mg</div></div>
+                <div><div class="audit-item-amount-label">Admin</div><div class="audit-item-amount-val">3 mg</div></div>
+                <div><div class="audit-item-amount-label">Waste</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Return</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Missing</div><div class="audit-item-amount-val" style="color:var(--teal-dark);font-weight:600">+1 mg</div></div>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:.8125rem">
+              <div style="font-weight:600;color:var(--text-54);margin-bottom:4px">ES ID 586334</div>
+              <div style="color:var(--teal);cursor:pointer">&#128193; Open</div>
+              <div style="color:var(--teal);cursor:pointer;margin-top:2px">&#128100; Assign</div>
+            </div>
+          </div>
+
+          <div class="audit-list-item" onclick="openAuditDetail('Montanez, Lorelei')">
+            <div class="audit-item-check" style="width:16px;height:16px;border:1.5px solid var(--gray-400);border-radius:2px;margin-top:4px"></div>
+            <div class="audit-item-body">
+              <div class="audit-item-name"><span style="color:var(--teal-dark);font-weight:600">Montanez, Lorelei</span> <span style="color:var(--text-54);font-weight:400;font-size:.8125rem">XF18256 , XM18255</span></div>
+              <div class="audit-item-date">May 28, 2026</div>
+              <div class="audit-item-dept">Department: <strong>Emergency</strong></div>
+            </div>
+            <div>
+              <div class="audit-item-drug-name">LORazepam 2 mg/mL Inj</div>
+              <div style="display:grid;grid-template-columns:repeat(5,80px);gap:4px;margin-top:4px">
+                <div><div class="audit-item-amount-label">Dispense</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Admin</div><div class="audit-item-amount-val">0.5 mg</div></div>
+                <div><div class="audit-item-amount-label">Waste</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Return</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Missing</div><div class="audit-item-amount-val" style="color:var(--teal-dark);font-weight:600">+0.5 mg</div></div>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:.8125rem">
+              <div style="font-weight:600;color:var(--text-54);margin-bottom:4px">ES ID 586348</div>
+              <div style="color:var(--teal);cursor:pointer">&#128193; Open</div>
+              <div style="color:var(--teal);cursor:pointer;margin-top:2px">&#128100; Assign</div>
+            </div>
+          </div>
+
+          <div class="audit-list-item" onclick="openAuditDetail('Loftin, Ashli')">
+            <div class="audit-item-check" style="width:16px;height:16px;border:1.5px solid var(--gray-400);border-radius:2px;margin-top:4px"></div>
+            <div class="audit-item-body">
+              <div class="audit-item-name"><span style="color:var(--teal-dark);font-weight:600">Loftin, Ashli</span> <span style="color:var(--text-54);font-weight:400;font-size:.8125rem">XF11611 , XM11610</span></div>
+              <div class="audit-item-date">May 28, 2026</div>
+              <div class="audit-item-dept">Department: <strong>Multiple Departments</strong></div>
+            </div>
+            <div>
+              <div class="audit-item-drug-name">fentaNYL 50 mcg/mL Inj</div>
+              <div style="display:grid;grid-template-columns:repeat(5,80px);gap:4px;margin-top:4px">
+                <div><div class="audit-item-amount-label">Dispense</div><div class="audit-item-amount-val">300 mcg</div></div>
+                <div><div class="audit-item-amount-label">Admin</div><div class="audit-item-amount-val">100 mcg</div></div>
+                <div><div class="audit-item-amount-label">Waste</div><div class="audit-item-amount-val">–</div></div>
+                <div><div class="audit-item-amount-label">Return</div><div class="audit-item-amount-val">100 mcg</div></div>
+                <div><div class="audit-item-amount-label">Missing</div><div class="audit-item-amount-val" style="color:var(--red);font-weight:600">-100 mcg</div></div>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:.8125rem">
+              <div style="font-weight:600;color:var(--text-54);margin-bottom:4px">ES ID 561424</div>
+              <div style="color:var(--teal);cursor:pointer">&#128193; Open</div>
+              <div style="color:var(--teal);cursor:pointer;margin-top:2px">&#128100; Assign</div>
+            </div>
+          </div>
+
+        </div><!-- /audit-list-pane -->
+
+        <!-- Scrim behind detail pane -->
+        <div class="audit-detail-scrim" onclick="closeAuditDetail()"></div>
+
+        <!-- Detail pane (hidden until row clicked) -->
+        <div class="audit-detail-pane hidden" id="auditDetailPane">
+          <div class="audit-detail-header">
+            <div>
+              <div class="audit-detail-name" id="auditDetailName">—</div>
+            </div>
+            <button class="audit-detail-close" onclick="closeAuditDetail()">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+          <div class="audit-detail-tabs">
+            <button class="audit-detail-tab active">Related Event Summaries</button>
+            <button class="audit-detail-tab">All Events</button>
+          </div>
+          <div class="audit-detail-toolbar">
+            <button class="audit-filter-pill active">Event Type <span class="material-icons">expand_more</span></button>
+            <button class="audit-filter-pill active" style="background:var(--teal);color:#fff;border-color:var(--teal)">Last 7 days <span class="material-icons">expand_more</span></button>
+            <button class="audit-filter-pill">Department <span class="material-icons">expand_more</span></button>
+            <button class="audit-filter-pill">Users <span class="material-icons">expand_more</span></button>
+            <button class="audit-filter-pill">Drug <span class="material-icons">expand_more</span></button>
+          </div>
+          <div class="audit-detail-body">
+            <table class="audit-detail-table">
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th class="sort-active">Timestamp <span class="material-icons">arrow_downward</span></th>
+                  <th>Recorded By</th>
+                  <th>Department</th>
+                  <th>Drug</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody id="auditDetailRows">
+                <tr>
+                  <td><span class="audit-event-type">Waste</span></td>
+                  <td>Jun 03, 2026 at 15:54</td>
+                  <td>Alberto Kies</td>
+                  <td>Pacu</td>
+                  <td>Hydromorphone 1 Mg/ml Inj</td>
+                  <td>0.8 mg</td>
+                </tr>
+                <tr>
+                  <td><span class="audit-event-type">Dispense</span></td>
+                  <td>Jun 03, 2026 at 12:01</td>
+                  <td>Alberto Kies</td>
+                  <td>Or</td>
+                  <td>Hydromorphone 1 Mg/ml Inj</td>
+                  <td>1 mg</td>
+                </tr>
+                <tr>
+                  <td><span class="audit-event-type">Dispense</span></td>
+                  <td>Jun 03, 2026 at 11:15</td>
+                  <td>Christopher Sclafani</td>
+                  <td>Med North</td>
+                  <td>Hydromorphone 1 Mg/ml Inj</td>
+                  <td>5 mg</td>
+                </tr>
+                <tr>
+                  <td><span class="audit-event-type audit-event-canceled">Canceled</span></td>
+                  <td>Jun 03, 2026 at 11:00</td>
+                  <td>Christopher Sclafani</td>
+                  <td>Med North</td>
+                  <td>Acetaminophen/hydrocodone 5-325 Mg Oral</td>
+                  <td>–</td>
+                </tr>
+                <tr>
+                  <td><span class="audit-event-type">Dispense</span></td>
+                  <td>Jun 03, 2026 at 09:10</td>
+                  <td>Christopher Sclafani</td>
+                  <td>Med North</td>
+                  <td>Hydromorphone 1 Mg/ml Inj</td>
+                  <td>4 mg</td>
+                </tr>
+                <tr>
+                  <td><span class="audit-event-type audit-event-canceled">Canceled</span></td>
+                  <td>Jun 03, 2026 at 09:00</td>
+                  <td>Christopher Sclafani</td>
+                  <td>Med North</td>
+                  <td>Morphine 4 Mg/ml Inj</td>
+                  <td>–</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div><!-- /audit-detail-pane -->
+
+      </div>
+    </div><!-- /view-audit -->
+
+    <!-- ── VIEW: Dashboard (default) ──────────────────── -->
+    <div class="view active" id="view-dashboard">
+      <div class="dashboard-page">
+        <h2>Dashboard</h2>
+
+        <!-- Page tabs -->
+        <div class="dash-tabs">
+          <button class="dash-tab active">This Hospital</button>
+          <button class="dash-tab">All Your Hospitals</button>
+        </div>
+
+        <!-- Two-column layout -->
+        <div class="dash-two-col">
+
+          <!-- LEFT column -->
+          <div class="dash-left">
+
+            <!-- Documentation Accuracy -->
+            <div class="dash-card">
+              <div class="dash-card-head">
+                <div>
+                  <div class="dash-card-title">Documentation Accuracy</div>
+                  <div class="dash-card-sub">Data from last 30 days | Updated 24 hours ago</div>
+                </div>
+                <a class="dash-card-link">Go to Nursing Variance Trends</a>
+              </div>
+              <div class="dash-doc-metrics">
+                <div>
+                  <div class="dash-metric-val">0.0%</div>
+                  <div class="dash-metric-label">Open Variances</div>
+                </div>
+                <div>
+                  <div class="dash-metric-val">5.8%</div>
+                  <div class="dash-metric-label">Closed-Reconciled</div>
+                </div>
+                <div>
+                  <div class="dash-metric-val">1.0%</div>
+                  <div class="dash-metric-label">Closed-Unreconciled</div>
+                </div>
+                <div>
+                  <div class="dash-metric-val">93.2%</div>
+                  <div class="dash-metric-label">Closed by Bluesight</div>
+                </div>
+              </div>
+              <div class="dash-avg-close"><strong>2.1 Days</strong> Average time to close a variance</div>
+            </div>
+
+            <!-- Bar chart card -->
+            <div class="dash-card">
+              <div class="dash-legend">
+                <div class="dash-legend-item"><div class="dash-legend-dot legend-red"></div> High Priority</div>
+                <div class="dash-legend-item"><div class="dash-legend-dot legend-yellow"></div> Medium Priority</div>
+                <div class="dash-legend-item"><div class="dash-legend-dot legend-green"></div> Low Priority</div>
+                <div class="dash-legend-item"><div class="dash-legend-dot legend-gray"></div> Closed by Bluesight</div>
+              </div>
+
+              <!-- bar rows -->
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#d64040;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:22%;background:#d64040"></div>
+                  <span class="dash-bar-label">Controlled substances</span>
+                </div>
+                <div class="dash-bar-count">465</div>
+              </div>
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#f5c842;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:55%;background:#f5c842"></div>
+                  <span class="dash-bar-label">ANW HH CV/EP LAB</span>
+                </div>
+                <div class="dash-bar-count">1145</div>
+              </div>
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#bdbdbd;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:8%;background:#bdbdbd"></div>
+                  <span class="dash-bar-label">ANW CK3700</span>
+                </div>
+                <div class="dash-bar-count">169</div>
+              </div>
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#f5c842;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:100%;background:#f5c842"></div>
+                  <span class="dash-bar-label">ANW HH H4200</span>
+                </div>
+                <div class="dash-bar-count">2765</div>
+              </div>
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#f5c842;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:60%;background:#f5c842"></div>
+                  <span class="dash-bar-label">ANW PB2000</span>
+                </div>
+                <div class="dash-bar-count">1656</div>
+              </div>
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#f5c842;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:88%;background:#f5c842"></div>
+                  <span class="dash-bar-label">ANW OR/SURG</span>
+                </div>
+                <div class="dash-bar-count">3398</div>
+              </div>
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#bdbdbd;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:16%;background:#bdbdbd"></div>
+                  <span class="dash-bar-label">ANW MB3600</span>
+                </div>
+                <div class="dash-bar-count">426</div>
+              </div>
+              <div class="dash-bar-row">
+                <div class="dash-bar-swatch" style="background:#f5c842;height:22px"></div>
+                <div class="dash-bar-track">
+                  <div class="dash-bar-fill" style="width:72%;background:#f5c842"></div>
+                  <span class="dash-bar-label">ANW HH H6000</span>
+                </div>
+                <div class="dash-bar-count">2125</div>
+              </div>
+            </div>
+
+          </div><!-- /dash-left -->
+
+          <!-- RIGHT column -->
+          <div class="dash-right">
+
+            <!-- Data Recency -->
+            <div class="dash-card">
+              <div class="dash-recency-head">
+                <div class="dash-card-title">Data Recency</div>
+                <div class="dash-recency-time">
+                  Last data received: Jun 04, 2026 at 07:42
+                  <span class="material-icons">help_outline</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Current Case Status -->
+            <div class="dash-card">
+              <div class="dash-panel-head">
+                <div>
+                  <div class="dash-card-title">Current Case Status</div>
+                  <div class="dash-panel-sub">Counts reflect cases you have access to</div>
+                </div>
+                <a class="dash-card-link">Go to Cases</a>
+              </div>
+              <div class="dash-stat-row">
+                <div class="dash-stat-box">
+                  <div class="dash-stat-num">6</div>
+                  <div class="dash-stat-label">Open</div>
+                </div>
+                <div class="dash-stat-box">
+                  <div class="dash-stat-num">1</div>
+                  <div class="dash-stat-label">Closed in Last 30 days</div>
+                </div>
+                <button class="dash-cta-btn">
+                  <span class="material-icons" style="font-size:22px;opacity:.9">bar_chart</span>
+                  <span class="dash-cta-btn-label">Case Oversight <span class="material-icons dash-cta-btn-arrow">arrow_forward</span></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Open IRIS Reviews -->
+            <div class="dash-card">
+              <div class="dash-panel-head">
+                <div>
+                  <div class="dash-card-title">Open IRIS Reviews</div>
+                  <div class="dash-panel-sub">Flagged reviews that require review or are in progress</div>
+                </div>
+                <a class="dash-card-link">Go to Worklist</a>
+              </div>
+              <div class="dash-inner-tabs">
+                <button class="dash-inner-tab active">Nursing</button>
+                <button class="dash-inner-tab">OR</button>
+              </div>
+              <div class="dash-stat-row">
+                <div class="dash-stat-box">
+                  <div class="dash-stat-num">0</div>
+                  <div class="dash-stat-label">Needs Review</div>
+                </div>
+                <div class="dash-stat-box">
+                  <div class="dash-stat-num">0</div>
+                  <div class="dash-stat-label">In Review</div>
+                </div>
+                <button class="dash-cta-btn">
+                  <span class="material-icons" style="font-size:22px;opacity:.9">bar_chart</span>
+                  <span class="dash-cta-btn-label">Review Oversight <span class="material-icons dash-cta-btn-arrow">arrow_forward</span></span>
+                </button>
+              </div>
+            </div>
+
+          </div><!-- /dash-right -->
+        </div><!-- /dash-two-col -->
+
+      </div>
+    </div>
+
+    <!-- ── VIEW: Prism Assistant – New Session ─────────── -->
+    <div class="view" id="view-prism-new">
+      <div class="prism-page">
+        <!-- Sidebar -->
+        <div class="prism-sidebar prism-sidebar-rel">
+          <div class="prism-sidebar-label">Prism Assistant</div>
+          <button class="prism-sidebar-item active" onclick="showPrismView('new')">
+            <span class="material-icons">add_circle_outline</span>
+            New Session
+          </button>
+          <button class="prism-sidebar-item" onclick="showPrismView('history')">
+            <span class="material-icons-outlined">history</span>
+            Recent Sessions
+          </button>
+        </div>
+        <!-- Main content -->
+        <div class="prism-main">
+          <div class="breadcrumb">
+            <a href="#" onclick="navigateTo('dashboard');return false;">Prism Assistant</a>
+            <span class="material-icons" style="font-size:14px;color:var(--text-54)">chevron_right</span>
+            <span style="color:var(--text-54)">New Session</span>
+          </div>
+          <div class="prism-new-session">
+            <div class="prism-new-session-prompt">
+              <h3>What can Prism Assistant help with?</h3>
+            </div>
+            <div class="prism-full-input-wrap">
+              <textarea class="prism-full-textarea" placeholder="Ask anything" rows="2"></textarea>
+            </div>
+            <p class="prism-disclaimer">Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided. The data, analysis, and recommendations generated by Prism Assistant should neither be used as a substitute for your professional judgment, nor be relied upon as the sole basis for your decision-making. You should always exercise discretion when making decisions and adhere to your internal policies, procedures, and clinical guidelines.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VIEW: Prism Assistant – Active Session ──────── -->
+    <div class="view" id="view-prism-session">
+      <div class="prism-page">
+        <!-- Sidebar -->
+        <div class="prism-sidebar">
+          <div class="prism-sidebar-label">Prism Assistant</div>
+          <button class="prism-sidebar-item" onclick="showPrismView('new')">
+            <span class="material-icons">add_circle_outline</span>
+            New Session
+          </button>
+          <button class="prism-sidebar-item" onclick="showPrismView('history')">
+            <span class="material-icons-outlined">history</span>
+            Recent Sessions
+          </button>
+        </div>
+        <!-- Session main area -->
+        <div class="prism-session-main">
+          <div class="prism-session-header">
+            <div class="breadcrumb">
+              <a href="#" onclick="navigateTo('dashboard');return false;">Prism Assistant</a>
+              <span class="material-icons" style="font-size:14px;color:var(--text-54)">chevron_right</span>
+              <span id="sessionBreadcrumb" style="color:var(--text-54)">Session</span>
+            </div>
+            <div class="prism-session-title" id="sessionTitle"></div>
+          </div>
+          <div class="prism-session-toolbar">
+            <button class="prism-session-tool-btn" title="Edit title"><span class="material-icons-outlined">edit</span></button>
+            <button class="prism-session-tool-btn" title="Download"><span class="material-icons-outlined">download</span></button>
+          </div>
+          <!-- Transcript -->
+          <div class="prism-session-transcript" id="sessionTranscript">
+            <!-- messages injected by JS -->
+          </div>
+          <!-- Scroll fab -->
+          <button class="prism-scroll-fab" id="sessionScrollFab" onclick="scrollTranscriptToBottom()">
+            <span class="material-icons">keyboard_double_arrow_down</span>
+          </button>
+          <!-- Input bar -->
+          <div class="prism-session-input-bar">
+            <div class="prism-session-input-wrap">
+              <textarea id="sessionInput" class="prism-session-textarea" placeholder="What else would you like to know?" rows="1"></textarea>
+              <button class="prism-send-btn" id="sessionSendBtn" style="margin:4px 0" disabled>
+                <span class="material-icons">send</span>
+              </button>
+            </div>
+            <p class="prism-session-disclaimer">Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VIEW: Prism Assistant – Session History ─────── -->
+    <div class="view" id="view-prism-history">
+      <div class="prism-page">
+        <!-- Sidebar -->
+        <div class="prism-sidebar">
+          <div class="prism-sidebar-label">Prism Assistant</div>
+          <button class="prism-sidebar-item" onclick="showPrismView('new')">
+            <span class="material-icons">add_circle_outline</span>
+            New Session
+          </button>
+          <button class="prism-sidebar-item active" onclick="showPrismView('history')">
+            <span class="material-icons-outlined">history</span>
+            Recent Sessions
+          </button>
+        </div>
+        <!-- Main content -->
+        <div class="prism-sessions-page">
+          <div class="breadcrumb">
+            <a href="#" onclick="navigateTo('dashboard');return false;">Prism Assistant</a>
+            <span class="material-icons" style="font-size:14px;color:var(--text-54)">chevron_right</span>
+            <span style="color:var(--text-54)">Prism Assistant Session History</span>
+          </div>
+          <h2>Prism Assistant Session History</h2>
+
+          <div class="prism-sessions-header">
+            <div class="prism-search-input">
+              <span class="material-icons">search</span>
+              <input type="text" placeholder="Search">
+            </div>
+          </div>
+
+          <table class="prism-table">
+            <thead>
+              <tr>
+                <th style="width:45%">Name</th>
+                <th class="sortable" style="color:var(--teal-dark)">Last Activity <span class="material-icons" style="color:var(--teal-dark)">arrow_downward</span></th>
+                <th>Created At</th>
+                <th style="width:60px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>IRIS Reviews by Department: Monthly Count and Completion Time</td>
+                <td>Apr 22, 2026 at 09:17</td>
+                <td>Apr 22, 2026 at 09:17</td>
+                <td>
+                  <button class="session-arrow-btn"><span class="material-icons">chevron_right</span></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="prism-pagination">
+            <span>1 – 1 of 1</span>
+            <button disabled><span class="material-icons">first_page</span></button>
+            <button disabled><span class="material-icons">chevron_left</span></button>
+            <button disabled><span class="material-icons">chevron_right</span></button>
+            <button disabled><span class="material-icons">last_page</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <bcs-loading-spinner id="main-loading-spinner" diameter="92" centered="true"></bcs-loading-spinner>
+  </div><!-- /#app-view -->
+
+  <!-- ── Prism Side Panel (ask + response modes) ────────── -->
+  <div id="prismSidePanel">
+    <div class="prism-panel-inner">
+
+      <!-- Shared header -->
+      <div class="prism-panel-header">
+        <div class="prism-panel-header-left">
+          <svg width="15" height="13" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg>
+          <span class="prism-panel-header-title">Ask Prism</span>
+        </div>
+        <div class="prism-panel-header-right">
+          <button class="prism-panel-close-btn" id="panelExpandBtn" title="Open full session" onclick="navigatePrism('session-from-panel')" style="display:none">
+            <span class="material-icons-outlined">open_in_full</span>
+          </button>
+          <button class="prism-panel-close-btn" title="Close" onclick="closePrismPanel()">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── ASK MODE ── -->
+      <div id="panelAskMode">
+        <div class="prism-panel-ask-body">
+          <div class="prism-input-label-row" style="margin-bottom:8px">
+            <span class="prism-input-label">What would you like to know?</span>
+          </div>
+          <div class="prism-input-box">
+            <div class="prism-textarea-wrap-tall">
+              <textarea id="prismQuickInput" class="prism-textarea-tall" placeholder="Ask anything about what you're currently looking at or start a New Session to broaden the scope…" rows="4"></textarea>
+            </div>
+            <div class="prism-input-toolbar">
+              <div class="prism-toolbar-left">
+                <button class="prism-toolbar-btn" title="New topic">
+                  <span class="material-icons">add</span>
+                </button>
+              </div>
+              <div class="prism-toolbar-right">
+                <button class="prism-send-btn" id="prismSendBtn" onclick="sendPrismQuery()" disabled>
+                  <span class="material-icons">send</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="prism-typing" id="prismTyping">
+            <div class="prism-typing-dot"></div>
+            <div class="prism-typing-dot"></div>
+            <div class="prism-typing-dot"></div>
+          </div>
+        </div>
+        <div style="display:flex">
+          <button class="prism-nav-link" onclick="navigatePrism('new')">
+            <span class="material-icons">add_circle_outline</span>
+            <span class="prism-nav-link-text">
+              New Session
+              <span class="prism-nav-link-desc">Start a fresh conversation</span>
+            </span>
+            <span class="material-icons link-arrow">chevron_right</span>
+          </button>
+          <button class="prism-nav-link" onclick="navigatePrism('history')">
+            <span class="material-icons-outlined">history</span>
+            <span class="prism-nav-link-text">
+              Recent Sessions
+              <span class="prism-nav-link-desc">View past conversations</span>
+            </span>
+            <span class="material-icons link-arrow">chevron_right</span>
+          </button>
+        </div>
+        <p class="prism-ask-disclosure" style="padding:12px 16px">Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided. The data, analysis, and recommendations generated by Prism Assistant should neither be used as a substitute for your professional judgment, nor be relied upon as the sole basis for your decision-making. You should always exercise discretion when making decisions and adhere to your internal policies, procedures, and clinical guidelines.</p>
+      </div>
+
+      <!-- ── RESPONSE MODE ── -->
+      <div id="panelResponseMode" style="display:none">
+        <div class="prism-panel-body">
+          <div class="prism-panel-q" id="prismPanelQ"></div>
+          <div class="prism-panel-text" id="prismPanelText"></div>
+        </div>
+        <div class="prism-panel-footer">
+          <!-- Feedback icons row -->
+          <div class="prism-panel-feedback-row">
+            <button class="prism-feedback-btn" id="prismThumbUp" title="Helpful" onclick="prismFeedback('up')">
+              <span class="material-icons-outlined">thumb_up</span>
+            </button>
+            <button class="prism-feedback-btn" id="prismThumbDown" title="Not helpful" onclick="prismFeedback('down')">
+              <span class="material-icons-outlined">thumb_down</span>
+            </button>
+            <button class="prism-feedback-btn" title="Copy response" onclick="prismCopy()">
+              <span class="material-icons-outlined">content_copy</span>
+            </button>
+            <button class="prism-feedback-btn" title="Share response" onclick="prismShare()">
+              <span class="material-icons-outlined">ios_share</span>
+            </button>
+          </div>
+          <!-- CTA buttons row -->
+          <div class="prism-panel-actions">
+            <button class="prism-panel-save-btn">
+              Save as Session
+            </button>
+            <button class="prism-panel-continue-btn" onclick="navigatePrism('session-from-panel')">
+              <span class="material-icons-outlined">chat</span>
+              Continue with Prism
+            </button>
+          </div>
+          <!-- Disclosure -->
+          <p class="prism-panel-disclosure">This content is only visible to you unless shared. Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided.</p>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /#prismSidePanel -->
+
+  </div><!-- /#body-wrap -->
+
+  <!-- ── Prism FAB ────────────────────────────────────────── -->
+  <div id="prismFabRoot">
+
+    <!-- FAB -->
+    <button class="prism-fab" id="prismFab" onclick="togglePrismWidget()" title="Prism Assistant">
+      <!-- Inverted rounded triangle background -->
+      <svg class="prism-fab-bg" viewBox="0 0 56 52" fill="#FBDAEB" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 2 H46 Q54 2 54 8 L31 49 Q28 53.5 25 49 L2 8 Q2 2 10 2 Z" fill="white" stroke="#d1d5db" stroke-width="1"></path>
+      </svg>
+      <span class="prism-fab-tooltip">Ask Prism</span>
+      <svg class="prism-fab-icon" width="40" height="56" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg>
+    </button>
+
+  </div><!-- /#prismFabRoot -->
+
+  <footer>
+    Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help@bluesight.com">help@bluesight.com</a>
+    • All Rights Reserved |
+    <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+  </footer>
+
+</div>
+</app-component>
+
+<script>
+  /* ── View management ──────────────────────────────── */
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const v = document.getElementById(id);
+    if (v) v.classList.add('active');
+  }
+
+  function navigateTo(page) {
+    closePrismWidget();
+    closePrismPanel();
+    // reset nav active states
+    document.querySelectorAll('.navigation .nav-link').forEach(l => l.classList.remove('nav-link-active'));
+    if (page === 'dashboard') {
+      showView('view-dashboard');
+      const cl = document.getElementById('prismContextLabel'); if (cl) cl.textContent = 'Dashboard';
+      document.getElementById('prismFabRoot').style.display = '';
+      document.getElementById('prismNavBtn').classList.remove('dropdown-open');
+    } else if (page === 'audit') {
+      showView('view-audit');
+      const cl2 = document.getElementById('prismContextLabel'); if (cl2) cl2.textContent = 'Patient Care Audit';
+      document.getElementById('prismFabRoot').style.display = '';
+    }
+  }
+
+  function showPrismView(sub) {
+    closePrismDropdown();
+    if (sub === 'new') {
+      showView('view-prism-new');
+      // update sidebar active states
+      document.querySelectorAll('#view-prism-new .prism-sidebar-item').forEach((btn, i) => {
+        btn.classList.toggle('active', i === 0);
+      });
+    } else {
+      showView('view-prism-history');
+    }
+    updateNavActive();
+  }
+
+  function navigatePrism(dest) {
+    if (dest === 'session' || dest === 'session-from-panel') {
+      const q = window._lastPrismQ || '';
+      const a = window._lastPrismA || '';
+      closePrismPanel();
+      openPrismSession(q, a);
+    } else {
+      closePrismPanel();
+      showPrismView(dest);
+    }
+  }
+
+  function openPrismSession(question, answerHtml) {
+    // Build a short session title from the question
+    const title = question.length > 60 ? question.slice(0, 57) + '…' : question;
+    document.getElementById('sessionTitle').textContent = title;
+    document.getElementById('sessionBreadcrumb').textContent = title;
+
+    // Render transcript
+    const transcript = document.getElementById('sessionTranscript');
+    transcript.innerHTML = '';
+
+    // User message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'prism-msg-user';
+    userMsg.innerHTML = `
+      <div class="prism-msg-user-bubble">
+        <div class="prism-msg-user-text">${escapeHtml(question)}</div>
+        <div class="prism-msg-avatar">JP</div>
+      </div>`;
+    transcript.appendChild(userMsg);
+
+    // Assistant response card
+    const assistantMsg = document.createElement('div');
+    assistantMsg.className = 'prism-msg-assistant';
+    assistantMsg.innerHTML = `
+      <div class="prism-session-card">
+        <button class="prism-session-card-dl-btn" title="Download">
+          <span class="material-icons-outlined">download</span>
+        </button>
+        <h4>Response</h4>
+        <p>${answerHtml}</p>
+        <div class="prism-response-footer" style="margin-top:12px;padding-top:10px">
+          <p class="prism-disclosure">This content is only visible to you unless shared. Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided.</p>
+          <div class="prism-feedback-btns">
+            <button class="prism-feedback-btn" title="Helpful" onclick="sessionFeedback(this,'up')">
+              <span class="material-icons-outlined">thumb_up</span>
+            </button>
+            <button class="prism-feedback-btn" title="Not helpful" onclick="sessionFeedback(this,'down')">
+              <span class="material-icons-outlined">thumb_down</span>
+            </button>
+            <button class="prism-feedback-btn" title="Copy response" onclick="sessionCopy(this, \`${answerHtml.replace(/`/g, '\\`')}\`)">
+              <span class="material-icons-outlined">content_copy</span>
+            </button>
+            <button class="prism-feedback-btn" title="Share response" onclick="sessionShare(this)">
+              <span class="material-icons-outlined">ios_share</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+    transcript.appendChild(assistantMsg);
+
+    showView('view-prism-session');
+    updateNavActive();
+    dismissResponse();
+
+    // Autofocus the input
+    setTimeout(() => {
+      const inp = document.getElementById('sessionInput');
+      inp.focus();
+      transcript.scrollTop = transcript.scrollHeight;
+    }, 50);
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function updateNavActive() {
+    const btn = document.getElementById('prismNavBtn');
+    const isOnPrism = !document.getElementById('view-dashboard').classList.contains('active');
+    btn.classList.toggle('dropdown-open', isOnPrism);
+    // Hide FAB and close side panel when on the full Prism Assistant pages
+    document.getElementById('prismFabRoot').style.display = isOnPrism ? 'none' : '';
+    if (isOnPrism) closePrismPanel();
+  }
+
+  /* ── FAB → Side Panel ──────────────────────────────── */
+  function togglePrismWidget() {
+    const panel = document.getElementById('prismSidePanel');
+    const isOpen = panel.classList.contains('open');
+    if (isOpen) {
+      closePrismPanel();
+    } else {
+      showPanelAskMode();
+      openPrismPanel();
+    }
+  }
+
+  function showPanelAskMode() {
+    document.getElementById('panelAskMode').style.removeProperty('display');
+    document.getElementById('panelResponseMode').style.display = 'none';
+    document.getElementById('panelExpandBtn').style.display = 'none';
+    setTimeout(() => document.getElementById('prismQuickInput').focus(), 50);
+  }
+
+  function showPanelResponseMode() {
+    document.getElementById('panelAskMode').style.display = 'none';
+    const rm = document.getElementById('panelResponseMode');
+    rm.style.removeProperty('display');
+    document.getElementById('panelExpandBtn').style.display = '';
+  }
+
+  function closePrismWidget() { closePrismPanel(); }
+  function closePrismDropdown() { closePrismPanel(); }
+
+  /* ── Quick input ───────────────────────────────────── */
+  const quickInput = document.getElementById('prismQuickInput');
+  const sendBtn = document.getElementById('prismSendBtn');
+
+  quickInput.addEventListener('input', () => {
+    sendBtn.disabled = quickInput.value.trim().length === 0;
+    // auto-grow
+    quickInput.style.height = 'auto';
+    quickInput.style.height = Math.min(quickInput.scrollHeight, 200) + 'px';
+  });
+  quickInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && quickInput.value.trim()) {
+      e.preventDefault();
+      sendPrismQuery();
+    }
+  });
+
+  /* Simulated inline responses keyed by loose keyword */
+  const responseMap = [
+    { keys: ['variance', 'variances', 'documentation', 'accuracy'],
+      text: 'Your <strong>Documentation Accuracy</strong> is strong. <strong>93.2%</strong> of variances are closed by Bluesight, with only <strong>0.0% open</strong> and <strong>1.0% closed-unreconciled</strong>. The average time to close a variance is <strong>2.1 days</strong>. The highest-volume locations are ANW HH H4200 (2,765), ANW OR/SURG (3,398), and ANW HH CV/EP LAB (1,145) — most flagged as medium priority.' },
+    { keys: ['iris', 'review', 'reviews'],
+      text: 'There are currently <strong>0 open IRIS reviews</strong> in both the Nursing and OR worklists — nothing requires immediate action. You can visit the Worklist or the Review Oversight dashboard to monitor trends over time.' },
+    { keys: ['case', 'cases'],
+      text: 'There are <strong>6 open cases</strong> and <strong>1 case closed in the last 30 days</strong>. Navigate to Case Oversight for a full breakdown by status, assignee, and priority.' },
+    { keys: ['data', 'recency', 'updated', 'last'],
+      text: 'Data on this dashboard was <strong>last received on Jun 04, 2026 at 07:42</strong>. All metrics reflect this most recent upload.' },
+    { keys: ['bar', 'chart', 'department', 'departments', 'location', 'locations', 'priority'],
+      text: 'The variance bar chart shows open variances by location. <strong>ANW OR/SURG</strong> (3,398) and <strong>ANW HH H4200</strong> (2,765) carry the highest volume, both flagged as medium priority. <strong>Controlled substances</strong> (465) is the only high-priority location currently. Most others are medium or closed by Bluesight.' },
+    { keys: [''],
+      text: 'This dashboard shows data for <strong>St. Cloud General Hospital</strong> as of Jun 04, 2026. Documentation accuracy is at <strong>93.2%</strong> closed by Bluesight with a 2.1-day average close time. There are <strong>6 open cases</strong>, <strong>0 open IRIS reviews</strong> in both Nursing and OR worklists, and the highest-volume variance locations are ANW OR/SURG and ANW HH H4200.' },
+  ];
+
+  function sendPrismQuery() {
+    const q = quickInput.value.trim();
+    if (!q) return;
+
+    sendBtn.disabled = true;
+    const typing = document.getElementById('prismTyping');
+    typing.classList.add('visible');
+
+    setTimeout(() => {
+      typing.classList.remove('visible');
+      closePrismDropdown();
+
+      // Make sure dashboard is visible
+      showView('view-dashboard');
+      document.getElementById('prismNavBtn').classList.remove('dropdown-open');
+
+      // Pick response
+      const lower = q.toLowerCase();
+      let answer = responseMap[responseMap.length - 1].text;
+      for (const r of responseMap.slice(0, -1)) {
+        if (r.keys.some(k => lower.includes(k))) { answer = r.text; break; }
+      }
+
+      // Store for session handoff
+      window._lastPrismQ = q;
+      window._lastPrismA = answer;
+
+      // Open side panel in response mode
+      document.getElementById('prismPanelQ').textContent = '“' + q + '”';
+      document.getElementById('prismPanelText').innerHTML = answer;
+      openPrismPanelWithResponse();
+
+      quickInput.value = '';
+      quickInput.style.height = 'auto';
+      sendBtn.disabled = true;
+    }, 1400);
+  }
+
+  function openPrismPanel() {
+    document.getElementById('prismSidePanel').classList.add('open');
+    document.getElementById('prismFabRoot').style.display = 'none';
+  }
+
+  function openPrismPanelWithResponse() {
+    showPanelResponseMode();
+    openPrismPanel();
+  }
+
+  function closePrismPanel() {
+    document.getElementById('prismSidePanel').classList.remove('open');
+    document.getElementById('prismThumbUp').classList.remove('active-up');
+    document.getElementById('prismThumbDown').classList.remove('active-down');
+    document.getElementById('prismFabRoot').style.display = '';
+  }
+
+  function dismissResponse() { closePrismPanel(); }
+
+  function prismFeedback(dir) {
+    const up = document.getElementById('prismThumbUp');
+    const dn = document.getElementById('prismThumbDown');
+    if (dir === 'up') {
+      const isActive = up.classList.contains('active-up');
+      up.classList.toggle('active-up', !isActive);
+      dn.classList.remove('active-down');
+    } else {
+      const isActive = dn.classList.contains('active-down');
+      dn.classList.toggle('active-down', !isActive);
+      up.classList.remove('active-up');
+    }
+  }
+
+  function prismShare() {
+    const btn = event.currentTarget;
+    const icon = btn.querySelector('.material-icons-outlined');
+    icon.textContent = 'check';
+    btn.style.color = 'var(--teal-dark)';
+    setTimeout(() => { icon.textContent = 'ios_share'; btn.style.color = ''; }, 1800);
+  }
+
+  function prismCopy() {
+    const text = document.getElementById('prismResponseText').innerText;
+    navigator.clipboard.writeText(text).catch(() => {});
+    const btn = event.currentTarget;
+    const icon = btn.querySelector('.material-icons-outlined');
+    icon.textContent = 'check';
+    btn.style.color = 'var(--teal-dark)';
+    setTimeout(() => { icon.textContent = 'content_copy'; btn.style.color = ''; }, 1800);
+  }
+
+  /* ── Session input ────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    const sInput = document.getElementById('sessionInput');
+    const sSend  = document.getElementById('sessionSendBtn');
+    if (!sInput) return;
+    sInput.addEventListener('input', () => {
+      sSend.disabled = sInput.value.trim().length === 0;
+      sInput.style.height = 'auto';
+      sInput.style.height = Math.min(sInput.scrollHeight, 120) + 'px';
+    });
+    sInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && sInput.value.trim()) {
+        e.preventDefault();
+        // placeholder: just clear for now
+        sInput.value = '';
+        sInput.style.height = 'auto';
+        sSend.disabled = true;
+      }
+    });
+  });
+
+  function sessionFeedback(btn, dir) {
+    const footer = btn.closest('.prism-feedback-btns');
+    const up = footer.querySelector('[title="Helpful"]');
+    const dn = footer.querySelector('[title="Not helpful"]');
+    if (dir === 'up') {
+      const active = up.classList.contains('active-up');
+      up.classList.toggle('active-up', !active);
+      dn.classList.remove('active-down');
+    } else {
+      const active = dn.classList.contains('active-down');
+      dn.classList.toggle('active-down', !active);
+      up.classList.remove('active-up');
+    }
+  }
+
+  function sessionCopy(btn, text) {
+    const plain = text.replace(/<[^>]+>/g, '');
+    navigator.clipboard.writeText(plain).catch(() => {});
+    const icon = btn.querySelector('.material-icons-outlined');
+    icon.textContent = 'check';
+    btn.style.color = 'var(--teal-dark)';
+    setTimeout(() => { icon.textContent = 'content_copy'; btn.style.color = ''; }, 1800);
+  }
+
+  function sessionShare(btn) {
+    const icon = btn.querySelector('.material-icons-outlined');
+    icon.textContent = 'check';
+    btn.style.color = 'var(--teal-dark)';
+    setTimeout(() => { icon.textContent = 'ios_share'; btn.style.color = ''; }, 1800);
+  }
+
+  function scrollTranscriptToBottom() {
+    const t = document.getElementById('sessionTranscript');
+    t.scrollTop = t.scrollHeight;
+  }
+
+  /* ── Audit detail pane ─────────────────────────────── */
+  function openAuditDetail(name) {
+    document.getElementById('auditDetailName').textContent = name;
+    document.getElementById('auditDetailPane').classList.remove('hidden');
+    document.getElementById('auditLayout').classList.add('detail-open');
+    // Mark active row
+    document.querySelectorAll('.audit-list-item').forEach(item => {
+      item.classList.toggle('active', item.querySelector('.audit-item-name').textContent.startsWith(name.split(',')[0]));
+    });
+    // If Prism panel is open, it already pushes — audit layout handles the rest via flex
+  }
+
+  function closeAuditDetail() {
+    document.getElementById('auditDetailPane').classList.add('hidden');
+    document.getElementById('auditLayout').classList.remove('detail-open');
+    document.querySelectorAll('.audit-list-item').forEach(i => i.classList.remove('active'));
+  }
+
+  /* ── Outer tab switching ──────────────────────────── */
+  function switchOuterTab(idx) {
+    const labels = document.querySelectorAll('#outer-tab-group > mat-tab-header .mdc-tab');
+    const bodies = document.querySelectorAll('#outer-tab-group > .mat-mdc-tab-body-wrapper > mat-tab-body');
+    labels.forEach((l, i) => {
+      const on = i === idx;
+      l.classList.toggle('mdc-tab--active', on);
+      l.classList.toggle('mdc-tab-indicator--active', on);
+      l.setAttribute('aria-selected', on);
+      l.setAttribute('tabindex', on ? '0' : '-1');
+    });
+    bodies.forEach((b, i) => {
+      const on = i === idx;
+      b.classList.toggle('mat-mdc-tab-body-active', on);
+      b.setAttribute('aria-hidden', !on);
+      b.style.display = on ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
