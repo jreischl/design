@@ -428,6 +428,24 @@
       gap: 6px;
       background: none;
       color: var(--teal-dark);
+      border: none;
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-family: var(--font);
+      font-size: .8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .prism-panel-save-btn:hover { background: rgba(0,150,184,.06); }
+
+    .prism-panel-ask-again-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      color: var(--teal-dark);
       border: 1.5px solid var(--teal);
       border-radius: 4px;
       padding: 7px 12px;
@@ -438,7 +456,7 @@
       white-space: nowrap;
       transition: background .15s;
     }
-    .prism-panel-save-btn:hover { background: rgba(0,150,184,.06); }
+    .prism-panel-ask-again-btn:hover { background: rgba(0,150,184,.06); }
     .prism-panel-feedback-row {
       display: flex;
       align-items: center;
@@ -2921,7 +2939,7 @@
           <div class="prism-panel-text" id="prismPanelText"></div>
         </div>
         <div class="prism-panel-footer">
-          <!-- Feedback icons row -->
+          <!-- Feedback icons + Save as Session row -->
           <div class="prism-panel-feedback-row">
             <button class="prism-feedback-btn" id="prismThumbUp" title="Helpful" onclick="prismFeedback('up')">
               <span class="material-icons-outlined">thumb_up</span>
@@ -2935,16 +2953,39 @@
             <button class="prism-feedback-btn" title="Share response" onclick="prismShare()">
               <span class="material-icons-outlined">ios_share</span>
             </button>
+            <button class="prism-panel-save-btn" onclick="saveAsSession(this)" style="margin-left:auto">
+              Save as Session
+            </button>
           </div>
           <!-- CTA buttons row -->
-          <div class="prism-panel-actions">
-            <button class="prism-panel-save-btn">
-              Save as Session
+          <div id="panelCtaRow" class="prism-panel-actions">
+            <button class="prism-panel-ask-again-btn" onclick="showInlineAskInput()">
+              Ask Something Else
             </button>
             <button class="prism-panel-continue-btn" onclick="navigatePrism('session-from-panel')">
               <span class="material-icons-outlined">chat</span>
               Continue with Prism
             </button>
+          </div>
+          <!-- Inline follow-up input (shown when Ask Something Else is clicked) -->
+          <div id="panelInlineAsk" style="display:none;margin-bottom:10px">
+            <div class="prism-input-box">
+              <div class="prism-textarea-wrap-tall">
+                <textarea id="prismFollowUpInput" class="prism-textarea-tall" placeholder="Ask a follow-up question…" rows="3"></textarea>
+              </div>
+              <div class="prism-input-toolbar">
+                <div class="prism-toolbar-left">
+                  <button class="prism-toolbar-btn" title="New topic">
+                    <span class="material-icons">add</span>
+                  </button>
+                </div>
+                <div class="prism-toolbar-right">
+                  <button class="prism-send-btn prism-followup-send" id="prismFollowUpSendBtn" onclick="sendFollowUp()" disabled style="width:32px;height:32px;border-radius:8px;background:#e96eaa">
+                    <span class="material-icons" style="font-size:18px">send</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- Disclosure -->
           <p class="prism-panel-disclosure">This content is only visible to you unless shared. Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided.</p>
@@ -3304,6 +3345,62 @@
       }
     });
   });
+
+  function showInlineAskInput() {
+    document.getElementById('panelCtaRow').style.display = 'none';
+    const inlineAsk = document.getElementById('panelInlineAsk');
+    inlineAsk.style.display = 'block';
+    const input = document.getElementById('prismFollowUpInput');
+    input.focus();
+    // wire up enable/disable
+    input.oninput = () => {
+      document.getElementById('prismFollowUpSendBtn').disabled = input.value.trim().length === 0;
+      input.style.height = 'auto';
+      input.style.height = Math.min(input.scrollHeight, 200) + 'px';
+    };
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey && input.value.trim()) {
+        e.preventDefault();
+        sendFollowUp();
+      }
+    };
+  }
+
+  function sendFollowUp() {
+    const input = document.getElementById('prismFollowUpInput');
+    const q = input.value.trim();
+    if (!q) return;
+    // reuse main query path
+    window._lastPrismQ = q;
+    // Hide inline input, show typing state in response body
+    document.getElementById('panelInlineAsk').style.display = 'none';
+    // Run the same pick-response logic
+    const lower = q.toLowerCase();
+    const activeView = document.querySelector('.view.active');
+    const context = activeView && activeView.id === 'view-audit' ? 'audit' : 'dashboard';
+    const map = responseMap[context];
+    let answer = map[map.length - 1].text;
+    for (const r of map.slice(0, -1)) {
+      if (r.keys.some(k => lower.includes(k))) { answer = r.text; break; }
+    }
+    window._lastPrismA = answer;
+    document.getElementById('prismPanelQ').textContent = '“' + q + '”';
+    document.getElementById('prismPanelText').innerHTML = answer;
+    // Reset CTA row and feedback
+    document.getElementById('panelCtaRow').style.display = '';
+    document.getElementById('prismThumbUp').classList.remove('active-up');
+    document.getElementById('prismThumbDown').classList.remove('active-down');
+    input.value = '';
+    input.style.height = 'auto';
+  }
+
+  function saveAsSession(btn) {
+    btn.innerHTML = '<span class="material-icons" style="font-size:16px;color:#4caf50;vertical-align:middle">check_circle</span> Saved';
+    btn.style.color = '#4caf50';
+    btn.style.borderColor = '#4caf50';
+    btn.style.cursor = 'default';
+    btn.onclick = null;
+  }
 
   function sessionFeedback(btn, dir) {
     const footer = btn.closest('.prism-feedback-btns');
