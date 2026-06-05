@@ -228,144 +228,48 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
     }
-    /* Make panel modes fill available space so nav bar stays at bottom */
-    #panelAskMode, #panelResponseMode { flex: 1; }
     .prism-panel-nav-bar {
       display: flex;
       flex-direction: column;
       border-top: 1px solid var(--gray-300);
       flex-shrink: 0;
-      margin-top: auto;
     }
     .prism-panel-nav-bar .prism-nav-link:first-child {
       border-right: 1px solid var(--gray-300);
     }
 
-    #panelAskMode {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    #panelResponseMode {
-      flex: 1;
-      flex-direction: column;
-      overflow: hidden;
-      min-height: 0;
-    }
-    /* ── Ask mode input box ─────────────────────────────── */
-    .prism-input-box {
-      background: #fff;
-      overflow: hidden;
-    }
-    .prism-textarea-wrap-tall {
-      border: 1px solid var(--gray-400);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color .15s, box-shadow .15s;
-      background: #fff;
-      margin-bottom: 6px;
-    }
-    .prism-textarea-wrap-tall:focus-within {
-      border-color: var(--teal);
-      box-shadow: 0 0 0 2px rgba(0,150,184,.15);
-    }
-    .prism-textarea-tall {
-      width: 100%;
-      resize: none;
-      border: none;
-      outline: none;
-      font-family: var(--font);
-      font-size: .875rem;
-      color: var(--text-87);
-      padding: 12px 12px 4px;
-      line-height: 1.5;
-      min-height: 90px;
-      background: transparent;
-      display: block;
-    }
-    .prism-input-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 8px 8px;
-    }
-    .prism-toolbar-left {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .prism-toolbar-right {
-      display: flex;
-      align-items: center;
-    }
-    .prism-toolbar-btn {
-      background: none;
-      border: 1px solid var(--gray-300);
-      border-radius: 6px;
-      cursor: pointer;
-      color: var(--gray-600);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 30px;
-      height: 30px;
-      transition: background .15s, color .15s;
-    }
-    .prism-toolbar-btn:hover { background: var(--gray-100); color: var(--blue-dark); }
-    .prism-toolbar-btn .material-icons,
-    .prism-toolbar-btn .material-icons-outlined { font-size: 18px; }
-    /* Override send btn for toolbar context */
-    .prism-input-toolbar .prism-send-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: #e96eaa;
-    }
-    .prism-input-toolbar .prism-send-btn:hover:not(:disabled) {
-      background: #d45e96;
-    }
-    .prism-input-toolbar .prism-send-btn:disabled {
-      background: var(--gray-300);
-    }
-    .prism-input-toolbar .prism-send-btn .material-icons { font-size: 18px; }
-
-    .prism-ask-disclosure {
-      font-size: .6875rem;
-      line-height: 1.5;
-      color: var(--text-54);
-      font-style: italic;
-      display: flex;
-      align-items: flex-end;
-      height: 100%;
-    }
-    .prism-panel-ask-body {
-      padding: 14px 16px 12px;
-    }
+    /* ── Panel header ─────────────────────────────────── */
     .prism-panel-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px 12px;
+      padding: 12px 16px 11px;
       border-bottom: 1px solid var(--gray-300);
       flex-shrink: 0;
+      gap: 8px;
     }
     .prism-panel-header-left {
       display: flex;
       align-items: center;
       gap: 7px;
+      min-width: 0;
+      flex: 1;
     }
     .prism-panel-header-title {
       font-size: .875rem;
       font-weight: 700;
       color: var(--blue-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .prism-panel-header-right {
       display: flex;
       align-items: center;
       gap: 2px;
+      flex-shrink: 0;
     }
     .prism-panel-close-btn {
       background: none;
@@ -381,63 +285,315 @@
     .prism-panel-close-btn:hover { color: var(--blue-dark); background: var(--gray-100); }
     .prism-panel-close-btn .material-icons,
     .prism-panel-close-btn .material-icons-outlined { font-size: 16px; }
-
-    .prism-panel-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-    }
-    .prism-panel-q {
-      font-size: .75rem;
-      font-style: italic;
-      color: var(--text-54);
-      margin-bottom: 8px;
-    }
-    .prism-panel-text {
-      font-size: .875rem;
-      line-height: 1.6;
-      color: var(--text-87);
-    }
-
-    .prism-panel-footer {
-      flex-shrink: 0;
-      padding: 10px 16px 12px;
-    }
-    .prism-panel-visibility-note {
-      font-size: .6875rem;
-      color: var(--text-54);
-      margin-top: 8px;
-      font-style: italic;
-    }
-    .prism-panel-disclosure {
-      font-size: .6875rem;
-      line-height: 1.5;
-      color: var(--text-54);
-      margin-bottom: 8px;
-    }
-    .prism-panel-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .prism-panel-continue-btn {
-      flex-shrink: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #e96eaa;
+    .prism-panel-close-btn[data-tooltip] { position: relative; }
+    .prism-panel-close-btn[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.75);
       color: #fff;
-      border: none;
+      font-size: .6875rem;
+      font-weight: 500;
+      white-space: nowrap;
+      padding: 4px 8px;
       border-radius: 4px;
-      padding: 7px 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .15s;
+      z-index: 200;
+    }
+    .prism-panel-close-btn[data-tooltip]:hover::after { opacity: 1; }
+
+    /* ── Session name banner (shown after save) ─────────── */
+    #prismSessionBanner {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px 8px;
+      background: var(--gray-100);
+      border-bottom: 1px solid var(--gray-300);
+      flex-shrink: 0;
+    }
+    #prismSessionBanner.visible { display: flex; }
+    .prism-session-banner-body { flex: 1; min-width: 0; }
+    .prism-session-banner-label { font-size: .6875rem; font-weight: 700; color: var(--text-54); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 2px; }
+    #prismSessionNameInput {
       font-family: var(--font);
       font-size: .8125rem;
       font-weight: 600;
+      color: var(--blue-dark);
+      border: none;
+      border-bottom: 1.5px solid transparent;
+      outline: none;
+      background: transparent;
+      padding: 0;
+      width: 100%;
+      transition: border-color .15s;
+      cursor: text;
+    }
+    #prismSessionNameInput:hover { border-bottom-color: var(--gray-400); }
+    #prismSessionNameInput:focus { border-bottom-color: var(--teal); }
+    .prism-session-banner-link {
+      font-size: .75rem;
+      color: var(--teal-dark);
+      text-decoration: none;
+      font-weight: 600;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
       cursor: pointer;
+    }
+    .prism-session-banner-link:hover { text-decoration: underline; }
+    .prism-session-banner-link .material-icons { font-size: 14px; }
+    .prism-banner-quat-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      border-radius: var(--radius);
+      padding: 4px 8px;
+      font-family: var(--font);
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--teal);
+      cursor: pointer;
+      transition: background .15s;
       white-space: nowrap;
+    }
+    .prism-banner-quat-btn:hover { background: rgba(0,150,184,.1); }
+    .prism-banner-quat-btn:active { background: rgba(0,150,184,.18); }
+    .prism-banner-quat-btn .material-icons { font-size: 14px; }
+
+    /* ── Chat thread ─────────────────────────────────── */
+    #prismChatThread {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 0 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    /* Empty state */
+    .prism-chat-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px 16px;
+      text-align: center;
+      gap: 8px;
+    }
+    .prism-chat-empty-icon {
+      opacity: .18;
+      margin-bottom: 4px;
+    }
+    .prism-chat-empty-title {
+      font-size: .875rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+    }
+    .prism-chat-empty-sub {
+      font-size: .8125rem;
+      color: var(--text-54);
+      line-height: 1.5;
+      max-width: 280px;
+    }
+
+    /* Chat bubble – user */
+    .prism-chat-user {
+      display: flex;
+      justify-content: flex-end;
+      padding: 6px 14px 2px;
+    }
+    .prism-chat-user-bubble {
+      background: var(--blue-dark);
+      color: #fff;
+      border-radius: 16px 16px 4px 16px;
+      padding: 9px 13px;
+      font-size: .8125rem;
+      line-height: 1.55;
+      max-width: 82%;
+      word-break: break-word;
+    }
+
+    /* Chat bubble – assistant */
+    .prism-chat-assistant {
+      padding: 6px 14px 2px;
+    }
+    .prism-chat-assistant-inner {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .prism-chat-avatar {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #f0f7fb;
+      border: 1px solid var(--gray-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .prism-chat-bubble {
+      flex: 1;
+      min-width: 0;
+    }
+    .prism-chat-bubble-text {
+      background: var(--gray-100);
+      border: 1px solid var(--gray-300);
+      border-radius: 4px 16px 16px 16px;
+      padding: 9px 12px;
+      font-size: .8125rem;
+      line-height: 1.6;
+      color: var(--text-87);
+      word-break: break-word;
+    }
+    .prism-chat-bubble-actions {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 4px 0 2px 2px;
+      flex-wrap: wrap;
+    }
+    .prism-chat-feedback-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--gray-400);
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 5px;
+      border-radius: 4px;
+      transition: color .15s, background .15s;
+    }
+    .prism-chat-feedback-btn:hover { color: var(--blue-dark); background: var(--gray-100); }
+    .prism-chat-feedback-btn.active-up { color: var(--teal-dark); }
+    .prism-chat-feedback-btn.active-down { color: var(--red); }
+    .prism-chat-feedback-btn .material-icons-outlined { font-size: 14px; }
+    .prism-chat-save-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      color: var(--teal-dark);
+      border: none;
+      border-radius: 4px;
+      padding: 3px 7px;
+      font-family: var(--font);
+      font-size: .75rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: auto;
+      transition: background .15s;
+      white-space: nowrap;
+    }
+    .prism-chat-save-btn:hover { background: rgba(0,150,184,.07); }
+    .prism-chat-save-btn .material-icons { font-size: 14px; }
+    .prism-chat-visibility-note {
+      font-size: .6875rem;
+      color: var(--text-54);
+      font-style: italic;
+      padding: 2px 2px 0 2px;
+    }
+
+    /* Typing indicator inside chat */
+    .prism-chat-typing {
+      padding: 6px 14px 2px;
+      display: none;
+    }
+    .prism-chat-typing.visible { display: flex; }
+    .prism-chat-typing-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .prism-chat-typing-dots {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--gray-100);
+      border: 1px solid var(--gray-300);
+      border-radius: 4px 16px 16px 16px;
+      padding: 10px 14px;
+    }
+
+    /* ── Panel input bar ─────────────────────────────── */
+    .prism-panel-input-bar {
+      flex-shrink: 0;
+      padding: 8px 12px 10px;
+      border-top: 1px solid var(--gray-300);
+      background: #fff;
+    }
+    .prism-panel-input-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      border: 1px solid var(--gray-400);
+      border-radius: 8px;
+      padding: 6px 8px;
+      transition: border-color .15s, box-shadow .15s;
+      background: #fff;
+    }
+    .prism-panel-input-wrap:focus-within {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(0,150,184,.13);
+    }
+    .prism-panel-textarea:focus { outline: none; }
+    .prism-panel-textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: .8125rem;
+      color: var(--text-87);
+      line-height: 1.5;
+      min-height: 22px;
+      max-height: 120px;
+      background: transparent;
+    }
+    .prism-panel-send-btn {
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: #e96eaa;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       transition: background .15s;
     }
-    .prism-panel-continue-btn:hover { background: #d45e96; }
+    .prism-panel-send-btn:hover:not(:disabled) { background: #d45e96; }
+    .prism-panel-send-btn:disabled { background: var(--gray-300); cursor: default; }
+    .prism-panel-send-btn .material-icons { font-size: 16px; }
+    .prism-panel-input-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 5px;
+    }
+    .prism-panel-disclosure-bar {
+      font-size: .6375rem;
+      color: var(--text-54);
+      margin-top: 5px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* ── keep old save-btn class for legacy ───────────── */
     .prism-panel-save-btn {
       display: inline-flex;
       align-items: center;
@@ -1053,7 +1209,7 @@
       gap: 4px;
       padding: 4px 0 0;
     }
-    .prism-typing.visible { display: flex; }
+    .prism-typing.visible, .prism-chat-typing.visible { display: flex; }
     .prism-typing-dot {
       width: 5px; height: 5px;
       border-radius: 50%;
@@ -2865,106 +3021,88 @@
     <bcs-loading-spinner id="main-loading-spinner" diameter="92" centered="true"></bcs-loading-spinner>
   </div><!-- /#app-view -->
 
-  <!-- ── Prism Side Panel (ask + response modes) ────────── -->
+  <!-- ── Prism Side Panel (chat mode) ──────────────────── -->
   <div id="prismSidePanel">
     <div class="prism-panel-inner">
 
-      <!-- Shared header -->
+      <!-- Header -->
       <div class="prism-panel-header">
         <div class="prism-panel-header-left">
           <svg width="15" height="13" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg>
-          <span class="prism-panel-header-title">Quick Question? Ask Prism</span>
+          <span class="prism-panel-header-title">Ask Prism</span>
         </div>
         <div class="prism-panel-header-right">
-          <button class="prism-panel-close-btn" id="panelExpandBtn" title="Open full session" onclick="navigatePrism('session-from-panel')" style="display:none">
-            <span class="material-icons-outlined">open_in_full</span>
+          <button class="prism-panel-close-btn" data-tooltip="Start a new chat" onclick="clearPrismChat()" id="prismClearBtn" style="display:none">
+            <span class="material-icons-outlined">chat_bubble_outline</span>
           </button>
-          <button class="prism-panel-close-btn" title="Close" onclick="closePrismPanel()">
+          <button class="prism-panel-close-btn" data-tooltip="Close" title="Close" onclick="closePrismPanel()">
             <span class="material-icons">close</span>
           </button>
         </div>
       </div>
 
-      <!-- ── ASK MODE ── -->
-      <div id="panelAskMode">
-        <div class="prism-panel-ask-body">
-          <div class="prism-input-label-row" style="margin-bottom:8px">
-            <span class="prism-input-label">What would you like to know?</span>
+      <!-- Session saved banner -->
+      <div id="prismSessionBanner">
+        <div class="prism-session-banner-body">
+          <div class="prism-session-banner-label">Session Name</div>
+          <input id="prismSessionNameInput" type="text" value="Session title" spellcheck="false">
+        </div>
+        <button class="prism-banner-quat-btn" onclick="navigatePrism('session-from-panel')" title="Open session">
+          View <span class="material-icons">chevron_right</span>
+        </button>
+      </div>
+
+      <!-- Chat thread -->
+      <div id="prismChatThread">
+        <!-- Empty state shown when no messages -->
+        <div class="prism-chat-empty" id="prismChatEmpty">
+          <div class="prism-chat-empty-icon">
+            <svg width="38" height="34" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg>
           </div>
-          <div class="prism-input-box">
-            <div class="prism-textarea-wrap-tall">
-              <textarea id="prismQuickInput" class="prism-textarea-tall" placeholder="Ask anything about what you're currently looking at or start a New Session to broaden the scope…" rows="4"></textarea>
+          <div class="prism-chat-empty-title">Quick Question? Ask Prism</div>
+          <div class="prism-chat-empty-sub">Ask anything about what you're currently looking at. Responses are temporary — save as a session to revisit later.</div>
+        </div>
+        <!-- Typing indicator -->
+        <div class="prism-chat-typing" id="prismTyping">
+          <div class="prism-chat-typing-inner">
+            <div class="prism-chat-avatar">
+              <svg width="14" height="12" viewBox="0 0 19 16" fill="none"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg>
             </div>
-            <div class="prism-input-toolbar">
-              <div class="prism-toolbar-left">
-                <button class="prism-toolbar-btn" title="New topic">
-                  <span class="material-icons">add</span>
-                </button>
-              </div>
-              <div class="prism-toolbar-right">
-                <button class="prism-send-btn" id="prismSendBtn" onclick="sendPrismQuery()" disabled>
-                  <span class="material-icons">send</span>
-                </button>
-              </div>
+            <div class="prism-chat-typing-dots">
+              <div class="prism-typing-dot"></div>
+              <div class="prism-typing-dot"></div>
+              <div class="prism-typing-dot"></div>
             </div>
-          </div>
-          <div class="prism-typing" id="prismTyping">
-            <div class="prism-typing-dot"></div>
-            <div class="prism-typing-dot"></div>
-            <div class="prism-typing-dot"></div>
           </div>
         </div>
       </div>
 
-      <!-- ── RESPONSE MODE ── -->
-      <div id="panelResponseMode" style="display:none">
-        <div class="prism-panel-body">
-          <div class="prism-panel-q" id="prismPanelQ"></div>
-          <div class="prism-panel-text" id="prismPanelText"></div>
-          <p class="prism-panel-visibility-note">This response is temporary and visible only to you. Save as a session to revisit it later.</p>
+      <!-- Input bar (always visible) -->
+      <div class="prism-panel-input-bar">
+        <div class="prism-panel-input-wrap">
+          <textarea id="prismQuickInput" class="prism-panel-textarea" placeholder="Ask anything…" rows="1"></textarea>
+          <button class="prism-panel-send-btn" id="prismSendBtn" onclick="sendPrismQuery()" disabled>
+            <span class="material-icons">send</span>
+          </button>
         </div>
-        <div class="prism-panel-footer">
-          <!-- Row 1: feedback icons + Save as Session -->
-          <div class="prism-panel-feedback-row">
-            <button class="prism-feedback-btn" id="prismThumbUp" title="Helpful" onclick="prismFeedback('up')">
-              <span class="material-icons-outlined">thumb_up</span>
-            </button>
-            <button class="prism-feedback-btn" id="prismThumbDown" title="Not helpful" onclick="prismFeedback('down')">
-              <span class="material-icons-outlined">thumb_down</span>
-            </button>
-            <button class="prism-feedback-btn" title="Copy response" onclick="prismCopy()">
-              <span class="material-icons-outlined">content_copy</span>
-            </button>
-            <button class="prism-feedback-btn" title="Share response" onclick="prismShare()">
-              <span class="material-icons-outlined">ios_share</span>
-            </button>
-            <button class="prism-panel-save-btn" onclick="saveAsSession(this)" style="margin-left:auto">
-              Save as Session
-            </button>
-          </div>
-          <!-- Row 2: Continue in a Session (centered, full-width pink) -->
-          <div style="display:flex;justify-content:center;margin:16px 0 4px">
-            <button class="prism-panel-continue-btn" onclick="navigatePrism('session-from-panel')" style="padding:9px 24px">
-              Continue in a Session
-            </button>
-          </div>
-          <!-- Row 3: Ask Something Else (centered, text link style) -->
-          <div style="display:flex;justify-content:center;margin-bottom:4px">
-            <button class="prism-panel-ask-again-btn" onclick="showPanelAskMode()" style="border:none;color:var(--teal);font-weight:600;background:none;padding:6px 12px">
-              Ask Something Else
-            </button>
-          </div>
+        <div class="prism-panel-input-actions" id="prismInputActions" style="display:none">
+          <span class="prism-chat-visibility-note" id="prismVisibilityNote">This chat is temporary — save as a session to revisit later.</span>
+          <span class="prism-chat-visibility-note" id="prismSavedNote" style="display:none">Additional responses are automatically saved to the session.</span>
+          <button class="prism-chat-save-btn" id="prismSaveSessionBtn" onclick="saveChat(this)">
+            <span class="material-icons" style="font-size:14px">bookmark_border</span> Save as Session
+          </button>
         </div>
+        <div class="prism-panel-disclosure-bar">Prism is AI-assisted — responses may not be fully accurate.</div>
       </div>
 
-      <!-- ── Persistent bottom nav ── -->
-      <div class="prism-panel-nav-bar">
+      <!-- Persistent bottom nav (hidden) -->
+      <div class="prism-panel-nav-bar" style="display:none">
         <div style="display:flex;border-bottom:1px solid var(--gray-300)">
           <button class="prism-nav-link" onclick="navigatePrism('new')">
             <span class="material-icons">add_circle_outline</span>
             <span class="prism-nav-link-text">
               New Session
-              <span class="prism-nav-link-desc">Start a fresh conversation</span>
+              <span class="prism-nav-link-desc">Start a full conversation</span>
             </span>
             <span class="material-icons link-arrow">chevron_right</span>
           </button>
@@ -2977,7 +3115,6 @@
             <span class="material-icons link-arrow">chevron_right</span>
           </button>
         </div>
-        <p class="prism-ask-disclosure" style="padding:10px 16px">Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided.</p>
       </div>
 
     </div>
@@ -3148,27 +3285,21 @@
     if (isOpen) {
       closePrismPanel();
     } else {
-      showPanelAskMode();
       openPrismPanel();
+      setTimeout(() => document.getElementById('prismQuickInput').focus(), 80);
     }
   }
 
-  function showPanelAskMode() {
-    document.getElementById('panelAskMode').style.removeProperty('display');
-    document.getElementById('panelResponseMode').style.display = 'none';
-    document.getElementById('panelExpandBtn').style.display = 'none';
-    setTimeout(() => document.getElementById('prismQuickInput').focus(), 50);
-  }
-
-  function showPanelResponseMode() {
-    document.getElementById('panelAskMode').style.display = 'none';
-    const rm = document.getElementById('panelResponseMode');
-    rm.style.removeProperty('display');
-    document.getElementById('panelExpandBtn').style.display = '';
-  }
+  // No-op stubs kept for backward compatibility
+  function showPanelAskMode() {}
+  function showPanelResponseMode() {}
 
   function closePrismWidget() { closePrismPanel(); }
   function closePrismDropdown() { closePrismPanel(); }
+
+  /* ── Chat thread state ─────────────────────────────── */
+  let _chatMessages = [];
+  let _chatSaved = false;
 
   /* ── Quick input ───────────────────────────────────── */
   const quickInput = document.getElementById('prismQuickInput');
@@ -3176,9 +3307,8 @@
 
   quickInput.addEventListener('input', () => {
     sendBtn.disabled = quickInput.value.trim().length === 0;
-    // auto-grow
     quickInput.style.height = 'auto';
-    quickInput.style.height = Math.min(quickInput.scrollHeight, 200) + 'px';
+    quickInput.style.height = Math.min(quickInput.scrollHeight, 120) + 'px';
   });
   quickInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey && quickInput.value.trim()) {
@@ -3186,6 +3316,82 @@
       sendPrismQuery();
     }
   });
+
+  /* ── Append a user bubble ─────────────────────────── */
+  function appendUserBubble(text) {
+    document.getElementById('prismChatEmpty').style.display = 'none';
+    const thread = document.getElementById('prismChatThread');
+    const typing = document.getElementById('prismTyping');
+    const el = document.createElement('div');
+    el.className = 'prism-chat-user';
+    el.innerHTML = `<div class="prism-chat-user-bubble">${escapeHtml(text)}</div>`;
+    thread.insertBefore(el, typing);
+    scrollPrismChat();
+  }
+
+  /* ── Append an assistant bubble ───────────────────── */
+  function appendAssistantBubble(answerHtml, msgIndex) {
+    const thread = document.getElementById('prismChatThread');
+    const typing = document.getElementById('prismTyping');
+    const el = document.createElement('div');
+    el.className = 'prism-chat-assistant';
+    el.dataset.msgIndex = msgIndex;
+    el.innerHTML = `
+      <div class="prism-chat-assistant-inner">
+        <div class="prism-chat-avatar">
+          <svg width="14" height="12" viewBox="0 0 19 16" fill="none"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"></path><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"></path><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"></path><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"></path><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"></path><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"></path></svg>
+        </div>
+        <div class="prism-chat-bubble">
+          <div class="prism-chat-bubble-text" id="prismBubbleText${msgIndex}">${answerHtml}</div>
+          <div class="prism-chat-bubble-actions">
+            <button class="prism-chat-feedback-btn" title="Helpful" onclick="chatFeedback(this,'up')">
+              <span class="material-icons-outlined">thumb_up</span>
+            </button>
+            <button class="prism-chat-feedback-btn" title="Not helpful" onclick="chatFeedback(this,'down')">
+              <span class="material-icons-outlined">thumb_down</span>
+            </button>
+            <button class="prism-chat-feedback-btn" title="Copy" onclick="chatCopy(this, ${msgIndex})">
+              <span class="material-icons-outlined">content_copy</span>
+            </button>
+            <button class="prism-chat-feedback-btn" title="Share" onclick="chatShare(this)">
+              <span class="material-icons-outlined">ios_share</span>
+            </button>
+          </div>
+        </div>
+      </div>`;
+    thread.insertBefore(el, typing);
+    scrollPrismChat();
+    document.getElementById('prismClearBtn').style.display = '';
+    document.getElementById('prismInputActions').style.display = '';
+  }
+
+  function scrollPrismChat() {
+    const thread = document.getElementById('prismChatThread');
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  function clearPrismChat() {
+    _chatMessages = [];
+    _chatSaved = false;
+    const thread = document.getElementById('prismChatThread');
+    Array.from(thread.children).forEach(child => {
+      if (!child.classList.contains('prism-chat-empty') && !child.classList.contains('prism-chat-typing')) {
+        child.remove();
+      }
+    });
+    document.getElementById('prismChatEmpty').style.display = '';
+    document.getElementById('prismSessionBanner').classList.remove('visible');
+    document.getElementById('prismClearBtn').style.display = 'none';
+    document.getElementById('prismInputActions').style.display = 'none';
+    const note2 = document.getElementById('prismVisibilityNote');
+    if (note2) note2.style.display = '';
+    const savedNote2 = document.getElementById('prismSavedNote');
+    if (savedNote2) savedNote2.style.display = 'none';
+    quickInput.value = '';
+    quickInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    quickInput.focus();
+  }
 
   /* Simulated inline responses keyed by loose keyword */
   const responseMap = {
@@ -3224,41 +3430,34 @@
     if (!q) return;
 
     sendBtn.disabled = true;
+    quickInput.value = '';
+    quickInput.style.height = 'auto';
+
+    appendUserBubble(q);
+
     const typing = document.getElementById('prismTyping');
     typing.classList.add('visible');
+    scrollPrismChat();
+
+    const lower = q.toLowerCase();
+    const activeView = document.querySelector('.view.active');
+    const context = activeView && activeView.id === 'view-audit' ? 'audit' : 'dashboard';
+    const map = responseMap[context];
+    let answer = map[map.length - 1].text;
+    for (const r of map.slice(0, -1)) {
+      if (r.keys.some(k => lower.includes(k))) { answer = r.text; break; }
+    }
+
+    const msgIndex = _chatMessages.length;
+    _chatMessages.push({ role: 'user', text: q });
+    _chatMessages.push({ role: 'assistant', html: answer });
+
+    window._lastPrismQ = q;
+    window._lastPrismA = answer;
 
     setTimeout(() => {
       typing.classList.remove('visible');
-      closePrismDropdown();
-
-      // Only navigate to dashboard if no other content view is active
-      const activeView = document.querySelector('.view.active');
-      if (!activeView || activeView.id === 'view-dashboard') {
-        showView('view-dashboard');
-      }
-      document.getElementById('prismNavBtn').classList.remove('dropdown-open');
-
-      // Pick context-aware response
-      const lower = q.toLowerCase();
-      const context = activeView && activeView.id === 'view-audit' ? 'audit' : 'dashboard';
-      const map = responseMap[context];
-      let answer = map[map.length - 1].text;
-      for (const r of map.slice(0, -1)) {
-        if (r.keys.some(k => lower.includes(k))) { answer = r.text; break; }
-      }
-
-      // Store for session handoff
-      window._lastPrismQ = q;
-      window._lastPrismA = answer;
-
-      // Open side panel in response mode
-      document.getElementById('prismPanelQ').textContent = '“' + q + '”';
-      document.getElementById('prismPanelText').innerHTML = answer;
-      openPrismPanelWithResponse();
-
-      quickInput.value = '';
-      quickInput.style.height = 'auto';
-      sendBtn.disabled = true;
+      appendAssistantBubble(answer, msgIndex);
     }, 1400);
   }
 
@@ -3267,23 +3466,19 @@
     document.getElementById('prismFabRoot').classList.add('hidden');
   }
 
-  function openPrismPanelWithResponse() {
-    showPanelResponseMode();
-    openPrismPanel();
-  }
+  function openPrismPanelWithResponse() { openPrismPanel(); }
 
   function closePrismPanel() {
     document.getElementById('prismSidePanel').classList.remove('open');
-    document.getElementById('prismThumbUp').classList.remove('active-up');
-    document.getElementById('prismThumbDown').classList.remove('active-down');
     document.getElementById('prismFabRoot').classList.remove('hidden');
   }
 
-  function dismissResponse() { closePrismPanel(); }
+  function dismissResponse() { /* no-op in chat mode */ }
 
-  function prismFeedback(dir) {
-    const up = document.getElementById('prismThumbUp');
-    const dn = document.getElementById('prismThumbDown');
+  function chatFeedback(btn, dir) {
+    const row = btn.closest('.prism-chat-bubble-actions');
+    const up = row.querySelector('[title="Helpful"]');
+    const dn = row.querySelector('[title="Not helpful"]');
     if (dir === 'up') {
       const isActive = up.classList.contains('active-up');
       up.classList.toggle('active-up', !isActive);
@@ -3295,52 +3490,51 @@
     }
   }
 
-  function prismShare() {
-    const btn = event.currentTarget;
-    const icon = btn.querySelector('.material-icons-outlined');
-    icon.textContent = 'check';
-    btn.style.color = 'var(--teal-dark)';
-    setTimeout(() => { icon.textContent = 'ios_share'; btn.style.color = ''; }, 1800);
-  }
-
-  function prismCopy() {
-    const text = document.getElementById('prismResponseText').innerText;
+  function chatCopy(btn, idx) {
+    const text = document.getElementById('prismBubbleText' + idx)?.innerText || '';
     navigator.clipboard.writeText(text).catch(() => {});
-    const btn = event.currentTarget;
     const icon = btn.querySelector('.material-icons-outlined');
     icon.textContent = 'check';
     btn.style.color = 'var(--teal-dark)';
     setTimeout(() => { icon.textContent = 'content_copy'; btn.style.color = ''; }, 1800);
   }
 
-  /* ── Session input ────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', () => {
-    const sInput = document.getElementById('sessionInput');
-    const sSend  = document.getElementById('sessionSendBtn');
-    if (!sInput) return;
-    sInput.addEventListener('input', () => {
-      sSend.disabled = sInput.value.trim().length === 0;
-      sInput.style.height = 'auto';
-      sInput.style.height = Math.min(sInput.scrollHeight, 120) + 'px';
-    });
-    sInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey && sInput.value.trim()) {
-        e.preventDefault();
-        // placeholder: just clear for now
-        sInput.value = '';
-        sInput.style.height = 'auto';
-        sSend.disabled = true;
-      }
-    });
-  });
-
-  function saveAsSession(btn) {
-    btn.innerHTML = '<span class="material-icons" style="font-size:16px;color:#4caf50;vertical-align:middle">check_circle</span> Saved';
-    btn.style.color = '#4caf50';
-    btn.style.borderColor = '#4caf50';
-    btn.style.cursor = 'default';
-    btn.onclick = null;
+  function chatShare(btn) {
+    const icon = btn.querySelector('.material-icons-outlined');
+    icon.textContent = 'check';
+    btn.style.color = 'var(--teal-dark)';
+    setTimeout(() => { icon.textContent = 'ios_share'; btn.style.color = ''; }, 1800);
   }
+
+  function saveChat(btn) {
+    if (_chatSaved) return;
+    _chatSaved = true;
+    const saveBtn = document.getElementById('prismSaveSessionBtn');
+    if (saveBtn) {
+      saveBtn.innerHTML = '<span class="material-icons" style="font-size:14px;color:var(--green)">bookmark</span> Saved';
+      saveBtn.style.color = 'var(--green)';
+      saveBtn.style.cursor = 'default';
+      saveBtn.onclick = null;
+    }
+    const firstQ = _chatMessages.find(m => m.role === 'user');
+    const title = firstQ
+      ? (firstQ.text.length > 52 ? firstQ.text.slice(0, 49) + '…' : firstQ.text)
+      : 'Saved Session';
+    document.getElementById('prismSessionNameInput').value = title;
+    const note = document.getElementById('prismVisibilityNote');
+    if (note) note.style.display = 'none';
+    const savedNote = document.getElementById('prismSavedNote');
+    if (savedNote) savedNote.style.display = '';
+    document.getElementById('prismSessionBanner').classList.add('visible');
+    window._lastPrismQ = firstQ ? firstQ.text : '';
+    window._lastPrismA = _chatMessages.find(m => m.role === 'assistant')?.html || '';
+  }
+
+  // Legacy shims
+  function prismFeedback() {}
+  function prismShare()   {}
+  function prismCopy()    {}
+  function saveAsSession() {}
 
   function sessionFeedback(btn, dir) {
     const footer = btn.closest('.prism-feedback-btns');
