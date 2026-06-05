@@ -377,6 +377,11 @@
       display: flex;
       flex-direction: column;
       gap: 0;
+      max-height: calc(100vh - 279px);
+    }
+    #prismSidePanel:has(#prismSessionBanner.visible) #prismChatThread,
+    #prismSidePanel.session-saved #prismChatThread {
+      max-height: calc(100vh - 340px);
     }
     /* Empty state */
     .prism-chat-empty {
@@ -3381,6 +3386,7 @@
     });
     document.getElementById('prismChatEmpty').style.display = '';
     document.getElementById('prismSessionBanner').classList.remove('visible');
+    document.getElementById('prismSidePanel').classList.remove('session-saved');
     document.getElementById('prismClearBtn').style.display = 'none';
     document.getElementById('prismInputActions').style.display = 'none';
     const note2 = document.getElementById('prismVisibilityNote');
@@ -3526,6 +3532,7 @@
     const savedNote = document.getElementById('prismSavedNote');
     if (savedNote) savedNote.style.display = '';
     document.getElementById('prismSessionBanner').classList.add('visible');
+    document.getElementById('prismSidePanel').classList.add('session-saved');
     window._lastPrismQ = firstQ ? firstQ.text : '';
     window._lastPrismA = _chatMessages.find(m => m.role === 'assistant')?.html || '';
   }
