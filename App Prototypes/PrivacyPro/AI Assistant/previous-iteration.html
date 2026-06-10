@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PrivacyPro Assistant — Prototype</title>
+<title>Prism Assistant — Prototype</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
 
@@ -233,10 +233,44 @@
     border-bottom: 1px solid var(--bs-border);
     padding: 14px 24px;
     display: flex; align-items: center; justify-content: space-between;
+    overflow: visible;
   }
   .chat-header-left { display: flex; align-items: center; gap: 12px; }
+  .chat-header-title-wrap {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .chat-header-rename-btn {
+    background: none; border: none; cursor: pointer; padding: 2px;
+    color: var(--bs-text-muted); display: flex; align-items: center;
+    border-radius: 4px; transition: color 0.15s, background 0.15s;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 14px; line-height: 1; text-transform: none; letter-spacing: normal;
+  }
+  .chat-header-rename-btn:hover { color: #0096B8; background: #E7F4F8; }
+  .chat-header-rename-input {
+    font-size: 15px; font-weight: 700; color: var(--bs-text);
+    border: none; border-bottom: 1.5px solid #0096B8;
+    background: transparent; outline: none;
+    font-family: 'DM Sans', sans-serif; padding: 0; width: 200px;
+  }
+  .chat-header-eyebrow { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--bs-text-muted); margin-bottom: 1px; }
   .chat-header-title { font-size: 15px; font-weight: 600; color: var(--bs-text); }
   .chat-header-sub { font-size: 12px; color: var(--bs-text-muted); }
+  .chat-header-right {
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  }
+  .chat-header-meta { font-size: 11px; color: var(--bs-text-muted); text-align: right; }
+  .chat-header-download-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 6px;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--bs-text-muted);
+    transition: color 0.15s, background 0.15s;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 18px; line-height: 1; text-transform: none; letter-spacing: normal;
+    position: relative;
+  }
+  .chat-header-download-btn:hover { color: #0096B8; background: #E7F4F8; }
 
   .chat-messages {
     flex: 1;
@@ -249,6 +283,51 @@
   }
 
   /* Welcome state */
+  /* ── HERO INPUT STATE ──────────────────────────────────────── */
+  .chat-hero {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex: 1; padding: 48px 32px;
+  }
+  .chat-hero-card {
+    width: 100%; max-width: 640px;
+    background: white; border: 1.5px solid var(--bs-border);
+    border-radius: 16px; padding: 20px 20px 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .chat-hero-card:focus-within {
+    border-color: #0096B8;
+    box-shadow: 0 4px 32px rgba(0,150,184,0.12);
+  }
+  .chat-hero-input {
+    width: 100%; border: none; outline: none; resize: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px; line-height: 24px; font-weight: 400;
+    color: var(--bs-text); background: transparent;
+    min-height: 56px;
+  }
+  .sidebar-search-input::placeholder { color: rgba(255,255,255,0.4); }
+  .chat-hero-input::placeholder { color: var(--bs-text-muted); }
+  .chat-hero-footer {
+    display: flex; align-items: center; justify-content: flex-end;
+    margin-top: 14px; padding-top: 12px;
+    border-top: 1px solid var(--bs-border);
+  }
+  .chat-hero-send {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #EB4699; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 0.15s;
+    box-shadow: 0 2px 8px rgba(235,70,153,0.3);
+  }
+  .chat-hero-send:hover { background: #AB336F; }
+  .chat-hero-hint {
+    font-size: 11px; color: var(--bs-text-muted);
+    text-align: center; margin-top: 16px;
+    max-width: 640px; line-height: 18px;
+  }
+
   .chat-welcome {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -296,14 +375,57 @@
     border-radius: 12px; overflow: hidden;
     max-width: 90%;
   }
-  .ai-response-header {
-    padding: 12px 16px;
-    background: #FAFAFA;
-    border-bottom: 1px solid var(--bs-border);
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12px; font-weight: 600; color: var(--bs-text-muted);
-  }
   .ai-response-body { padding: 16px; }
+  .ai-response-title {
+    font-size: 12px; font-weight: 600; color: var(--bs-text-muted);
+    margin-bottom: 12px;
+  }
+
+  /* ─── RESPONSE FOOTER CONTROLS ──────────────────────────── */
+  .ai-response-footer {
+    display: flex; align-items: center;
+    gap: 2px;
+    padding: 6px 10px;
+    border-top: 1px solid var(--bs-border);
+    background: #FAFAFA;
+    overflow: visible;
+  }
+  .ai-response-footer-label {
+    font-size: 11px; font-weight: 600; color: var(--bs-text-muted);
+    margin-right: auto;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 60%;
+  }
+  .ai-ctrl-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 6px;
+    background: transparent; border: none; cursor: pointer;
+    color: #9E9E9E;
+    transition: color 0.15s, background 0.15s;
+    position: relative;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 17px; line-height: 1; text-transform: none; letter-spacing: normal;
+  }
+  .ai-ctrl-btn:hover { color: #555555; background: #EEEEEE; }
+  .ai-ctrl-btn.active-thumb-up   { color: #0096B8; }
+  .ai-ctrl-btn.active-thumb-down { color: #B53228; }
+  /* Shared floating tooltip — appended to body, position:fixed */
+  #prism-tooltip {
+    position: fixed;
+    background: #181F25; color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 400;
+    padding: 4px 8px; border-radius: 5px;
+    white-space: nowrap; pointer-events: none;
+    z-index: 9999;
+    opacity: 0; transition: opacity 0.12s;
+  }
+  #prism-tooltip.visible { opacity: 1; }
+  .ai-ctrl-sep {
+    width: 1px; height: 16px;
+    background: var(--bs-border);
+    margin: 0 4px; flex-shrink: 0;
+  }
   .ai-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0; }
   .ai-table th { background: var(--bs-navy); color: white; padding: 6px 10px; text-align: left; font-weight: 600; font-size: 11px; }
   .ai-table td { padding: 6px 10px; border-bottom: 1px solid #FAFAFA; }
@@ -366,6 +488,7 @@
     display: flex; align-items: center; gap: 10px;
     background: #FAFAFA; border: 1.5px solid var(--bs-border);
     border-radius: 12px; padding: 8px 12px;
+    max-width: 720px; margin: 0 auto;
     transition: border-color 0.15s;
   }
   .chat-input-wrap:focus-within { border-color: #0096B8; }
@@ -377,7 +500,7 @@
   }
   .chat-input::placeholder { color: var(--bs-text-muted); }
   .chat-send-btn {
-    width: 32px; height: 32px; border-radius: 4px; flex-shrink: 0;
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
     background: #EB4699; border: 1px solid #EB4699; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.15s; color: white;
@@ -752,6 +875,103 @@
   }
   .ai-gen-tag:hover .ai-tooltip { display: block; }
 
+  /* ─── FEEDBACK MODAL ─────────────────────────────────────── */
+  .feedback-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(2, 30, 53, 0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+  .feedback-modal-overlay.open {
+    opacity: 1; pointer-events: all;
+  }
+  .feedback-modal {
+    background: white; border-radius: 12px;
+    width: 100%; max-width: 440px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    transform: translateY(10px) scale(0.98);
+    transition: transform 0.18s ease;
+    overflow: hidden;
+  }
+  .feedback-modal-overlay.open .feedback-modal {
+    transform: translateY(0) scale(1);
+  }
+  .feedback-modal-header {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--bs-border);
+  }
+  .feedback-modal-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 20px; line-height: 1; text-transform: none; letter-spacing: normal;
+  }
+  .feedback-modal-icon.up   { background: #E7F4F8; color: #0096B8; }
+  .feedback-modal-icon.down { background: #FCD9D7; color: #B53228; }
+  .feedback-modal-title {
+    font-size: 15px; font-weight: 700; color: var(--bs-text);
+    margin-bottom: 2px;
+  }
+  .feedback-modal-sub {
+    font-size: 12px; color: var(--bs-text-muted); line-height: 1.4;
+  }
+  .feedback-modal-close {
+    margin-left: auto; flex-shrink: 0;
+    background: none; border: none; cursor: pointer;
+    color: var(--bs-text-muted); border-radius: 6px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 18px; line-height: 1; text-transform: none; letter-spacing: normal;
+    transition: color 0.15s, background 0.15s;
+  }
+  .feedback-modal-close:hover { color: var(--bs-text); background: #F0F0F0; }
+  .feedback-modal-body { padding: 16px 20px; }
+  .feedback-modal-label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--bs-text); margin-bottom: 8px;
+  }
+  .feedback-modal-textarea {
+    width: 100%; border: 1.5px solid var(--bs-border);
+    border-radius: 8px; padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--bs-text); resize: none; outline: none;
+    line-height: 1.5; transition: border-color 0.15s;
+  }
+  .feedback-modal-textarea:focus { border-color: #0096B8; }
+  .feedback-modal-textarea::placeholder { color: var(--bs-text-muted); }
+  .feedback-modal-char {
+    font-size: 11px; color: var(--bs-text-muted);
+    text-align: right; margin-top: 4px;
+  }
+  .feedback-modal-footer {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding: 12px 20px 16px;
+  }
+  .feedback-modal-btn-cancel {
+    background: white; border: 1.5px solid var(--bs-border);
+    border-radius: 6px; padding: 7px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 600; color: var(--bs-text-muted);
+    cursor: pointer; transition: border-color 0.15s, color 0.15s;
+  }
+  .feedback-modal-btn-cancel:hover { border-color: #9E9E9E; color: var(--bs-text); }
+  .feedback-modal-btn-submit {
+    background: #0096B8; border: none; border-radius: 6px;
+    padding: 7px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 700; color: white;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .feedback-modal-btn-submit:hover { background: #00718A; }
+  .feedback-modal-btn-submit.submitted {
+    background: #16B434; pointer-events: none;
+  }
+
   /* ─── UTILS ───────────────────────────────────────────────── */
   .hidden { display: none !important; }
   .flex-center { display: flex; align-items: center; justify-content: center; }
@@ -897,8 +1117,15 @@
   <!-- Left nav icons -->
   <div class="topnav-icons">
     <!-- AI Assistant — first item after logo -->
-    <div class="topnav-icon topnav-ai-icon" id="nav-ai-btn" onclick="showScreen('chat');setAINavActive()" title="PrivacyPro Assistant" style="width:48px;position:relative;">
-      <i class="mi" style="font-size:24px;">assistant</i>
+    <div class="topnav-icon topnav-ai-icon" id="nav-ai-btn" onclick="showScreen('chat');setAINavActive()" title="Prism Assistant" style="width:48px;position:relative;">
+      <svg width="22" height="19" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+        <path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="white"/>
+        <path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="white"/>
+        <path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="white"/>
+        <path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="white"/>
+        <path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="white"/>
+        <path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="white"/>
+      </svg>
       
     </div>
 
@@ -987,10 +1214,16 @@
     <div class="sidebar-section-label">Current</div>
     <div class="sidebar-item active" id="sidebar-current" onclick="showScreen('chat')">
       <i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;">assistant</i>
-      <span class="sidebar-chat-label">Assistant</span>
+      <span class="sidebar-chat-label">Untitled Session</span>
     </div>
     <div class="sidebar-divider" style="margin:12px 0"></div>
     <div class="sidebar-section-label">Previous Sessions</div>
+    <div style="padding: 6px 12px 8px;">
+      <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 10px;">
+        <i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:14px;line-height:1;color:rgba(255,255,255,0.5);text-transform:none;letter-spacing:normal;flex-shrink:0;">search</i>
+        <input type="text" placeholder="Search sessions" style="background:transparent;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:12px;color:white;width:100%;" oninput="filterSessions(this.value)" class="sidebar-search-input" />
+      </div>
+    </div>
     <div class="sidebar-item" id="sidebar-prev" onclick="showScreen('prev-session')">
       <i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;">reviews</i>
       <div class="sidebar-prev-label">
@@ -1012,17 +1245,45 @@
           <div class="chat-header">
             <div class="chat-header-left">
               <div class="ai-dot"></div>
+              <svg width="28" height="24" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/></svg>
               <div>
-                <div class="chat-header-title">PrivacyPro Assistant</div>
-                <div class="chat-header-sub">Powered by Bluesight Prism <i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:1em;line-height:1;vertical-align:middle;">assistant</i> · Q1 2026 data</div>
+                <div class="chat-header-eyebrow">Prism Assistant</div>
+                <div class="chat-header-title-wrap">
+                  <div class="chat-header-title" id="sessionTitle">Untitled Session</div>
+                  <button class="chat-header-rename-btn" onclick="startRename()" title="Rename session">edit</button>
+                </div>
               </div>
             </div>
-            <div style="font-size:11px;color:var(--bs-text-muted);">Session: Sarah Chen · Mar 13, 2026</div>
+            <div class="chat-header-right">
+              <div class="chat-header-meta">Session: Sarah Chen · Mar 13, 2026</div>
+              <button class="chat-header-download-btn" onclick="downloadSession('chat')" title="Download session">download</button>
+            </div>
           </div>
 
           <div class="chat-messages" id="chatMessages">
+            <!-- HERO INPUT STATE — shown before any message is sent -->
+            <div class="chat-hero" id="chatHero">
+              <div style="text-align:center;margin-bottom:28px;">
+                <h2 style="font-size:24px;line-height:30px;font-weight:700;color:#003E4B;margin:0 0 8px;">Prism Assistant</h2>
+                
+              </div>
+              <div class="chat-hero-card">
+                <textarea class="chat-hero-input" id="heroInput"
+                  placeholder="What would you like to investigate?"
+                  rows="3"
+                  onkeydown="handleHeroKey(event)"
+                ></textarea>
+                <div class="chat-hero-footer">
+                  <button class="chat-hero-send" onclick="sendHeroInput()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="chat-hero-hint">Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided. The data, analysis, and recommendations generated by Prism Assistant should neither be used as a substitute for your professional judgment, nor be relied upon as the sole basis for your decision-making. You should always exercise discretion when making decisions and adhere to your internal policies, procedures, and clinical guidelines.</div>
+            </div>
+
             <!-- Welcome state shown by default -->
-            <div class="chat-welcome" id="chatWelcome">
+            <div class="chat-welcome" id="chatWelcome" style="display:none;">
               <div class="chat-welcome-icon"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:32px;line-height:1;color:white">assistant</i></div>
               <h2>What would you like to investigate?</h2>
               <p>Ask me anything about cases, accesses, violations, or program performance. I can summarize investigations, surface risk patterns, and draft escalation communications.</p>
@@ -1035,14 +1296,14 @@
             </div>
           </div>
 
-          <div class="chat-input-area">
+          <div class="chat-input-area" id="chatInputArea" style="display:none;">
             <div class="chat-input-wrap">
-              <textarea class="chat-input" id="chatInput" placeholder="Ask about a case, user, patient, or program trend…" rows="1" onkeydown="handleKey(event)"></textarea>
+              <textarea class="chat-input" id="chatInput" placeholder="What's next?" rows="1" onkeydown="handleKey(event)"></textarea>
               <button class="chat-send-btn" onclick="sendFromInput()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               </button>
             </div>
-            <div class="chat-input-hint">Try one of the suggested prompts above, or type your own question</div>
+            <div class="chat-input-hint">Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided.</div>
           </div>
         </div>
       </div>
@@ -1796,12 +2057,22 @@
         <div class="chat-main">
           <div class="chat-header">
             <div class="chat-header-left">
+              <svg width="28" height="24" viewBox="0 0 19 16" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0;"><path d="M2.0635 3.36019L0 0.0313487L14.422 0.00439453" fill="#004E7D"/><path d="M11.5187 11.934L9.44625 15.31L2.06348 3.36035" fill="#E969A7"/><path d="M14.4221 0.00449225L18.8904 0L11.5188 11.934" fill="#54C8E7"/><path d="M12.3226 8.63645L11.5188 11.9338L4.54468 5.61084" fill="#F49ACC"/><path d="M10.8137 0.979237L14.422 0.00439453L12.3226 8.63647" fill="#9FDCEF"/><path d="M4.54461 5.61087L2.06348 3.3602L10.8137 0.979248" fill="#4EADDD"/></svg>
               <div>
-                <div class="chat-header-title">Taylor Swift VIP Investigation</div>
-                <div class="chat-header-sub">Mar 10, 2026 · Read-only</div>
+                <div class="chat-header-eyebrow">Prism Assistant</div>
+                <div class="chat-header-title-wrap">
+                  <div class="chat-header-title" id="prevSessionTitle">Taylor Swift VIP Investigation</div>
+                  <button class="chat-header-rename-btn" onclick="startRename('prevSessionTitle')" title="Rename session">edit</button>
+                </div>
               </div>
             </div>
-            <div style="font-size:11px;color:var(--bs-text-muted);">Session: Sarah Chen</div>
+            <div class="chat-header-right">
+              <div class="chat-header-meta" style="text-align:right;">
+                <div>Session: Sarah Chen</div>
+                <div style="margin-top:2px;">Mar 10, 2026 · Read-only</div>
+              </div>
+              <button class="chat-header-download-btn" onclick="downloadSession('prev-session')" title="Download session">download</button>
+            </div>
           </div>
 
           <div class="chat-messages" style="background:#fafafa">
@@ -1816,11 +2087,9 @@
             <div class="msg ai fade-in" style="align-items:flex-start">
               <div class="msg-avatar" style="margin-top:4px"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:white">assistant</i></div>
               <div style="max-width:88%">
-                <div class="ai-response-card">
-                  <div class="ai-response-header">
-                    Reactive Case · VIP Patient Search Report <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-                  </div>
+                <div class="ai-response-card" data-label="Reactive Case · VIP Patient Search Report">
                   <div class="ai-response-body">
+                    <div class="ai-response-title">Reactive Case · VIP Patient Search Report</div>
                     <div class="ai-section-title">Search Activity: "Taylor Swift" (PT-39817, VIP) — Last 6 Months</div>
                     <div style="margin-bottom:10px">
                       <span class="chip red"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:inherit;font-size:11px">gpp_bad</i> 4 users accessed this VIP patient</span>
@@ -1856,11 +2125,9 @@
             <div class="msg ai fade-in" style="align-items:flex-start">
               <div class="msg-avatar" style="margin-top:4px"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:white">assistant</i></div>
               <div style="max-width:88%">
-                <div class="ai-response-card">
-                  <div class="ai-response-header">
-                    Reactive Cases Opened <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-                  </div>
+                <div class="ai-response-card" data-label="Reactive Cases Opened">
                   <div class="ai-response-body">
+                    <div class="ai-response-title">Reactive Cases Opened</div>
                     <div class="ai-section-title">4 Cases Created · VIP Protocol</div>
                     <table class="ai-table">
                       <thead><tr><th>Case</th><th>User</th><th>Priority</th><th>Status</th></tr></thead>
@@ -1937,9 +2204,30 @@
   function newChat() {
     // Reset chat and navigate to fresh session
     chatStarted = false;
+    const inputArea = document.getElementById('chatInputArea');
+    if (inputArea) inputArea.style.display = 'none';
     const msgs = document.getElementById('chatMessages');
     if (msgs) {
-      msgs.innerHTML = `<div class="chat-welcome" id="chatWelcome">
+      msgs.innerHTML = `<div class="chat-hero" id="chatHero">
+        <div style="text-align:center;margin-bottom:28px;">
+          <h2 style="font-size:24px;line-height:30px;font-weight:700;color:#003E4B;margin:0 0 8px;">Prism Assistant</h2>
+          
+        </div>
+        <div class="chat-hero-card">
+          <textarea class="chat-hero-input" id="heroInput"
+            placeholder="What would you like to investigate?"
+            rows="3"
+            onkeydown="handleHeroKey(event)"
+          ></textarea>
+          <div class="chat-hero-footer">
+            <button class="chat-hero-send" onclick="sendHeroInput()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+        </div>
+        <div class="chat-hero-hint">Prism Assistant is an AI-assisted tool and we cannot guarantee the accuracy or completeness of its results and information provided. The data, analysis, and recommendations generated by Prism Assistant should neither be used as a substitute for your professional judgment, nor be relied upon as the sole basis for your decision-making. You should always exercise discretion when making decisions and adhere to your internal policies, procedures, and clinical guidelines.</div>
+      </div>
+      <div class="chat-welcome" id="chatWelcome" style="display:none;">
         <div class="chat-welcome-icon"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:32px;line-height:1;color:white">assistant</i></div>
         <h2>What would you like to investigate?</h2>
         <p>Ask me anything about cases, accesses, violations, or program performance. I can summarize investigations, surface risk patterns, and draft escalation communications.</p>
@@ -1962,6 +2250,162 @@
     if (aiBtn) aiBtn.classList.add('active');
   }
 
+  // ─── RESPONSE FOOTER ────────────────────────────────────
+  // Returns the HTML string for the feedback/export footer
+  function responseFooterHTML() {
+    const label = window.__aiTooltipText || '';
+    return `
+      <div class="ai-response-footer">
+        ${label ? `<span class="ai-response-footer-label">${label}</span>` : ''}
+        <button class="ai-ctrl-btn" data-tip="Not helpful" onclick="thumbDown(this)">thumb_down</button>
+        <button class="ai-ctrl-btn" data-tip="Helpful" onclick="thumbUp(this)">thumb_up</button>
+        <div class="ai-ctrl-sep"></div>
+        <button class="ai-ctrl-btn" data-tip="Copy response" onclick="copyResponse(this)">content_copy</button>
+        <button class="ai-ctrl-btn" data-tip="Export as PDF" onclick="exportPDF(this)">download</button>
+      </div>`;
+  }
+
+  // Append footer to every .ai-response-card inside a container (or doc)
+  function attachResponseFooters(root) {
+    (root || document).querySelectorAll('.ai-response-card').forEach(card => {
+      if (!card.querySelector('.ai-response-footer')) {
+        card.insertAdjacentHTML('beforeend', responseFooterHTML());
+      }
+    });
+  }
+
+  // ─── FEEDBACK MODAL ─────────────────────────────────────
+  let _feedbackBtn = null;
+  let _feedbackType = null; // 'up' | 'down'
+
+  function openFeedbackModal(btn, type) {
+    _feedbackBtn = btn;
+    _feedbackType = type;
+
+    const icon    = document.getElementById('feedbackModalIcon');
+    const title   = document.getElementById('feedbackModalTitle');
+    const sub     = document.getElementById('feedbackModalSub');
+    const label   = document.getElementById('feedbackModalLabel');
+    const textarea = document.getElementById('feedbackText');
+    const submitBtn = document.getElementById('feedbackSubmitBtn');
+    const charCount = document.getElementById('feedbackCharCount');
+
+    if (type === 'up') {
+      icon.className = 'feedback-modal-icon up';
+      icon.textContent = 'thumb_up';
+      title.textContent = 'What did we get right?';
+      sub.textContent = 'Your feedback helps us improve Prism Assistant.';
+      label.textContent = 'What was helpful about this response?';
+    } else {
+      icon.className = 'feedback-modal-icon down';
+      icon.textContent = 'thumb_down';
+      title.textContent = 'What went wrong?';
+      sub.textContent = 'Your feedback helps us improve Prism Assistant.';
+      label.textContent = 'What could this response have done better?';
+    }
+
+    textarea.value = '';
+    charCount.textContent = '0';
+    submitBtn.textContent = 'Submit feedback';
+    submitBtn.classList.remove('submitted');
+
+    const overlay = document.getElementById('feedbackModal');
+    overlay.classList.add('open');
+    setTimeout(() => textarea.focus(), 180);
+  }
+
+  function closeFeedbackModal(e) {
+    // If called from overlay click, only close if clicking the backdrop itself
+    if (e && e.target !== document.getElementById('feedbackModal')) return;
+    document.getElementById('feedbackModal').classList.remove('open');
+    _feedbackBtn = null;
+    _feedbackType = null;
+  }
+
+  function submitFeedback() {
+    const submitBtn = document.getElementById('feedbackSubmitBtn');
+    submitBtn.textContent = 'Submitted ✓';
+    submitBtn.classList.add('submitted');
+
+    // Apply the active state to the originating button
+    if (_feedbackBtn && _feedbackType === 'up') {
+      const card = _feedbackBtn.closest('.ai-response-card');
+      const down = card && card.querySelector('[data-tip="Not helpful"]');
+      _feedbackBtn.classList.add('active-thumb-up');
+      if (down) down.classList.remove('active-thumb-down');
+    } else if (_feedbackBtn && _feedbackType === 'down') {
+      const card = _feedbackBtn.closest('.ai-response-card');
+      const up = card && card.querySelector('[data-tip="Helpful"]');
+      _feedbackBtn.classList.add('active-thumb-down');
+      if (up) up.classList.remove('active-thumb-up');
+    }
+
+    setTimeout(() => {
+      document.getElementById('feedbackModal').classList.remove('open');
+      _feedbackBtn = null;
+      _feedbackType = null;
+    }, 1000);
+  }
+
+  // Character counter
+  document.addEventListener('DOMContentLoaded', function() {
+    const ta = document.getElementById('feedbackText');
+    if (ta) ta.addEventListener('input', function() {
+      document.getElementById('feedbackCharCount').textContent = ta.value.length;
+    });
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') document.getElementById('feedbackModal').classList.remove('open');
+    });
+  });
+
+  function thumbUp(btn) {
+    // If already active, toggle off without modal
+    if (btn.classList.contains('active-thumb-up')) {
+      btn.classList.remove('active-thumb-up');
+      return;
+    }
+    openFeedbackModal(btn, 'up');
+  }
+
+  function thumbDown(btn) {
+    // If already active, toggle off without modal
+    if (btn.classList.contains('active-thumb-down')) {
+      btn.classList.remove('active-thumb-down');
+      return;
+    }
+    openFeedbackModal(btn, 'down');
+  }
+
+  function copyResponse(btn) {
+    const card = btn.closest('.ai-response-card');
+    const body = card.querySelector('.ai-response-body');
+    const text = body ? body.innerText.replace(/\n{3,}/g, '\n\n').trim() : '';
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'check';
+      btn.style.color = '#0E7221';
+      btn.setAttribute('data-tip', 'Copied!');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.color = '';
+        btn.setAttribute('data-tip', 'Copy response');
+      }, 2000);
+    });
+  }
+
+  function exportPDF(btn) {
+    // Prototype feedback only
+    btn.textContent = 'check';
+    btn.style.color = '#0E7221';
+    btn.setAttribute('data-tip', 'Export started');
+    setTimeout(() => {
+      btn.textContent = 'download';
+      btn.style.color = '';
+      btn.setAttribute('data-tip', 'Export as PDF');
+    }, 2000);
+  }
+
   // ─── ASSESSMENT TOGGLE ──────────────────────────────────
   // Populate AI tooltip timestamps
   (function() {
@@ -1970,7 +2414,7 @@
       month: 'short', day: 'numeric', year: 'numeric',
       hour: 'numeric', minute: '2-digit', hour12: true
     });
-    const text = 'Generated by PrivacyPro Assistant on ' + fmt;
+    const text = 'Generated by Prism Assistant on ' + fmt;
     // Set on static tooltips
     document.querySelectorAll('[data-ai-tooltip]').forEach(el => el.textContent = text);
     // Store for dynamic tooltips added later
@@ -2027,9 +2471,133 @@
     }
   };
 
+  function startRename(titleId) {
+    const id = titleId || 'sessionTitle';
+    const titleEl = document.getElementById(id);
+    if (!titleEl) return;
+    const current = titleEl.textContent.trim();
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = current;
+    input.className = 'chat-header-rename-input';
+    const wrap = titleEl.parentElement;
+    wrap.replaceChild(input, titleEl);
+    input.focus();
+    input.select();
+    function commit() {
+      const newName = input.value.trim() || current;
+      const newTitle = document.createElement('div');
+      newTitle.className = 'chat-header-title';
+      newTitle.id = id;
+      newTitle.textContent = newName;
+      wrap.replaceChild(newTitle, input);
+      // Update sidebar label for the matching session
+      if (id === 'sessionTitle') {
+        const sidebarLabel = document.querySelector('#sidebar-current .sidebar-chat-label');
+        if (sidebarLabel) sidebarLabel.textContent = newName;
+      } else if (id === 'prevSessionTitle') {
+        const sidebarLabel = document.querySelector('#sidebar-prev .sidebar-prev-title');
+        if (sidebarLabel) sidebarLabel.textContent = newName;
+      }
+    }
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+      if (e.key === 'Escape') { input.value = current; input.blur(); }
+    });
+  }
+
+  function downloadSession(screen) {
+    // Prototype feedback — flash the button
+    const btn = document.querySelector('#screen-' + screen + ' .chat-header-download-btn');
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = 'check';
+    btn.style.color = '#0E7221';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.color = '';
+    }, 2000);
+  }
+
+  // ─── FLOATING TOOLTIP ───────────────────────────────────
+  (function() {
+    const tip = document.createElement('div');
+    tip.id = 'prism-tooltip';
+    document.body.appendChild(tip);
+    let hideTimer;
+
+    function showTip(el, text) {
+      clearTimeout(hideTimer);
+      const rect = el.getBoundingClientRect();
+      tip.textContent = text;
+      tip.classList.add('visible');
+      // Position below center of element
+      const tipW = tip.offsetWidth;
+      let left = rect.left + rect.width / 2 - tipW / 2;
+      // Keep within viewport
+      left = Math.max(8, Math.min(left, window.innerWidth - tipW - 8));
+      tip.style.left = left + 'px';
+      tip.style.top = (rect.bottom + 6) + 'px';
+    }
+
+    function hideTip() {
+      hideTimer = setTimeout(() => tip.classList.remove('visible'), 80);
+    }
+
+    // Attach to buttons with data-tip or title="Download session"
+    document.addEventListener('mouseover', function(e) {
+      const btn = e.target.closest('[data-tip], .chat-header-download-btn');
+      if (!btn) return;
+      const text = btn.dataset.tip || btn.title || '';
+      if (text) showTip(btn, text);
+    });
+    document.addEventListener('mouseout', function(e) {
+      const btn = e.target.closest('[data-tip], .chat-header-download-btn');
+      if (btn) hideTip();
+    });
+    // Hide on scroll/click
+    document.addEventListener('scroll', hideTip, true);
+    document.addEventListener('click', hideTip, true);
+  })();
+
+  function filterSessions(query) {
+    const items = document.querySelectorAll('.sidebar-item[id="sidebar-prev"], .sidebar-item:not(#sidebar-current)');
+    const q = query.toLowerCase();
+    items.forEach(item => {
+      const title = item.querySelector('.sidebar-prev-title');
+      if (!title) return;
+      item.style.display = (!q || title.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    });
+  }
+
+  function handleHeroKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      sendHeroInput();
+    }
+  }
+
+  function sendHeroInput() {
+    const input = document.getElementById('heroInput');
+    const val = input ? input.value.trim() : '';
+    if (!val) return;
+    if (input) input.value = '';
+    document.getElementById('chatHero').style.display = 'none';
+    const inputArea = document.getElementById('chatInputArea');
+    if (inputArea) inputArea.style.display = 'block';
+    startChat();
+    appendUserMsg(val);
+    showTyping(() => {
+      removeTyping();
+      appendAIResponse(buildGenericResponse(val));
+    });
+  }
+
   function runPrompt(key) {
     const r = RESPONSES[key];
     if (!r) return;
+    showScreen('chat');
     startChat();
     appendUserMsg(r.userMsg);
     showTyping(() => {
@@ -2070,7 +2638,12 @@
 
   function startChat() {
     if (!chatStarted) {
-      document.getElementById('chatWelcome').remove();
+      const hero = document.getElementById('chatHero');
+      if (hero) hero.style.display = 'none';
+      const welcome = document.getElementById('chatWelcome');
+      if (welcome) welcome.style.display = 'none';
+      const inputArea = document.getElementById('chatInputArea');
+      if (inputArea) inputArea.style.display = 'block';
       chatStarted = true;
       const btn = document.getElementById('new-session-btn');
       if (btn) { btn.classList.remove('disabled'); btn.classList.remove('hidden'); }
@@ -2125,6 +2698,8 @@
     if (window.__aiTooltipText) {
       wrapper.querySelectorAll('[data-ai-tooltip]').forEach(el => el.textContent = window.__aiTooltipText);
     }
+    // Attach feedback/export footer to any new response cards
+    attachResponseFooters(wrapper);
     msgs.scrollTop = msgs.scrollHeight;
   }
 
@@ -2132,11 +2707,9 @@
 
   function buildReactiveResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Reactive Case · VIP Patient Search Report <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Reactive Case · VIP Patient Search Report">
         <div class="ai-response-body">
+          <div class="ai-response-title">Reactive Case · VIP Patient Search Report</div>
           <div class="ai-section-title">Search Activity: "Taylor Swift" (PT-39817, VIP) — Last 6 Months</div>
           <div style="margin-bottom:10px">
             <span class="chip red"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:inherit;font-size:11px">gpp_bad</i> 4 users accessed this VIP patient</span>
@@ -2171,11 +2744,9 @@
 
   function buildCoverageResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Risk Coverage Report · February 2026 <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Risk Coverage Report · February 2026">
         <div class="ai-response-body">
+          <div class="ai-response-title">Risk Coverage Report · February 2026</div>
           <div class="ai-section-title">Coverage Summary</div>
           <div class="ai-metric-row">
             <div class="ai-metric"><div class="ai-metric-val">847</div><div class="ai-metric-label">Alerts triggered</div></div>
@@ -2214,11 +2785,9 @@
 
   function buildReportResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Q1 2026 Executive Summary <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Q1 2026 Executive Summary">
         <div class="ai-response-body">
+          <div class="ai-response-title">Q1 2026 Executive Summary</div>
           <div class="ai-metric-row">
             <div class="ai-metric"><div class="ai-metric-val">143</div><div class="ai-metric-label">Total Cases</div><div class="ai-metric-change up"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#EF4444;font-size:13px">trending_up</i> +11.7% vs Q4</div></div>
             <div class="ai-metric"><div class="ai-metric-val">21</div><div class="ai-metric-label">Violations</div><div class="ai-metric-change down"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#00AE8D;font-size:13px">trending_down</i> Rate improved 2.1pp</div></div>
@@ -2338,11 +2907,9 @@
 
   function buildInvestigateSummaryResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Case PP-2847 · Access Summary <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Case PP-2847 · Access Summary">
         <div class="ai-response-body">
+          <div class="ai-response-title">Case PP-2847 · Access Summary</div>
           <div class="risk-banner">
             <span><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#B53228;font-size:20px">gpp_bad</i></span>
             <div><strong>High risk · Case open 38 days</strong> — Manager responded but no corrective action taken. Escalation warranted.</div>
@@ -2380,11 +2947,9 @@
 
   function buildEscalationEmailResponse() {
     return `
-      <div class="ai-response-card">
-        <div class="ai-response-header">
-          Draft Escalation Email · Case PP-2847 <span class="ai-gen-tag" style="margin-left:auto"><i class="ai-info-icon">info</i><span class="ai-tooltip" data-ai-tooltip></span></span>
-        </div>
+      <div class="ai-response-card" data-label="Draft Escalation Email · Case PP-2847">
         <div class="ai-response-body">
+          <div class="ai-response-title">Draft Escalation Email · Case PP-2847</div>
           <div style="background:#FAFAFA;border:1px solid var(--bs-border);border-radius:8px;padding:14px;font-size:12px;line-height:1.7;font-family:'DM Mono',monospace">
             <div style="margin-bottom:6px"><strong>To:</strong> [Manager M-304, Pediatric ICU]</div>
             <div style="margin-bottom:12px"><strong>Subject:</strong> Follow-Up Required — Privacy Case PP-2847, Emily Torres</div>
@@ -2444,8 +3009,13 @@
   function buildGenericResponse(query) {
     return `
       <div class="msg-bubble" style="background:white;border:1px solid var(--bs-border);border-radius:2px 12px 12px 12px;max-width:100%;font-size:13px;line-height:1.6;padding:12px 16px;color:var(--bs-text)">
-        I can help you investigate that. To see a full demo response, try one of the suggested prompts — they're loaded with real Q1 2026 synthetic data from the PrivacyPro demo environment.<br><br>
-        <span style="color:#00718A;cursor:pointer;font-weight:600" onmouseover="this.style.color='#00718A'" onmouseout="this.style.color='#0096B8'" onclick="newChat()">← Try a suggested prompt</span>
+        I can help you investigate that. To see a full demo response, try one of these:
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+          <button onclick="runPrompt(\'reactive\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Show me all users who searched for Taylor Swift in the last 6 months</button>
+          <button onclick="runPrompt(\'coverage\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> What am I missing? Show my risk coverage and unreviewed alerts</button>
+          <button onclick="runPrompt(\'report\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Generate my Q1 2026 executive summary</button>
+          <button onclick="runPrompt(\'investigate\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Summarize the access between Emily Torres and John Rivera</button>
+        </div>
       </div>
     `;
   }
@@ -2457,7 +3027,7 @@
       month: 'short', day: 'numeric', year: 'numeric',
       hour: 'numeric', minute: '2-digit', hour12: true
     });
-    const text = 'Generated by PrivacyPro Assistant on ' + fmt;
+    const text = 'Generated by Prism Assistant on ' + fmt;
     document.querySelectorAll('[data-ai-tooltip]').forEach(el => el.textContent = text);
     window.__aiTooltipText = text;
   })();
@@ -2465,7 +3035,37 @@
   setView('new'); // default to AI view
   setAINavActive(); // AI icon active on load
   document.querySelector('.sidebar').style.display = 'flex'; // show sidebar on load
+  attachResponseFooters(); // attach footers to any pre-rendered response cards
 
 </script>
+<!-- ═══════════════════════ FEEDBACK MODAL ═══════════════════════ -->
+<div id="feedbackModal" class="feedback-modal-overlay" onclick="closeFeedbackModal(event)">
+  <div class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedbackModalTitle">
+    <div class="feedback-modal-header">
+      <div class="feedback-modal-icon" id="feedbackModalIcon"></div>
+      <div>
+        <div class="feedback-modal-title" id="feedbackModalTitle">Share your feedback</div>
+        <div class="feedback-modal-sub" id="feedbackModalSub"></div>
+      </div>
+      <button class="feedback-modal-close" onclick="closeFeedbackModal()" aria-label="Close">close</button>
+    </div>
+    <div class="feedback-modal-body">
+      <label class="feedback-modal-label" for="feedbackText" id="feedbackModalLabel"></label>
+      <textarea
+        id="feedbackText"
+        class="feedback-modal-textarea"
+        placeholder="Tell us more…"
+        rows="4"
+        maxlength="1000"
+      ></textarea>
+      <div class="feedback-modal-char"><span id="feedbackCharCount">0</span> / 1000</div>
+    </div>
+    <div class="feedback-modal-footer">
+      <button class="feedback-modal-btn-cancel" onclick="closeFeedbackModal()">Cancel</button>
+      <button class="feedback-modal-btn-submit" id="feedbackSubmitBtn" onclick="submitFeedback()">Submit feedback</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
