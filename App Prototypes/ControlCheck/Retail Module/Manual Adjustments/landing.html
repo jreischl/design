@@ -3364,14 +3364,24 @@ function renderPharmList(typeKey, drugIdx) {
 /* Events summary line — shows adjustments + cycle counts as parallel
    numbers above the type-stat filter cards. Cycle counts aren't part
    of the adjustment denominator, so they sit alongside, not within.
-   In aggregate scope, both numbers sum across all pharmacies. */
+   In aggregate scope (L1 panel from the By-Adjustment-Type view), both
+   numbers sum across pharmacies that have the focus type for this
+   drug — same set the pharm-list table renders. Pharmacies with zero
+   of the focus type are excluded so the totals here reconcile with
+   the rows visible in the table below. */
 function renderEventsSummary(pharmIdx, drugIdx) {
   const isAggregate = (PANEL_STATE.scope === 'aggregate');
   let adjTotal, ccTotal;
   if (isAggregate) {
-    adjTotal = getTypeCellValue(PANEL_STATE.typeKey, drugIdx);
+    const typeKey = PANEL_STATE.typeKey;
+    adjTotal = 0;
     ccTotal  = 0;
-    for (let i = 0; i < HEATMAP.length; i++) ccTotal += getCellCycleCount(i, drugIdx);
+    for (let i = 0; i < HEATMAP.length; i++) {
+      const focusCount = getDrilledCellValue(i, drugIdx, typeKey);
+      if (focusCount <= 0) continue;     // matches pharm-list row filter
+      adjTotal += focusCount;
+      ccTotal  += getCellCycleCount(i, drugIdx);
+    }
   } else {
     adjTotal = HEATMAP[pharmIdx][drugIdx].v || 0;
     ccTotal  = getCellCycleCount(pharmIdx, drugIdx);
