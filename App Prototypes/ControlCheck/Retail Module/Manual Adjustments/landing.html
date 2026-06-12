@@ -1284,6 +1284,14 @@
     table.med-table .med-name {
       font-weight: 600; color: var(--blue-darker);
     }
+    /* Strength column bolded to match the drug-name column. The dose
+       is the key disambiguator between rows that share a drug name
+       (e.g. two strengths of buprenorphine-naloxone), so it carries
+       the same visual weight as the name itself. */
+    table.med-table .med-strength {
+      font-weight: 600; color: var(--blue-darker);
+      font-variant-numeric: tabular-nums;
+    }
     table.med-table .chev {
       font-size: 18px; color: var(--gray-400); transition: transform .2s;
     }
@@ -4124,7 +4132,7 @@ function renderFilteredMedTable() {
     return `
       <tr data-row="${i}" onclick="toggleMedRow(${PANEL_STATE.pharm},${PANEL_STATE.drug},${i}, this)">
         <td class="med-name">${row.name}</td>
-        <td>${row.strength}</td>
+        <td class="med-strength">${row.strength}</td>
         <td class="num">${count}</td>
         <td class="num">${totalAdj.toLocaleString()}</td>
         <td class="num"><span class="material-icons chev">expand_more</span></td>
