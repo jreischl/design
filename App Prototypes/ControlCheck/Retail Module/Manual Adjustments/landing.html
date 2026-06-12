@@ -3831,33 +3831,41 @@ function reRenderAfterFilterChange() {
    MED TABLE  (Adjustments by Medication, with Comments column)
    ============================================================ */
 
+/* MED_VARIANTS — per-drug forms shown in the panel's medication table.
+   Two fields per entry:
+     name     — the drug identity only (no dosage). Stays consistent
+                across variants of the same compound; the medication
+                table groups them visually because they share a name.
+     strength — the dosage / concentration. Combo products use the
+                hyphenated dose string (e.g. "4-1 mg" means 4 mg of
+                buprenorphine + 1 mg of naloxone per unit). */
 const MED_VARIANTS = [
   /* Buprenorphine/naloxone forms */
-  [{ name: 'buprenorphine-naloxone 4-1 MG', strength: '1 unit' },
-   { name: 'buprenorphine-naloxone 8-2 MG', strength: '1 unit' }],
-  [{ name: 'alprazolam 0.5 MG',  strength: '1 unit' },
-   { name: 'alprazolam 1 MG',    strength: '1 unit' },
-   { name: 'alprazolam 2 MG',    strength: '1 unit' }],
-  [{ name: 'acetaminophen-hydrocodone 325-5 MG',  strength: '1 unit' },
-   { name: 'acetaminophen-hydrocodone 325-7.5 MG', strength: '1 unit' },
-   { name: 'acetaminophen-hydrocodone 325-10 MG',  strength: '1 unit' }],
-  [{ name: 'lorazepam 0.5 MG', strength: '1 unit' },
-   { name: 'lorazepam 1 MG',   strength: '1 unit' },
-   { name: 'lorazepam 2 MG',   strength: '1 unit' }],
-  [{ name: 'phentermine 37.5 MG', strength: '1 unit' }],
-  [{ name: 'clonazepam 0.5 MG', strength: '1 unit' },
-   { name: 'clonazepam 1 MG',   strength: '1 unit' }],
-  [{ name: 'oxycodone 5 MG',  strength: '1 unit' },
-   { name: 'oxycodone 10 MG', strength: '1 unit' },
-   { name: 'oxycodone 15 MG', strength: '1 unit' }],
-  [{ name: 'amphetamine-dextroamphetamine 10 MG', strength: '1 unit' },
-   { name: 'amphetamine-dextroamphetamine 20 MG', strength: '1 unit' },
-   { name: 'amphetamine-dextroamphetamine 30 MG', strength: '1 unit' }],
-  [{ name: 'diazepam 5 MG',  strength: '1 unit' },
-   { name: 'diazepam 10 MG', strength: '1 unit' }],
-  [{ name: 'methylphenidate 5 MG',  strength: '1 unit' },
-   { name: 'methylphenidate 10 MG', strength: '1 unit' },
-   { name: 'methylphenidate 20 MG', strength: '1 unit' }],
+  [{ name: 'buprenorphine-naloxone', strength: '4-1 mg' },
+   { name: 'buprenorphine-naloxone', strength: '8-2 mg' }],
+  [{ name: 'alprazolam', strength: '0.5 mg' },
+   { name: 'alprazolam', strength: '1 mg' },
+   { name: 'alprazolam', strength: '2 mg' }],
+  [{ name: 'acetaminophen-hydrocodone', strength: '325-5 mg' },
+   { name: 'acetaminophen-hydrocodone', strength: '325-7.5 mg' },
+   { name: 'acetaminophen-hydrocodone', strength: '325-10 mg' }],
+  [{ name: 'lorazepam', strength: '0.5 mg' },
+   { name: 'lorazepam', strength: '1 mg' },
+   { name: 'lorazepam', strength: '2 mg' }],
+  [{ name: 'phentermine', strength: '37.5 mg' }],
+  [{ name: 'clonazepam', strength: '0.5 mg' },
+   { name: 'clonazepam', strength: '1 mg' }],
+  [{ name: 'oxycodone', strength: '5 mg' },
+   { name: 'oxycodone', strength: '10 mg' },
+   { name: 'oxycodone', strength: '15 mg' }],
+  [{ name: 'amphetamine-dextroamphetamine', strength: '10 mg' },
+   { name: 'amphetamine-dextroamphetamine', strength: '20 mg' },
+   { name: 'amphetamine-dextroamphetamine', strength: '30 mg' }],
+  [{ name: 'diazepam', strength: '5 mg' },
+   { name: 'diazepam', strength: '10 mg' }],
+  [{ name: 'methylphenidate', strength: '5 mg' },
+   { name: 'methylphenidate', strength: '10 mg' },
+   { name: 'methylphenidate', strength: '20 mg' }],
 ];
 
 /* Fictional users (rotated per row) */
