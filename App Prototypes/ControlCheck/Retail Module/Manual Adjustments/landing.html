@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Manual Adjustments | ControlCheck</title>
+  <title>Inventory Adjustments | ControlCheck</title>
   <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
   <style>
@@ -11,24 +11,24 @@
     :root {
       --blue-dark:   #044a82;
       --blue-darker: #0a3861;
-      --teal:        #0096b8;
-      --teal-dark:   #0083a8;
+      --teal:        #00718a;
+      --teal-dark:   #005f77;
       --teal-light:  #74c5d8;
       --teal-50:     #e7f4f8;
       --teal-25:     #f3fbfd;
-      --teal-900:    #00718a;
-      --pink:        #eb4699;
+      --teal-900:    #005f77;
+      --pink:        #c0306e;
       --red:         #f24335;
       --red-dark:    #b9211d;
-      --orange:      #e67e2c;
-      --green:       #16b434;
+      --orange:      #b35a00;
+      --green:       #0e7221;
       --yellow:      #f5dd67;
       --gray-50:     #fafafa;
       --gray-100:    #f6f6f6;
       --gray-200:    #f5f5f5;
       --gray-300:    #e5e5e5;
-      --gray-400:    #adadad;
-      --gray-500:    #9e9e9e;
+      --gray-400:    #767676;
+      --gray-500:    #737373;
       --gray-600:    #727272;
       --gray-700:    #555;
       --border:      rgba(0,0,0,.12);
@@ -40,7 +40,7 @@
       /* Heat-map severity tokens (preserved from existing UI) */
       --hm-green:    #f0e1a5;   /* yellow band 0-2 */
       --hm-yellow:   #f5dd67;   /* yellow 3-5 */
-      --hm-orange:   #e67e2c;   /* orange 6-7 */
+      --hm-orange:   #b35a00;   /* orange 6-7 */
       --hm-red:      #b9211d;   /* red 8+ */
     }
     html, body {
@@ -529,9 +529,10 @@
     .btn-apply {
       background: var(--pink); border: none; border-radius: 4px;
       color: #fff; font: 600 13px var(--font);
-      cursor: pointer; padding: 6px 16px;
+      cursor: pointer; padding: 0 16px;
+      height: 32px; display: inline-flex; align-items: center; gap: 4px;
     }
-    .btn-apply:hover { background: #d93d88; }
+    .btn-apply:hover { background: #a8285e; }
 
     /* ── Slider menu (Quantity Adjusted) ─────────────────── */
     .slider-section { padding: 14px 16px 4px; }
@@ -1153,59 +1154,50 @@
     .ts-chart .axis-line { stroke: #E5E5E5; stroke-width: 1; }
 
     /* Type breakdown stats row */
+    /* Type-stat filter pills — compact chip-style row replacing the old
+       card grid. Each pill shows a colored dot, the type label, and the
+       count. Click toggles it as a filter for the med table below. */
     .type-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
     }
-    /* Each stat is a clickable filter for the med table below */
     button.type-stat {
-      background: var(--gray-50);
-      border: 1px solid var(--gray-300);
-      border-radius: 4px;
-      padding: 10px 12px;
-      text-align: left;
+      display: inline-flex; align-items: center; gap: 5px;
+      height: 26px; padding: 0 10px;
+      border-radius: 13px;
+      border: 1px solid transparent;
+      background: var(--pill-color, var(--gray-500));
       cursor: pointer;
       font-family: inherit;
-      transition: background .12s, border-color .12s, opacity .12s, box-shadow .12s;
+      font-size: .8125rem; font-weight: 500;
+      color: #fff;
+      transition: filter .12s, opacity .12s, outline .12s;
+      white-space: nowrap;
     }
     button.type-stat:hover {
-      background: #fff;
-      border-color: var(--teal);
+      filter: brightness(1.12);
     }
     button.type-stat.active {
-      background: var(--teal-50);
-      border-color: var(--teal);
-      box-shadow: inset 0 0 0 1px var(--teal);
+      outline: 2px solid #fff;
+      outline-offset: 1px;
+      box-shadow: 0 0 0 3px var(--pill-color, var(--gray-500));
+      font-weight: 700;
     }
-    button.type-stat.active .type-stat-value { color: var(--teal-900); }
-    /* When any filter is active, the unselected ones fade back */
     button.type-stat.dimmed {
-      opacity: 0.45;
+      opacity: 0.35;
     }
     button.type-stat.dimmed:hover { opacity: 1; }
-    .type-stat {
-      background: var(--gray-50);
-      border: 1px solid var(--gray-300);
-      border-radius: 4px;
-      padding: 10px 12px;
+    .type-stat-dot { display: none; } /* no longer needed */
+    .type-stat-count {
+      font-weight: 700;
+      opacity: .9;
     }
-    .type-stat-name {
-      display: flex; align-items: center; gap: 6px;
-      font-size: .75rem; font-weight: 600;
-      color: var(--gray-700);
-      text-transform: uppercase; letter-spacing: .04em;
-      margin-bottom: 4px;
-    }
-    .type-stat-name .swatch { width: 10px; height: 10px; border-radius: 2px; }
-    .type-stat-value {
-      font-size: 1.5rem; font-weight: 700;
-      color: var(--blue-darker); line-height: 1;
-    }
-    .type-stat-meta {
-      font-size: .75rem; font-weight: 500;
-      color: var(--gray-600); margin-top: 4px;
+    /* Empty state — no types active */
+    .type-stats-empty {
+      font-size: .8125rem; color: var(--gray-600);
+      padding: 4px 0 8px;
     }
 
     /* Events summary above the type-stats grid — parallel display of
@@ -1235,8 +1227,9 @@
     /* Filter status row above the type-stats grid */
     .type-stats-status {
       display: flex; align-items: center; justify-content: space-between;
-      font-size: .75rem; color: var(--gray-600); font-weight: 500;
-      margin-bottom: 10px;
+      font-size: .6875rem; color: var(--gray-500); font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      margin-bottom: 8px;
     }
     .type-stats-status .clear-filter {
       background: none; border: none; padding: 0;
@@ -1417,7 +1410,25 @@
       color: var(--gray-700); text-transform: uppercase;
       letter-spacing: .04em;
       padding: 10px 0 8px; display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
     }
+    .tx-filter-btn {
+      display: inline-flex; align-items: center;
+      height: 24px; padding: 0 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,113,138,.4);
+      background: transparent; cursor: pointer;
+      font: 500 .6875rem var(--font);
+      color: var(--teal-900);
+      text-transform: none; letter-spacing: 0;
+      transition: background .12s, border-color .12s, color .12s;
+    }
+    .tx-filter-btn:hover { background: var(--teal-50); }
+    .tx-filter-btn.active {
+      background: var(--teal); color: #fff;
+      border-color: var(--teal);
+    }
+    .tx-filter-btn.active:hover { background: var(--teal-dark); }
     table.tx-table {
       width: 100%;
       border-collapse: collapse;
@@ -1476,13 +1487,40 @@
       color: var(--blue-darker, #0a3861);
     }
 
-    /* Cycle Count rows — verification events, not balance changes.
-       Amount column shows an em-dash; Comments column carries the
-       counted value and variance (or "Match"). Optional subtle navy
-       left-edge marker signals "this is a count, not an adjustment." */
-    table.tx-table .amt-na {
-      color: var(--gray-500); font-weight: 500;
+    /* Dual user identifier — system ID shown muted below the name */
+    .user-cell { display: flex; flex-direction: column; gap: 1px; }
+    .user-id { display: none; }
+    /* Dispense rows — subtly muted to let manual adjustments stand out */
+    table.tx-table tbody tr.dispense-row { background: var(--gray-50); }
+    table.tx-table tbody tr.dispense-row:hover { background: #f0f0f0; }
+
+    .view-settings-checks {
+      display: flex; flex-direction: row; gap: 1rem;
+      padding-top: 8px; flex-wrap: wrap; margin-left: 2rem;
     }
+    .vs-check {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .8125rem; color: var(--gray-700);
+      cursor: pointer; user-select: none;
+    }
+    .vs-check input[type="checkbox"] {
+      width: 14px; height: 14px; cursor: pointer;
+      accent-color: var(--teal);
+    }
+
+    /* Transaction table sortable column headers */
+    table.tx-table th.tx-sort-th { cursor: pointer; user-select: none; }
+    table.tx-table th.tx-sort-th:hover { color: var(--teal); }
+    table.tx-table th.tx-sort-active { color: var(--teal); }
+    table.tx-table .tx-sort-icon {
+      font-size: 13px; vertical-align: middle;
+      opacity: 0.35; margin-left: 2px;
+    }
+    table.tx-table th.tx-sort-active .tx-sort-icon { opacity: 1; }
+
+    /* Cycle Count rows — two subtypes:
+       .cc-row          = verified match (no balance change). Muted, slightly de-emphasized.
+       .cc-variance-row = discrepancy found, balance adjusted. Treated like any adjustment. */
     table.tx-table .cc-comment {
       font-style: normal;             /* override comment-cell italic */
       color: var(--gray-700); font-weight: 400;
@@ -1495,6 +1533,8 @@
     }
     table.tx-table .cc-variance.neg { color: var(--red-dark); font-weight: 600; }
     table.tx-table .cc-variance.pos { color: var(--green);    font-weight: 600; }
+    /* Verified rows: slightly muted to reduce noise */
+    table.tx-table tbody tr.cc-row { opacity: .75; }
 
     /* Footer */
     footer {
@@ -1608,7 +1648,7 @@
               <div class="menu nav-menu" style="width: 220px;">
                 <div class="menu-options">
                   <a class="menu-option nav-menu-option nav-menu-option-active" href="#">
-                    Manual Adjustments
+                    Inventory Adjustments
                   </a>
                   <a class="menu-option nav-menu-option" href="#">
                     Inventory Discrepancies
@@ -1678,7 +1718,7 @@
             <!-- Manual Adjustments — section header with the two view-mode pages -->
             <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
               <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
-                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Manual Adjustments</mat-panel-title></span>
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Inventory Adjustments</mat-panel-title></span>
                 <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
               </mat-expansion-panel-header>
               <div class="mat-expansion-panel-content-wrapper">
@@ -1703,13 +1743,13 @@
       <nav class="breadcrumb" id="page-breadcrumb" aria-label="breadcrumb">
         <button class="bc-parent" type="button">Analyze</button>
         <span class="bc-sep">›</span>
-        <span class="bc-current">Manual Adjustments</span>
+        <span class="bc-current">Inventory Adjustments</span>
       </nav>
 
       <!-- Page header (title + filter chips) -->
       <div class="page-header">
         <div class="page-title-group" id="page-title-group">
-          <h1 class="page-title">Manual Adjustments</h1>
+          <h1 class="page-title">Inventory Adjustments</h1>
           <span class="page-section-indicator" id="page-section-indicator">By Retail Pharmacy</span>
         </div>
 
@@ -1796,12 +1836,12 @@
       <!-- Description + Legend (flex row) -->
       <div class="description-legend-row">
         <p class="page-description">
-          Explore manual balance adjustments across your retail network with an interactive heat-map view.
+          Explore manual balance adjustments and cycle count reconciliations across your retail network with an interactive heat-map view.
         </p>
 
         <div class="adj-legend">
           <span class="adj-legend-label">
-            <span class="adj-legend-label-title">Manual Adjustments</span>
+            <span class="adj-legend-label-title">Inventory Adjustments</span>
             <span class="adj-legend-label-sub">Scale adjusts based on selected date range</span>
           </span>
           <span class="adj-legend-pill lvl-low"    id="legend-low">0–1</span>
@@ -1892,7 +1932,7 @@
         <span class="material-icons">arrow_back</span>
         <span id="panel-back-label">Back</span>
       </button>
-      <div class="panel-eyebrow">Manual Adjustments</div>
+      <div class="panel-eyebrow">Inventory Adjustments</div>
       <div class="panel-title" id="panel-title">—</div>
       <div class="panel-subtitle" id="panel-subtitle">—</div>
     </div>
@@ -1938,7 +1978,7 @@
       <div class="panel-section-header">
         <div class="panel-section-title" id="med-table-title">Adjustments by Medication</div>
         <div class="panel-section-actions" id="panel-section-actions">
-          <button class="btn-apply" id="open-review-btn" type="button" style="height:32px; display:inline-flex; align-items:center; gap:4px;">
+          <button class="btn-apply" id="open-review-btn" type="button">
             <span class="material-icons" style="font-size:16px;">add</span>
             Open Review
           </button>
@@ -1954,19 +1994,45 @@
            these are replaced by the pharmacies-by-count list below. -->
       <div id="cell-scope-section">
         <!-- Type filters: click a card to filter the table by that adjustment type -->
-        <div class="type-stats-status" id="type-stats-status">
-          <span id="type-stats-status-label">Click a type to filter the table below</span>
-          <button class="clear-filter" id="clear-type-filter" style="display:none;" onclick="clearTypeFilter()">Clear filter</button>
+        <div class="type-stats-status" id="type-stats-status" style="cursor:pointer; justify-content:flex-start;" onclick="toggleReasonFilter(this)" aria-expanded="true">
+          <span class="material-icons" style="font-size:18px; color:var(--gray-500); margin-right:4px; transition:transform .15s; flex-shrink:0; transform:rotate(90deg);">chevron_right</span>
+          <span id="type-stats-status-label">Filter by reason</span>
+          <div style="display:flex; align-items:center; gap:8px; margin-left:auto;" onclick="event.stopPropagation()">
+            <button class="clear-filter" id="clear-type-filter" style="display:none;" onclick="clearTypeFilter()">Clear filter</button>
+          </div>
         </div>
-        <div class="type-stats" id="type-stats"></div>
+        <div id="reason-filter-body">
+          <div class="type-stats" id="type-stats"></div>
+        </div>
+
+        <div class="type-stats-status" style="margin-top:10px; cursor:pointer; justify-content:flex-start;" onclick="toggleViewSettings(this)" aria-expanded="false">
+          <span class="material-icons" style="font-size:18px; color:var(--gray-500); margin-right:4px; transition:transform .15s; flex-shrink:0;">chevron_right</span>
+          <span>View Settings</span>
+        </div>
+        <div id="view-settings-body" style="display:none; margin-bottom:12px;">
+          <div class="view-settings-checks">
+            <label class="vs-check">
+              <input type="checkbox" id="show-dispenses-btn" onchange="toggleShowDispenses(this)">
+              <span>Show dispenses</span>
+            </label>
+            <label class="vs-check">
+              <input type="checkbox" id="hide-increases-btn" onchange="toggleHideIncreases(this)">
+              <span>Hide increases</span>
+            </label>
+            <label class="vs-check">
+              <input type="checkbox" id="show-all-cycle-counts-btn" onchange="toggleShowAllCycleCounts(this)">
+              <span>Show all Cycle Counts</span>
+            </label>
+          </div>
+        </div>
 
         <table class="med-table" id="med-table">
-          <thead>
+          <thead id="med-table-head">
             <tr>
-              <th class="active-sort">Name <span class="material-icons sort-icon">arrow_upward</span></th>
-              <th>Strength</th>
-              <th class="num">Adjustments</th>
-              <th class="num">Total Adjusted</th>
+              <th onclick="sortMedTable('name')" style="cursor:pointer;" class="active-sort" data-col="name">Name <span class="material-icons sort-icon">arrow_upward</span></th>
+              <th onclick="sortMedTable('strength')" style="cursor:pointer;" data-col="strength">Strength <span class="material-icons sort-icon">arrow_upward</span></th>
+              <th onclick="sortMedTable('count')" style="cursor:pointer;" class="num" data-col="count">Adjustments <span class="material-icons sort-icon">arrow_upward</span></th>
+              <th onclick="sortMedTable('total')" style="cursor:pointer;" class="num" data-col="total">Total Adjusted <span class="material-icons sort-icon">arrow_upward</span></th>
               <th></th>
             </tr>
           </thead>
@@ -2023,17 +2089,25 @@
      colorLight — 500-tier ("Base"): used as bar fills in the chart
                   and the chart legend, so adjacent bars from the
                   same hue family stay distinguishable. */
+/* Confirmed adjustment type list from Epic "Update Balance" reasons (UAM session, June 2026).
+   Excluded: 340B Accumulator Adjustment (not inventory), Initial Set (system-generated setup).
+   Clinic Return and Return to Stock are included despite being stock increases — a bad actor
+   could inflate reported stock to mask diversion, so they must be visible in the full picture.
+   Cycle Count Variance and Cycle Count (Verified) are our structured representation of the
+   cycle count workflow (Option B unified audit log). Only variance rows contribute to the
+   heatmap cell totals. */
 const ADJ_TYPES = [
-  { key: 'count_correction',     label: 'Count Correction',     color: '#00718A', colorLight: '#0096B8' },  // Blue 700 / Blue 500
-  { key: 'cycle_count',          label: 'Cycle Count',          color: '#0A3961', colorLight: '#044A82' },  // Navy 700 / Navy 500 (brand)
-  { key: 'return_to_stock',      label: 'Return to Stock',      color: '#0E7221', colorLight: '#16B434' },  // Success 700 / 500
-  { key: 'waste',                label: 'Waste',                color: '#AB336F', colorLight: '#EB4699' },  // Pink 700 / 500
-  { key: 'expired',              label: 'Expired',              color: '#C26E00', colorLight: '#F5A623' },  // Orange 700 / 500
-  { key: 'returned_to_vendor',   label: 'Returned to Vendor',   color: '#296475', colorLight: '#409CB7' },  // UA 700 / 500 (Bodrum)
-  { key: 'shrinkage',            label: 'Shrinkage',            color: '#B53228', colorLight: '#F24335' },  // Danger 700 / 500
-  { key: 'contaminated',         label: 'Contaminated',         color: '#4C577D', colorLight: '#6C7BB1' },  // UD 700 / 500 (Charleston)
-  { key: 'ndc_change',           label: 'NDC Change',           color: '#357F96', colorLight: '#52C7EA' },  // UE 700 / 500 (Malibu)
-  { key: 'other',                label: 'Other',                color: '#555555', colorLight: '#757575' },  // Gray 700 / 500
+  { key: 'correction',             label: 'Correction',              color: '#00718A', colorLight: '#0096B8' },  // Blue 700 / 500
+  { key: 'waste',                  label: 'Waste',                   color: '#AB336F', colorLight: '#EB4699' },  // Pink 700 / 500
+  { key: 'expired',                label: 'Expired',                 color: '#c25700', colorLight: '#e08020' },  // Orange darkened for AA contrast
+  { key: 'contaminated',           label: 'Contaminated',            color: '#4C577D', colorLight: '#6C7BB1' },  // UD 700 / 500
+  { key: 'clinic_dispense',        label: 'Clinic Dispense',         color: '#296475', colorLight: '#409CB7' },  // UA 700 / 500
+  { key: 'inpatient_pharmacy',     label: 'Inpatient Pharmacy',      color: '#245D8A', colorLight: '#3891D8' },  // UB 700 / 500
+  { key: 'shrinkage',              label: 'Shrinkage',               color: '#B53228', colorLight: '#F24335' },  // Danger 700 / 500
+  { key: 'return_to_vendor',       label: 'Return to Vendor',        color: '#646A9A', colorLight: '#9CA6F1' },  // UC 700 / 500
+  { key: 'clinic_return',          label: 'Clinic Return',           color: '#0E7221', colorLight: '#16B434' },  // Success 700 / 500
+  { key: 'cycle_count_variance',   label: 'Cycle Count Variance',    color: '#0A3961', colorLight: '#044A82' },  // Navy 700 / 500
+  { key: 'other',                  label: 'Other',                   color: '#555555', colorLight: '#757575' },  // Gray 700 / 500
 ];
 const TYPE_BY_KEY = Object.fromEntries(ADJ_TYPES.map(t => [t.key, t]));
 
@@ -2043,22 +2117,20 @@ const TYPE_BY_KEY = Object.fromEntries(ADJ_TYPES.map(t => [t.key, t]));
 
    'dec'    — decrease only: stock leaves inventory
    'inc'    — increase only: stock added to inventory
-   'either' — can go either way; count_correction depends on what
-              the count found, NDC Change is paired (decrement on
-              source NDC, increment on destination), Other is the
-              free-form catch-all.
-   'none'   — no balance change at all (cycle_count is verification) */
+   'either' — can go either way (correction depends on the count; other is free-form)
+   'none'   — no balance change (cycle_count_verified is audit-only) */
 const TYPE_DIRECTION = {
-  count_correction:   'either',
-  cycle_count:        'none',
-  return_to_stock:    'inc',
-  waste:              'dec',
-  expired:            'dec',
-  returned_to_vendor: 'dec',
-  shrinkage:          'dec',
-  contaminated:       'dec',
-  ndc_change:         'either',   // paired with offsetting tx on the other NDC
-  other:              'either',
+  correction:           'either',
+  waste:                'dec',
+  expired:              'dec',
+  contaminated:         'dec',
+  clinic_dispense:      'dec',
+  inpatient_pharmacy:   'dec',
+  shrinkage:            'dec',
+  return_to_vendor:     'dec',
+  clinic_return:        'inc',
+  cycle_count_variance: 'either',  // can be +/− depending on discrepancy direction
+  other:                'either',
 };
 function typeDirection(key) { return TYPE_DIRECTION[key] || 'either'; }
 
@@ -2142,18 +2214,18 @@ function setHeatmapSearch(value) {
 }
 
 /* Adjustment types available for the Y axis in adj_type view.
-   Cycle Count is excluded — it's a verification event, not an
-   adjustment, and not part of the heat-map's cell totals. */
-const ADJ_TYPES_FOR_HEATMAP = ADJ_TYPES.filter(t => t.key !== 'cycle_count');
+   Both cycle count types are excluded:
+   - cycle_count_verified: pure audit record, no balance change, no heatmap contribution.
+   - cycle_count_variance: tracked separately via getCellCycleCount / getCellCycleVarianceCount,
+     not part of HEATMAP[i][j].v. Including it here would imply heatmap cell values contain
+     cycle count reconciliations, which they don't. */
+const ADJ_TYPES_FOR_HEATMAP = ADJ_TYPES.filter(t => t.key !== 'cycle_count_verified' && t.key !== 'cycle_count_variance');
 
-/* Per-cell adjustment type breakdown.
-   Each cell carries a hand-authored `v` total — this represents the
-   count of MANUAL ADJUSTMENTS only. Cycle counts are tracked separately
-   (see getCellCycleCount) since they don't change inventory and don't
-   belong in the same denominator. The distribution here covers
-   adjustment types only, weighted to roughly match real-world frequency.
-   Deterministically seeded by (i, j) so the same breakdown comes back
-   on every re-render. */
+/* Per-cell adjustment type breakdown — manual adjustments only.
+   Each cell carries a hand-authored `v` total representing manual adjustments.
+   Cycle count reconciliations are tracked separately via getCellCycleCount /
+   getCellCycleVarianceCount and are never part of this breakdown or HEATMAP[i][j].v.
+   Deterministically seeded by (i, j) so the same breakdown is stable across renders. */
 const _cellBreakdownCache = new Map();
 function getCellBreakdown(i, j) {
   const key = i * 100 + j;
@@ -2171,19 +2243,17 @@ function getCellBreakdown(i, j) {
       t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
-    // Adjustment types only — NO cycle_count. Cycle counts are
-    // verification events that don't change inventory and aren't
-    // part of the heat-map's "manual adjustments" total.
     const pickType = () => {
       const r = rand();
-      if (r < 0.38) return 'count_correction';
-      if (r < 0.55) return 'return_to_stock';
-      if (r < 0.65) return 'expired';
-      if (r < 0.74) return 'waste';
-      if (r < 0.82) return 'returned_to_vendor';
-      if (r < 0.91) return 'shrinkage';
-      if (r < 0.96) return 'contaminated';
-      if (r < 0.99) return 'ndc_change';
+      if (r < 0.22) return 'correction';
+      if (r < 0.34) return 'waste';
+      if (r < 0.44) return 'expired';
+      if (r < 0.52) return 'shrinkage';
+      if (r < 0.60) return 'clinic_dispense';
+      if (r < 0.67) return 'inpatient_pharmacy';
+      if (r < 0.73) return 'return_to_vendor';
+      if (r < 0.79) return 'contaminated';
+      if (r < 0.92) return 'clinic_return';
       return 'other';
     };
     for (let k = 0; k < total; k++) breakdown[pickType()] += 1;
@@ -2221,12 +2291,12 @@ function getCellCycleCount(i, j) {
   return count;
 }
 
-/* Cell value visible in the heat-map (canonical pharmacy view).
-   The Adjustment Type filter chip used to scope this; removed in
-   favor of the View By selector + drill-down which provide the
-   same workflow more clearly. */
+/* Cell value visible in the heat-map — manual adjustments + cycle count
+   reconciliations (variances only; verified counts have no balance change).
+   This is the canonical display value used for cell rendering, column
+   totals, sorting, and severity band computation. */
 function getFilteredCellValue(i, j) {
-  return HEATMAP[i][j].v || 0;
+  return (HEATMAP[i][j].v || 0) + getCellCycleVarianceCount(i, j);
 }
 
 /* Adj-type-view cell value: sum across all pharmacies of a single
@@ -2448,7 +2518,7 @@ function getSortedUserRows() {
   if (SORT.key === null) return rowIdxs;
   if (SORT.key === 'user') {
     rowIdxs.sort((a, b) =>
-      USERS[USER_ROWS[a].userIdx].localeCompare(USERS[USER_ROWS[b].userIdx])
+      USERS[USER_ROWS[a].userIdx].name.localeCompare(USERS[USER_ROWS[b].userIdx].name)
     );
   } else if (SORT.key === 'pharmacy' || SORT.key === 'adj_type') {
     return rowIdxs;  // not meaningful for this view
@@ -2512,11 +2582,11 @@ function updatePageChrome(isDrilled) {
     breadcrumbEl.innerHTML =
       '<button class="bc-parent" type="button">Analyze</button>'
       + '<span class="bc-sep">›</span>'
-      + '<button class="bc-parent" type="button" onclick="' + clearFn + '">Manual Adjustments</button>'
+      + '<button class="bc-parent" type="button" onclick="' + clearFn + '">Inventory Adjustments</button>'
       + '<span class="bc-sep">›</span>'
       + '<span class="bc-current">' + label + '</span>';
     titleGroupEl.innerHTML =
-      '<button class="page-back-btn" type="button" aria-label="Back to Manual Adjustments" onclick="' + clearFn + '">'
+      '<button class="page-back-btn" type="button" aria-label="Back to Inventory Adjustments" onclick="' + clearFn + '">'
       +   '<span class="material-icons">arrow_back</span>'
       + '</button>'
       + '<h1 class="page-title">' + label + '</h1>';
@@ -2532,9 +2602,9 @@ function updatePageChrome(isDrilled) {
     breadcrumbEl.innerHTML =
       '<button class="bc-parent" type="button">Analyze</button>'
       + '<span class="bc-sep">›</span>'
-      + '<span class="bc-current">Manual Adjustments</span>';
+      + '<span class="bc-current">Inventory Adjustments</span>';
     titleGroupEl.innerHTML =
-      '<h1 class="page-title">Manual Adjustments</h1>'
+      '<h1 class="page-title">Inventory Adjustments</h1>'
       + '<span class="page-section-indicator" id="page-section-indicator">' + sectionLabel + '</span>';
   }
 }
@@ -2718,7 +2788,7 @@ function renderHeatmap() {
     const order = getSortedUserRows();
     order.forEach(rowIdx => {
       const { userIdx, pharmIdx } = USER_ROWS[rowIdx];
-      const userName  = USERS[userIdx];
+      const userName  = USERS[userIdx].name;
       const pharmName = PHARMACIES[pharmIdx];
       html += `<tr class="pharmacy-row">
         <td><span class="pharmacy-name">${userName}</span></td>`;
@@ -3008,9 +3078,15 @@ function openPanel(pharmIdx, drugIdx, cameFrom = null, highlightUserIdx = null) 
   PANEL_STATE.cameFrom = cameFrom;
   PANEL_STATE.highlightUserIdx = highlightUserIdx;
 
-  // Reset type filter for the new panel
+  // Reset all panel filters for the new panel
   PANEL_FILTER.activeTypes.clear();
-  PANEL_FILTER.rolledUp = [];
+  PANEL_FILTER.rolledUp      = [];
+  PANEL_FILTER.showDispenses      = false;
+  PANEL_FILTER.hideIncreases      = false;
+  PANEL_FILTER.showAllCycleCounts = false;
+  MED_SORT = { col: 'name', dir: 'asc' };
+  TX_SORT.clear();
+  syncToggleButtons();
 
   const drug   = DRUGS[drugIdx].name;
   const pharm  = PHARMACIES[pharmIdx];
@@ -3022,7 +3098,7 @@ function openPanel(pharmIdx, drugIdx, cameFrom = null, highlightUserIdx = null) 
   // viewer has continuity from the row they clicked.
   const subtitleEl = document.getElementById('panel-subtitle');
   if (highlightUserIdx !== null && highlightUserIdx !== undefined) {
-    subtitleEl.textContent = `${pharm} · Highlighting ${USERS[highlightUserIdx]}`;
+    subtitleEl.textContent = `${pharm} · Highlighting ${USERS[highlightUserIdx].name}`;
   } else {
     subtitleEl.textContent = pharm;
   }
@@ -3068,7 +3144,9 @@ function openTypeDrugPanel(typeKey, drugIdx) {
   // PANEL_FILTER (the Trend chart, for instance).
   PANEL_FILTER.activeTypes.clear();
   PANEL_FILTER.activeTypes.add(typeKey);
-  PANEL_FILTER.rolledUp = [];
+  PANEL_FILTER.rolledUp      = [];
+  PANEL_FILTER.showDispenses = false;
+  PANEL_FILTER.hideIncreases = false;
 
   const drug = DRUGS[drugIdx].name;
   const typeLabel = TYPE_BY_KEY[typeKey]?.label || typeKey;
@@ -3220,7 +3298,25 @@ function renderPanelContent(pharmIdx, drugIdx) {
     activeTypes = t ? [t] : [];
   } else {
     const breakdown = getCellBreakdown(pharmIdx, drugIdx);
-    activeTypes = ADJ_TYPES.filter(t => (breakdown[t.key] || 0) > 0);
+    activeTypes = ADJ_TYPES.filter(t => (breakdown[t.key] || 0) > 0 && t.key !== 'cycle_count_variance' && t.key !== 'cycle_count_verified');
+    // Cycle count reconciliation rows also carry a reason (e.g. Expired, Other).
+    // Add any reason types found in cycle count variances so they appear as
+    // filter pills regardless of which activity type they came from.
+    // We approximate by checking getCellCycleVarianceCount — if the cell has
+    // variances, the reasons used are drawn from COMMENT_TEMPLATES['cycle_count_variance'],
+    // which maps to existing reason type keys via reasonKey. Since we can't know
+    // the exact distribution without expanding, we add all possible cc variance
+    // reason types when the cell has any variances, weighted by template frequency.
+    const ccVarCount = getCellCycleVarianceCount(pharmIdx, drugIdx);
+    if (ccVarCount > 0) {
+      // Reason types that can appear on cycle count variance rows
+      const ccReasonKeys = ['correction', 'shrinkage', 'other'];
+      ccReasonKeys.forEach(k => {
+        if (!activeTypes.find(t => t.key === k) && TYPE_BY_KEY[k]) {
+          activeTypes = [...activeTypes, TYPE_BY_KEY[k]];
+        }
+      });
+    }
   }
 
   // Per-month, per-type matrix.
@@ -3243,8 +3339,8 @@ function renderPanelContent(pharmIdx, drugIdx) {
       } else if (dir === 'none') {
         pos = total; neg = 0;          // CC strip reads pos+neg as count
       } else {
-        // 'either' — mixed direction. count_correction tends to be
-        // small symmetric swings; ndc_change & other are 50/50.
+        // 'either' — mixed direction. correction tends to be
+        // small symmetric swings; other is free-form.
         const posRatio = 0.30 + rand() * 0.40;
         pos = Math.round(total * posRatio);
         neg = Math.max(0, total - pos);
@@ -3369,42 +3465,56 @@ function renderPharmList(typeKey, drugIdx) {
   }).join('');
 }
 
-/* Events summary line — shows adjustments + cycle counts as parallel
-   numbers above the type-stat filter cards. Cycle counts aren't part
-   of the adjustment denominator, so they sit alongside, not within.
-   In aggregate scope (L1 panel from the By-Adjustment-Type view), both
-   numbers sum across pharmacies that have the focus type for this
-   drug — same set the pharm-list table renders. Pharmacies with zero
-   of the focus type are excluded so the totals here reconcile with
-   the rows visible in the table below. */
+/* Events summary line — shows total adjustments (including cycle count
+   variances, which are now inventory adjustments) and a separate count of
+   In aggregate scope, numbers sum across pharmacies that have the focus
+   type for this drug, matching the pharm-list table rows. */
+
+/* Returns the number of cycle count sessions for a cell that resulted
+   in a variance (reconciliation), using the same deterministic seed
+   as renderMedTable so the count is consistent throughout the panel. */
+function getCellCycleVarianceCount(pharmIdx, drugIdx) {
+  const ccTotal = getCellCycleCount(pharmIdx, drugIdx);
+  let seed = (pharmIdx * 31 + drugIdx * 7 + 99) >>> 0;
+  let varCount = 0;
+  for (let k = 0; k < ccTotal; k++) {
+    seed = (seed + 0x6D2B79F5) >>> 0;
+    let s = seed;
+    s = Math.imul(s ^ (s >>> 15), s | 1);
+    s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+    if (((s ^ (s >>> 14)) >>> 0) / 4294967296 < 0.25) varCount++;
+  }
+  return varCount;
+}
+
 function renderEventsSummary(pharmIdx, drugIdx) {
   const isAggregate = (PANEL_STATE.scope === 'aggregate');
-  let adjTotal, ccTotal;
+  let adjTotal, ccReconTotal;
   if (isAggregate) {
     const typeKey = PANEL_STATE.typeKey;
-    adjTotal = 0;
-    ccTotal  = 0;
+    adjTotal     = 0;
+    ccReconTotal = 0;
     for (let i = 0; i < HEATMAP.length; i++) {
       const focusCount = getDrilledCellValue(i, drugIdx, typeKey);
-      if (focusCount <= 0) continue;     // matches pharm-list row filter
-      adjTotal += focusCount;
-      ccTotal  += getCellCycleCount(i, drugIdx);
+      if (focusCount <= 0) continue;
+      adjTotal     += focusCount;
+      ccReconTotal += getCellCycleVarianceCount(i, drugIdx);
     }
   } else {
-    adjTotal = HEATMAP[pharmIdx][drugIdx].v || 0;
-    ccTotal  = getCellCycleCount(pharmIdx, drugIdx);
+    adjTotal     = HEATMAP[pharmIdx][drugIdx].v || 0;
+    ccReconTotal = getCellCycleVarianceCount(pharmIdx, drugIdx);
   }
   const el = document.getElementById('events-summary');
   if (!el) return;
   el.innerHTML = `
     <span class="summary-item">
       <span class="summary-value">${adjTotal}</span>
-      <span class="summary-label">manual adjustment${adjTotal === 1 ? '' : 's'}</span>
+      <span class="summary-label">Manual Adjustment${adjTotal === 1 ? '' : 's'}</span>
     </span>
     <span class="summary-divider">·</span>
     <span class="summary-item">
-      <span class="summary-value">${ccTotal}</span>
-      <span class="summary-label">cycle count${ccTotal === 1 ? '' : 's'} performed</span>
+      <span class="summary-value">${ccReconTotal}</span>
+      <span class="summary-label">Cycle Count Reconciliation${ccReconTotal === 1 ? '' : 's'}</span>
     </span>
   `;
 }
@@ -3418,23 +3528,14 @@ function drawTimeSeries(matrix, months, activeTypes) {
   const svg = document.getElementById('ts-chart');
   svg.innerHTML = '';
   const W = 980, H = 260;
-  // Reserve the top 36px for the Cycle Count track when cycle_count is active
-  const CC_KEY  = 'cycle_count';
-  const NDC_KEY = 'ndc_change';
-  const ccActive = activeTypes.some(t => t.key === CC_KEY);
-  const trackH  = ccActive ? 36 : 0;     // strip height incl. label
-  const trackGap = ccActive ? 6  : 0;    // gap between strip and main chart
-  const pad = { l: 40, r: 12, t: 14 + trackH + trackGap, b: 28 };
+  // cycle_count_variance is now a normal adjustment type on the main chart.
+  // cycle_count_verified has no bar (zero amount, audit only) — excluded.
+  const EXCL_KEYS = new Set(['cycle_count_verified']);
+  const pad = { l: 40, r: 12, t: 14, b: 28 };
   const innerW = W - pad.l - pad.r;
   const innerH = H - pad.t - pad.b;
 
-  // Two types are excluded from the main chart's bar render:
-  //   cycle_count — rendered in its own track above (count, not inventory change)
-  //   ndc_change  — paired source/destination decrement+increment per event,
-  //                 so it's net-zero at the drug level. Showing it as an
-  //                 inventory change would be misleading. Still available
-  //                 in the type-stats cards, table filter, and tx history.
-  const mainTypes = activeTypes.filter(t => t.key !== CC_KEY && t.key !== NDC_KEY);
+  const mainTypes = activeTypes.filter(t => !EXCL_KEYS.has(t.key));
 
   // Per-month max bar magnitude across MAIN TYPES only
   const monthPos = matrix.map(row => Math.max(0, ...mainTypes.map(t => row[t.key]?.pos || 0)));
@@ -3481,72 +3582,15 @@ function drawTimeSeries(matrix, months, activeTypes) {
       `<text class="axis-text" x="${x}" y="${H - pad.b + 16}" text-anchor="middle">${m}</text>`);
   });
 
-  // ─── Cycle Count track ─────────────────────────────────────────
-  // Cycle counts are activity events, not inventory changes — they
-  // occupy a separate strip above the main chart so the y-axis stays
-  // honest about what's a "real" inventory adjustment.
-  if (ccActive) {
-    const cc = TYPE_BY_KEY[CC_KEY];
-    const cycleCountByMonth = matrix.map(row => {
-      const c = row[CC_KEY] || { pos: 0, neg: 0 };
-      return c.pos + c.neg;                 // count of count events
-    });
-    const maxCC = Math.max(...cycleCountByMonth, 0);
-    const trackTopY    = 14;                // strip starts here
-    const trackBaseY   = trackTopY + trackH; // baseline of bars
-    const trackBarMaxH = 22;                // max bar height in the strip
-
-    // Strip label sits inside the strip area, top-left, so it doesn't
-    // collide with or get clipped by the y-axis number labels.
-    svg.insertAdjacentHTML('beforeend',
-      `<text x="${pad.l + 4}" y="${trackTopY + 10}" text-anchor="start"
-             style="font-family: var(--font); font-size: 10.5px; font-weight: 700;
-                    letter-spacing: .04em; text-transform: uppercase; fill: ${cc.color};">CYCLE COUNT</text>`);
-
-    // Faint divider just below the strip to visually separate it from
-    // the main chart body
-    svg.insertAdjacentHTML('beforeend',
-      `<line x1="${pad.l}" x2="${W - pad.r}" y1="${trackBaseY + 2}" y2="${trackBaseY + 2}"
-             stroke="#E5E5E5" stroke-width="1" stroke-dasharray="0"/>`);
-
-    // One mini-bar per month, plus numeric label above it
-    const stripBarW = Math.min(36, monthW * 0.45);
-    cycleCountByMonth.forEach((count, mi) => {
-      const cx = pad.l + (mi + 0.5) * monthW;
-      const x  = cx - stripBarW / 2;
-
-      // Hover area for this month's cycle count cell — full strip column,
-      // so the tooltip works even on zero months
-      svg.insertAdjacentHTML('beforeend',
-        `<rect class="ts-cc-hover-area"
-               data-month-idx="${mi}" data-type-key="${CC_KEY}"
-               x="${pad.l + mi * monthW}" y="${trackTopY}"
-               width="${monthW}" height="${trackH}"
-               fill="transparent" style="cursor:default"/>`);
-
-      if (count <= 0 || maxCC === 0) return;
-
-      const h = (count / maxCC) * trackBarMaxH;
-      const y = trackBaseY - h;
-      svg.insertAdjacentHTML('beforeend',
-        `<rect data-type="${CC_KEY}"
-               x="${x}" y="${y}" width="${stripBarW}" height="${h}"
-               fill="${cc.colorLight}"
-               style="pointer-events:none"/>`);
-      svg.insertAdjacentHTML('beforeend',
-        `<text data-type="${CC_KEY}" class="ts-cc-label"
-               x="${cx}" y="${y - 3}" text-anchor="middle"
-               style="font-size:10px; fill: ${cc.color}; font-weight:600; pointer-events:none;">${count}</text>`);
-    });
-  }
+  // ─── Cycle Count track removed ────────────────────────────────
+  // cycle_count_variance is now a normal adjustment type rendered
+  // in the main bar chart. cycle_count_verified has zero amount and
+  // is excluded from the chart entirely (audit record only).
 
   // Zero baseline — rendered last on top of bars (stronger weight)
   // We'll insert it after bars so it overlays them.
 
-  // Grouped bars — within each month, draw one bar per MAIN active type
-  // (cycle_count is rendered in its own track above; see further down).
-  // Each bar is colored by its type, with the increase magnitude
-  // sitting above zero and the decrease magnitude below zero.
+  // Grouped bars — one bar per main type per month.
   const groupGap = monthW * 0.12;          // padding on each side of group
   const groupW   = monthW - groupGap * 2;
   const n        = Math.max(1, mainTypes.length);
@@ -3593,10 +3637,9 @@ function drawTimeSeries(matrix, months, activeTypes) {
     `<line class="axis-line" x1="${pad.l}" x2="${W - pad.r}"
            y1="${zeroY}" y2="${zeroY}" stroke-width="1.5"/>`);
 
-  // Legend — one item per type that appears in the chart. Cycle Count
-  // stays (rendered in its own track above), but ndc_change is excluded
-  // since it isn't visualized at all.
-  const legendTypes = activeTypes.filter(t => t.key !== NDC_KEY);
+  // Legend — one item per type that appears in the chart.
+  // cycle_count_verified is excluded (no bars rendered for it).
+  const legendTypes = activeTypes.filter(t => !EXCL_KEYS.has(t.key));
   const legend = document.getElementById('ts-legend');
   legend.innerHTML = legendTypes.map(t => `
     <span class="ts-legend-item" data-type="${t.key}" onclick="toggleTypeLine('${t.key}', this)">
@@ -3707,12 +3750,22 @@ function toggleTypeLine(key, el) {
 
 /* Type filter state — set of active type keys.
    Empty set = no filter (show all). Reset on each panel open. */
-const PANEL_FILTER = { activeTypes: new Set(), rolledUp: [] };
+let OPEN_TX_ROW = null; // context for the currently-open tx expansion row
+
+const PANEL_FILTER = {
+  activeTypes:      new Set(),  // type keys selected for type-card filtering
+  rolledUp:         [],         // unused (no rollup), kept for compatibility
+  showDispenses:    false,      // off by default — dispenses are contextual, not the focus
+  hideIncreases:    false,      // off by default — increases are visible but filterable
+  showAllCycleCounts: false,    // off by default — cycle_count_verified rows hidden unless toggled
+};
 
 /* Per-variant byType breakdown saved on render, used by:
    - filtered med table re-renders
    - the transactions expansion (so tx types match displayed counts) */
 let MED_STATE = null;
+let MED_SORT  = { col: 'name', dir: 'asc' }; // current sort column + direction
+const TX_SORT = new Map(); // per-rowIdx sort state for tx expansion tables
 
 /* Type breakdown stat cards
    Each card is now a CLICKABLE FILTER for the medication table below.
@@ -3721,7 +3774,7 @@ let MED_STATE = null;
    table can't show any rows for a type, the card for that type won't
    appear either. */
 function renderTypeStats(activeTypes, total) {
-  // Sum each type's count across all variants
+  // Sum each type's count across all variants (manual adjustments)
   const typeTotals = {};
   activeTypes.forEach(t => { typeTotals[t.key] = 0; });
   if (MED_STATE) {
@@ -3729,56 +3782,62 @@ function renderTypeStats(activeTypes, total) {
       activeTypes.forEach(t => { typeTotals[t.key] += (v.byType[t.key] || 0); });
     });
   }
+  // Also count cycle count variance rows by their reason key,
+  // since "Filter by reason" should surface reasons from both
+  // Manual Adjustments and Cycle Count Reconciliations.
+  if (MED_STATE && PANEL_STATE.scope !== 'aggregate') {
+    const pharmIdx = PANEL_STATE.pharm;
+    const drugIdx  = PANEL_STATE.drug;
+    const ccVarCount = getCellCycleVarianceCount(pharmIdx, drugIdx);
+    if (ccVarCount > 0) {
+      // Use the same seed as buildTxExpansion to get consistent reason distribution
+      let seed = (pharmIdx * 31 + drugIdx * 7 + 999) >>> 0;
+      const rand = () => {
+        seed = (seed + 0x6D2B79F5) >>> 0;
+        let s = seed;
+        s = Math.imul(s ^ (s >>> 15), s | 1);
+        s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+        return ((s ^ (s >>> 14)) >>> 0) / 4294967296;
+      };
+      const ccReasons = COMMENT_TEMPLATES['cycle_count_variance'];
+      for (let k = 0; k < ccVarCount; k++) {
+        const reason = ccReasons[Math.floor(rand() * ccReasons.length)];
+        const reasonKey = reason === 'Correction' ? 'correction'
+          : reason === 'Shrinkage' ? 'shrinkage'
+          : 'other';
+        if (typeTotals[reasonKey] !== undefined) typeTotals[reasonKey]++;
+      }
+    }
+  }
 
   const scaled = activeTypes
     .map(t => ({ type: t, total: typeTotals[t.key] || 0 }))
     .filter(r => r.total > 0);
   scaled.sort((a, b) => b.total - a.total);
 
-  // Limit to top 4 + "Other" rollup so the row stays readable
-  const top  = scaled.slice(0, 4);
-  const rest = scaled.slice(4);
-  const restSum  = rest.reduce((s, r) => s + r.total, 0);
-  const restKeys = rest.map(r => r.type.key);
-  PANEL_FILTER.rolledUp = restKeys; // remember for the rollup-button toggle
+  PANEL_FILTER.rolledUp = []; // no rollup — all types shown individually
   const grand = total || 1;
 
   const filterActive = PANEL_FILTER.activeTypes.size > 0;
   const isOn = (k) => PANEL_FILTER.activeTypes.has(k);
-  const cardClass = (keys) => {
-    const anyOn = keys.some(isOn);
-    if (anyOn)        return 'active';
-    if (filterActive) return 'dimmed';
+  const cardClass = (key) => {
+    if (isOn(key))     return 'active';
+    if (filterActive)  return 'dimmed';
     return '';
   };
 
-  const html = top.map(({ type, total: n }) => `
-    <button class="type-stat ${cardClass([type.key])}"
+  const html = scaled.length === 0
+    ? `<span class="type-stats-empty">No adjustments in selected date range.</span>`
+    : scaled.map(({ type, total: n }) => `
+    <button class="type-stat ${cardClass(type.key)}"
             type="button"
+            style="--pill-color: ${type.color}"
             onclick="toggleTypeFilter('${type.key}')"
             aria-pressed="${isOn(type.key)}">
-      <div class="type-stat-name">
-        <span class="swatch" style="background:${type.color}"></span>${type.label}
-      </div>
-      <div class="type-stat-value">${n}</div>
-      <div class="type-stat-meta">${Math.round(n / grand * 100)}% of total</div>
+      ${type.label}
+      <span class="type-stat-count">${n}</span>
     </button>
-  `).join('') + (restSum > 0 ? `
-    <button class="type-stat ${cardClass(restKeys)}"
-            type="button"
-            onclick="toggleRolledUpFilter()"
-            aria-pressed="${restKeys.some(isOn)}">
-      <div class="type-stat-name">
-        <span class="swatch" style="background:var(--gray-500)"></span>Other types (${rest.length})
-      </div>
-      <div class="type-stat-value">${restSum}</div>
-      <div class="type-stat-meta">${Math.round(restSum / grand * 100)}% of total</div>
-    </button>
-  ` : '') + (top.length === 0 ? `
-    <div class="type-stat" style="grid-column: 1 / -1; text-align: center; color: var(--gray-600);">
-      No adjustments in selected date range.
-    </div>
-  ` : '');
+  `).join('');
 
   document.getElementById('type-stats').innerHTML = html;
 
@@ -3786,11 +3845,10 @@ function renderTypeStats(activeTypes, total) {
   const statusLabel = document.getElementById('type-stats-status-label');
   const clearBtn    = document.getElementById('clear-type-filter');
   if (filterActive) {
-    const labels = [...PANEL_FILTER.activeTypes].map(k => TYPE_BY_KEY[k].label);
-    statusLabel.innerHTML = `<strong style="color:var(--gray-700);">Filtered to:</strong> ${labels.join(', ')}`;
+    statusLabel.textContent = 'Filtered by reason';
     clearBtn.style.display = '';
   } else {
-    statusLabel.textContent = 'Click a type to filter the table below';
+    statusLabel.textContent = 'Filter by reason';
     clearBtn.style.display = 'none';
   }
 }
@@ -3822,17 +3880,96 @@ function clearTypeFilter() {
   reRenderAfterFilterChange();
 }
 
-function reRenderAfterFilterChange() {
-  // Collapse any expanded med rows so the tx tables don't go stale
-  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => r.classList.remove('expanded'));
-  document.querySelectorAll('#med-table-body tr.expansion-row').forEach(r => r.remove());
+/* Show/hide dispenses in the transaction table.
+   Dispenses are off by default — they add context but aren't the focus. */
+/* syncToggleButtons — reflects current PANEL_FILTER flag state onto the
+   static panel-level toggle buttons. Called whenever a panel opens so
+   the buttons always start unchecked on a fresh panel. */
+function syncToggleButtons() {
+  const dispCb = document.getElementById('show-dispenses-btn');
+  const incCb  = document.getElementById('hide-increases-btn');
+  const ccCb   = document.getElementById('show-all-cycle-counts-btn');
+  if (dispCb) dispCb.checked = PANEL_FILTER.showDispenses;
+  if (incCb)  incCb.checked  = PANEL_FILTER.hideIncreases;
+  if (ccCb)   ccCb.checked   = PANEL_FILTER.showAllCycleCounts;
+}
 
-  // Re-render the panel sections that depend on filter state
+function toggleReasonFilter(header) {
+  const body = document.getElementById('reason-filter-body');
+  const icon = header.querySelector('.material-icons');
+  const isOpen = header.getAttribute('aria-expanded') === 'true';
+  header.setAttribute('aria-expanded', !isOpen);
+  body.style.display = isOpen ? 'none' : 'block';
+  if (icon) icon.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+
+function toggleViewSettings(header) {
+  const body = document.getElementById('view-settings-body');
+  const icon = header.querySelector('.material-icons');
+  const isOpen = header.getAttribute('aria-expanded') === 'true';
+  header.setAttribute('aria-expanded', !isOpen);
+  body.style.display = isOpen ? 'none' : 'block';
+  if (icon) icon.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+
+function toggleShowDispenses(cb) {
+  PANEL_FILTER.showDispenses = cb.checked;
+  reRenderOpenTxTable();
+}
+
+function toggleHideIncreases(cb) {
+  PANEL_FILTER.hideIncreases = cb.checked;
+  reRenderOpenTxTable();
+}
+
+function toggleShowAllCycleCounts(cb) {
+  PANEL_FILTER.showAllCycleCounts = cb.checked;
+  reRenderOpenTxTable();
+}
+
+/* reRenderOpenTxTable — re-renders the currently-open transaction expansion
+   row in-place. Now a view-level control: iterates all expanded rows so
+   the filter applies everywhere, not just the one that was last opened. */
+function reRenderOpenTxTable() {
+  document.querySelectorAll('#med-table-body tr.expanded').forEach(tr => {
+    const existing = tr.nextElementSibling;
+    if (existing && existing.classList.contains('expansion-row')) existing.remove();
+    // Recover coords from the data attributes set on the row
+    const pharmIdx = parseInt(tr.dataset.pharm ?? PANEL_STATE.pharm, 10);
+    const drugIdx  = parseInt(tr.dataset.drug  ?? PANEL_STATE.drug,  10);
+    const rowIdx   = parseInt(tr.dataset.row, 10);
+    if (!isNaN(rowIdx)) buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr);
+  });
+}
+
+function reRenderAfterFilterChange() {
+  // Snapshot which rows are currently expanded so we can restore them
+  // after re-rendering the table. Keyed by data-row index.
+  const openRows = new Set();
+  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => {
+    openRows.add(r.dataset.row);
+  });
+
+  // Re-render the type-stat pills and the med table
   if (PANEL_STATE.lastRender) {
     const { activeTypes, total } = PANEL_STATE.lastRender;
     renderTypeStats(activeTypes, total);
   }
   renderFilteredMedTable();
+
+  // Re-open rows that were expanded before the filter changed
+  if (openRows.size > 0) {
+    document.querySelectorAll('#med-table-body tr[data-row]').forEach(tr => {
+      if (openRows.has(tr.dataset.row)) {
+        tr.classList.add('expanded');
+        const pharmIdx = parseInt(tr.dataset.pharm, 10);
+        const drugIdx  = parseInt(tr.dataset.drug,  10);
+        const rowIdx   = parseInt(tr.dataset.row,   10);
+        buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr);
+        OPEN_TX_ROW = { pharmIdx, drugIdx, rowIdx, tr };
+      }
+    });
+  }
 }
 
 /* ============================================================
@@ -3877,15 +4014,38 @@ const MED_VARIANTS = [
 ];
 
 /* Fictional users (rotated per row) */
+/* USERS — each entry carries both a display name and a unique system ID.
+   System IDs follow the pattern: first 3 letters of last name (upper) +
+   first initial (upper) + zero-padded 2-digit index. This mirrors common
+   health system EHR account naming conventions and provides unambiguous
+   legal accountability even when names overlap across a large IDN. */
 const USERS = [
-  'Jordan Reeves',    'Casey Whitman',   'Riley Foster',     'Morgan Avery',
-  'Taylor Bennett',   'Sage Holloway',   'Devon Marsh',      'Quinn Delgado',
-  'Avery Dunbar',     'Sloan Kavanaugh', 'Cameron Ellis',    'Skylar Reyes',
-  'Hayden Park',      'Reese Whitfield', 'Emerson Walsh',    'Logan Patel',
-  'Parker Knox',      'Drew Mathis',     'Sawyer Hayes',     'Finley Cross',
-  'Ellis Boone',      'Rowan Tate',      'Blake Sutton',     'Marlow Chen',
-  'Phoenix Vargas',   'Harper Vance',    'Jamie Lin',        'Spencer Yates',
-  'Bennett Cole',     'Adair Singh',     'Toby Ramirez',     'Jules Castellano',
+  { name: 'Jordan Reeves',    id: 'REEJ01' },  { name: 'Casey Whitman',    id: 'WHIC02' },
+  { name: 'Riley Foster',     id: 'FOSR03' },  { name: 'Morgan Avery',     id: 'AVEM04' },
+  { name: 'Taylor Bennett',   id: 'BENT05' },  { name: 'Sage Holloway',    id: 'HOLS06' },
+  { name: 'Devon Marsh',      id: 'MARD07' },  { name: 'Quinn Delgado',    id: 'DELQ08' },
+  { name: 'Avery Dunbar',     id: 'DUNA09' },  { name: 'Sloan Kavanaugh',  id: 'KAVS10' },
+  { name: 'Cameron Ellis',    id: 'ELLC11' },  { name: 'Skylar Reyes',     id: 'REYS12' },
+  { name: 'Hayden Park',      id: 'PARH13' },  { name: 'Reese Whitfield',  id: 'WHIR14' },
+  { name: 'Emerson Walsh',    id: 'WALE15' },  { name: 'Logan Patel',      id: 'PATL16' },
+  { name: 'Parker Knox',      id: 'KNOP17' },  { name: 'Drew Mathis',      id: 'MATD18' },
+  { name: 'Sawyer Hayes',     id: 'HAYS19' },  { name: 'Finley Cross',     id: 'CROF20' },
+  { name: 'Ellis Boone',      id: 'BOOE21' },  { name: 'Rowan Tate',       id: 'TATR22' },
+  { name: 'Blake Sutton',     id: 'SUTB23' },  { name: 'Marlow Chen',      id: 'CHEM24' },
+  { name: 'Phoenix Vargas',   id: 'VARP25' },  { name: 'Harper Vance',     id: 'VANH26' },
+  { name: 'Jamie Lin',        id: 'LINJ27' },  { name: 'Spencer Yates',    id: 'YATS28' },
+  { name: 'Bennett Cole',     id: 'COLB29' },  { name: 'Adair Singh',      id: 'SINA30' },
+  { name: 'Toby Ramirez',     id: 'RAMT31' },  { name: 'Jules Castellano', id: 'CASJ32' },
+];
+
+/* Fast name→id lookup for tx row generation */
+const USER_BY_NAME = Object.fromEntries(USERS.map(u => [u.name, u.id]));
+
+/* Mock patient names and RX numbers for dispense rows */
+const MOCK_PATIENTS = [
+  'Doe, Jane', 'Smith, John', 'Garcia, Maria', 'Johnson, Robert',
+  'Williams, Linda', 'Brown, David', 'Jones, Patricia', 'Miller, James',
+  'Davis, Barbara', 'Wilson, Charles', 'Moore, Susan', 'Taylor, Thomas',
 ];
 
 /* ──────────────────────────────────────────────────────────
@@ -3997,23 +4157,13 @@ function getUserPharmDrugCount(userIdx, pharmIdx, drugIdx) {
 
 /* Realistic comment patterns sourced from the customer session */
 const COMMENT_TEMPLATES = {
-  count_correction: [
+  correction: [
     'Stock verified after audit',
     'Balance off by 2 tablets — recount confirmed',
     'Back count short — see incident #41620',
     'Vault count reconciled to perpetual inventory',
     '',  // sometimes missing
     'Reconciled with second tech sign-off',
-  ],
-  cycle_count: [
-    '',
-    'Quarterly cycle count — no discrepancy',
-    'Daily cycle count, off by 1, recount matched',
-  ],
-  return_to_stock: [
-    'Patient cancelled prescription — RX #4108273',
-    'Returned, unopened, original lot intact',
-    'Returned by patient; expiration verified',
   ],
   waste: [
     'Two broken tablets — discarded per policy',
@@ -4025,26 +4175,46 @@ const COMMENT_TEMPLATES = {
     'Removed expired stock per monthly review',
     'Expired lot returned to vendor',
   ],
-  returned_to_vendor: [
-    'Returned to vendor via INMAR — confirmation #88421',
-    'Vendor return, 222 form #A01234567',
-    'Manufacturer recall — vendor return processed',
+  contaminated: [
+    'Contamination found during inspection',
+    'Compromised packaging — destroyed per policy',
+  ],
+  clinic_dispense: [
+    'Floor stock — administered to patient on unit 4B',
+    'Clinic floor dispense, anesthesia request',
+    'Dispensed to clinic per standing order',
+  ],
+  inpatient_pharmacy: [
+    'Transferred to inpatient pharmacy for patient care',
+    'Inpatient fill — order #IP-88421',
+    '',
   ],
   shrinkage: [
     'Unaccounted shrinkage during inventory audit',
     '',
     'Loss identified during cycle count — investigation pending',
   ],
-  contaminated: [
-    'Contamination found during inspection',
-    'Compromised packaging — destroyed per policy',
+  return_to_vendor: [
+    'Returned to vendor via INMAR — confirmation #88421',
+    'Vendor return, 222 form #A01234567',
+    'Manufacturer recall — vendor return processed',
   ],
-  ndc_change: [
-    'Source balance: NDC change to new lot',
-    'Destination balance: NDC change',
+  clinic_return: [
+    'Unused floor stock returned from unit 4B',
+    'Patient discharged, unused dose returned',
+    'Clinic return per policy — sealed, unexpired',
+  ],
+  // Cycle Count Reconciliation reasons — restricted to shared reason codes:
+  // Correction (data alignment), Shrinkage (unexplained loss), Other (catch-all).
+  // Manual-adjustment-only reasons (Expired, Waste, Contaminated, etc.) are
+  // not available on this activity type.
+  cycle_count_variance: [
+    'Correction',
+    'Shrinkage',
+    'Other',
   ],
   other: [
-    'See attached note',
+    'Unusual variance — flagged for review',
     '',
   ],
 };
@@ -4067,7 +4237,9 @@ function renderMedTable(pharmIdx, drugIdx, rand, activeTypes) {
   //     Type view.
   //   - aggregate scope: the panel is pre-scoped to one type, so
   //     the entire total is that type.
-  const adjustmentTypes = activeTypes.filter(t => t.key !== 'cycle_count');
+  // cycle_count_verified has no balance change and is not a reason code —
+  // exclude both cycle count types from the med table type breakdown.
+  const adjustmentTypes = activeTypes.filter(t => t.key !== 'cycle_count_verified' && t.key !== 'cycle_count_variance');
   const typeTotals = {};
   adjustmentTypes.forEach(t => { typeTotals[t.key] = 0; });
   if (isAggregate) {
@@ -4114,6 +4286,26 @@ function renderMedTable(pharmIdx, drugIdx, rand, activeTypes) {
   renderFilteredMedTable();
 }
 
+/* sortMedTable — called by column header clicks.
+   Toggles direction if the same column is clicked again; resets to
+   asc when switching columns. Updates header classes and re-renders. */
+function sortMedTable(col) {
+  if (MED_SORT.col === col) {
+    MED_SORT.dir = MED_SORT.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    MED_SORT.col = col;
+    MED_SORT.dir = col === 'count' || col === 'total' ? 'desc' : 'asc'; // numbers default desc
+  }
+  // Update header classes + icon direction
+  document.querySelectorAll('#med-table-head th[data-col]').forEach(th => {
+    const isActive = th.dataset.col === MED_SORT.col;
+    th.classList.toggle('active-sort', isActive);
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = (isActive && MED_SORT.dir === 'desc') ? 'arrow_downward' : 'arrow_upward';
+  });
+  renderFilteredMedTable();
+}
+
 /* Render (or re-render) the med table rows based on PANEL_FILTER + MED_STATE */
 function renderFilteredMedTable() {
   if (!MED_STATE) return;
@@ -4123,22 +4315,37 @@ function renderFilteredMedTable() {
     ? activeTypes.filter(t => PANEL_FILTER.activeTypes.has(t.key)).map(t => t.key)
     : activeTypes.map(t => t.key);
 
-  let visibleRows = 0;
-  const html = variantState.map((row, i) => {
-    const count    = keysToSum.reduce((s, k) => s + (row.byType[k] || 0), 0);
-    const totalAdj = keysToSum.reduce((s, k) => s + (row.totalByType[k] || 0), 0);
-    if (count === 0) return ''; // hide rows with 0 of selected types
-    visibleRows += 1;
-    return `
-      <tr data-row="${i}" onclick="toggleMedRow(${PANEL_STATE.pharm},${PANEL_STATE.drug},${i}, this)">
+  // Build visible row objects first so we can sort before rendering
+  const visibleRowData = variantState
+    .map((row, i) => {
+      const count    = keysToSum.reduce((s, k) => s + (row.byType[k] || 0), 0);
+      const totalAdj = keysToSum.reduce((s, k) => s + (row.totalByType[k] || 0), 0);
+      return { row, i, count, totalAdj };
+    })
+    .filter(r => r.count > 0);
+
+  // Apply current sort
+  visibleRowData.sort((a, b) => {
+    const dir = MED_SORT.dir === 'asc' ? 1 : -1;
+    switch (MED_SORT.col) {
+      case 'name':     return dir * a.row.name.localeCompare(b.row.name);
+      case 'strength': return dir * a.row.strength.localeCompare(b.row.strength, undefined, { numeric: true });
+      case 'count':    return dir * (a.count - b.count);
+      case 'total':    return dir * (a.totalAdj - b.totalAdj);
+      default:         return 0;
+    }
+  });
+
+  let visibleRows = visibleRowData.length;
+  const html = visibleRowData.map(({ row, i, count, totalAdj }) => `
+      <tr data-row="${i}" data-pharm="${PANEL_STATE.pharm}" data-drug="${PANEL_STATE.drug}" onclick="toggleMedRow(${PANEL_STATE.pharm},${PANEL_STATE.drug},${i}, this)">
         <td class="med-name">${row.name}</td>
         <td class="med-strength">${row.strength}</td>
         <td class="num">${count}</td>
         <td class="num">${totalAdj.toLocaleString()}</td>
         <td class="num"><span class="material-icons chev">expand_more</span></td>
       </tr>
-    `;
-  }).join('');
+    `).join('');
 
   const body = document.getElementById('med-table-body');
   body.innerHTML = html || `
@@ -4149,22 +4356,43 @@ function renderFilteredMedTable() {
 }
 
 function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
-  // close any other expanded
-  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => {
-    if (r !== tr) {
-      r.classList.remove('expanded');
-      const next = r.nextElementSibling;
-      if (next && next.classList.contains('expansion-row')) next.remove();
-    }
-  });
-
   const isOpen = tr.classList.toggle('expanded');
   const next = tr.nextElementSibling;
   if (!isOpen) {
     if (next && next.classList.contains('expansion-row')) next.remove();
     return;
   }
+  OPEN_TX_ROW = { pharmIdx, drugIdx, rowIdx, tr };
+  buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr);
+}
 
+/* sortTxTable — called by tx-table column header clicks.
+   Stores sort state per rowIdx in TX_SORT, then re-renders just that
+   expansion row in place. */
+function sortTxTable(rowIdx, col) {
+  const current = TX_SORT.get(rowIdx) || { col: 'date', dir: 'desc' };
+  const dir = current.col === col
+    ? (current.dir === 'asc' ? 'desc' : 'asc')
+    : (col === 'amount' || col === 'balance' ? 'desc' : 'asc');
+  // activity and reason sort asc by default (already handled by fallback 'asc')
+  TX_SORT.set(rowIdx, { col, dir });
+  // Find the tr for this rowIdx and re-render its expansion row
+  const tr = document.querySelector(`#med-table-body tr[data-row="${rowIdx}"]`);
+  if (!tr) return;
+  const existing = tr.nextElementSibling;
+  if (existing && existing.classList.contains('expansion-row')) existing.remove();
+  buildTxExpansion(
+    parseInt(tr.dataset.pharm, 10),
+    parseInt(tr.dataset.drug,  10),
+    rowIdx, tr
+  );
+}
+
+/* buildTxExpansion — generates and inserts the transaction expansion row
+   for a given (pharmIdx, drugIdx, rowIdx). Separated from toggleMedRow
+   so it can be called independently by reRenderOpenTxTable without
+   toggling the .expanded state. */
+function buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr) {
   // Build expansion row (transactions table, with Comments column)
   function mulberry32(a) {
     return function() {
@@ -4202,16 +4430,44 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
     return `${mm} ${dd}, ${d.getFullYear()}`;
   }
 
-  // When a type filter is active, transactions in this expansion
-  // should only be of the filtered types so the count matches the
-  // displayed (filtered) Adjustments value.
+  // Build the exact ordered list of type keys for this variant's
+  // adjustment rows from MED_STATE — this guarantees the transaction
+  // rows match the type pill counts exactly.
+  // If a type filter is active, restrict to only the filtered types.
   const filterKeys = [...PANEL_FILTER.activeTypes];
-  function pickTxType() {
-    if (filterKeys.length > 0) {
-      return filterKeys[Math.floor(rand() * filterKeys.length)];
-    }
-    return pickWeightedType(rand);
+  const variantByType = (MED_STATE && MED_STATE.variantState[rowIdx])
+    ? MED_STATE.variantState[rowIdx].byType
+    : null;
+
+  // Build a flat array: ['correction','correction','waste',...] in
+  // canonical ADJ_TYPES order so the deterministic shuffle is stable.
+  // Exclude cycle_count_variance and cycle_count_verified — these are
+  // generated exclusively by the dedicated cycle count loop below and
+  // carry extra fields (expected, actual, reason, reasonKey) that this
+  // loop doesn't set.
+  const MANUAL_ADJ_KEYS = new Set(
+    ADJ_TYPES.map(t => t.key).filter(k => k !== 'cycle_count_variance' && k !== 'cycle_count_verified')
+  );
+  let txTypeList = [];
+  if (variantByType) {
+    ADJ_TYPES.forEach(t => {
+      if (!MANUAL_ADJ_KEYS.has(t.key)) return;
+      if (filterKeys.length > 0 && !filterKeys.includes(t.key)) return;
+      const count = variantByType[t.key] || 0;
+      for (let k = 0; k < count; k++) txTypeList.push(t.key);
+    });
+  } else {
+    // Fallback if MED_STATE isn't populated yet
+    for (let k = 0; k < adjustments; k++) txTypeList.push(pickWeightedType(rand));
   }
+
+  // Fisher-Yates shuffle so types are interleaved naturally by date
+  for (let k = txTypeList.length - 1; k > 0; k--) {
+    const j = Math.floor(rand() * (k + 1));
+    [txTypeList[k], txTypeList[j]] = [txTypeList[j], txTypeList[k]];
+  }
+  let txTypeIdx = 0;
+  function pickTxType() { return txTypeList[txTypeIdx++] || 'other'; }
 
   /* Pick a user-name attribution for a transaction. Three layers:
        1. If the panel was opened with a highlight user (entered from
@@ -4225,15 +4481,15 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
   function pickTxUser() {
     const hl = PANEL_STATE.highlightUserIdx;
     if (hl !== null && hl !== undefined && rand() < 0.35) {
-      return USERS[hl];
+      return USERS[hl].name;
     }
     if (PANEL_STATE.scope === 'cell' && PANEL_STATE.pharm >= 0) {
       const usersHere = getUsersInPharm(PANEL_STATE.pharm);
       if (usersHere.length > 0) {
-        return USERS[usersHere[Math.floor(rand() * usersHere.length)]];
+        return USERS[usersHere[Math.floor(rand() * usersHere.length)]].name;
       }
     }
-    return USERS[Math.floor(rand() * USERS.length)];
+    return USERS[Math.floor(rand() * USERS.length)].name;
   }
 
   // synthesize tx rows: manual adjustments + dispense events.
@@ -4242,13 +4498,11 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
   const txs = [];
   let bal = 2000 + Math.floor(rand() * 400);
 
-  // Manual adjustments — these get colored Type chips.
-  // Cycle Count is NOT generated by this loop — see the dedicated
-  // cycle-count loop below.
-  // Direction is constrained by typeDirection() — Return to Stock
-  // can only increase, Waste/Expired/Returned to Vendor/Shrinkage/
-  // Contaminated can only decrease, the rest can go either way.
-  for (let i = 0; i < Math.max(adjustments, 1); i++) {
+  // Manual adjustments only — cycle_count_variance and cycle_count_verified
+  // are excluded from txTypeList and generated by the dedicated loop below.
+  // Direction is constrained by typeDirection() per TYPE_DIRECTION map.
+  const adjCount2 = txTypeList.length || Math.max(adjustments, 1);
+  for (let i = 0; i < adjCount2; i++) {
     const typeKey = pickTxType();
     const d = txDate(i, adjustments);
     const hh = String(8 + Math.floor(rand() * 11)).padStart(2, '0');
@@ -4262,20 +4516,25 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
 
     const amt = (isInc ? 1 : -1) * (1 + Math.floor(rand() * 90));
     bal += amt;
+    const txUser = pickTxUser();
     txs.push({
       date: fmt(d),
       time: `${hh}:${mn}`,
       ndc, type: typeKey, amount: amt, balance: bal,
-      user: pickTxUser(),
+      user: txUser, userId: USER_BY_NAME[txUser] || '',
       comment: pickComment(typeKey, rand),
     });
   }
 
-  // Cycle counts — verification events on this medication. Per-variant
-  // share of the cell's cycle count total. Don't change balance.
-  // Suppressed when a type filter is active on the Events tab, since
-  // cycle counts aren't an adjustment type (the filter doesn't expose them).
-  if (filterKeys.length === 0) {
+  // Cycle counts — unified audit log (Option B).
+  // Each cycle count event is either a variance (balance changes, shown as
+  // cycle_count_variance type) or a verified match (balance unchanged, shown
+  // as cycle_count_verified). Both appear in the table; only variance rows
+  // contribute to the heatmap cell totals.
+  // Suppressed when a type filter is active that doesn't include cycle counts.
+  const filterHasCycleVariance = filterKeys.includes('cycle_count_variance');
+  const showCycleCounts = filterKeys.length === 0 || filterHasCycleVariance;
+  if (showCycleCounts) {
     let cellCC;
     if (PANEL_STATE.scope === 'aggregate') {
       cellCC = 0;
@@ -4284,145 +4543,278 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
       cellCC = getCellCycleCount(PANEL_STATE.pharm, PANEL_STATE.drug);
     }
     const variantCount = MED_VARIANTS[drugIdx].length;
-    // Distribute roughly evenly across variants; this variant gets
-    // its share plus a small random jitter
     const baseShare = Math.floor(cellCC / variantCount);
     const remainder = cellCC % variantCount;
     const myShare   = baseShare + (rowIdx < remainder ? 1 : 0);
+
+    // Dedicated seeded RNG for variance decisions — must match the seed
+    // used in getCellCycleVarianceCount so the variance/verified split
+    // is consistent with what the Events Summary reports.
+    // We advance past the sessions assigned to earlier variants so this
+    // variant's decisions land on the same RNG positions.
+    let ccSeed = (pharmIdx * 31 + drugIdx * 7 + 99) >>> 0;
+    const ccRand = () => {
+      ccSeed = (ccSeed + 0x6D2B79F5) >>> 0;
+      let s = ccSeed;
+      s = Math.imul(s ^ (s >>> 15), s | 1);
+      s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+      return ((s ^ (s >>> 14)) >>> 0) / 4294967296;
+    };
+    // Burn through sessions assigned to earlier variants
+    const priorSessions = baseShare * rowIdx + Math.min(rowIdx, remainder);
+    for (let k = 0; k < priorSessions; k++) ccRand();
+
     for (let i = 0; i < myShare; i++) {
       const d = txDate(i, Math.max(myShare, 1));
       const hh = String(7 + Math.floor(rand() * 12)).padStart(2, '0');
       const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
-      // Counted matches perpetual ~80% of the time; remainder shows a
-      // variance ±1–3 units (the workflow signal that a paired Count
-      // Correction should follow).
-      const variance = rand() < 0.20 ? (rand() < 0.5 ? -1 : 1) * (1 + Math.floor(rand() * 3)) : 0;
-      const counted  = bal + variance;
+      // Use dedicated ccRand for variance decision — keeps in sync with getCellCycleVarianceCount
+      const hasVariance = ccRand() < 0.25;
+      const variance = hasVariance
+        ? (rand() < 0.5 ? -1 : 1) * (1 + Math.floor(rand() * 3))
+        : 0;
+      const expected = bal - variance;
+      if (hasVariance) {
+        bal += variance;
+        const ccvUser = pickTxUser();
+        const ccvReason = pickComment('cycle_count_variance', rand);
+        const ccvReasonKey = (() => {
+          if (ccvReason === 'Correction') return 'correction';
+          if (ccvReason === 'Shrinkage')  return 'shrinkage';
+          return 'other';
+        })();
+        txs.push({
+          date: fmt(d), time: `${hh}:${mn}`,
+          ndc, type: 'cycle_count_variance',
+          amount: variance,
+          balance: bal,
+          expected,
+          actual: bal,
+          user: ccvUser, userId: USER_BY_NAME[ccvUser] || '',
+          reason: ccvReason,
+          reasonKey: ccvReasonKey,
+          comment: '',
+        });
+      } else {
+        const ccvrUser = pickTxUser();
+        txs.push({
+          date: fmt(d), time: `${hh}:${mn}`,
+          ndc, type: 'cycle_count_verified',
+          amount: 0,
+          balance: bal,
+          expected: bal,
+          actual: bal,
+          user: ccvrUser, userId: USER_BY_NAME[ccvrUser] || '',
+          comment: '',
+        });
+      }
+    }
+  }
+
+  // Dispense events — generated only when the "Show dispenses" toggle
+  // is active. Off by default; the visibleTxs filter below is a safety
+  // net but the real gate is here so we don't build unused rows.
+  if (PANEL_FILTER.showDispenses) {
+    const dispenseCount = Math.max(2, Math.floor(adjustments * 1.5 + rand() * 5));
+    for (let i = 0; i < dispenseCount; i++) {
+      const amt = -(1 + Math.floor(rand() * 3));
+      bal += amt;
+      const d  = txDate(i, dispenseCount);
+      const hh = String(7 + Math.floor(rand() * 13)).padStart(2, '0');
+      const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
+      const rxBase = 9800000 + Math.floor(rand() * 99999);
+      const patIdx = Math.floor(rand() * MOCK_PATIENTS.length);
+      const dispUser = pickTxUser();
       txs.push({
-        date: fmt(d),
-        time: `${hh}:${mn}`,
-        ndc, type: 'cycle_count',
-        amount: null,
-        counted, variance,
-        balance: bal,                    // unchanged
-        user: pickTxUser(),
+        date: fmt(d), time: `${hh}:${mn}`,
+        ndc, type: 'dispense', amount: amt, balance: bal,
+        user: dispUser, userId: USER_BY_NAME[dispUser] || '',
+        rxNum: `RX #${rxBase}`,
+        patient: MOCK_PATIENTS[patIdx],
         comment: '',
       });
     }
   }
 
-  // Dispense events — non-adjustment, no chip, no comment.
-  // Generate ~1.5–3× the adjustment count for realism.
-  const dispenseCount = Math.max(2, Math.floor(adjustments * 1.5 + rand() * 5));
-  for (let i = 0; i < dispenseCount; i++) {
-    const amt = -(1 + Math.floor(rand() * 3));   // dispenses are always decreases
-    bal += amt;
-    const d  = txDate(i, dispenseCount);
-    const hh = String(7 + Math.floor(rand() * 13)).padStart(2, '0');
-    const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
-    txs.push({
-      date: fmt(d),
-      time: `${hh}:${mn}`,
-      ndc, type: 'dispense', amount: amt, balance: bal,
-      user: pickTxUser(),
-      comment: '',                                // dispenses don't get analyst comments
+  let visibleTxs = txs.slice();
+
+  // Apply reason filter — matches manual adjustments by tx.type,
+  // and cycle count reconciliations by tx.reasonKey.
+  if (filterKeys.length > 0) {
+    visibleTxs = visibleTxs.filter(t => {
+      if (t.type === 'cycle_count_variance') return filterKeys.includes(t.reasonKey);
+      if (t.type === 'cycle_count_verified') return false;
+      if (t.type === 'dispense')             return true;
+      return filterKeys.includes(t.type);
     });
   }
 
-  // Sort by most recent first
-  txs.sort((a, b) => (a.date < b.date ? 1 : -1));
+  // cycle_count_verified: hidden by default — verified counts are audit
+  // records with no balance change. Show only when "Show all Cycle Counts" is on.
+  if (!PANEL_FILTER.showAllCycleCounts) {
+    visibleTxs = visibleTxs.filter(t => t.type !== 'cycle_count_verified');
+  }
 
-  const adjCount  = txs.filter(t => t.type !== 'dispense' && t.type !== 'cycle_count').length;
-  const ccCount   = txs.filter(t => t.type === 'cycle_count').length;
-  const dispCount = txs.filter(t => t.type === 'dispense').length;
+  // Dispenses: hidden by default, shown only when showDispenses is on
+  if (!PANEL_FILTER.showDispenses) {
+    visibleTxs = visibleTxs.filter(t => t.type !== 'dispense');
+  }
+
+  // Hide increases: remove rows where the net amount is positive
+  // (stock-increasing adjustments and positive cycle count variances).
+  // cycle_count_verified has amount=0 and is not hidden by this filter.
+  if (PANEL_FILTER.hideIncreases) {
+    visibleTxs = visibleTxs.filter(t => {
+      if (t.type === 'dispense') return true;        // dispenses always decrease
+      if (t.type === 'cycle_count_verified') return true; // neutral, keep
+      return (t.amount || 0) <= 0;
+    });
+  }
+
+  // Apply per-row tx sort (default: date desc — most recent first)
+  const txSort = TX_SORT.get(rowIdx) || { col: 'date', dir: 'desc' };
+  const txSortDir = txSort.dir === 'asc' ? 1 : -1;
+  visibleTxs.sort((a, b) => {
+    const activityLabel = t => {
+      if (t.type === 'cycle_count_variance') return 'Cycle Count Reconciliation';
+      if (t.type === 'cycle_count_verified') return 'Cycle Count (Verified)';
+      if (t.type === 'dispense')             return 'Dispense';
+      return 'Manual Adjustment';
+    };
+    const reasonLabel = t => (TYPE_BY_KEY[t.type]?.label || '');
+    switch (txSort.col) {
+      case 'date':     return txSortDir * ((a.date + a.time) < (b.date + b.time) ? -1 : 1);
+      case 'user':     return txSortDir * a.user.localeCompare(b.user);
+      case 'activity': return txSortDir * activityLabel(a).localeCompare(activityLabel(b));
+      case 'reason':   return txSortDir * reasonLabel(a).localeCompare(reasonLabel(b));
+      case 'amount':   return txSortDir * ((a.amount || 0) - (b.amount || 0));
+      case 'balance':  return txSortDir * ((a.balance || 0) - (b.balance || 0));
+      default:         return 0;
+    }
+  });
+
+  const adjCount  = visibleTxs.filter(t => TYPE_BY_KEY[t.type] && t.type !== 'cycle_count_variance' && t.type !== 'cycle_count_verified').length;
+  const ccVarCount = visibleTxs.filter(t => t.type === 'cycle_count_variance').length;
+  const ccVerCount = visibleTxs.filter(t => t.type === 'cycle_count_verified').length;
+  const dispCount  = visibleTxs.filter(t => t.type === 'dispense').length;
+
+  const ccSummary = (ccVarCount + ccVerCount) > 0
+    ? ` · ${ccVarCount} cycle count reconciliation${ccVarCount===1?'':'s'}${ccVerCount > 0 ? ` · ${ccVerCount} verified` : ''}`
+    : '';
+  const dispSummary = dispCount > 0 ? ` · ${dispCount} dispense${dispCount===1?'':'s'}` : '';
 
   const txHtml = `
     <tr class="expansion-row"><td colspan="5">
       <div class="tx-wrap">
         <div class="tx-wrap-header">
-          <span class="material-icons" style="font-size:16px;color:var(--teal);">history</span>
           Transactions
-          <span style="font-weight:500; color:var(--gray-600); margin-left: 8px; text-transform: none; letter-spacing:0;">${adjCount} adjustment${adjCount===1?'':'s'}${ccCount > 0 ? ` · ${ccCount} cycle count${ccCount===1?'':'s'}` : ''} · ${dispCount} dispense${dispCount===1?'':'s'} in selected range</span>
+          <span style="font-weight:500; color:var(--gray-600); margin-left: 8px; text-transform: none; letter-spacing:0;">${adjCount} adjustment${adjCount===1?'':'s'}${ccSummary}${dispSummary} in selected range</span>
         </div>
         <table class="tx-table">
           <thead>
             <tr>
-              <th>Date</th>
+              <th class="tx-sort-th ${txSort.col==='date'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'date')" style="cursor:pointer">Date <span class="material-icons tx-sort-icon">${txSort.col==='date'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
               <th>NDC</th>
-              <th>User</th>
-              <th>Type</th>
-              <th class="num">Amount</th>
-              <th class="num">Balance</th>
+              <th class="tx-sort-th ${txSort.col==='user'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'user')" style="cursor:pointer">User <span class="material-icons tx-sort-icon">${txSort.col==='user'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th ${txSort.col==='activity'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'activity')" style="cursor:pointer">Activity Type <span class="material-icons tx-sort-icon">${txSort.col==='activity'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th ${txSort.col==='reason'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'reason')" style="cursor:pointer">Reason <span class="material-icons tx-sort-icon">${txSort.col==='reason'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th num ${txSort.col==='amount'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'amount')" style="cursor:pointer">Amount <span class="material-icons tx-sort-icon">${txSort.col==='amount'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th num ${txSort.col==='balance'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'balance')" style="cursor:pointer">Balance <span class="material-icons tx-sort-icon">${txSort.col==='balance'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
               <th>Comments</th>
             </tr>
           </thead>
           <tbody>
-            ${txs.map(tx => {
-              const t   = TYPE_BY_KEY[tx.type];
-              const isAdj = !!t;
-              const isCycle = tx.type === 'cycle_count';
-              const amt = tx.amount;
+            ${visibleTxs.map(tx => {
+              const t              = TYPE_BY_KEY[tx.type];
+              const isManualAdj    = !!t && tx.type !== 'cycle_count_variance' && tx.type !== 'cycle_count_verified';
+              const isCycleVariance  = tx.type === 'cycle_count_variance';
+              const isCycleVerified  = tx.type === 'cycle_count_verified';
+              const isDispense     = tx.type === 'dispense';
+              const isCycle        = isCycleVariance || isCycleVerified;
+              const amt            = tx.amount;
 
-              // Type cell: chip only for manual adjustments;
-              // non-adjustment events render as plain text.
-              const typeCell = isAdj
-                ? `<td><span class="type-chip" style="background:${t.color}; color: #fff;">${t.label}</span></td>`
-                : `<td><span class="type-plain">${tx.type === 'dispense' ? 'Dispense' : tx.type}</span></td>`;
+              // ── Activity Type cell ──────────────────────────────────
+              // Plain text label for the category of event.
+              let activityLabel, activityStyle = '';
+              if (isManualAdj)      { activityLabel = 'Manual Adjustment'; }
+              else if (isCycleVariance) { activityLabel = 'Cycle Count Reconciliation'; }
+              else if (isCycleVerified) { activityLabel = 'Cycle Count (Verified)'; activityStyle = 'color:var(--gray-500); font-style:italic;'; }
+              else if (isDispense)  { activityLabel = 'Dispense'; activityStyle = 'color:var(--gray-600);'; }
+              else                  { activityLabel = tx.type; }
+              const activityCell = `<td><span class="type-plain" style="${activityStyle}">${activityLabel}</span></td>`;
 
-              // Amount cell:
-              //   - Cycle count: em-dash. Verification event, no balance change.
-              //   - Anything else: signed value, green if positive, red if negative.
-              let amountCell;
-              if (isCycle) {
-                amountCell = `<td class="num amt-na" title="Cycle counts verify inventory; they don't change the balance.">—</td>`;
+              // ── Reason cell ─────────────────────────────────────────
+              // Manual adjustments: colored chip (the reason code label).
+              // Cycle count reconciliation: chip using cycle_count_variance color.
+              // Cycle count verified: em-dash (no reason, it matched).
+              // Dispense: RX number as the "reason" identifier.
+              let reasonCell;
+              if (isManualAdj && t) {
+                reasonCell = `<td><span class="type-chip" style="background:${t.color}; color:#fff;">${t.label}</span></td>`;
+              } else if (isCycleVariance) {
+                const reasonType = TYPE_BY_KEY[tx.reasonKey] || TYPE_BY_KEY['other'];
+                reasonCell = tx.reason
+                  ? `<td><span class="type-chip" style="background:${reasonType.color}; color:#fff;">${tx.reason}</span></td>`
+                  : `<td><span class="type-plain" style="color:var(--gray-400);">—</span></td>`;
+              } else if (isCycleVerified) {
+                reasonCell = `<td><span class="type-plain" style="color:var(--gray-400);">—</span></td>`;
+              } else if (isDispense) {
+                reasonCell = `<td><span class="type-plain" style="color:var(--gray-400);">–</span></td>`;
               } else {
-                const cls = amt < 0 ? 'neg' : 'pos';
-                const sign = amt > 0 ? '+' : '';
-                amountCell = `<td class="num ${cls}">${sign}${amt}</td>`;
+                reasonCell = `<td><span class="type-plain" style="color:var(--gray-400);">—</span></td>`;
               }
 
-              // Comment cell:
-              //   - Cycle count: synthesized from counted + variance.
-              //     "Counted: 247 · Match" or "Counted: 247 · Variance -2" (variance colored).
-              //   - Dispense: blank.
-              //   - Other adjustments: analyst-supplied comment or placeholder.
+              // ── Amount cell ─────────────────────────────────────────
+              const cls  = amt > 0 ? 'pos' : amt < 0 ? 'neg' : '';
+              const sign = amt > 0 ? '+' : '';
+              const amountCell = `<td class="num ${cls}">${sign}${amt}</td>`;
+
+              // ── User cell ───────────────────────────────────────────
+              // Dual identifier: name + system ID. Dispenses show "System (AUTO)".
+              const userDisplay = tx.userId
+                ? `<div class="user-cell">${tx.user}<span class="user-id">${tx.userId}</span></div>`
+                : `<div class="user-cell">${tx.user}</div>`;
+
+              // ── Comments cell ───────────────────────────────────────
+              // Manual adjustments: analyst comment or placeholder.
+              // Cycle count variance: Expected/Actual math + optional note.
+              // Cycle count verified: Expected/Matched confirmation.
+              // Dispense: patient identifier.
               let commentCell;
-              if (isCycle) {
-                const v = tx.variance || 0;
-                let variancePart;
-                if (v === 0) {
-                  variancePart = `<span class="cc-match">Match</span>`;
-                } else {
-                  const vSign  = v > 0 ? '+' : '';
-                  const vClass = v < 0 ? 'cc-variance neg' : 'cc-variance pos';
-                  variancePart = `<span class="${vClass}">Variance ${vSign}${v}</span>`;
-                }
-                commentCell = `<td class="comment-cell cc-comment">Counted: <strong>${tx.counted.toLocaleString()}</strong> &middot; ${variancePart}</td>`;
+              if (isCycleVariance) {
+                const expectedStr = (tx.expected || 0).toLocaleString();
+                const actualStr   = (tx.actual   || 0).toLocaleString();
+                const vSign  = amt > 0 ? '+' : '';
+                const vClass = amt < 0 ? 'cc-variance neg' : 'cc-variance pos';
+                // Reason is shown in the Reason column; comment cell shows math only
+                commentCell = `<td class="comment-cell cc-comment">Expected: <strong>${expectedStr}</strong> · Actual: <strong>${actualStr}</strong> · <span class="${vClass}">Variance ${vSign}${amt}</span></td>`;
+              } else if (isCycleVerified) {
+                const expectedStr = (tx.expected || 0).toLocaleString();
+                commentCell = `<td class="comment-cell cc-comment">Expected: <strong>${expectedStr}</strong> · <span class="cc-match">Matched</span></td>`;
+              } else if (isDispense) {
+                commentCell = `<td class="comment-cell"><span style="color:var(--gray-400);">–</span></td>`;
               } else if (tx.comment) {
                 commentCell = `<td class="comment-cell">"${tx.comment}"</td>`;
-              } else if (isAdj) {
-                commentCell = `<td class="comment-cell empty">— No comment provided —</td>`;
               } else {
-                commentCell = `<td class="comment-cell"></td>`;
+                commentCell = `<td class="comment-cell empty">— No comment provided —</td>`;
               }
 
-              // Highlight: when the panel was opened from the By User
-              // view, mark rows attributed to that user so the viewer
-              // can spot them at a glance. The class composes with
-              // cc-row (a cycle-count row can also be highlighted).
               const hl = PANEL_STATE.highlightUserIdx;
-              const isHighlighted = (hl !== null && hl !== undefined && tx.user === USERS[hl]);
+              const isHighlighted = (hl !== null && hl !== undefined && tx.user === USERS[hl].name);
               const rowClasses = [];
-              if (isCycle) rowClasses.push('cc-row');
-              if (isHighlighted) rowClasses.push('tx-row-highlighted');
+              if (isCycleVerified) rowClasses.push('cc-row');
+              if (isCycleVariance) rowClasses.push('cc-variance-row');
+              if (isDispense)      rowClasses.push('dispense-row');
+              if (isHighlighted)   rowClasses.push('tx-row-highlighted');
               const rowClassAttr = rowClasses.length ? ` class="${rowClasses.join(' ')}"` : '';
 
               return `
                 <tr${rowClassAttr}>
                   <td>${tx.date} at ${tx.time}</td>
                   <td>${tx.ndc}</td>
-                  <td><div class="user-cell">${tx.user}</div></td>
-                  ${typeCell}
+                  <td>${userDisplay}</td>
+                  ${activityCell}
+                  ${reasonCell}
                   ${amountCell}
                   <td class="num">${tx.balance.toLocaleString()}</td>
                   ${commentCell}
@@ -4437,18 +4829,18 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
   tr.insertAdjacentHTML('afterend', txHtml);
 }
 
+
 function pickWeightedType(rand) {
-  // Adjustment types only — cycle counts are generated separately as
-  // verification events, not by this picker.
   const r = rand();
-  if (r < 0.38) return 'count_correction';
-  if (r < 0.55) return 'return_to_stock';
-  if (r < 0.65) return 'expired';
-  if (r < 0.74) return 'waste';
-  if (r < 0.82) return 'returned_to_vendor';
-  if (r < 0.91) return 'shrinkage';
-  if (r < 0.96) return 'contaminated';
-  if (r < 0.99) return 'ndc_change';
+  if (r < 0.22) return 'correction';
+  if (r < 0.34) return 'waste';
+  if (r < 0.44) return 'expired';
+  if (r < 0.52) return 'shrinkage';
+  if (r < 0.60) return 'clinic_dispense';
+  if (r < 0.67) return 'inpatient_pharmacy';
+  if (r < 0.73) return 'return_to_vendor';
+  if (r < 0.79) return 'contaminated';
+  if (r < 0.88) return 'clinic_return';
   return 'other';
 }
 
