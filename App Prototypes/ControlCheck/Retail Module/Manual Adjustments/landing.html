@@ -4282,7 +4282,33 @@ function renderMedTable(pharmIdx, drugIdx, rand, activeTypes) {
     });
   });
 
-  MED_STATE = { variantState, activeTypes };
+  // Compute per-variant cycle count variance counts using the same seeded
+  // RNG as buildTxExpansion so the med table count and tx rows always agree.
+  const totalCC = getCellCycleCount(pharmIdx, drugIdx);
+  const variantCount = variants.length;
+  const ccVarByVariant = variants.map((_, vi) => {
+    const baseShare = Math.floor(totalCC / variantCount);
+    const remainder = totalCC % variantCount;
+    const myShare   = baseShare + (vi < remainder ? 1 : 0);
+    // Burn through prior variants' sessions on the shared seed
+    let ccSeed = (pharmIdx * 31 + drugIdx * 7 + 99) >>> 0;
+    const ccRand = () => {
+      ccSeed = (ccSeed + 0x6D2B79F5) >>> 0;
+      let s = ccSeed;
+      s = Math.imul(s ^ (s >>> 15), s | 1);
+      s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+      return ((s ^ (s >>> 14)) >>> 0) / 4294967296;
+    };
+    const priorSessions = baseShare * vi + Math.min(vi, remainder);
+    for (let k = 0; k < priorSessions; k++) ccRand();
+    let varCount = 0;
+    for (let k = 0; k < myShare; k++) {
+      if (ccRand() < 0.25) varCount++;
+    }
+    return varCount;
+  });
+
+  MED_STATE = { variantState, activeTypes, ccVarByVariant };
   renderFilteredMedTable();
 }
 
@@ -4309,16 +4335,25 @@ function sortMedTable(col) {
 /* Render (or re-render) the med table rows based on PANEL_FILTER + MED_STATE */
 function renderFilteredMedTable() {
   if (!MED_STATE) return;
-  const { variantState, activeTypes } = MED_STATE;
+  const { variantState, activeTypes, ccVarByVariant } = MED_STATE;
   const filterActive = PANEL_FILTER.activeTypes.size > 0;
   const keysToSum = filterActive
     ? activeTypes.filter(t => PANEL_FILTER.activeTypes.has(t.key)).map(t => t.key)
     : activeTypes.map(t => t.key);
 
+  // When a reason filter is active, only include CCR rows whose reasonKey matches.
+  // Since we don't know per-variant CCR reason distribution here, include all
+  // CCR when no filter is active, or exclude CCR when none of the active filter
+  // keys are shared reasons (correction, shrinkage, other).
+  const CCR_REASON_KEYS = new Set(['correction', 'shrinkage', 'other']);
+  const includeCCR = !filterActive || keysToSum.some(k => CCR_REASON_KEYS.has(k));
+
   // Build visible row objects first so we can sort before rendering
   const visibleRowData = variantState
     .map((row, i) => {
-      const count    = keysToSum.reduce((s, k) => s + (row.byType[k] || 0), 0);
+      const adjCount = keysToSum.reduce((s, k) => s + (row.byType[k] || 0), 0);
+      const ccrCount = includeCCR ? (ccVarByVariant?.[i] || 0) : 0;
+      const count    = adjCount + ccrCount;
       const totalAdj = keysToSum.reduce((s, k) => s + (row.totalByType[k] || 0), 0);
       return { row, i, count, totalAdj };
     })
