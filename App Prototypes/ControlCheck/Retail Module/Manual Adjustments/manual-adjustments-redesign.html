@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Manual Adjustments | ControlCheck</title>
+  <title>Inventory Adjustments | ControlCheck</title>
   <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined" rel="stylesheet">
   <style>
@@ -11,24 +11,24 @@
     :root {
       --blue-dark:   #044a82;
       --blue-darker: #0a3861;
-      --teal:        #0096b8;
-      --teal-dark:   #0083a8;
+      --teal:        #00718a;
+      --teal-dark:   #005f77;
       --teal-light:  #74c5d8;
       --teal-50:     #e7f4f8;
       --teal-25:     #f3fbfd;
-      --teal-900:    #00718a;
-      --pink:        #eb4699;
+      --teal-900:    #005f77;
+      --pink:        #c0306e;
       --red:         #f24335;
       --red-dark:    #b9211d;
-      --orange:      #e67e2c;
-      --green:       #16b434;
+      --orange:      #b35a00;
+      --green:       #0e7221;
       --yellow:      #f5dd67;
       --gray-50:     #fafafa;
       --gray-100:    #f6f6f6;
       --gray-200:    #f5f5f5;
       --gray-300:    #e5e5e5;
-      --gray-400:    #adadad;
-      --gray-500:    #9e9e9e;
+      --gray-400:    #767676;
+      --gray-500:    #737373;
       --gray-600:    #727272;
       --gray-700:    #555;
       --border:      rgba(0,0,0,.12);
@@ -40,7 +40,7 @@
       /* Heat-map severity tokens (preserved from existing UI) */
       --hm-green:    #f0e1a5;   /* yellow band 0-2 */
       --hm-yellow:   #f5dd67;   /* yellow 3-5 */
-      --hm-orange:   #e67e2c;   /* orange 6-7 */
+      --hm-orange:   #b35a00;   /* orange 6-7 */
       --hm-red:      #b9211d;   /* red 8+ */
     }
     html, body {
@@ -119,6 +119,39 @@
     }
     .mat-badge-hidden .mat-badge-content { display: none; }
 
+    /* Analyze dropdown menu in the top nav.
+       Pattern matches the in-page .menu wrapper but with a slightly
+       larger visual register since these are page-level destinations
+       rather than filter options. Currently-active destination gets
+       a teal-50 fill + bold text + left accent rail. */
+    .nav-menu-wrapper { display: inline-block; position: relative; }
+    .nav-menu {
+      /* override .menu width default and align with the trigger */
+      top: calc(100% + 4px);
+      left: 0;
+    }
+    .nav-menu-option {
+      height: 40px;
+      padding: 0 16px;
+      font-size: .875rem;
+      color: var(--blue-dark);
+      text-decoration: none;
+      position: relative;
+    }
+    .nav-menu-option:hover { background: var(--gray-100); }
+    .nav-menu-option-active {
+      background: var(--teal-50);
+      font-weight: 600;
+    }
+    .nav-menu-option-active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 8px; width: 3px;
+      background: var(--teal);
+      border-radius: 0 2px 2px 0;
+    }
+    .nav-menu-option-active:hover { background: #d3ecf3; }
+
     /* ── user-menu ──────────────────────────────────────── */
     .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
     .header-user-button {
@@ -153,6 +186,127 @@
 
     /* ── #app-view ──────────────────────────────────────── */
     #app-view { flex: 1 1 auto; position: relative; display: flex; flex-direction: column; }
+
+    /* ═══════════════════════════════════════════════════════
+       DRAWER LAYOUT — analyze sidebar + main content area
+       Sidebar lives inside #app-view; main content occupies
+       whatever's left. Sidebar is a fixed 220px (48px when
+       collapsed). Footer sits below the drawer-container in
+       #app-view's column layout.
+    ═══════════════════════════════════════════════════════ */
+    mat-drawer-container, mat-drawer-content, mat-drawer { display: block; }
+    mat-drawer-container {
+      display: flex; flex-direction: row;
+      flex: 1 1 auto; overflow: hidden; position: relative;
+      min-height: 0;
+    }
+    mat-drawer-content {
+      display: flex; flex-direction: column;
+      flex: 1 1 auto; overflow: auto; position: relative;
+      min-height: 0;
+    }
+    mat-drawer {
+      display: block; position: relative; overflow: visible;
+      background: #fff; border-right: 1px solid var(--gray-300);
+      width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container {
+      width: 100%; height: 100%; overflow: auto;
+      display: flex; flex-direction: column;
+    }
+    /* Drawer collapse/expand FAB sticks to the drawer's right edge */
+    .mdc-fab.mat-mdc-mini-fab {
+      width: 24px; height: 24px; min-height: 24px;
+      border-radius: 50%; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--teal); color: #fff;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+      transition: background .15s, transform .3s cubic-bezier(.4,0,.2,1);
+      position: absolute; right: -12px; top: 10px; z-index: 99; padding: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background: var(--teal-dark, #0083a8); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; transition: transform .3s; }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    /* Accordion (section headers) */
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header, mat-panel-title { display: block; }
+    .navigation-accordion mat-expansion-panel {
+      background: #fff; border-radius: 0; box-shadow: none;
+      border-bottom: none;
+    }
+    .navigation-accordion mat-expansion-panel-header {
+      height: 45px !important; padding: 0 16px;
+      cursor: pointer; display: flex; align-items: center;
+      transition: background .15s;
+    }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .mat-content { display: flex; flex: 1; align-items: center; }
+    .navigation-accordion mat-panel-title {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--gray-600, #757575);
+      flex-grow: 1;
+      text-transform: uppercase;
+    }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg { width: 24px; height: 24px; fill: var(--gray-600, #757575); transition: transform 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1);
+    }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+
+    /* Nav list items */
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px;
+      text-decoration: none; cursor: pointer; position: relative;
+      border-left: 3px solid transparent;
+      transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active { background: rgba(4,74,130,.08); border-left-color: var(--blue-dark); }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500;
+      color: rgba(0,0,0,.87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon {
+      font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600, #757575);
+    }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span { display: none; }
+    mat-drawer.collapsed .mdc-list-item__primary-text .mat-icon { margin: 0; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-expansion-panel-header { justify-content: center; padding: 0; }
+
+    /* Page-section indicator — renders next to the page title with a `/`
+       separator. E.g. "Manual Adjustments / By Retail Pharmacy". Hidden
+       when the page is in a drilled state (title takes over). */
+    .page-section-indicator {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--blue-dark);
+      white-space: nowrap;
+    }
+    .page-section-indicator::before {
+      content: '/';
+      margin-right: 10px;
+      color: rgba(0,0,0,.54);
+      font-weight: 400;
+    }
 
     /* ═══════════════════════════════════════════════════════
        PAGE LAYOUT
@@ -272,6 +426,41 @@
     }
     .chip.active .chip-badge { background: #fff; color: var(--teal-900); }
 
+    /* Secondary pillter chip — aligned with the Comparison Score
+       treatment from med-trends-redesign. No border by default,
+       teal-900 text. Hover reveals teal-50; when the menu is open
+       (toggleMenu adds .active), the chip holds the teal-50 fill so
+       the open state is visible. */
+    .chip.chip-secondary {
+      background: transparent;
+      color: var(--teal-900);
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .chip.chip-secondary:hover { background: var(--teal-50); }
+    /* Narrower-than-everything filter state (the chip-badge variant).
+       Higher specificity than the base .chip.chip-secondary above so
+       the transparent default doesn't win the cascade. */
+    .chip.chip-secondary.selected {
+      background: var(--teal-50);
+      color: var(--teal-900);
+      border-color: transparent;
+    }
+    .chip.chip-secondary.selected:hover { background: #d3ecf3; }
+    .chip.chip-secondary.active,
+    .chip.chip-secondary.active.selected {
+      background: var(--teal-50);
+      color: var(--teal-900);
+      border-color: transparent;
+    }
+    .chip.chip-secondary.active:hover,
+    .chip.chip-secondary.active.selected:hover { background: #d3ecf3; }
+    .chip.chip-secondary .chip-label-prefix {
+      color: inherit;
+      opacity: .85;
+      font-weight: 500;
+    }
+
     /* ── Pillter menus ─────────────────────────────────── */
     .menu-wrapper { display: inline-block; position: relative; }
     .menu {
@@ -340,9 +529,10 @@
     .btn-apply {
       background: var(--pink); border: none; border-radius: 4px;
       color: #fff; font: 600 13px var(--font);
-      cursor: pointer; padding: 6px 16px;
+      cursor: pointer; padding: 0 16px;
+      height: 32px; display: inline-flex; align-items: center; gap: 4px;
     }
-    .btn-apply:hover { background: #d93d88; }
+    .btn-apply:hover { background: #a8285e; }
 
     /* ── Slider menu (Quantity Adjusted) ─────────────────── */
     .slider-section { padding: 14px 16px 4px; }
@@ -395,14 +585,29 @@
       padding: 10px 16px;
       margin: 0 0 16px;
     }
+    /* Legend label sits flush-left in the adj-legend bar. Two-line stack:
+       the title ("Manual Adjustments") sits on top and matches the
+       severity pills' weight/case, the subtext below explains that
+       the scale moves with the date range (i.e. these numbers are not
+       a fixed legend). */
     .adj-legend-label {
-      font-size: 12px; font-weight: 600;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1px;
+      line-height: 1.2;
+    }
+    .adj-legend-label-title {
+      font-size: 12px;
+      font-weight: 600;
       color: var(--gray-700);
       letter-spacing: .04em;
-      display: inline-flex; align-items: center; gap: 6px;
     }
-    .adj-legend-label .material-icons {
-      font-size: 16px; color: var(--teal); cursor: help;
+    .adj-legend-label-sub {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--gray-600);
+      letter-spacing: 0;
     }
     .adj-legend-pill {
       display: inline-flex; align-items: center;
@@ -447,6 +652,82 @@
       border-radius: 6px;
       overflow: hidden;
       box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    /* Heatmap toolbar — sits above the card. Left group hosts the
+       View By selector (a secondary pillter); right group hosts the
+       row-search input. Both are view-shaping controls, distinct from
+       the data-scoping pillters in the top filter row. */
+    .heatmap-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 16px;
+      background: transparent;
+    }
+    .heatmap-toolbar .toolbar-left,
+    .heatmap-toolbar .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    /* Row count — left side of the heatmap toolbar. Slightly muted so
+       the filter chip next to it remains the primary affordance. The
+       count itself is bolded against the surrounding label so it reads
+       as a data point rather than a static caption. */
+    .row-count {
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      white-space: nowrap;
+    }
+    .row-count strong {
+      color: var(--blue-darker, #0a3861);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .heatmap-search {
+      position: relative;
+      width: 260px;
+      max-width: 100%;
+    }
+    .heatmap-search-icon {
+      position: absolute;
+      left: 8px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px !important;
+      color: var(--gray-500);
+      pointer-events: none;
+    }
+    .heatmap-search input[type="search"] {
+      width: 100%;
+      height: 32px;
+      padding: 0 8px 0 32px;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      background: #fff;
+      font: inherit;
+      font-size: .8125rem;
+      color: var(--gray-700);
+      transition: border-color .12s, box-shadow .12s;
+    }
+    .heatmap-search input[type="search"]:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0, 150, 184, 0.15);
+    }
+    .heatmap-search input[type="search"]::placeholder {
+      color: var(--gray-500);
+    }
+    /* Strip the native clear button styling so the search field looks
+       consistent across browsers (it appears when the field has text). */
+    .heatmap-search input[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px; height: 14px;
+      background: var(--gray-400);
+      mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>") center/contain no-repeat;
+      cursor: pointer;
     }
     .heatmap-scroll {
       overflow-x: auto;
@@ -526,10 +807,80 @@
     table.heatmap tbody tr.pharmacy-row { transition: background .12s; }
     table.heatmap tbody tr.pharmacy-row:hover td { background: var(--gray-50); }
 
+    /* Adjustment-type view rows — each row is one type; the type label
+       in the first cell is a click target that drills into pharmacy
+       view filtered to that type. */
+    table.heatmap tbody tr.adj-type-row { transition: background .12s; }
+    table.heatmap tbody tr.adj-type-row:hover td { background: var(--gray-50); }
+    .adj-type-label {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; padding: 4px 0;
+      font: inherit;
+      font-weight: 700;
+      color: var(--teal);                /* Blue 500 from the Bluesight Palette */
+      font-size: .8125rem;
+      cursor: pointer;
+      transition: color .12s;
+    }
+    .adj-type-label:hover {
+      color: var(--teal-900);
+    }
+    .adj-type-label:hover .drill-icon {
+      color: var(--teal-900);
+      transform: translateX(2px);
+    }
+    .adj-type-label .drill-icon {
+      font-size: 16px;
+      color: var(--teal);                /* match the label color */
+      transition: transform .12s;
+    }
+
     .pharmacy-name {
       font-weight: 500;
       color: var(--gray-700);
       font-size: .8125rem;
+    }
+
+    /* Pharmacy row drill — the canonical pharmacy view's row label is
+       a drill target into that pharmacy's users × drugs. Styled to
+       match .adj-type-label so the two "click the row label to drill"
+       affordances read consistently: always-visible teal text + bold
+       weight + always-visible trailing chevron, underline on hover.
+       The nested .pharmacy-name span inherits all that, since the JS
+       still references that class for the label substring. */
+    .pharmacy-row-drill {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; padding: 4px 0;
+      font: inherit;
+      font-weight: 700;
+      color: var(--teal);
+      font-size: .8125rem;
+      cursor: pointer;
+      transition: color .12s;
+      text-align: left;
+    }
+    .pharmacy-row-drill .pharmacy-name {
+      /* Override the default gray .pharmacy-name styling — when the
+         name lives inside the drill button, it inherits the button's
+         teal color + bold weight so the affordance is unmistakable. */
+      color: inherit;
+      font-weight: inherit;
+      font-size: inherit;
+    }
+    .pharmacy-row-drill:hover { color: var(--teal-900); }
+    .pharmacy-row-drill:hover .pharmacy-row-drill-icon {
+      color: var(--teal-900);
+      transform: translateX(2px);
+    }
+    .pharmacy-row-drill-icon {
+      font-size: 16px !important;
+      color: var(--teal);
+      transition: transform .12s;
+    }
+    .pharmacy-row-drill:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+      border-radius: 2px;
     }
 
     /* Heat-map cells */
@@ -619,6 +970,21 @@
       border-bottom: 1px solid var(--gray-300);
       flex-shrink: 0;
     }
+    /* Back link — shown above the eyebrow when the panel was reached
+       by drilling from the aggregate (type, drug) panel. Click returns
+       to that exact aggregate panel. */
+    .panel-back {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none; padding: 0;
+      margin-bottom: 8px;
+      font: inherit;
+      font-size: .8125rem; font-weight: 600;
+      color: var(--teal);
+      cursor: pointer;
+      transition: color .12s;
+    }
+    .panel-back:hover { text-decoration: underline; }
+    .panel-back .material-icons { font-size: 16px; }
     .panel-eyebrow {
       font-size: .75rem; font-weight: 700;
       color: var(--teal-900);
@@ -788,66 +1154,82 @@
     .ts-chart .axis-line { stroke: #E5E5E5; stroke-width: 1; }
 
     /* Type breakdown stats row */
+    /* Type-stat filter pills — compact chip-style row replacing the old
+       card grid. Each pill shows a colored dot, the type label, and the
+       count. Click toggles it as a filter for the med table below. */
     .type-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
     }
-    /* Each stat is a clickable filter for the med table below */
     button.type-stat {
-      background: var(--gray-50);
-      border: 1px solid var(--gray-300);
-      border-radius: 4px;
-      padding: 10px 12px;
-      text-align: left;
+      display: inline-flex; align-items: center; gap: 5px;
+      height: 26px; padding: 0 10px;
+      border-radius: 13px;
+      border: 1px solid transparent;
+      background: var(--pill-color, var(--gray-500));
       cursor: pointer;
       font-family: inherit;
-      transition: background .12s, border-color .12s, opacity .12s, box-shadow .12s;
+      font-size: .8125rem; font-weight: 500;
+      color: #fff;
+      transition: filter .12s, opacity .12s, outline .12s;
+      white-space: nowrap;
     }
     button.type-stat:hover {
-      background: #fff;
-      border-color: var(--teal);
+      filter: brightness(1.12);
     }
     button.type-stat.active {
-      background: var(--teal-50);
-      border-color: var(--teal);
-      box-shadow: inset 0 0 0 1px var(--teal);
+      outline: 2px solid #fff;
+      outline-offset: 1px;
+      box-shadow: 0 0 0 3px var(--pill-color, var(--gray-500));
+      font-weight: 700;
     }
-    button.type-stat.active .type-stat-value { color: var(--teal-900); }
-    /* When any filter is active, the unselected ones fade back */
     button.type-stat.dimmed {
-      opacity: 0.45;
+      opacity: 0.35;
     }
     button.type-stat.dimmed:hover { opacity: 1; }
-    .type-stat {
-      background: var(--gray-50);
-      border: 1px solid var(--gray-300);
-      border-radius: 4px;
-      padding: 10px 12px;
+    .type-stat-dot { display: none; } /* no longer needed */
+    .type-stat-count {
+      font-weight: 700;
+      opacity: .9;
     }
-    .type-stat-name {
-      display: flex; align-items: center; gap: 6px;
-      font-size: .75rem; font-weight: 600;
+    /* Empty state — no types active */
+    .type-stats-empty {
+      font-size: .8125rem; color: var(--gray-600);
+      padding: 4px 0 8px;
+    }
+
+    /* Events summary above the type-stats grid — parallel display of
+       Adjustments count (drives the filter cards below) and Cycle
+       Counts performed (verification events, not filterable). */
+    .events-summary {
+      display: flex; align-items: center; gap: 24px;
+      padding: 4px 0 14px;
+      font-size: .8125rem;
       color: var(--gray-700);
-      text-transform: uppercase; letter-spacing: .04em;
-      margin-bottom: 4px;
     }
-    .type-stat-name .swatch { width: 10px; height: 10px; border-radius: 2px; }
-    .type-stat-value {
-      font-size: 1.5rem; font-weight: 700;
-      color: var(--blue-darker); line-height: 1;
+    .events-summary .summary-item {
+      display: inline-flex; align-items: baseline; gap: 6px;
     }
-    .type-stat-meta {
-      font-size: .75rem; font-weight: 500;
-      color: var(--gray-600); margin-top: 4px;
+    .events-summary .summary-item .summary-value {
+      font-size: 1.0625rem; font-weight: 700;
+      color: var(--blue-darker);
+      font-variant-numeric: tabular-nums;
+    }
+    .events-summary .summary-item .summary-label {
+      font-size: .8125rem; color: var(--gray-700); font-weight: 500;
+    }
+    .events-summary .summary-divider {
+      color: var(--gray-400); font-weight: 400;
     }
 
     /* Filter status row above the type-stats grid */
     .type-stats-status {
       display: flex; align-items: center; justify-content: space-between;
-      font-size: .75rem; color: var(--gray-600); font-weight: 500;
-      margin-bottom: 10px;
+      font-size: .6875rem; color: var(--gray-500); font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      margin-bottom: 8px;
     }
     .type-stats-status .clear-filter {
       background: none; border: none; padding: 0;
@@ -895,10 +1277,106 @@
     table.med-table .med-name {
       font-weight: 600; color: var(--blue-darker);
     }
+    /* Strength column bolded to match the drug-name column. The dose
+       is the key disambiguator between rows that share a drug name
+       (e.g. two strengths of buprenorphine-naloxone), so it carries
+       the same visual weight as the name itself. */
+    table.med-table .med-strength {
+      font-weight: 600; color: var(--blue-darker);
+      font-variant-numeric: tabular-nums;
+    }
     table.med-table .chev {
       font-size: 18px; color: var(--gray-400); transition: transform .2s;
     }
     table.med-table tr.expanded .chev { transform: rotate(180deg); color: var(--teal); }
+
+    /* Pharmacies-by-count list (aggregate-scope panel).
+       Same structural treatment as the med-table for visual rhythm,
+       but rows are simpler (no expansion) and the row click drills
+       to the standard cell panel. Cross-tab format: pharmacy on the
+       left, one column per non-zero adjustment type in this view,
+       focus type column highlighted teal. */
+    .pharm-list-scroll {
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    table.pharm-list-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .8125rem;
+    }
+    /* Inline heatmap-style badges used in the pharm-list cross-tab.
+       The row is the click target, not the individual badge, so
+       suppress the hover scale/shadow effect that the heat-map cells
+       use to signal clickability. */
+    table.pharm-list-table .hm-cell {
+      cursor: inherit;
+    }
+    table.pharm-list-table .hm-cell:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    table.pharm-list-table th {
+      text-align: left;
+      padding: 8px 12px;
+      font-size: .75rem; font-weight: 600;
+      color: var(--gray-700);
+      text-transform: uppercase; letter-spacing: .03em;
+      border-bottom: 1px solid var(--gray-300);
+      white-space: nowrap;
+      vertical-align: bottom;
+    }
+    /* Type column — single column in the pharm-list table. Sized to
+       fit its label naturally (no forced width or wrapping since the
+       cross-tab layout is no longer in use). */
+    table.pharm-list-table th.type-col {
+      text-align: center;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 600;
+      white-space: nowrap;
+      vertical-align: bottom;
+    }
+    table.pharm-list-table td.type-col {
+      text-align: center;
+      padding: 8px 12px;
+    }
+    table.pharm-list-table th.num,
+    table.pharm-list-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    table.pharm-list-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--gray-300);
+      vertical-align: middle;
+      color: var(--gray-700);
+    }
+    table.pharm-list-table tbody tr {
+      cursor: pointer; transition: background .12s;
+    }
+    table.pharm-list-table tbody tr:hover { background: var(--teal-25); }
+    table.pharm-list-table tbody tr:hover .pharm-list-name { text-decoration: underline; }
+    table.pharm-list-table .pharm-list-name {
+      font-weight: 700; color: var(--teal);
+      white-space: nowrap;
+    }
+    table.pharm-list-table .pharm-list-drill {
+      text-align: right;
+      width: 32px;
+      color: var(--gray-500);
+    }
+    table.pharm-list-table tbody tr:hover .pharm-list-drill {
+      color: var(--teal);
+    }
+    /* Cycle count cell — plain text, tabular-nums. Slightly muted vs
+       the colored focus-type badge so the eye stays on the focus
+       column when scanning. */
+    table.pharm-list-table .cc-count {
+      font-weight: 600;
+      color: var(--gray-700);
+      font-variant-numeric: tabular-nums;
+    }
 
     /* Type chip inline */
     .type-chip {
@@ -919,7 +1397,11 @@
     }
 
     /* Transactions sub-table */
+    table.med-table tbody tr.expansion-row { cursor: default; }
+    table.med-table tbody tr.expansion-row:hover { background: transparent !important; }
     tr.expansion-row > td { padding: 0 !important; background: var(--gray-50) !important; }
+    /* Inner transactions table rows aren't clickable either */
+    table.tx-table tbody tr { cursor: default; }
     .tx-wrap {
       padding: 8px 12px 16px 32px;
     }
@@ -928,7 +1410,25 @@
       color: var(--gray-700); text-transform: uppercase;
       letter-spacing: .04em;
       padding: 10px 0 8px; display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
     }
+    .tx-filter-btn {
+      display: inline-flex; align-items: center;
+      height: 24px; padding: 0 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,113,138,.4);
+      background: transparent; cursor: pointer;
+      font: 500 .6875rem var(--font);
+      color: var(--teal-900);
+      text-transform: none; letter-spacing: 0;
+      transition: background .12s, border-color .12s, color .12s;
+    }
+    .tx-filter-btn:hover { background: var(--teal-50); }
+    .tx-filter-btn.active {
+      background: var(--teal); color: #fff;
+      border-color: var(--teal);
+    }
+    .tx-filter-btn.active:hover { background: var(--teal-dark); }
     table.tx-table {
       width: 100%;
       border-collapse: collapse;
@@ -969,6 +1469,72 @@
     table.tx-table .user-cell {
       display: flex; align-items: center; gap: 6px;
     }
+
+    /* Highlighted transaction row — used when the panel was opened
+       from the By User view, to surface rows attributed to that
+       user. Soft teal-50 fill with a left accent stripe so the
+       eye can scan to them. Composes with .cc-row (a cycle-count
+       row can also be highlighted). */
+    table.tx-table tbody tr.tx-row-highlighted {
+      background: #e7f4f8;                           /* teal-50 */
+      box-shadow: inset 3px 0 0 var(--teal, #0096b8);
+    }
+    table.tx-table tbody tr.tx-row-highlighted:hover {
+      background: #d3ecf3;                           /* slightly darker on hover */
+    }
+    table.tx-table tbody tr.tx-row-highlighted .user-cell {
+      font-weight: 700;
+      color: var(--blue-darker, #0a3861);
+    }
+
+    /* Dual user identifier — system ID shown muted below the name */
+    .user-cell { display: flex; flex-direction: column; gap: 1px; }
+    .user-id { display: none; }
+    /* Dispense rows — subtly muted to let manual adjustments stand out */
+    table.tx-table tbody tr.dispense-row { background: var(--gray-50); }
+    table.tx-table tbody tr.dispense-row:hover { background: #f0f0f0; }
+
+    .view-settings-checks {
+      display: flex; flex-direction: row; gap: 1rem;
+      padding-top: 8px; flex-wrap: wrap; margin-left: 2rem;
+    }
+    .vs-check {
+      display: flex; align-items: center; gap: 8px;
+      font-size: .8125rem; color: var(--gray-700);
+      cursor: pointer; user-select: none;
+    }
+    .vs-check input[type="checkbox"] {
+      width: 14px; height: 14px; cursor: pointer;
+      accent-color: var(--teal);
+    }
+
+    /* Transaction table sortable column headers */
+    table.tx-table th.tx-sort-th { cursor: pointer; user-select: none; }
+    table.tx-table th.tx-sort-th:hover { color: var(--teal); }
+    table.tx-table th.tx-sort-active { color: var(--teal); }
+    table.tx-table .tx-sort-icon {
+      font-size: 13px; vertical-align: middle;
+      opacity: 0.35; margin-left: 2px;
+    }
+    table.tx-table th.tx-sort-active .tx-sort-icon { opacity: 1; }
+
+    /* Cycle Count rows — two subtypes:
+       .cc-row          = verified match (no balance change). Muted, slightly de-emphasized.
+       .cc-variance-row = discrepancy found, balance adjusted. Treated like any adjustment. */
+    table.tx-table .cc-comment {
+      font-style: normal;             /* override comment-cell italic */
+      color: var(--gray-700); font-weight: 400;
+    }
+    table.tx-table .cc-comment strong {
+      color: var(--blue-darker); font-weight: 700;
+    }
+    table.tx-table .cc-match {
+      color: var(--green); font-weight: 600;
+    }
+    table.tx-table .cc-variance.neg { color: var(--red-dark); font-weight: 600; }
+    table.tx-table .cc-variance.pos { color: var(--green);    font-weight: 600; }
+    /* Verified rows: slightly muted to reduce noise */
+    table.tx-table tbody tr.cc-row { opacity: .75; }
 
     /* Footer */
     footer {
@@ -1075,9 +1641,21 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">Audit</span>
             </button>
-            <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active">
-              <span class="mdc-button__label">Analyze</span>
-            </button>
+            <div class="menu-wrapper nav-menu-wrapper" id="mw-analyze">
+              <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed active" onclick="toggleMenu('mw-analyze', event)">
+                <span class="mdc-button__label">Analyze</span>
+              </button>
+              <div class="menu nav-menu" style="width: 220px;">
+                <div class="menu-options">
+                  <a class="menu-option nav-menu-option nav-menu-option-active" href="#">
+                    Inventory Adjustments
+                  </a>
+                  <a class="menu-option nav-menu-option" href="#">
+                    Inventory Discrepancies
+                  </a>
+                </div>
+              </div>
+            </div>
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">Cases</span>
             </button>
@@ -1107,11 +1685,11 @@
             <button class="mdc-button mat-mdc-button-base mat-mdc-menu-trigger header-user-button nav-link mat-mdc-button mat-unthemed">
               <span class="mdc-button__label">
                 <div class="header-customer-name">
-                  <div class="header-customer-fullName">Jane Pharmacist</div>
-                  <div class="header-customer-hospitalName">Steel City Retail Network</div>
+                  <div class="header-customer-fullName">Alex Morrow</div>
+                  <div class="header-customer-hospitalName">St. Cloud Retail Network</div>
                 </div>
                 <button tabindex="-1" class="mdc-icon-button inline-avatar mat-primary">
-                  <div class="user-circle mat-primary">JP</div>
+                  <div class="user-circle mat-primary">AM</div>
                 </button>
               </span>
             </button>
@@ -1127,22 +1705,52 @@
 
   <!-- ── PAGE CONTENT ────────────────────────────────────── -->
   <div id="app-view">
+    <mat-drawer-container class="mat-drawer-container mat-drawer-container-has-open">
+
+      <!-- ── ANALYZE SIDEBAR ── -->
+      <mat-drawer mode="side" opened="" class="mat-drawer mat-drawer-opened mat-drawer-side" id="analyze-drawer">
+        <div class="mat-drawer-inner-container">
+          <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <span class="mat-icon material-icons">chevron_left</span>
+          </button>
+          <mat-accordion class="mat-accordion navigation-accordion mat-accordion-multi">
+
+            <!-- Manual Adjustments — section header with the two view-mode pages -->
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded mat-expansion-panel-animations-enabled">
+              <mat-expansion-panel-header role="button" class="mat-expansion-panel-header mat-focus-indicator mat-expanded mat-expansion-toggle-indicator-after" aria-expanded="true" style="height:45px" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title class="mat-expansion-panel-header-title">Inventory Adjustments</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item active" id="nav-manual-adjustments-by-pharmacy" href="#" onclick="setPage('by-pharmacy');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">store</span>By Retail Pharmacy</span></span></a>
+                    <a class="mat-mdc-list-item" id="nav-manual-adjustments-by-type" href="#" onclick="setPage('by-type');return false;"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">edit_note</span>By Adjustment Type</span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <!-- ── MAIN CONTENT ── -->
+      <mat-drawer-content class="mat-drawer-content">
     <div class="page-content">
 
       <!-- Breadcrumb -->
-      <nav class="breadcrumb" aria-label="breadcrumb">
-        <button class="bc-parent" type="button">Dashboard</button>
+      <nav class="breadcrumb" id="page-breadcrumb" aria-label="breadcrumb">
+        <button class="bc-parent" type="button">Analyze</button>
         <span class="bc-sep">›</span>
-        <span class="bc-current">Manual Adjustments</span>
+        <span class="bc-current">Inventory Adjustments</span>
       </nav>
 
       <!-- Page header (title + filter chips) -->
       <div class="page-header">
-        <div class="page-title-group">
-          <button class="page-back-btn" type="button" aria-label="Back">
-            <span class="material-icons">arrow_back</span>
-          </button>
-          <h1 class="page-title">Manual Adjustments</h1>
+        <div class="page-title-group" id="page-title-group">
+          <h1 class="page-title">Inventory Adjustments</h1>
+          <span class="page-section-indicator" id="page-section-indicator">By Retail Pharmacy</span>
         </div>
 
         <div class="pillter-row" id="pillter-row">
@@ -1178,27 +1786,6 @@
             </div>
           </div>
 
-          <!-- Retail Pharmacy -->
-          <div class="menu-wrapper" id="mw-pharm">
-            <button class="chip" type="button" onclick="toggleMenu('mw-pharm', event)">
-              Retail Pharmacy
-            </button>
-            <div class="menu">
-              <div class="menu-search">
-                <input type="text" placeholder="Search pharmacies…">
-              </div>
-              <div class="menu-actions">
-                <button class="link-btn">Select all</button>
-                <button class="link-btn" disabled>Clear</button>
-              </div>
-              <div class="menu-options" id="pharm-options"></div>
-              <div class="menu-footer">
-                <button class="btn-cancel" onclick="closeAllMenus()">Cancel</button>
-                <button class="btn-apply" onclick="closeAllMenus()">Apply</button>
-              </div>
-            </div>
-          </div>
-
           <!-- Drug -->
           <div class="menu-wrapper align-right" id="mw-drug">
             <button class="chip selected" type="button" onclick="toggleMenu('mw-drug', event)">
@@ -1216,26 +1803,6 @@
               <div class="menu-footer">
                 <button class="btn-cancel" onclick="closeAllMenus()">Cancel</button>
                 <button class="btn-apply" onclick="closeAllMenus()">Apply</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Adjustment Type — filters heat-map cell counts -->
-          <div class="menu-wrapper align-right" id="mw-type">
-            <button class="chip" type="button" id="mw-type-chip"
-                    onclick="syncTypeMenuFromFilter(); toggleMenu('mw-type', event)"
-                    title="Filter the heat-map to only count adjustments of the selected types">
-              Adjustment Type
-            </button>
-            <div class="menu">
-              <div class="menu-actions">
-                <button class="link-btn" onclick="selectAllTypes(true)">Select all</button>
-                <button class="link-btn" onclick="selectAllTypes(false)">Clear</button>
-              </div>
-              <div class="menu-options" id="type-options"></div>
-              <div class="menu-footer">
-                <button class="btn-cancel" onclick="syncTypeMenuFromFilter(); closeAllMenus()">Cancel</button>
-                <button class="btn-apply" onclick="applyTypeFilter()">Apply</button>
               </div>
             </div>
           </div>
@@ -1269,22 +1836,18 @@
       <!-- Description + Legend (flex row) -->
       <div class="description-legend-row">
         <p class="page-description">
-          Explore manual balance adjustments across your retail network with an interactive heat-map view.
-          Adjustments are inventory changes outside of dispenses — including count corrections, cycle counts, returns to stock, waste, expirations, and other reasons.
+          Explore manual balance adjustments and cycle count reconciliations across your retail network with an interactive heat-map view.
         </p>
 
         <div class="adj-legend">
           <span class="adj-legend-label">
-            Manual Adjustments
-            <span class="tip-target">
-              <span class="material-icons" aria-hidden="true">info</span>
-              <span class="tip">Adjustment volume per pharmacy/drug pair</span>
-            </span>
+            <span class="adj-legend-label-title">Inventory Adjustments</span>
+            <span class="adj-legend-label-sub">Scale adjusts based on selected date range</span>
           </span>
-          <span class="adj-legend-pill lvl-low">0–2</span>
-          <span class="adj-legend-pill lvl-mid">3–5</span>
-          <span class="adj-legend-pill lvl-orange">6–7</span>
-          <span class="adj-legend-pill lvl-red">8+</span>
+          <span class="adj-legend-pill lvl-low"    id="legend-low">0–1</span>
+          <span class="adj-legend-pill lvl-mid"    id="legend-mid">2–3</span>
+          <span class="adj-legend-pill lvl-orange" id="legend-orange">4–5</span>
+          <span class="adj-legend-pill lvl-red"    id="legend-red">6+</span>
           <span style="flex:1"></span>
           <span class="adj-legend-pill review-pill tip-target tip-right" tabindex="0" aria-label="Active review: there is an active review within the selected date range">
             <span class="marker-dot active" aria-hidden="true"></span>
@@ -1300,6 +1863,30 @@
       </div>
 
       <!-- HEAT MAP -->
+      <!-- Toolbar sits above the card — row search on the right.
+           The View By selector that used to live here has moved into
+           the sidebar (Manual Adjustments → By Retail Pharmacy /
+           By Adjustment Type / By User). In By User mode, a secondary
+           Retail Pharmacy filter chip appears on the left to scope
+           the user-set to one pharmacy. -->
+      <div class="heatmap-toolbar">
+        <div class="toolbar-left">
+          <!-- Row count — always visible, updated per render. Noun reflects
+               the current Y-axis (retail pharmacies / adjustment types /
+               users). Drives off the same row set the heatmap is actually
+               rendering, so search + filter narrowing are reflected. -->
+          <span class="row-count" id="row-count"></span>
+        </div>
+        <div class="toolbar-right">
+          <div class="heatmap-search">
+            <span class="material-icons heatmap-search-icon">search</span>
+            <input type="search" id="heatmap-search-input"
+                   placeholder="Search…"
+                   oninput="setHeatmapSearch(this.value)"
+                   autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+      </div>
       <div class="heatmap-card">
         <div class="heatmap-scroll">
           <table class="heatmap" id="heatmap-table">
@@ -1317,6 +1904,9 @@
       </div>
 
     </div><!-- /.page-content -->
+
+      </mat-drawer-content>
+    </mat-drawer-container>
 
     <footer>
       Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
@@ -1338,7 +1928,11 @@
 <aside class="detail-panel" id="detail-panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
   <div class="panel-header">
     <div>
-      <div class="panel-eyebrow">Manual Adjustments</div>
+      <button class="panel-back" id="panel-back" type="button" style="display:none;" onclick="returnToAggregate()">
+        <span class="material-icons">arrow_back</span>
+        <span id="panel-back-label">Back</span>
+      </button>
+      <div class="panel-eyebrow">Inventory Adjustments</div>
       <div class="panel-title" id="panel-title">—</div>
       <div class="panel-subtitle" id="panel-subtitle">—</div>
     </div>
@@ -1348,65 +1942,124 @@
   </div>
 
   <div class="panel-tabs">
-    <button class="panel-tab active" type="button" onclick="switchPanelTab('data', this)">Data</button>
-    <button class="panel-tab" type="button" onclick="switchPanelTab('reviews', this)">
+    <button class="panel-tab active" type="button" onclick="switchPanelTab('data', this)">Events</button>
+    <button class="panel-tab" type="button" onclick="switchPanelTab('trend', this)">Trend</button>
+    <button class="panel-tab" id="panel-tab-reviews" type="button" onclick="switchPanelTab('reviews', this)">
       Reviews <span class="tab-count" id="panel-review-count">(0 Active)</span>
     </button>
   </div>
 
   <div class="panel-body" id="panel-body">
 
-    <!-- Time series chart -->
-    <div class="panel-section">
-      <div class="panel-section-header">
-        <div class="panel-section-title">Adjustments Over 6 Months by Type</div>
-        <div class="panel-section-actions">
-          <button class="icon-btn" title="Download chart">
-            <span class="material-icons">download</span>
-          </button>
+    <!-- ─── Trend tab ─────────────────────────────────────────── -->
+    <div class="panel-tab-pane" id="panel-pane-trend" style="display:none;">
+      <div class="panel-section">
+        <div class="panel-section-header">
+          <div class="panel-section-title">Adjustments Over 6 Months by Type</div>
+          <div class="panel-section-actions">
+            <button class="icon-btn" title="Download chart">
+              <span class="material-icons">download</span>
+            </button>
+          </div>
+        </div>
+        <div class="ts-legend" id="ts-legend"></div>
+        <div class="ts-wrap">
+          <svg class="ts-chart" id="ts-chart" viewBox="0 0 980 260" preserveAspectRatio="none"></svg>
+          <div class="ts-tooltip" id="ts-tooltip" role="tooltip"></div>
         </div>
       </div>
-      <div class="ts-legend" id="ts-legend"></div>
-      <div class="ts-wrap">
-        <svg class="ts-chart" id="ts-chart" viewBox="0 0 980 260" preserveAspectRatio="none"></svg>
-        <div class="ts-tooltip" id="ts-tooltip" role="tooltip"></div>
-      </div>
     </div>
+
+    <!-- ─── Data tab ──────────────────────────────────────────── -->
+    <div class="panel-tab-pane" id="panel-pane-data">
 
     <!-- Adjustments by Medication -->
     <div class="panel-section">
       <div class="panel-section-header">
         <div class="panel-section-title" id="med-table-title">Adjustments by Medication</div>
-        <div class="panel-section-actions">
-          <button class="btn-apply" type="button" style="height:32px; display:inline-flex; align-items:center; gap:4px;">
+        <div class="panel-section-actions" id="panel-section-actions">
+          <button class="btn-apply" id="open-review-btn" type="button">
             <span class="material-icons" style="font-size:16px;">add</span>
             Open Review
           </button>
         </div>
       </div>
 
-      <!-- Type filters: click a card to filter the table by that adjustment type -->
-      <div class="type-stats-status" id="type-stats-status">
-        <span id="type-stats-status-label">Click a type to filter the table below</span>
-        <button class="clear-filter" id="clear-type-filter" style="display:none;" onclick="clearTypeFilter()">Clear filter</button>
-      </div>
-      <div class="type-stats" id="type-stats"></div>
+      <!-- Events summary: adjustments + cycle counts shown as parallel
+           tracks. Cycle counts aren't filterable because they aren't
+           an adjustment type — they're verification events. -->
+      <div class="events-summary" id="events-summary"></div>
 
-      <table class="med-table" id="med-table">
-        <thead>
-          <tr>
-            <th class="active-sort">Name <span class="material-icons sort-icon">arrow_upward</span></th>
-            <th>Strength</th>
-            <th class="num">Adjustments</th>
-            <th class="num">Total Adjusted</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="med-table-body">
-          <!-- Rows injected -->
-        </tbody>
-      </table>
+      <!-- Type-stats + med table — cell-scope only. In aggregate scope,
+           these are replaced by the pharmacies-by-count list below. -->
+      <div id="cell-scope-section">
+        <!-- Type filters: click a card to filter the table by that adjustment type -->
+        <div class="type-stats-status" id="type-stats-status" style="cursor:pointer; justify-content:flex-start;" onclick="toggleReasonFilter(this)" aria-expanded="true">
+          <span class="material-icons" style="font-size:18px; color:var(--gray-500); margin-right:4px; transition:transform .15s; flex-shrink:0; transform:rotate(90deg);">chevron_right</span>
+          <span id="type-stats-status-label">Filter by reason</span>
+          <div style="display:flex; align-items:center; gap:8px; margin-left:auto;" onclick="event.stopPropagation()">
+            <button class="clear-filter" id="clear-type-filter" style="display:none;" onclick="clearTypeFilter()">Clear filter</button>
+          </div>
+        </div>
+        <div id="reason-filter-body">
+          <div class="type-stats" id="type-stats"></div>
+        </div>
+
+        <div class="type-stats-status" style="margin-top:10px; cursor:pointer; justify-content:flex-start;" onclick="toggleViewSettings(this)" aria-expanded="false">
+          <span class="material-icons" style="font-size:18px; color:var(--gray-500); margin-right:4px; transition:transform .15s; flex-shrink:0;">chevron_right</span>
+          <span>View Settings</span>
+        </div>
+        <div id="view-settings-body" style="display:none; margin-bottom:12px;">
+          <div class="view-settings-checks">
+            <label class="vs-check">
+              <input type="checkbox" id="show-dispenses-btn" onchange="toggleShowDispenses(this)">
+              <span>Show dispenses</span>
+            </label>
+            <label class="vs-check">
+              <input type="checkbox" id="hide-increases-btn" onchange="toggleHideIncreases(this)">
+              <span>Hide increases</span>
+            </label>
+            <label class="vs-check">
+              <input type="checkbox" id="show-all-cycle-counts-btn" onchange="toggleShowAllCycleCounts(this)">
+              <span>Show all Cycle Counts</span>
+            </label>
+          </div>
+        </div>
+
+        <table class="med-table" id="med-table">
+          <thead id="med-table-head">
+            <tr>
+              <th onclick="sortMedTable('name')" style="cursor:pointer;" class="active-sort" data-col="name">Name <span class="material-icons sort-icon">arrow_upward</span></th>
+              <th onclick="sortMedTable('strength')" style="cursor:pointer;" data-col="strength">Strength <span class="material-icons sort-icon">arrow_upward</span></th>
+              <th onclick="sortMedTable('count')" style="cursor:pointer;" class="num" data-col="count">Adjustments <span class="material-icons sort-icon">arrow_upward</span></th>
+              <th onclick="sortMedTable('total')" style="cursor:pointer;" class="num" data-col="total">Total Adjusted <span class="material-icons sort-icon">arrow_upward</span></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="med-table-body">
+            <!-- Rows injected -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pharmacies-by-count list — aggregate scope only. Shows which
+           retail pharmacies contribute to this (drug, type) total.
+           Each row drills to the standard cell panel. -->
+      <div id="aggregate-scope-section" style="display:none;">
+        <div class="pharm-list-scroll">
+          <table class="pharm-list-table">
+            <thead id="pharm-list-head">
+              <!-- Header injected per render so column count matches active types -->
+            </thead>
+            <tbody id="pharm-list-body">
+              <!-- Rows injected -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
+    </div><!-- /panel-pane-data -->
 
   </div><!-- /panel-body -->
 </aside>
@@ -1436,19 +2089,50 @@
      colorLight — 500-tier ("Base"): used as bar fills in the chart
                   and the chart legend, so adjacent bars from the
                   same hue family stay distinguishable. */
+/* Confirmed adjustment type list from Epic "Update Balance" reasons (UAM session, June 2026).
+   Excluded: 340B Accumulator Adjustment (not inventory), Initial Set (system-generated setup).
+   Clinic Return and Return to Stock are included despite being stock increases — a bad actor
+   could inflate reported stock to mask diversion, so they must be visible in the full picture.
+   Cycle Count Variance and Cycle Count (Verified) are our structured representation of the
+   cycle count workflow (Option B unified audit log). Only variance rows contribute to the
+   heatmap cell totals. */
 const ADJ_TYPES = [
-  { key: 'count_correction',     label: 'Count Correction',     color: '#00718A', colorLight: '#0096B8' },  // Blue 700 / Blue 500
-  { key: 'cycle_count',          label: 'Cycle Count',          color: '#0A3961', colorLight: '#044A82' },  // Navy 700 / Navy 500 (brand)
-  { key: 'return_to_stock',      label: 'Return to Stock',      color: '#0E7221', colorLight: '#16B434' },  // Success 700 / 500
-  { key: 'waste',                label: 'Waste',                color: '#AB336F', colorLight: '#EB4699' },  // Pink 700 / 500
-  { key: 'expired',              label: 'Expired',              color: '#C26E00', colorLight: '#F5A623' },  // Orange 700 / 500
-  { key: 'returned_to_vendor',   label: 'Returned to Vendor',   color: '#296475', colorLight: '#409CB7' },  // UA 700 / 500 (Bodrum)
-  { key: 'shrinkage',            label: 'Shrinkage',            color: '#B53228', colorLight: '#F24335' },  // Danger 700 / 500
-  { key: 'contaminated',         label: 'Contaminated',         color: '#4C577D', colorLight: '#6C7BB1' },  // UD 700 / 500 (Charleston)
-  { key: 'ndc_change',           label: 'NDC Change',           color: '#357F96', colorLight: '#52C7EA' },  // UE 700 / 500 (Malibu)
-  { key: 'other',                label: 'Other',                color: '#555555', colorLight: '#757575' },  // Gray 700 / 500
+  { key: 'correction',             label: 'Correction',              color: '#00718A', colorLight: '#0096B8' },  // Blue 700 / 500
+  { key: 'waste',                  label: 'Waste',                   color: '#AB336F', colorLight: '#EB4699' },  // Pink 700 / 500
+  { key: 'expired',                label: 'Expired',                 color: '#c25700', colorLight: '#e08020' },  // Orange darkened for AA contrast
+  { key: 'contaminated',           label: 'Contaminated',            color: '#4C577D', colorLight: '#6C7BB1' },  // UD 700 / 500
+  { key: 'clinic_dispense',        label: 'Clinic Dispense',         color: '#296475', colorLight: '#409CB7' },  // UA 700 / 500
+  { key: 'inpatient_pharmacy',     label: 'Inpatient Pharmacy',      color: '#245D8A', colorLight: '#3891D8' },  // UB 700 / 500
+  { key: 'shrinkage',              label: 'Shrinkage',               color: '#B53228', colorLight: '#F24335' },  // Danger 700 / 500
+  { key: 'return_to_vendor',       label: 'Return to Vendor',        color: '#646A9A', colorLight: '#9CA6F1' },  // UC 700 / 500
+  { key: 'clinic_return',          label: 'Clinic Return',           color: '#0E7221', colorLight: '#16B434' },  // Success 700 / 500
+  { key: 'cycle_count_variance',   label: 'Cycle Count Variance',    color: '#0A3961', colorLight: '#044A82' },  // Navy 700 / 500
+  { key: 'other',                  label: 'Other',                   color: '#555555', colorLight: '#757575' },  // Gray 700 / 500
 ];
 const TYPE_BY_KEY = Object.fromEntries(ADJ_TYPES.map(t => [t.key, t]));
+
+/* Direction constraint per type — what's actually possible in a real
+   pharmacy operation. Both the trend chart and the transactions
+   table use this to keep mock data semantically valid.
+
+   'dec'    — decrease only: stock leaves inventory
+   'inc'    — increase only: stock added to inventory
+   'either' — can go either way (correction depends on the count; other is free-form)
+   'none'   — no balance change (cycle_count_verified is audit-only) */
+const TYPE_DIRECTION = {
+  correction:           'either',
+  waste:                'dec',
+  expired:              'dec',
+  contaminated:         'dec',
+  clinic_dispense:      'dec',
+  inpatient_pharmacy:   'dec',
+  shrinkage:            'dec',
+  return_to_vendor:     'dec',
+  clinic_return:        'inc',
+  cycle_count_variance: 'either',  // can be +/− depending on discrepancy direction
+  other:                'either',
+};
+function typeDirection(key) { return TYPE_DIRECTION[key] || 'either'; }
 
 /* Pharmacies (fictional) */
 const PHARMACIES = [
@@ -1495,18 +2179,53 @@ const HEATMAP = [
   [ {v:0},               {v:0},                 {v:0},                 {v:0},  {v:0},  {v:0},                 {v:0},                 {v:0},                 {v:0},  {v:0}  ],
 ];
 
-/* Heat-map adjustment-type filter state.
-   Empty set = no filter (cells show full totals). Otherwise cells show
-   the sum across only the selected types. */
-const HEATMAP_FILTER = { activeTypes: new Set() };
+/* Heat-map view-pivot state.
+   mode: 'pharmacy' (default) — Y axis is pharmacies, the canonical view.
+         'adj_type'           — Y axis is adjustment types (cycle_count
+                                excluded; not part of the cell totals).
+   drillType: null            — top-level view of the current mode.
+              <typeKey>       — drilled into a specific adjustment type
+                                inside the adj_type view. Heat-map renders
+                                pharmacies × drugs scoped to that type,
+                                with a breadcrumb showing the way back.
+   drillPharm: null           — top-level view of the current mode.
+               <pharmIdx>     — drilled into a specific pharmacy inside
+                                the pharmacy view. Heat-map renders that
+                                pharmacy's (user × drug) detail, with a
+                                breadcrumb showing the way back.
+                                Mutually exclusive with drillType — the
+                                two drills belong to different parent
+                                modes.
 
-/* Per-cell type breakdown.
-   Each cell carries a hand-authored `v` total. To make the type filter
-   work, we synthesize a per-type distribution that sums to `v`,
-   deterministically seeded by (i, j) so the same breakdown comes back
-   on every re-render. Weights mirror pickWeightedType() so the broad
-   shape ("count corrections and cycle counts dominate, contaminated /
-   ndc-change are rare") matches the rest of the prototype. */
+   Switching mode always clears both drill states. Drilling does NOT
+   touch the user-owned Adjustment Type filter chip or the View By
+   selection. */
+const VIEW_BY = { mode: 'pharmacy', drillType: null, drillPharm: null };
+
+/* Row search — case-insensitive substring match against the Y-axis
+   label of each row (pharmacy name in pharmacy and drilled views;
+   adjustment type label in adj_type top-level view). Empty string
+   means no filter. */
+const HEATMAP_SEARCH = { query: '' };
+
+function setHeatmapSearch(value) {
+  HEATMAP_SEARCH.query = (value || '').trim().toLowerCase();
+  renderHeatmap();
+}
+
+/* Adjustment types available for the Y axis in adj_type view.
+   Both cycle count types are excluded:
+   - cycle_count_verified: pure audit record, no balance change, no heatmap contribution.
+   - cycle_count_variance: tracked separately via getCellCycleCount / getCellCycleVarianceCount,
+     not part of HEATMAP[i][j].v. Including it here would imply heatmap cell values contain
+     cycle count reconciliations, which they don't. */
+const ADJ_TYPES_FOR_HEATMAP = ADJ_TYPES.filter(t => t.key !== 'cycle_count_verified' && t.key !== 'cycle_count_variance');
+
+/* Per-cell adjustment type breakdown — manual adjustments only.
+   Each cell carries a hand-authored `v` total representing manual adjustments.
+   Cycle count reconciliations are tracked separately via getCellCycleCount /
+   getCellCycleVarianceCount and are never part of this breakdown or HEATMAP[i][j].v.
+   Deterministically seeded by (i, j) so the same breakdown is stable across renders. */
 const _cellBreakdownCache = new Map();
 function getCellBreakdown(i, j) {
   const key = i * 100 + j;
@@ -1526,15 +2245,15 @@ function getCellBreakdown(i, j) {
     };
     const pickType = () => {
       const r = rand();
-      if (r < 0.30) return 'count_correction';
-      if (r < 0.50) return 'cycle_count';
-      if (r < 0.62) return 'return_to_stock';
-      if (r < 0.72) return 'expired';
-      if (r < 0.80) return 'waste';
-      if (r < 0.86) return 'returned_to_vendor';
-      if (r < 0.92) return 'shrinkage';
-      if (r < 0.96) return 'contaminated';
-      if (r < 0.99) return 'ndc_change';
+      if (r < 0.22) return 'correction';
+      if (r < 0.34) return 'waste';
+      if (r < 0.44) return 'expired';
+      if (r < 0.52) return 'shrinkage';
+      if (r < 0.60) return 'clinic_dispense';
+      if (r < 0.67) return 'inpatient_pharmacy';
+      if (r < 0.73) return 'return_to_vendor';
+      if (r < 0.79) return 'contaminated';
+      if (r < 0.92) return 'clinic_return';
       return 'other';
     };
     for (let k = 0; k < total; k++) breakdown[pickType()] += 1;
@@ -1543,23 +2262,96 @@ function getCellBreakdown(i, j) {
   return breakdown;
 }
 
-/* Cell value visible in the heat-map after the type filter is applied. */
+/* Per-cell cycle count count.
+   Cycle counts happen on a regular cadence regardless of adjustment
+   volume — typically 1–5 per drug-pharmacy in a 30-day window. We
+   synthesize a stable count per cell, independent of cell.v.
+   Returned alongside the cell value in the panel so users see both
+   numbers without conflating them. */
+const _cellCycleCountCache = new Map();
+function getCellCycleCount(i, j) {
+  const key = i * 100 + j;
+  if (_cellCycleCountCache.has(key)) return _cellCycleCountCache.get(key);
+  let seed = (i * 53 + j * 17 + 97) >>> 0;
+  const rand = () => {
+    seed = (seed + 0x6D2B79F5) >>> 0;
+    let t = seed;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  // Distribution: most cells get 1–4 counts; a few get 0; rare cells get more
+  const r = rand();
+  let count;
+  if (r < 0.10)      count = 0;
+  else if (r < 0.45) count = 1 + Math.floor(rand() * 2);  // 1–2
+  else if (r < 0.85) count = 2 + Math.floor(rand() * 3);  // 2–4
+  else               count = 4 + Math.floor(rand() * 3);  // 4–6
+  _cellCycleCountCache.set(key, count);
+  return count;
+}
+
+/* Cell value visible in the heat-map — manual adjustments + cycle count
+   reconciliations (variances only; verified counts have no balance change).
+   This is the canonical display value used for cell rendering, column
+   totals, sorting, and severity band computation. */
 function getFilteredCellValue(i, j) {
-  const v = HEATMAP[i][j].v || 0;
-  if (HEATMAP_FILTER.activeTypes.size === 0) return v;
-  if (v === 0) return 0;
-  const breakdown = getCellBreakdown(i, j);
+  return (HEATMAP[i][j].v || 0) + getCellCycleVarianceCount(i, j);
+}
+
+/* Adj-type-view cell value: sum across all pharmacies of a single
+   adjustment type's count for a given drug column. */
+function getTypeCellValue(typeKey, j) {
   let sum = 0;
-  HEATMAP_FILTER.activeTypes.forEach(k => { sum += breakdown[k] || 0; });
+  for (let i = 0; i < HEATMAP.length; i++) {
+    const breakdown = getCellBreakdown(i, j);
+    sum += breakdown[typeKey] || 0;
+  }
   return sum;
 }
 
-/* Column totals — recomputed each render so they reflect the filter. */
+/* Drilled-state cell value — count of a single type's adjustments
+   for a specific (pharmacy, drug) pair. Used inside the adj_type
+   view when a user has drilled into a specific type. */
+function getDrilledCellValue(i, j, typeKey) {
+  return getCellBreakdown(i, j)[typeKey] || 0;
+}
+
+/* Column totals — recomputed each render so they reflect the filter
+   and the current view:
+     pharmacy view  - sum cells across all pharmacies
+     adj_type top   - sum cells across all types
+     adj_type drill - sum the drilled type's cells across all pharmacies */
 function getColTotals() {
   const t = new Array(DRUGS.length).fill(0);
-  for (let i = 0; i < HEATMAP.length; i++) {
+  if (VIEW_BY.mode === 'adj_type') {
+    if (VIEW_BY.drillType) {
+      for (let j = 0; j < DRUGS.length; j++) {
+        t[j] = getTypeCellValue(VIEW_BY.drillType, j);
+      }
+    } else {
+      for (let j = 0; j < DRUGS.length; j++) {
+        for (const type of ADJ_TYPES_FOR_HEATMAP) {
+          t[j] += getTypeCellValue(type.key, j);
+        }
+      }
+    }
+  } else if (VIEW_BY.mode === 'pharmacy' && VIEW_BY.drillPharm !== null) {
+    // Pharmacy drilled: sum across users at the drilled pharmacy for
+    // each drug. Equivalent to the un-drilled pharmacy row total, since
+    // every adjustment at this pharmacy is owned by some user there.
+    const visibleRows = getSortedUserRows();
     for (let j = 0; j < DRUGS.length; j++) {
-      t[j] += getFilteredCellValue(i, j);
+      for (const r of visibleRows) {
+        const row = USER_ROWS[r];
+        t[j] += getUserPharmDrugCount(row.userIdx, row.pharmIdx, j);
+      }
+    }
+  } else {
+    for (let i = 0; i < HEATMAP.length; i++) {
+      for (let j = 0; j < DRUGS.length; j++) {
+        t[j] += getFilteredCellValue(i, j);
+      }
     }
   }
   return t;
@@ -1569,12 +2361,72 @@ function getColTotals() {
    HELPERS
    ============================================================ */
 
-function severityClass(n) {
+/* Severity banding — population-σ-based, matches the real ControlCheck
+   heatmap algorithm:
+     1. Collect all cell values from the current filtered dataset
+     2. Compute population σ
+     3. If σ ≥ 1.67 use σ as the tier boundary:
+          low      0  → ⌊σ⌋
+          warning  ⌈σ⌉ → ⌊2σ⌋
+          tertiary ⌈2σ⌉ → ⌊3σ⌋
+          danger   ⌈3σ⌉ and above
+        Otherwise fall back to hardcoded defaults:
+          low 0–1 / warning 2–3 / tertiary 4–5 / danger 6+
+   The 1.67 threshold is the practical minimum σ at which dynamic
+   ranges produce meaningful integer boundaries. */
+
+function computeBands(values) {
+  const n = values.length;
+  if (n === 0) return { sigma: 0, lowMax: 1, warnMax: 3, tertMax: 5, dynamic: false };
+  const mean = values.reduce((s, v) => s + v, 0) / n;
+  const variance = values.reduce((s, v) => s + (v - mean) ** 2, 0) / n;
+  const sigma = Math.sqrt(variance);
+  if (sigma >= 1.67) {
+    return {
+      sigma,
+      lowMax:  Math.floor(sigma),         // low: 0 .. ⌊σ⌋
+      warnMax: Math.floor(2 * sigma),     // warning: ⌈σ⌉ .. ⌊2σ⌋
+      tertMax: Math.floor(3 * sigma),     // tertiary: ⌈2σ⌉ .. ⌊3σ⌋
+      dynamic: true,                       // danger: ⌈3σ⌉ and above
+    };
+  }
+  // Static fallback when σ is too small to produce useful integer tiers
+  return { sigma, lowMax: 1, warnMax: 3, tertMax: 5, dynamic: false };
+}
+
+function severityClass(n, bands) {
   if (n <= 0) return 'zero';
-  if (n <= 2) return 'lvl-low';
-  if (n <= 5) return 'lvl-mid';
-  if (n <= 7) return 'lvl-orange';
+  if (!bands) {
+    // Defensive fallback — caller should always pass bands. Use the
+    // static defaults so a missed call site doesn't crash.
+    if (n <= 1) return 'lvl-low';
+    if (n <= 3) return 'lvl-mid';
+    if (n <= 5) return 'lvl-orange';
+    return 'lvl-red';
+  }
+  if (n <= bands.lowMax)  return 'lvl-low';
+  if (n <= bands.warnMax) return 'lvl-mid';
+  if (n <= bands.tertMax) return 'lvl-orange';
   return 'lvl-red';
+}
+
+/* renderLegend — update the heat-map legend pills to reflect the
+   bands actually in use for this render. When σ is dynamic the
+   ranges shift; when σ < 1.67 they fall back to the static defaults.
+   The legend's subtext ("Scale adjusts based on selected date range")
+   is static — the changing pill values themselves are the indicator
+   that the scale moved. */
+function renderLegend(bands) {
+  const lowEl  = document.getElementById('legend-low');
+  const midEl  = document.getElementById('legend-mid');
+  const orgEl  = document.getElementById('legend-orange');
+  const redEl  = document.getElementById('legend-red');
+  if (!lowEl) return;
+  const fmtRange = (lo, hi) => lo === hi ? `${lo}` : `${lo}–${hi}`;
+  lowEl.textContent = fmtRange(0, bands.lowMax);
+  midEl.textContent = fmtRange(bands.lowMax + 1, bands.warnMax);
+  orgEl.textContent = fmtRange(bands.warnMax + 1, bands.tertMax);
+  redEl.textContent = `${bands.tertMax + 1}+`;
 }
 
 /* ─── Sort state ───────────────────────────────────────────
@@ -1595,22 +2447,91 @@ function setSort(key) {
     }
   } else {
     SORT.key = key;
-    SORT.dir = (key === 'pharmacy') ? 'asc' : 'desc';
+    SORT.dir = (key === 'pharmacy' || key === 'adj_type') ? 'asc' : 'desc';
   }
   renderHeatmap();
 }
 
 function getSortedIndices() {
-  const idx = PHARMACIES.map((_, i) => i);
+  let idx = PHARMACIES.map((_, i) => i);
+  // Search filter — match pharmacy name (Y-axis label in pharmacy view
+  // and in the drilled child view)
+  if (HEATMAP_SEARCH.query) {
+    const q = HEATMAP_SEARCH.query;
+    idx = idx.filter(i => PHARMACIES[i].toLowerCase().includes(q));
+  }
   if (SORT.key === null) return idx;
   if (SORT.key === 'pharmacy') {
     idx.sort((a, b) => PHARMACIES[a].localeCompare(PHARMACIES[b]));
+  } else if (SORT.key === 'adj_type') {
+    // No-op for pharmacy index sort
+    return idx;
   } else {
     const col = Number(SORT.key);
     idx.sort((a, b) => getFilteredCellValue(a, col) - getFilteredCellValue(b, col));
   }
   if (SORT.dir === 'desc') idx.reverse();
   return idx;
+}
+
+/* Sorted-order list of adjustment types for the adj_type view.
+   Returns the types in render order respecting current SORT state
+   and the active search query (matched against the type label). */
+function getSortedTypes() {
+  let types = ADJ_TYPES_FOR_HEATMAP.slice();
+  if (HEATMAP_SEARCH.query) {
+    const q = HEATMAP_SEARCH.query;
+    types = types.filter(t => t.label.toLowerCase().includes(q));
+  }
+  if (SORT.key === null) return types;
+  if (SORT.key === 'adj_type') {
+    types.sort((a, b) => a.label.localeCompare(b.label));
+  } else if (SORT.key === 'pharmacy') {
+    return types;  // not meaningful for this view
+  } else {
+    const col = Number(SORT.key);
+    types.sort((a, b) => getTypeCellValue(a.key, col) - getTypeCellValue(b.key, col));
+  }
+  if (SORT.dir === 'desc') types.reverse();
+  return types;
+}
+
+/* Sorted-order list of user-row indices for the pharmacy-drilled view.
+   The drilled view is always scoped to one specific pharmacy
+   (VIEW_BY.drillPharm), so this returns only the USER_ROWS entries
+   whose pharmIdx matches. Search filters against user name only
+   (pharmacy is fixed and shown in the breadcrumb, not in row labels
+   for this view). Sort key:
+     - 'user' → user name asc
+     - numeric → column j (the cell's adjustment count) */
+function getSortedUserRows() {
+  const pIdx = VIEW_BY.drillPharm;
+  let rowIdxs = USER_ROWS
+    .map((_, i) => i)
+    .filter(r => USER_ROWS[r].pharmIdx === pIdx);
+  // Search — user name only, since the pharmacy is fixed in this view
+  if (HEATMAP_SEARCH.query) {
+    const q = HEATMAP_SEARCH.query;
+    rowIdxs = rowIdxs.filter(r => USERS[USER_ROWS[r].userIdx].toLowerCase().includes(q));
+  }
+  // Sort
+  if (SORT.key === null) return rowIdxs;
+  if (SORT.key === 'user') {
+    rowIdxs.sort((a, b) =>
+      USERS[USER_ROWS[a].userIdx].name.localeCompare(USERS[USER_ROWS[b].userIdx].name)
+    );
+  } else if (SORT.key === 'pharmacy' || SORT.key === 'adj_type') {
+    return rowIdxs;  // not meaningful for this view
+  } else {
+    const col = Number(SORT.key);
+    rowIdxs.sort((a, b) => {
+      const rA = USER_ROWS[a], rB = USER_ROWS[b];
+      return getUserPharmDrugCount(rA.userIdx, rA.pharmIdx, col)
+           - getUserPharmDrugCount(rB.userIdx, rB.pharmIdx, col);
+    });
+  }
+  if (SORT.dir === 'desc') rowIdxs.reverse();
+  return rowIdxs;
 }
 
 function sortIcon(key) {
@@ -1623,6 +2544,73 @@ function sortIcon(key) {
 }
 
 /* ============================================================
+   PAGE CHROME (breadcrumb + page title) — driven by drill state
+   ============================================================ */
+
+/* updatePageChrome — rewrites the page-level breadcrumb and the page
+   title group based on whether the user has drilled into a specific
+   adjustment type from the adj_type view.
+
+   Non-drilled (default) state:
+     Breadcrumb:  Analyze › Manual Adjustments
+     Title:       Manual Adjustments       (no back arrow)
+
+   Drilled state:
+     Breadcrumb:  Analyze › Manual Adjustments › <Type Label>
+                  ("Manual Adjustments" is clickable, returns to top)
+     Title:       ←  <Type Label>         (arrow returns to top)
+
+   Both the breadcrumb-parent click and the title back arrow call
+   clearDrillType(), which re-renders the heatmap (and thus re-runs
+   this function to restore the default chrome). */
+function updatePageChrome(isDrilled) {
+  const breadcrumbEl = document.getElementById('page-breadcrumb');
+  const titleGroupEl = document.getElementById('page-title-group');
+  if (!breadcrumbEl || !titleGroupEl) return;
+
+  // Two drill paths share the same chrome shape (back-arrow title +
+  // breadcrumb with the way back). The mode determines which back
+  // handler + label to plug in.
+  const isTypeDrill  = VIEW_BY.mode === 'adj_type' && !!VIEW_BY.drillType;
+  const isPharmDrill = VIEW_BY.mode === 'pharmacy' && VIEW_BY.drillPharm !== null;
+
+  if (isTypeDrill || isPharmDrill) {
+    const label = isTypeDrill
+      ? (TYPE_BY_KEY[VIEW_BY.drillType]?.label || VIEW_BY.drillType)
+      : PHARMACIES[VIEW_BY.drillPharm];
+    const clearFn = isTypeDrill ? 'clearDrillType()' : 'clearDrillPharm()';
+    breadcrumbEl.innerHTML =
+      '<button class="bc-parent" type="button">Analyze</button>'
+      + '<span class="bc-sep">›</span>'
+      + '<button class="bc-parent" type="button" onclick="' + clearFn + '">Inventory Adjustments</button>'
+      + '<span class="bc-sep">›</span>'
+      + '<span class="bc-current">' + label + '</span>';
+    titleGroupEl.innerHTML =
+      '<button class="page-back-btn" type="button" aria-label="Back to Inventory Adjustments" onclick="' + clearFn + '">'
+      +   '<span class="material-icons">arrow_back</span>'
+      + '</button>'
+      + '<h1 class="page-title">' + label + '</h1>';
+  } else {
+    // Un-drilled: standard breadcrumb + title + page-section-indicator
+    // (the indicator names the active sub-page — "By Retail Pharmacy" or
+    // "By Adjustment Type" — and is intentionally suppressed in the
+    // drilled state, since the title there already names the specific
+    // type / pharmacy the viewer is inspecting.)
+    const sectionLabel = (VIEW_BY.mode === 'adj_type')
+      ? 'By Adjustment Type'
+      : 'By Retail Pharmacy';
+    breadcrumbEl.innerHTML =
+      '<button class="bc-parent" type="button">Analyze</button>'
+      + '<span class="bc-sep">›</span>'
+      + '<span class="bc-current">Inventory Adjustments</span>';
+    titleGroupEl.innerHTML =
+      '<h1 class="page-title">Inventory Adjustments</h1>'
+      + '<span class="page-section-indicator" id="page-section-indicator">' + sectionLabel + '</span>';
+  }
+}
+
+
+/* ============================================================
    RENDER HEAT MAP
    ============================================================ */
 
@@ -1630,55 +2618,345 @@ function renderHeatmap() {
   const head = document.getElementById('heatmap-head');
   const body = document.getElementById('heatmap-body');
 
-  // Header — pharmacy column + drug columns. Each th is a sort trigger.
+  // Four render cases share most of the table structure:
+  //   A. pharmacy top-level (canonical)        Y=pharmacies
+  //   B. adj_type top-level                    Y=types
+  //   C. adj_type drilled into one type        Y=pharmacies (scoped to type)
+  //   D. pharmacy drilled into one pharmacy    Y=users (scoped to pharmacy)
+  const isTypeDrilled  = VIEW_BY.mode === 'adj_type' && !!VIEW_BY.drillType;
+  const isTypeTop      = VIEW_BY.mode === 'adj_type' && !VIEW_BY.drillType;
+  const isPharmDrilled = VIEW_BY.mode === 'pharmacy' && VIEW_BY.drillPharm !== null;
+  // Either kind of drill triggers the page-chrome change (breadcrumb +
+  // back link). updatePageChrome distinguishes them internally by mode.
+  const isDrilled = isTypeDrilled || isPharmDrilled;
+
+  // Drilled-state surfacing now lives in the page-level breadcrumb +
+  // page title (rather than an in-card breadcrumb above the heatmap).
+  // updatePageChrome rewrites both based on the current drill state.
+  updatePageChrome(isDrilled);
+
+  // Header — Y-axis column + drug columns. Each th is a sort trigger.
+  let yAxisLabel, yAxisSortKey;
+  if (isTypeTop) {
+    yAxisLabel   = 'Adjustment Type';
+    yAxisSortKey = 'adj_type';
+  } else if (isPharmDrilled) {
+    yAxisLabel   = 'User';
+    yAxisSortKey = 'user';
+  } else {
+    yAxisLabel   = 'Retail Pharmacy';
+    yAxisSortKey = 'pharmacy';
+  }
   const isSorted = (k) => SORT.key === k ? ' sorted' : '';
   head.innerHTML =
-    `<th class="sortable${isSorted('pharmacy')}" onclick="setSort('pharmacy')" aria-sort="${SORT.key === 'pharmacy' ? (SORT.dir === 'asc' ? 'ascending' : 'descending') : 'none'}">
-       <span class="th-label">Retail Pharmacy ${sortIcon('pharmacy')}</span>
+    `<th class="sortable${isSorted(yAxisSortKey)}" onclick="setSort('${yAxisSortKey}')" aria-sort="${SORT.key === yAxisSortKey ? (SORT.dir === 'asc' ? 'ascending' : 'descending') : 'none'}">
+       <span class="th-label">${yAxisLabel} ${sortIcon(yAxisSortKey)}</span>
      </th>` +
     DRUGS.map((d, j) => `<th class="sortable${isSorted(j)}" onclick="setSort(${j})" title="${d.schedule}" aria-sort="${SORT.key === j ? (SORT.dir === 'asc' ? 'ascending' : 'descending') : 'none'}">
        <span class="th-label">${d.name} ${sortIcon(j)}</span>
      </th>`).join('');
 
-  // Totals row (always at top, not sorted) — derived from active filter
+  // Totals row — derived from active filter and current view/drill
   const colTotals = getColTotals();
   let html = '<tr class="totals-row"><td>Totals</td>' +
     colTotals.map(t => `<td>${t}</td>`).join('') + '</tr>';
 
-  // Pharmacy rows — render in sorted index order
-  const order = getSortedIndices();
-  order.forEach(i => {
-    const row = HEATMAP[i];
-    html += `<tr class="pharmacy-row"><td><span class="pharmacy-name">${PHARMACIES[i]}</span></td>`;
-    row.forEach((cell, j) => {
-      const v = getFilteredCellValue(i, j);
-      const sev = severityClass(v);
-      if (v === 0) {
-        html += `<td><span class="hm-zero">0</span></td>`;
-      } else {
-        let marker = '';
-        let extraLabel = '';
-        if (cell.r === 'active') {
-          marker = `<span class="review-marker active" aria-hidden="true"></span>`;
-          extraLabel = ', active review';
-        } else if (cell.r === 'completed') {
-          marker = `<span class="review-marker completed" aria-hidden="true">
-            <svg viewBox="0 0 10 10"><path d="M2 5.2 L4.2 7.4 L8 3.2"/></svg>
-          </span>`;
-          extraLabel = ', reviews completed';
-        }
-        html += `<td>
-          <button class="hm-cell ${sev}" type="button"
-            onclick="openPanel(${i},${j})"
-            aria-label="${PHARMACIES[i]} — ${DRUGS[j].name}: ${v} adjustments${extraLabel}"
-          >${v}${marker}</button>
-        </td>`;
-      }
+  // Compute σ-based severity bands once per render. Population
+  // depends on which view we're showing:
+  //   - pharmacy top:    all pharmacy × drug cell values
+  //   - adj_type top:    all type × drug aggregated values
+  //   - adj_type drill:  cells of the drilled type across pharmacies × drugs
+  //   - pharmacy drill:  user × drug values for users at the drilled pharmacy
+  // The bands are then passed to severityClass() for each cell.
+  let bandPopulation;
+  if (isTypeTop) {
+    bandPopulation = [];
+    ADJ_TYPES_FOR_HEATMAP.forEach(t => {
+      for (let j = 0; j < DRUGS.length; j++) bandPopulation.push(getTypeCellValue(t.key, j));
     });
-    html += '</tr>';
-  });
+  } else if (isTypeDrilled) {
+    bandPopulation = [];
+    for (let i = 0; i < HEATMAP.length; i++) {
+      for (let j = 0; j < DRUGS.length; j++) {
+        bandPopulation.push(getDrilledCellValue(i, j, VIEW_BY.drillType));
+      }
+    }
+  } else if (isPharmDrilled) {
+    // Bands use every (user × drug) cell for users at the drilled pharmacy.
+    // Not affected by search (search is a UI narrow; population shouldn't
+    // shrink with each keystroke).
+    bandPopulation = [];
+    const pIdx = VIEW_BY.drillPharm;
+    for (let r = 0; r < USER_ROWS.length; r++) {
+      const row = USER_ROWS[r];
+      if (row.pharmIdx !== pIdx) continue;
+      for (let j = 0; j < DRUGS.length; j++) {
+        bandPopulation.push(getUserPharmDrugCount(row.userIdx, row.pharmIdx, j));
+      }
+    }
+  } else {
+    bandPopulation = [];
+    for (let i = 0; i < HEATMAP.length; i++) {
+      for (let j = 0; j < DRUGS.length; j++) {
+        bandPopulation.push(getFilteredCellValue(i, j));
+      }
+    }
+  }
+  const bands = computeBands(bandPopulation);
+  renderLegend(bands);
+
+  // Row count for the heatmap toolbar — number of Y-axis rows actually
+  // rendered (respecting search + filter narrowing) plus a noun matching
+  // the current axis. Computed once here so the case branches below
+  // can stay focused on their data paths.
+  let rowCount, rowNoun;
+  if (isTypeTop) {
+    rowCount = getSortedTypes().length;
+    rowNoun = rowCount === 1 ? 'adjustment type' : 'adjustment types';
+  } else if (isPharmDrilled) {
+    rowCount = getSortedUserRows().length;
+    rowNoun = rowCount === 1 ? 'user' : 'users';
+  } else {
+    rowCount = getSortedIndices().length;
+    rowNoun = rowCount === 1 ? 'retail pharmacy' : 'retail pharmacies';
+  }
+  const rowCountEl = document.getElementById('row-count');
+  if (rowCountEl) rowCountEl.innerHTML = `<strong>${rowCount}</strong> ${rowNoun}`;
+
+  if (isTypeTop) {
+    // ─── Case B: adj_type top-level — each row is one type ──────
+    // Row label drills the HEATMAP into that type's pharmacy×drug breakout.
+    // Cell badges open the DETAIL PANEL for that (type, drug) combination,
+    // aggregated across all pharmacies.
+    getSortedTypes().forEach(type => {
+      html += `<tr class="adj-type-row">
+        <td>
+          <button class="adj-type-label" type="button"
+                  onclick="drillIntoType('${type.key}')"
+                  title="View pharmacies for ${type.label}">
+            ${type.label}
+            <span class="material-icons drill-icon">chevron_right</span>
+          </button>
+        </td>`;
+      DRUGS.forEach((d, j) => {
+        const v = getTypeCellValue(type.key, j);
+        const sev = severityClass(v, bands);
+        if (v === 0) {
+          html += `<td><span class="hm-zero">0</span></td>`;
+        } else {
+          html += `<td>
+            <button class="hm-cell ${sev}" type="button"
+              onclick="openTypeDrugPanel('${type.key}',${j})"
+              aria-label="${type.label} — ${d.name}: ${v} adjustments across all pharmacies. Open details."
+            >${v}</button>
+          </td>`;
+        }
+      });
+      html += '</tr>';
+    });
+  } else if (isTypeDrilled) {
+    // ─── Case C: adj_type drilled — pharmacies × drugs, scoped
+    //                                 to VIEW_BY.drillType. ─────
+    const drillKey = VIEW_BY.drillType;
+    const order = getSortedIndices();
+    order.forEach(i => {
+      const row = HEATMAP[i];
+      html += `<tr class="pharmacy-row"><td><span class="pharmacy-name">${PHARMACIES[i]}</span></td>`;
+      row.forEach((cell, j) => {
+        const v = getDrilledCellValue(i, j, drillKey);
+        const sev = severityClass(v, bands);
+        if (v === 0) {
+          html += `<td><span class="hm-zero">0</span></td>`;
+        } else {
+          html += `<td>
+            <button class="hm-cell ${sev}" type="button"
+              onclick="openPanel(${i},${j})"
+              aria-label="${PHARMACIES[i]} — ${DRUGS[j].name}: ${v} ${TYPE_BY_KEY[drillKey]?.label || drillKey} adjustments"
+            >${v}</button>
+          </td>`;
+        }
+      });
+      html += '</tr>';
+    });
+  } else if (isPharmDrilled) {
+    // ─── Case D: pharmacy drilled — users × drugs, scoped to
+    //                                 VIEW_BY.drillPharm. ───────────
+    // Y axis = users at the drilled pharmacy. Each cell value is
+    // getUserPharmDrugCount for that (user, pharm, drug). Pharmacy
+    // name is fixed for this view (shown in the breadcrumb above),
+    // so row labels are single-line user names.
+    const order = getSortedUserRows();
+    order.forEach(rowIdx => {
+      const { userIdx, pharmIdx } = USER_ROWS[rowIdx];
+      const userName  = USERS[userIdx].name;
+      const pharmName = PHARMACIES[pharmIdx];
+      html += `<tr class="pharmacy-row">
+        <td><span class="pharmacy-name">${userName}</span></td>`;
+      DRUGS.forEach((d, j) => {
+        const v = getUserPharmDrugCount(userIdx, pharmIdx, j);
+        const sev = severityClass(v, bands);
+        if (v === 0) {
+          html += `<td><span class="hm-zero">0</span></td>`;
+        } else {
+          html += `<td>
+            <button class="hm-cell ${sev}" type="button"
+              onclick="openPanel(${pharmIdx},${j},null,${userIdx})"
+              aria-label="${userName} at ${pharmName} — ${d.name}: ${v} adjustments"
+            >${v}</button>
+          </td>`;
+        }
+      });
+      html += '</tr>';
+    });
+  } else {
+    // ─── Case A: pharmacy top-level (canonical) ────────────────
+    // Y axis = pharmacies. Each pharmacy row label is clickable —
+    // drills to that pharmacy's (user × drug) detail in case D.
+    const order = getSortedIndices();
+    order.forEach(i => {
+      const row = HEATMAP[i];
+      html += `<tr class="pharmacy-row"><td>
+        <button class="pharmacy-row-drill" type="button"
+          onclick="drillIntoPharm(${i})"
+          aria-label="View ${PHARMACIES[i]} users in detail">
+          <span class="pharmacy-name">${PHARMACIES[i]}</span>
+          <span class="material-icons pharmacy-row-drill-icon" aria-hidden="true">chevron_right</span>
+        </button>
+      </td>`;
+      row.forEach((cell, j) => {
+        const v = getFilteredCellValue(i, j);
+        const sev = severityClass(v, bands);
+        if (v === 0) {
+          html += `<td><span class="hm-zero">0</span></td>`;
+        } else {
+          let marker = '';
+          let extraLabel = '';
+          if (cell.r === 'active') {
+            marker = `<span class="review-marker active" aria-hidden="true"></span>`;
+            extraLabel = ', active review';
+          } else if (cell.r === 'completed') {
+            marker = `<span class="review-marker completed" aria-hidden="true">
+              <svg viewBox="0 0 10 10"><path d="M2 5.2 L4.2 7.4 L8 3.2"/></svg>
+            </span>`;
+            extraLabel = ', reviews completed';
+          }
+          html += `<td>
+            <button class="hm-cell ${sev}" type="button"
+              onclick="openPanel(${i},${j})"
+              aria-label="${PHARMACIES[i]} — ${DRUGS[j].name}: ${v} adjustments${extraLabel}"
+            >${v}${marker}</button>
+          </td>`;
+        }
+      });
+      html += '</tr>';
+    });
+  }
 
   body.innerHTML = html;
+}
+
+/* ============================================================
+   SIDEBAR INTERACTIONS
+   ============================================================ */
+
+/* togglePanel — flip an accordion section open/closed. Driven by the
+   click handler on each mat-expansion-panel-header. */
+function togglePanel(header) {
+  const panel = header.closest('mat-expansion-panel');
+  if (!panel) return;
+  const wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+  const isOpen = panel.classList.contains('mat-expanded');
+  panel.classList.toggle('mat-expanded', !isOpen);
+  header.classList.toggle('mat-expanded', !isOpen);
+  header.setAttribute('aria-expanded', !isOpen);
+  if (!wrapper) return;
+  isOpen ? wrapper.setAttribute('inert','') : wrapper.removeAttribute('inert');
+}
+
+/* toggleDrawer — collapse/expand the analyze sidebar. Collapsed state
+   shrinks the drawer to 48px and hides nav labels (CSS handles that). */
+function toggleDrawer() {
+  document.getElementById('analyze-drawer')?.classList.toggle('collapsed');
+}
+
+
+/* setPage — sidebar entry point. Wraps setViewBy so the two nav links
+   ("By Retail Pharmacy" / "By Adjustment Type") drive the same view-mode
+   state that the old in-toolbar View By pillter used to control. Also
+   bails out cleanly if the same page is clicked again. */
+function setPage(page) {
+  if (page !== 'by-pharmacy' && page !== 'by-type') return;
+  const mode = (page === 'by-type') ? 'adj_type' : 'pharmacy';
+  // setViewBy handles drill-reset + sidebar active toggling + re-render.
+  setViewBy(mode);
+}
+
+/* setViewBy — switch between Retail Pharmacy and Adjustment Type views.
+   Switching always clears any drilled state (both drillType and
+   drillPharm). Drilling within a mode does NOT switch the mode —
+   the drilled child view is still inside the same parent mode. */
+function setViewBy(mode) {
+  if (VIEW_BY.mode === mode && VIEW_BY.drillType === null && VIEW_BY.drillPharm === null) return;
+  VIEW_BY.mode = mode;
+  VIEW_BY.drillType = null;
+  VIEW_BY.drillPharm = null;
+  // Reset sort — column indices still work, but row-axis sort keys
+  // ('pharmacy' / 'adj_type' / 'user') only apply to their own view.
+  SORT.key = null;
+  SORT.dir = 'desc';
+  // Sidebar nav-item active state mirrors VIEW_BY.mode.
+  const byPharm = document.getElementById('nav-manual-adjustments-by-pharmacy');
+  const byType  = document.getElementById('nav-manual-adjustments-by-type');
+  if (byPharm) byPharm.classList.toggle('active', mode === 'pharmacy');
+  if (byType)  byType .classList.toggle('active', mode === 'adj_type');
+  closeAllMenus();
+  renderHeatmap();
+}
+
+/* drillIntoType — invoked when a user clicks an adjustment type row or
+   any cell in the top-level adj_type view. Drills into a child view
+   that shows pharmacies × drugs for just that type. Does NOT change
+   the View By selection (the user is still in the Adjustment Type view,
+   just one level deeper) and does NOT touch the Adjustment Type filter
+   chip. The way back is the breadcrumb that appears at the top of
+   the heat-map card. */
+function drillIntoType(typeKey) {
+  VIEW_BY.drillType = typeKey;
+  // Reset sort — we're now looking at a fresh set of rows.
+  SORT.key = null;
+  SORT.dir = 'desc';
+  renderHeatmap();
+}
+
+/* clearDrillType — pop back from the drilled child view to the
+   top-level adj_type view. Called from the breadcrumb's back button. */
+function clearDrillType() {
+  VIEW_BY.drillType = null;
+  SORT.key = null;
+  SORT.dir = 'desc';
+  renderHeatmap();
+}
+
+/* drillIntoPharm — invoked when a user clicks a pharmacy row label in
+   the top-level pharmacy view. Drills into a child view that shows
+   that pharmacy's (user × drug) detail. Does NOT change the View By
+   selection — the drilled view is still inside the pharmacy mode,
+   one level deeper. The way back is the breadcrumb at the top. */
+function drillIntoPharm(pharmIdx) {
+  VIEW_BY.drillPharm = pharmIdx;
+  // Reset sort — we're now looking at a fresh set of rows.
+  SORT.key = null;
+  SORT.dir = 'desc';
+  renderHeatmap();
+}
+
+/* clearDrillPharm — pop back from the drilled (user × drug) view to
+   the top-level pharmacy view. Called from the breadcrumb's back button. */
+function clearDrillPharm() {
+  VIEW_BY.drillPharm = null;
+  SORT.key = null;
+  SORT.dir = 'desc';
+  renderHeatmap();
 }
 
 
@@ -1718,15 +2996,6 @@ function setDate(label) {
   closeAllMenus();
 }
 
-/* Pharmacy options (multi-select) */
-function renderPharmacyOptions() {
-  document.getElementById('pharm-options').innerHTML = PHARMACIES.map((p, i) => `
-    <label class="menu-option">
-      <input type="checkbox" data-pharm="${i}"> ${p}
-    </label>
-  `).join('');
-}
-
 /* Drug options (multi-select, all selected by default == "10") */
 function renderDrugOptions() {
   document.getElementById('drug-options').innerHTML = DRUGS.map((d, i) => `
@@ -1736,75 +3005,13 @@ function renderDrugOptions() {
   `).join('');
 }
 
-/* Adjustment Type options */
-function renderTypeOptions() {
-  document.getElementById('type-options').innerHTML = ADJ_TYPES.map(t => `
-    <label class="menu-option">
-      <input type="checkbox" data-type="${t.key}">
-      ${t.label}
-    </label>
-  `).join('');
-}
-
-function selectAllTypes(state) {
-  document.querySelectorAll('#type-options input[type="checkbox"]').forEach(cb => cb.checked = state);
-}
-
-/* Sync the menu's checkboxes to match the currently-active filter,
-   so reopening the menu shows the live state (and Cancel can revert
-   any pending edits). */
-function syncTypeMenuFromFilter() {
-  document.querySelectorAll('#type-options input[type="checkbox"]').forEach(cb => {
-    cb.checked = HEATMAP_FILTER.activeTypes.has(cb.dataset.type);
-  });
-}
-
-/* Read the menu's checked types into the filter state, re-render the
-   heat-map with the new filter, refresh the chip badge, and close. */
-function applyTypeFilter() {
-  HEATMAP_FILTER.activeTypes.clear();
-  document.querySelectorAll('#type-options input[type="checkbox"]:checked').forEach(cb => {
-    HEATMAP_FILTER.activeTypes.add(cb.dataset.type);
-  });
-  updateTypeChipLabel();
-  renderHeatmap();
-  closeAllMenus();
-}
-
-/* Reflect filter state on the chip:
-   no filter   → "Adjustment Type"
-   one type    → "Adjustment Type · <Label>" (with a small badge dot)
-   N > 1 types → "Adjustment Type" with badge "N" */
-function updateTypeChipLabel() {
-  const chip = document.getElementById('mw-type-chip');
-  if (!chip) return;
-  const n = HEATMAP_FILTER.activeTypes.size;
-  if (n === 0) {
-    chip.classList.remove('selected');
-    chip.innerHTML = 'Adjustment Type';
-  } else if (n === 1) {
-    chip.classList.add('selected');
-    const key = [...HEATMAP_FILTER.activeTypes][0];
-    chip.innerHTML = `<span class="chip-badge">1</span>Adjustment Type · ${TYPE_BY_KEY[key].label}`;
-  } else {
-    chip.classList.add('selected');
-    chip.innerHTML = `<span class="chip-badge">${n}</span>Adjustment Type`;
-  }
-}
-
 function clearAllFilters() {
   document.getElementById('date-label').textContent = 'Last 30 days';
   document.querySelectorAll('.date-preset-item').forEach(el => el.classList.remove('selected-item'));
   document.querySelector('.date-preset-item:nth-child(2)').classList.add('selected-item');
-  document.querySelectorAll('#pharm-options input').forEach(cb => cb.checked = false);
   document.querySelectorAll('#drug-options input').forEach(cb => cb.checked = true);
-  document.querySelectorAll('#type-options input').forEach(cb => cb.checked = false);
   document.getElementById('qty-min').value = 1;
   document.getElementById('qty-max').value = 10;
-  // Reset the heat-map type filter as well
-  HEATMAP_FILTER.activeTypes.clear();
-  updateTypeChipLabel();
-  renderHeatmap();
   closeAllMenus();
 }
 
@@ -1812,23 +3019,89 @@ function clearAllFilters() {
    PANEL OPEN / CLOSE + DETAIL CONTENT
    ============================================================ */
 
-const PANEL_STATE = { pharm: 0, drug: 0, total: 0 };
+/* Panel state.
+   scope:
+     'cell'      — opened from a (pharmacy, drug) cell in the pharmacy
+                   view or the drilled child view. Standard layout.
+     'aggregate' — opened from a (type, drug) cell badge in the
+                   adj_type top-level view. Data is aggregated across
+                   all pharmacies and pre-scoped to one adjustment type.
+   pharm: pharmacy index in 'cell' scope; -1 in 'aggregate' scope.
+   drug:  drug index (used in both scopes).
+   typeKey: the pre-applied adjustment type in 'aggregate' scope. */
+/* Panel state.
+   scope:
+     'cell'      — opened from a (pharmacy, drug) cell in the pharmacy
+                   view or the drilled child view. Standard layout.
+     'aggregate' — opened from a (type, drug) cell badge in the
+                   adj_type top-level view. Data is aggregated across
+                   all pharmacies and pre-scoped to one adjustment type.
+   pharm: pharmacy index in 'cell' scope; -1 in 'aggregate' scope.
+   drug:  drug index (used in both scopes).
+   typeKey: the pre-applied adjustment type in 'aggregate' scope.
+   cameFrom: when the user drilled into a cell from an aggregate
+             panel, this carries the aggregate (typeKey, drugIdx) so
+             a back link can return them exactly there. Null otherwise. */
+/* Panel state.
+   scope:
+     'cell'      — opened from a (pharmacy, drug) cell. Standard layout.
+                   Includes cells in the top-level pharmacy view, the
+                   adj_type drilled view, and the pharmacy drilled
+                   (users × drugs) view. In the last case, a
+                   highlightUserIdx is set so the events table
+                   surfaces that user's rows.
+     'aggregate' — opened from a (type, drug) cell badge in the
+                   adj_type top-level view. Data is aggregated across
+                   all pharmacies and pre-scoped to one adjustment type.
+   pharm: pharmacy index in 'cell' scope; -1 in 'aggregate' scope.
+   drug:  drug index (used in all scopes).
+   highlightUserIdx: when entering from the pharmacy-drilled view,
+                     the user whose events should be visually
+                     highlighted; null otherwise. */
+const PANEL_STATE = { pharm: 0, drug: 0, total: 0, scope: 'cell', typeKey: null, userIdx: null, highlightUserIdx: null, cameFrom: null };
 
-function openPanel(pharmIdx, drugIdx) {
-  PANEL_STATE.pharm = pharmIdx;
-  PANEL_STATE.drug  = drugIdx;
-  PANEL_STATE.total = HEATMAP[pharmIdx][drugIdx].v || 0;
+/* openPanel — opens the standard (pharmacy, drug) cell detail panel.
+   Arguments:
+     pharmIdx, drugIdx       — the cell coordinates
+     cameFrom                — for the back-link affordance when drilling
+                               in from an aggregate panel (null otherwise)
+     highlightUserIdx        — when entering from the By User view, the
+                               user whose events should be visually
+                               highlighted in the panel's Events table.
+                               null when entering from any other view. */
+function openPanel(pharmIdx, drugIdx, cameFrom = null, highlightUserIdx = null) {
+  PANEL_STATE.pharm    = pharmIdx;
+  PANEL_STATE.drug     = drugIdx;
+  PANEL_STATE.total    = HEATMAP[pharmIdx][drugIdx].v || 0;
+  PANEL_STATE.scope    = 'cell';
+  PANEL_STATE.typeKey  = null;
+  PANEL_STATE.cameFrom = cameFrom;
+  PANEL_STATE.highlightUserIdx = highlightUserIdx;
 
-  // Reset type filter for the new panel
+  // Reset all panel filters for the new panel
   PANEL_FILTER.activeTypes.clear();
-  PANEL_FILTER.rolledUp = [];
+  PANEL_FILTER.rolledUp      = [];
+  PANEL_FILTER.showDispenses      = false;
+  PANEL_FILTER.hideIncreases      = false;
+  PANEL_FILTER.showAllCycleCounts = false;
+  MED_SORT = { col: 'name', dir: 'asc' };
+  TX_SORT.clear();
+  syncToggleButtons();
 
   const drug   = DRUGS[drugIdx].name;
   const pharm  = PHARMACIES[pharmIdx];
   const reviewState = HEATMAP[pharmIdx][drugIdx].r;
 
   document.getElementById('panel-title').textContent = drug;
-  document.getElementById('panel-subtitle').textContent = pharm;
+  // Subtitle shows the cell's pharmacy. When entering from the By User
+  // view, the subtitle also names the user being highlighted so the
+  // viewer has continuity from the row they clicked.
+  const subtitleEl = document.getElementById('panel-subtitle');
+  if (highlightUserIdx !== null && highlightUserIdx !== undefined) {
+    subtitleEl.textContent = `${pharm} · Highlighting ${USERS[highlightUserIdx].name}`;
+  } else {
+    subtitleEl.textContent = pharm;
+  }
   document.getElementById('med-table-title').textContent = `Adjustments by Medication from Apr 04, 2026 to May 04, 2026`;
 
   // Reviews-tab counter — reflects cell-level review state so the
@@ -1844,11 +3117,114 @@ function openPanel(pharmIdx, drugIdx) {
     }
   }
 
+  applyScopeChrome('cell');
+  applyBackLink();
+  resetPanelTabsAndOpen();
   renderPanelContent(pharmIdx, drugIdx);
+  showPanelChrome();
+}
 
+/* openTypeDrugPanel — invoked from a cell badge in the adj_type top-level
+   view. Shows panel for (type, drug) aggregated across pharmacies. The
+   clicked type is auto-applied to PANEL_FILTER so the data paths scope
+   themselves to it. Reviews tab and the Open Review action are hidden,
+   and the cell-scope sections (type-stats + med table) are replaced by
+   a pharmacies-by-count list that drills back to the standard cell
+   panel on click. */
+function openTypeDrugPanel(typeKey, drugIdx) {
+  PANEL_STATE.pharm    = -1;                                  // sentinel: aggregate
+  PANEL_STATE.drug     = drugIdx;
+  PANEL_STATE.total    = getTypeCellValue(typeKey, drugIdx);
+  PANEL_STATE.scope    = 'aggregate';
+  PANEL_STATE.typeKey  = typeKey;
+  PANEL_STATE.cameFrom = null;                                // aggregate is itself a top-level entry
+  PANEL_STATE.highlightUserIdx = null;                        // aggregate scope doesn't highlight a user
+
+  // Pre-scope to the clicked type for any data path that still reads
+  // PANEL_FILTER (the Trend chart, for instance).
+  PANEL_FILTER.activeTypes.clear();
+  PANEL_FILTER.activeTypes.add(typeKey);
+  PANEL_FILTER.rolledUp      = [];
+  PANEL_FILTER.showDispenses = false;
+  PANEL_FILTER.hideIncreases = false;
+
+  const drug = DRUGS[drugIdx].name;
+  const typeLabel = TYPE_BY_KEY[typeKey]?.label || typeKey;
+
+  document.getElementById('panel-title').textContent = drug;
+  document.getElementById('panel-subtitle').textContent =
+    `All Retail Pharmacies · ${typeLabel}`;
+  document.getElementById('med-table-title').textContent =
+    `Pharmacies with ${typeLabel} adjustments from Apr 04, 2026 to May 04, 2026`;
+
+  applyScopeChrome('aggregate');
+  applyBackLink();
+  resetPanelTabsAndOpen();
+  renderPanelContent(-1, drugIdx);
+  showPanelChrome();
+}
+
+/* applyScopeChrome — flip the panel's chrome (Reviews tab, Open Review
+   button, which subsection is visible) based on scope. */
+function applyScopeChrome(scope) {
+  const reviewsTab     = document.getElementById('panel-tab-reviews');
+  const openReviewBtn  = document.getElementById('open-review-btn');
+  const cellSection    = document.getElementById('cell-scope-section');
+  const aggregateSec   = document.getElementById('aggregate-scope-section');
+  if (scope === 'aggregate') {
+    if (reviewsTab)    reviewsTab.style.display    = 'none';
+    if (openReviewBtn) openReviewBtn.style.display = 'none';
+    if (cellSection)   cellSection.style.display   = 'none';
+    if (aggregateSec)  aggregateSec.style.display  = '';
+  } else {
+    if (reviewsTab)    reviewsTab.style.display    = '';
+    if (openReviewBtn) openReviewBtn.style.display = '';
+    if (cellSection)   cellSection.style.display   = '';
+    if (aggregateSec)  aggregateSec.style.display  = 'none';
+  }
+}
+
+/* Helpers shared by both openers */
+function resetPanelTabsAndOpen() {
+  const tabs = document.querySelectorAll('.panel-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  if (tabs[0]) tabs[0].classList.add('active');
+  const dataPane  = document.getElementById('panel-pane-data');
+  const trendPane = document.getElementById('panel-pane-trend');
+  if (dataPane)  dataPane.style.display  = '';
+  if (trendPane) trendPane.style.display = 'none';
+}
+function showPanelChrome() {
   document.getElementById('panel-scrim').classList.add('open');
   document.getElementById('detail-panel').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+/* Back link — visible only when PANEL_STATE.cameFrom is set
+   (the user reached this panel by drilling from an aggregate panel).
+   Label reflects exactly which aggregate panel to return to so the
+   user knows where back will take them. */
+function applyBackLink() {
+  const backBtn = document.getElementById('panel-back');
+  const label   = document.getElementById('panel-back-label');
+  if (!backBtn) return;
+  const cf = PANEL_STATE.cameFrom;
+  if (cf && cf.typeKey != null && cf.drugIdx != null) {
+    const typeLabel = TYPE_BY_KEY[cf.typeKey]?.label || cf.typeKey;
+    label.textContent = `All Retail Pharmacies · ${typeLabel}`;
+    backBtn.style.display = '';
+  } else {
+    backBtn.style.display = 'none';
+  }
+}
+
+/* returnToAggregate — invoked by the back-link click. Reopens the
+   aggregate panel the user came from. openTypeDrugPanel clears
+   cameFrom itself so the back link disappears on the next render. */
+function returnToAggregate() {
+  const cf = PANEL_STATE.cameFrom;
+  if (!cf) return;
+  openTypeDrugPanel(cf.typeKey, cf.drugIdx);
 }
 
 function closePanel() {
@@ -1867,6 +3243,13 @@ document.addEventListener('keydown', (e) => {
 function switchPanelTab(name, btn) {
   document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
+  // Toggle which pane is visible. Reviews has no rendered pane yet
+  // (no review history is wired up in this prototype), so for now
+  // selecting that tab leaves both prototype panes hidden.
+  const dataPane  = document.getElementById('panel-pane-data');
+  const trendPane = document.getElementById('panel-pane-trend');
+  if (dataPane)  dataPane.style.display  = (name === 'data')  ? '' : 'none';
+  if (trendPane) trendPane.style.display = (name === 'trend') ? '' : 'none';
 }
 
 /* ============================================================
@@ -1874,17 +3257,18 @@ function switchPanelTab(name, btn) {
    ============================================================ */
 
 function renderPanelContent(pharmIdx, drugIdx) {
-  // Build a 6-month synthetic series, with most weight in the
-  // most recent month (matches the "May spike" pattern in the
-  // existing screenshot for Buprenorphine/naloxone @ Seattle Grace East).
-  const total = HEATMAP[pharmIdx][drugIdx].v || 0;
+  const isAggregate = (PANEL_STATE.scope === 'aggregate');
+  // For aggregate mode, total = sum of the pre-scoped type across all
+  // pharmacies (= the cell badge value the user clicked).
+  // For cell mode, total = the (pharmacy, drug) cell value.
+  const total = isAggregate
+    ? getTypeCellValue(PANEL_STATE.typeKey, drugIdx)
+    : (HEATMAP[pharmIdx][drugIdx].v || 0);
 
-  // Series shape: per-month, per-type counts.
-  // Use a deterministic "scatter" based on (pharm, drug) so the
-  // panel always shows the same data when you reopen the same cell.
   const months = ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'];
 
-  // PRNG (mulberry32) seeded by the cell coords
+  // PRNG (mulberry32). Seed differs between scopes so a (type, drug)
+  // aggregate panel doesn't accidentally reuse a pharmacy's seed.
   function mulberry32(a) {
     return function() {
       let t = a += 0x6D2B79F5;
@@ -1893,46 +3277,246 @@ function renderPanelContent(pharmIdx, drugIdx) {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   }
-  const rand = mulberry32(pharmIdx * 31 + drugIdx * 7 + 1);
+  const rand = isAggregate
+    ? mulberry32(drugIdx * 53 + (PANEL_STATE.typeKey || '').length * 11 + 9001)
+    : mulberry32(pharmIdx * 31 + drugIdx * 7 + 1);
 
-  // Decide which types are active for this drug (between 3 and 6)
-  const numTypes = 3 + Math.floor(rand() * 4);
-  const shuffled = ADJ_TYPES.slice().sort(() => rand() - 0.5);
-  const activeTypes = shuffled.slice(0, numTypes);
+  // Active types for the trend chart + type stats + filterable
+  // breakdown. These must agree with the canonical cell breakdown
+  // (the same data the By-Adjustment-Type heatmap reads), otherwise
+  // the cell panel would show different per-type counts than the
+  // heatmap cell that opened it.
+  //   - aggregate scope: just the pre-scoped type (the panel is about
+  //     this one type by design)
+  //   - cell scope: every type that has a non-zero count for this
+  //     (pharmacy, drug) cell, in canonical order. Order is preserved
+  //     from ADJ_TYPES so the type-stat cards render in a stable
+  //     sequence regardless of which cell was clicked.
+  let activeTypes;
+  if (isAggregate) {
+    const t = TYPE_BY_KEY[PANEL_STATE.typeKey];
+    activeTypes = t ? [t] : [];
+  } else {
+    const breakdown = getCellBreakdown(pharmIdx, drugIdx);
+    activeTypes = ADJ_TYPES.filter(t => (breakdown[t.key] || 0) > 0 && t.key !== 'cycle_count_variance' && t.key !== 'cycle_count_verified');
+    // Cycle count reconciliation rows also carry a reason (e.g. Expired, Other).
+    // Add any reason types found in cycle count variances so they appear as
+    // filter pills regardless of which activity type they came from.
+    // We approximate by checking getCellCycleVarianceCount — if the cell has
+    // variances, the reasons used are drawn from COMMENT_TEMPLATES['cycle_count_variance'],
+    // which maps to existing reason type keys via reasonKey. Since we can't know
+    // the exact distribution without expanding, we add all possible cc variance
+    // reason types when the cell has any variances, weighted by template frequency.
+    const ccVarCount = getCellCycleVarianceCount(pharmIdx, drugIdx);
+    if (ccVarCount > 0) {
+      // Reason types that can appear on cycle count variance rows
+      const ccReasonKeys = ['correction', 'shrinkage', 'other'];
+      ccReasonKeys.forEach(k => {
+        if (!activeTypes.find(t => t.key === k) && TYPE_BY_KEY[k]) {
+          activeTypes = [...activeTypes, TYPE_BY_KEY[k]];
+        }
+      });
+    }
+  }
 
   // Per-month, per-type matrix.
   // Each cell carries BOTH increase counts (`pos`) and decrease
-  // counts (`neg`) so the chart can stack adjustments by direction:
-  // positives go above the zero line, negatives go below.
-  // Some adjustment types skew toward one direction in the real
-  // world — e.g. Waste / Expired / Shrinkage are almost always
-  // decreases, Return to Stock is almost always an increase.
-  const DECREASE_HEAVY = new Set(['waste','expired','returned_to_vendor','shrinkage','contaminated']);
-  const INCREASE_HEAVY = new Set(['return_to_stock']);
+  // counts (`neg`) so the chart can stack adjustments by direction.
+  // Direction is constrained by typeDirection() — Waste / Expired /
+  // Shrinkage / Returned to Vendor / Contaminated are decrease-only,
+  // Return to Stock is increase-only, others can go either way.
   const matrix = months.map((m, mi) => {
     const row = {};
     const monthWeight = mi === 5 ? 8 : (mi === 4 ? 1.4 : (mi === 3 ? 0.9 : 0.5 + rand()*0.4));
     activeTypes.forEach(t => {
       const total = Math.max(0, Math.round(rand() * 30 * monthWeight));
-      let posRatio;
-      if (DECREASE_HEAVY.has(t.key))      posRatio = 0.05 + rand() * 0.15;
-      else if (INCREASE_HEAVY.has(t.key)) posRatio = 0.70 + rand() * 0.25;
-      else                                posRatio = 0.30 + rand() * 0.40;  // mixed
-      const pos = Math.round(total * posRatio);
-      const neg = Math.max(0, total - pos);
+      const dir = typeDirection(t.key);
+      let pos, neg;
+      if (dir === 'inc') {
+        pos = total; neg = 0;
+      } else if (dir === 'dec') {
+        pos = 0; neg = total;
+      } else if (dir === 'none') {
+        pos = total; neg = 0;          // CC strip reads pos+neg as count
+      } else {
+        // 'either' — mixed direction. correction tends to be
+        // small symmetric swings; other is free-form.
+        const posRatio = 0.30 + rand() * 0.40;
+        pos = Math.round(total * posRatio);
+        neg = Math.max(0, total - pos);
+      }
       row[t.key] = { pos, neg };
     });
     return row;
   });
 
   drawTimeSeries(matrix, months, activeTypes);
-  // Build the medication-variant byType breakdown FIRST.
-  // The Type Breakdown cards then sum across variants — that way the
-  // card counts and the table counts are guaranteed to agree.
-  renderMedTable(pharmIdx, drugIdx, rand, activeTypes);
-  // Stash so filter toggles can re-render type-stats without re-synthesizing data
-  PANEL_STATE.lastRender = { activeTypes, total };
-  renderTypeStats(activeTypes, total);
+  renderEventsSummary(pharmIdx, drugIdx);
+  if (isAggregate) {
+    renderPharmList(PANEL_STATE.typeKey, drugIdx);
+    PANEL_STATE.lastRender = { activeTypes, total, pharmIdx, drugIdx };
+  } else {
+    // Build the medication-variant byType breakdown FIRST.
+    // The Type Breakdown cards then sum across variants — that way the
+    // card counts and the table counts are guaranteed to agree.
+    renderMedTable(pharmIdx, drugIdx, rand, activeTypes);
+    // Stash so filter toggles can re-render type-stats without re-synthesizing data
+    PANEL_STATE.lastRender = { activeTypes, total, pharmIdx, drugIdx };
+    renderTypeStats(activeTypes, total);
+  }
+}
+
+/* withSoftHyphens — insert soft-hyphen (U+00AD) characters at known
+   syllable boundaries for long single-word adjustment-type labels
+   so they wrap with a visible hyphen mark inside narrow columns.
+   Soft hyphens are invisible unless the browser wraps at that
+   position, in which case they render as a real "-". Labels that
+   are already two or more words wrap at the existing space and
+   pass through unchanged. */
+const SOFT_HYPHEN_MAP = {
+  'Contaminated': 'Con\u00ADtam\u00ADi\u00ADnat\u00ADed',
+  'Shrinkage':    'Shrink\u00ADage',
+  'Expired':      'Ex\u00ADpired',
+};
+function withSoftHyphens(label) {
+  return SOFT_HYPHEN_MAP[label] || label;
+}
+
+/* renderPharmList — aggregate-scope replacement for the
+   Adjustments-by-Medication table. Cross-tab format:
+     - Rows: pharmacies with > 0 of the focus type (sum of the focus
+       column reconciles to the badge value the user clicked).
+     - Columns: one per adjustment type that has any non-zero value
+       across the rendered rows. Focus type is always included and
+       visually highlighted (teal underline header + teal-50 column
+       fill). Type columns with all-zero values are omitted to keep
+       the table from being mostly empty.
+     - Row click drills to the standard cell panel via openPanel. */
+function renderPharmList(typeKey, drugIdx) {
+  // Build candidate rows — only pharmacies with non-zero counts of
+  // the focus adjustment type for this drug. For each, capture the
+  // cycle-count for the same (pharm, drug) as parallel context: cycle
+  // counts aren't adjustments, but they tell you how active that
+  // pharmacy was at verifying the medication's on-hand quantity over
+  // the same window, which is useful for interpreting whether a high
+  // adjustment count reflects diligence or a problem. Sort by focus
+  // count desc with pharmacy name as tiebreaker.
+  const rows = [];
+  for (let i = 0; i < PHARMACIES.length; i++) {
+    const focusCount = getDrilledCellValue(i, drugIdx, typeKey);
+    if (focusCount <= 0) continue;
+    const cycleCount = getCellCycleCount(i, drugIdx);
+    rows.push({ pharmIdx: i, name: PHARMACIES[i], focusCount, cycleCount });
+  }
+  rows.sort((a, b) => b.focusCount - a.focusCount || a.name.localeCompare(b.name));
+
+  const head = document.getElementById('pharm-list-head');
+  const body = document.getElementById('pharm-list-body');
+  if (!head || !body) return;
+
+  const focusType = TYPE_BY_KEY[typeKey];
+  const focusLabel = focusType?.label || typeKey;
+
+  if (rows.length === 0) {
+    head.innerHTML = '';
+    body.innerHTML = `
+      <tr><td colspan="4" style="text-align:center; padding: 24px; color: var(--gray-600);">
+        No pharmacies have ${focusLabel} adjustments for this drug in the selected range.
+      </td></tr>
+    `;
+    return;
+  }
+
+  // Compute σ-based severity bands across the visible focus-count
+  // population. Small + uniform set, so the static-fallback branch
+  // typically fires here — expected. Cycle counts render as plain
+  // text rather than a heatmap badge so visual emphasis stays on the
+  // focus-type column (cycle counts are context, not the signal).
+  const bands = computeBands(rows.map(r => r.focusCount));
+
+  // Header: pharmacy column + focus-type column + cycle counts
+  // column + drill chevron spacer.
+  head.innerHTML = `
+    <tr>
+      <th>Retail Pharmacy</th>
+      <th class="type-col num">${focusLabel}</th>
+      <th class="type-col num">Cycle Counts</th>
+      <th></th>
+    </tr>
+  `;
+
+  // Body — one row per pharmacy. Click drills into the pharmacy cell
+  // panel pre-scoped to this (type, drug) view. Cycle counts render
+  // as plain text (no heatmap badge) to keep visual emphasis on the
+  // focus-type column — they're context, not the primary signal.
+  body.innerHTML = rows.map(r => {
+    const sev = severityClass(r.focusCount, bands);
+    const cc  = r.cycleCount > 0
+      ? `<span class="cc-count">${r.cycleCount}</span>`
+      : `<span class="hm-zero">0</span>`;
+    return `
+      <tr onclick="openPanel(${r.pharmIdx}, ${drugIdx}, { typeKey: '${typeKey}', drugIdx: ${drugIdx} })">
+        <td><span class="pharm-list-name">${r.name}</span></td>
+        <td class="type-col num"><span class="hm-cell ${sev}">${r.focusCount}</span></td>
+        <td class="type-col num">${cc}</td>
+        <td class="pharm-list-drill"><span class="material-icons">chevron_right</span></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* Events summary line — shows total adjustments (including cycle count
+   variances, which are now inventory adjustments) and a separate count of
+   In aggregate scope, numbers sum across pharmacies that have the focus
+   type for this drug, matching the pharm-list table rows. */
+
+/* Returns the number of cycle count sessions for a cell that resulted
+   in a variance (reconciliation), using the same deterministic seed
+   as renderMedTable so the count is consistent throughout the panel. */
+function getCellCycleVarianceCount(pharmIdx, drugIdx) {
+  const ccTotal = getCellCycleCount(pharmIdx, drugIdx);
+  let seed = (pharmIdx * 31 + drugIdx * 7 + 99) >>> 0;
+  let varCount = 0;
+  for (let k = 0; k < ccTotal; k++) {
+    seed = (seed + 0x6D2B79F5) >>> 0;
+    let s = seed;
+    s = Math.imul(s ^ (s >>> 15), s | 1);
+    s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+    if (((s ^ (s >>> 14)) >>> 0) / 4294967296 < 0.25) varCount++;
+  }
+  return varCount;
+}
+
+function renderEventsSummary(pharmIdx, drugIdx) {
+  const isAggregate = (PANEL_STATE.scope === 'aggregate');
+  let adjTotal, ccReconTotal;
+  if (isAggregate) {
+    const typeKey = PANEL_STATE.typeKey;
+    adjTotal     = 0;
+    ccReconTotal = 0;
+    for (let i = 0; i < HEATMAP.length; i++) {
+      const focusCount = getDrilledCellValue(i, drugIdx, typeKey);
+      if (focusCount <= 0) continue;
+      adjTotal     += focusCount;
+      ccReconTotal += getCellCycleVarianceCount(i, drugIdx);
+    }
+  } else {
+    adjTotal     = HEATMAP[pharmIdx][drugIdx].v || 0;
+    ccReconTotal = getCellCycleVarianceCount(pharmIdx, drugIdx);
+  }
+  const el = document.getElementById('events-summary');
+  if (!el) return;
+  el.innerHTML = `
+    <span class="summary-item">
+      <span class="summary-value">${adjTotal}</span>
+      <span class="summary-label">Manual Adjustment${adjTotal === 1 ? '' : 's'}</span>
+    </span>
+    <span class="summary-divider">·</span>
+    <span class="summary-item">
+      <span class="summary-value">${ccReconTotal}</span>
+      <span class="summary-label">Cycle Count Reconciliation${ccReconTotal === 1 ? '' : 's'}</span>
+    </span>
+  `;
 }
 
 /* SVG stacked-bar chart.
@@ -1944,23 +3528,14 @@ function drawTimeSeries(matrix, months, activeTypes) {
   const svg = document.getElementById('ts-chart');
   svg.innerHTML = '';
   const W = 980, H = 260;
-  // Reserve the top 36px for the Cycle Count track when cycle_count is active
-  const CC_KEY  = 'cycle_count';
-  const NDC_KEY = 'ndc_change';
-  const ccActive = activeTypes.some(t => t.key === CC_KEY);
-  const trackH  = ccActive ? 36 : 0;     // strip height incl. label
-  const trackGap = ccActive ? 6  : 0;    // gap between strip and main chart
-  const pad = { l: 40, r: 12, t: 14 + trackH + trackGap, b: 28 };
+  // cycle_count_variance is now a normal adjustment type on the main chart.
+  // cycle_count_verified has no bar (zero amount, audit only) — excluded.
+  const EXCL_KEYS = new Set(['cycle_count_verified']);
+  const pad = { l: 40, r: 12, t: 14, b: 28 };
   const innerW = W - pad.l - pad.r;
   const innerH = H - pad.t - pad.b;
 
-  // Two types are excluded from the main chart's bar render:
-  //   cycle_count — rendered in its own track above (count, not inventory change)
-  //   ndc_change  — paired source/destination decrement+increment per event,
-  //                 so it's net-zero at the drug level. Showing it as an
-  //                 inventory change would be misleading. Still available
-  //                 in the type-stats cards, table filter, and tx history.
-  const mainTypes = activeTypes.filter(t => t.key !== CC_KEY && t.key !== NDC_KEY);
+  const mainTypes = activeTypes.filter(t => !EXCL_KEYS.has(t.key));
 
   // Per-month max bar magnitude across MAIN TYPES only
   const monthPos = matrix.map(row => Math.max(0, ...mainTypes.map(t => row[t.key]?.pos || 0)));
@@ -2007,72 +3582,15 @@ function drawTimeSeries(matrix, months, activeTypes) {
       `<text class="axis-text" x="${x}" y="${H - pad.b + 16}" text-anchor="middle">${m}</text>`);
   });
 
-  // ─── Cycle Count track ─────────────────────────────────────────
-  // Cycle counts are activity events, not inventory changes — they
-  // occupy a separate strip above the main chart so the y-axis stays
-  // honest about what's a "real" inventory adjustment.
-  if (ccActive) {
-    const cc = TYPE_BY_KEY[CC_KEY];
-    const cycleCountByMonth = matrix.map(row => {
-      const c = row[CC_KEY] || { pos: 0, neg: 0 };
-      return c.pos + c.neg;                 // count of count events
-    });
-    const maxCC = Math.max(...cycleCountByMonth, 0);
-    const trackTopY    = 14;                // strip starts here
-    const trackBaseY   = trackTopY + trackH; // baseline of bars
-    const trackBarMaxH = 22;                // max bar height in the strip
-
-    // Strip label sits inside the strip area, top-left, so it doesn't
-    // collide with or get clipped by the y-axis number labels.
-    svg.insertAdjacentHTML('beforeend',
-      `<text x="${pad.l + 4}" y="${trackTopY + 10}" text-anchor="start"
-             style="font-family: var(--font); font-size: 10.5px; font-weight: 700;
-                    letter-spacing: .04em; text-transform: uppercase; fill: ${cc.color};">CYCLE COUNT</text>`);
-
-    // Faint divider just below the strip to visually separate it from
-    // the main chart body
-    svg.insertAdjacentHTML('beforeend',
-      `<line x1="${pad.l}" x2="${W - pad.r}" y1="${trackBaseY + 2}" y2="${trackBaseY + 2}"
-             stroke="#E5E5E5" stroke-width="1" stroke-dasharray="0"/>`);
-
-    // One mini-bar per month, plus numeric label above it
-    const stripBarW = Math.min(36, monthW * 0.45);
-    cycleCountByMonth.forEach((count, mi) => {
-      const cx = pad.l + (mi + 0.5) * monthW;
-      const x  = cx - stripBarW / 2;
-
-      // Hover area for this month's cycle count cell — full strip column,
-      // so the tooltip works even on zero months
-      svg.insertAdjacentHTML('beforeend',
-        `<rect class="ts-cc-hover-area"
-               data-month-idx="${mi}" data-type-key="${CC_KEY}"
-               x="${pad.l + mi * monthW}" y="${trackTopY}"
-               width="${monthW}" height="${trackH}"
-               fill="transparent" style="cursor:default"/>`);
-
-      if (count <= 0 || maxCC === 0) return;
-
-      const h = (count / maxCC) * trackBarMaxH;
-      const y = trackBaseY - h;
-      svg.insertAdjacentHTML('beforeend',
-        `<rect data-type="${CC_KEY}"
-               x="${x}" y="${y}" width="${stripBarW}" height="${h}"
-               fill="${cc.colorLight}"
-               style="pointer-events:none"/>`);
-      svg.insertAdjacentHTML('beforeend',
-        `<text data-type="${CC_KEY}" class="ts-cc-label"
-               x="${cx}" y="${y - 3}" text-anchor="middle"
-               style="font-size:10px; fill: ${cc.color}; font-weight:600; pointer-events:none;">${count}</text>`);
-    });
-  }
+  // ─── Cycle Count track removed ────────────────────────────────
+  // cycle_count_variance is now a normal adjustment type rendered
+  // in the main bar chart. cycle_count_verified has zero amount and
+  // is excluded from the chart entirely (audit record only).
 
   // Zero baseline — rendered last on top of bars (stronger weight)
   // We'll insert it after bars so it overlays them.
 
-  // Grouped bars — within each month, draw one bar per MAIN active type
-  // (cycle_count is rendered in its own track above; see further down).
-  // Each bar is colored by its type, with the increase magnitude
-  // sitting above zero and the decrease magnitude below zero.
+  // Grouped bars — one bar per main type per month.
   const groupGap = monthW * 0.12;          // padding on each side of group
   const groupW   = monthW - groupGap * 2;
   const n        = Math.max(1, mainTypes.length);
@@ -2119,10 +3637,9 @@ function drawTimeSeries(matrix, months, activeTypes) {
     `<line class="axis-line" x1="${pad.l}" x2="${W - pad.r}"
            y1="${zeroY}" y2="${zeroY}" stroke-width="1.5"/>`);
 
-  // Legend — one item per type that appears in the chart. Cycle Count
-  // stays (rendered in its own track above), but ndc_change is excluded
-  // since it isn't visualized at all.
-  const legendTypes = activeTypes.filter(t => t.key !== NDC_KEY);
+  // Legend — one item per type that appears in the chart.
+  // cycle_count_verified is excluded (no bars rendered for it).
+  const legendTypes = activeTypes.filter(t => !EXCL_KEYS.has(t.key));
   const legend = document.getElementById('ts-legend');
   legend.innerHTML = legendTypes.map(t => `
     <span class="ts-legend-item" data-type="${t.key}" onclick="toggleTypeLine('${t.key}', this)">
@@ -2233,12 +3750,22 @@ function toggleTypeLine(key, el) {
 
 /* Type filter state — set of active type keys.
    Empty set = no filter (show all). Reset on each panel open. */
-const PANEL_FILTER = { activeTypes: new Set(), rolledUp: [] };
+let OPEN_TX_ROW = null; // context for the currently-open tx expansion row
+
+const PANEL_FILTER = {
+  activeTypes:      new Set(),  // type keys selected for type-card filtering
+  rolledUp:         [],         // unused (no rollup), kept for compatibility
+  showDispenses:    false,      // off by default — dispenses are contextual, not the focus
+  hideIncreases:    false,      // off by default — increases are visible but filterable
+  showAllCycleCounts: false,    // off by default — cycle_count_verified rows hidden unless toggled
+};
 
 /* Per-variant byType breakdown saved on render, used by:
    - filtered med table re-renders
    - the transactions expansion (so tx types match displayed counts) */
 let MED_STATE = null;
+let MED_SORT  = { col: 'name', dir: 'asc' }; // current sort column + direction
+const TX_SORT = new Map(); // per-rowIdx sort state for tx expansion tables
 
 /* Type breakdown stat cards
    Each card is now a CLICKABLE FILTER for the medication table below.
@@ -2247,7 +3774,7 @@ let MED_STATE = null;
    table can't show any rows for a type, the card for that type won't
    appear either. */
 function renderTypeStats(activeTypes, total) {
-  // Sum each type's count across all variants
+  // Sum each type's count across all variants (manual adjustments)
   const typeTotals = {};
   activeTypes.forEach(t => { typeTotals[t.key] = 0; });
   if (MED_STATE) {
@@ -2255,56 +3782,62 @@ function renderTypeStats(activeTypes, total) {
       activeTypes.forEach(t => { typeTotals[t.key] += (v.byType[t.key] || 0); });
     });
   }
+  // Also count cycle count variance rows by their reason key,
+  // since "Filter by reason" should surface reasons from both
+  // Manual Adjustments and Cycle Count Reconciliations.
+  if (MED_STATE && PANEL_STATE.scope !== 'aggregate') {
+    const pharmIdx = PANEL_STATE.pharm;
+    const drugIdx  = PANEL_STATE.drug;
+    const ccVarCount = getCellCycleVarianceCount(pharmIdx, drugIdx);
+    if (ccVarCount > 0) {
+      // Use the same seed as buildTxExpansion to get consistent reason distribution
+      let seed = (pharmIdx * 31 + drugIdx * 7 + 999) >>> 0;
+      const rand = () => {
+        seed = (seed + 0x6D2B79F5) >>> 0;
+        let s = seed;
+        s = Math.imul(s ^ (s >>> 15), s | 1);
+        s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+        return ((s ^ (s >>> 14)) >>> 0) / 4294967296;
+      };
+      const ccReasons = COMMENT_TEMPLATES['cycle_count_variance'];
+      for (let k = 0; k < ccVarCount; k++) {
+        const reason = ccReasons[Math.floor(rand() * ccReasons.length)];
+        const reasonKey = reason === 'Correction' ? 'correction'
+          : reason === 'Shrinkage' ? 'shrinkage'
+          : 'other';
+        if (typeTotals[reasonKey] !== undefined) typeTotals[reasonKey]++;
+      }
+    }
+  }
 
   const scaled = activeTypes
     .map(t => ({ type: t, total: typeTotals[t.key] || 0 }))
     .filter(r => r.total > 0);
   scaled.sort((a, b) => b.total - a.total);
 
-  // Limit to top 4 + "Other" rollup so the row stays readable
-  const top  = scaled.slice(0, 4);
-  const rest = scaled.slice(4);
-  const restSum  = rest.reduce((s, r) => s + r.total, 0);
-  const restKeys = rest.map(r => r.type.key);
-  PANEL_FILTER.rolledUp = restKeys; // remember for the rollup-button toggle
+  PANEL_FILTER.rolledUp = []; // no rollup — all types shown individually
   const grand = total || 1;
 
   const filterActive = PANEL_FILTER.activeTypes.size > 0;
   const isOn = (k) => PANEL_FILTER.activeTypes.has(k);
-  const cardClass = (keys) => {
-    const anyOn = keys.some(isOn);
-    if (anyOn)        return 'active';
-    if (filterActive) return 'dimmed';
+  const cardClass = (key) => {
+    if (isOn(key))     return 'active';
+    if (filterActive)  return 'dimmed';
     return '';
   };
 
-  const html = top.map(({ type, total: n }) => `
-    <button class="type-stat ${cardClass([type.key])}"
+  const html = scaled.length === 0
+    ? `<span class="type-stats-empty">No adjustments in selected date range.</span>`
+    : scaled.map(({ type, total: n }) => `
+    <button class="type-stat ${cardClass(type.key)}"
             type="button"
+            style="--pill-color: ${type.color}"
             onclick="toggleTypeFilter('${type.key}')"
             aria-pressed="${isOn(type.key)}">
-      <div class="type-stat-name">
-        <span class="swatch" style="background:${type.color}"></span>${type.label}
-      </div>
-      <div class="type-stat-value">${n}</div>
-      <div class="type-stat-meta">${Math.round(n / grand * 100)}% of total</div>
+      ${type.label}
+      <span class="type-stat-count">${n}</span>
     </button>
-  `).join('') + (restSum > 0 ? `
-    <button class="type-stat ${cardClass(restKeys)}"
-            type="button"
-            onclick="toggleRolledUpFilter()"
-            aria-pressed="${restKeys.some(isOn)}">
-      <div class="type-stat-name">
-        <span class="swatch" style="background:var(--gray-500)"></span>Other types (${rest.length})
-      </div>
-      <div class="type-stat-value">${restSum}</div>
-      <div class="type-stat-meta">${Math.round(restSum / grand * 100)}% of total</div>
-    </button>
-  ` : '') + (top.length === 0 ? `
-    <div class="type-stat" style="grid-column: 1 / -1; text-align: center; color: var(--gray-600);">
-      No adjustments in selected date range.
-    </div>
-  ` : '');
+  `).join('');
 
   document.getElementById('type-stats').innerHTML = html;
 
@@ -2312,11 +3845,10 @@ function renderTypeStats(activeTypes, total) {
   const statusLabel = document.getElementById('type-stats-status-label');
   const clearBtn    = document.getElementById('clear-type-filter');
   if (filterActive) {
-    const labels = [...PANEL_FILTER.activeTypes].map(k => TYPE_BY_KEY[k].label);
-    statusLabel.innerHTML = `<strong style="color:var(--gray-700);">Filtered to:</strong> ${labels.join(', ')}`;
+    statusLabel.textContent = 'Filtered by reason';
     clearBtn.style.display = '';
   } else {
-    statusLabel.textContent = 'Click a type to filter the table below';
+    statusLabel.textContent = 'Filter by reason';
     clearBtn.style.display = 'none';
   }
 }
@@ -2348,78 +3880,290 @@ function clearTypeFilter() {
   reRenderAfterFilterChange();
 }
 
-function reRenderAfterFilterChange() {
-  // Collapse any expanded med rows so the tx tables don't go stale
-  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => r.classList.remove('expanded'));
-  document.querySelectorAll('#med-table-body tr.expansion-row').forEach(r => r.remove());
+/* Show/hide dispenses in the transaction table.
+   Dispenses are off by default — they add context but aren't the focus. */
+/* syncToggleButtons — reflects current PANEL_FILTER flag state onto the
+   static panel-level toggle buttons. Called whenever a panel opens so
+   the buttons always start unchecked on a fresh panel. */
+function syncToggleButtons() {
+  const dispCb = document.getElementById('show-dispenses-btn');
+  const incCb  = document.getElementById('hide-increases-btn');
+  const ccCb   = document.getElementById('show-all-cycle-counts-btn');
+  if (dispCb) dispCb.checked = PANEL_FILTER.showDispenses;
+  if (incCb)  incCb.checked  = PANEL_FILTER.hideIncreases;
+  if (ccCb)   ccCb.checked   = PANEL_FILTER.showAllCycleCounts;
+}
 
-  // Re-render the panel sections that depend on filter state
+function toggleReasonFilter(header) {
+  const body = document.getElementById('reason-filter-body');
+  const icon = header.querySelector('.material-icons');
+  const isOpen = header.getAttribute('aria-expanded') === 'true';
+  header.setAttribute('aria-expanded', !isOpen);
+  body.style.display = isOpen ? 'none' : 'block';
+  if (icon) icon.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+
+function toggleViewSettings(header) {
+  const body = document.getElementById('view-settings-body');
+  const icon = header.querySelector('.material-icons');
+  const isOpen = header.getAttribute('aria-expanded') === 'true';
+  header.setAttribute('aria-expanded', !isOpen);
+  body.style.display = isOpen ? 'none' : 'block';
+  if (icon) icon.style.transform = isOpen ? '' : 'rotate(90deg)';
+}
+
+function toggleShowDispenses(cb) {
+  PANEL_FILTER.showDispenses = cb.checked;
+  reRenderOpenTxTable();
+}
+
+function toggleHideIncreases(cb) {
+  PANEL_FILTER.hideIncreases = cb.checked;
+  reRenderOpenTxTable();
+}
+
+function toggleShowAllCycleCounts(cb) {
+  PANEL_FILTER.showAllCycleCounts = cb.checked;
+  reRenderOpenTxTable();
+}
+
+/* reRenderOpenTxTable — re-renders the currently-open transaction expansion
+   row in-place. Now a view-level control: iterates all expanded rows so
+   the filter applies everywhere, not just the one that was last opened. */
+function reRenderOpenTxTable() {
+  document.querySelectorAll('#med-table-body tr.expanded').forEach(tr => {
+    const existing = tr.nextElementSibling;
+    if (existing && existing.classList.contains('expansion-row')) existing.remove();
+    // Recover coords from the data attributes set on the row
+    const pharmIdx = parseInt(tr.dataset.pharm ?? PANEL_STATE.pharm, 10);
+    const drugIdx  = parseInt(tr.dataset.drug  ?? PANEL_STATE.drug,  10);
+    const rowIdx   = parseInt(tr.dataset.row, 10);
+    if (!isNaN(rowIdx)) buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr);
+  });
+}
+
+function reRenderAfterFilterChange() {
+  // Snapshot which rows are currently expanded so we can restore them
+  // after re-rendering the table. Keyed by data-row index.
+  const openRows = new Set();
+  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => {
+    openRows.add(r.dataset.row);
+  });
+
+  // Re-render the type-stat pills and the med table
   if (PANEL_STATE.lastRender) {
     const { activeTypes, total } = PANEL_STATE.lastRender;
     renderTypeStats(activeTypes, total);
   }
   renderFilteredMedTable();
+
+  // Re-open rows that were expanded before the filter changed
+  if (openRows.size > 0) {
+    document.querySelectorAll('#med-table-body tr[data-row]').forEach(tr => {
+      if (openRows.has(tr.dataset.row)) {
+        tr.classList.add('expanded');
+        const pharmIdx = parseInt(tr.dataset.pharm, 10);
+        const drugIdx  = parseInt(tr.dataset.drug,  10);
+        const rowIdx   = parseInt(tr.dataset.row,   10);
+        buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr);
+        OPEN_TX_ROW = { pharmIdx, drugIdx, rowIdx, tr };
+      }
+    });
+  }
 }
 
 /* ============================================================
    MED TABLE  (Adjustments by Medication, with Comments column)
    ============================================================ */
 
+/* MED_VARIANTS — per-drug forms shown in the panel's medication table.
+   Two fields per entry:
+     name     — the drug identity only (no dosage). Stays consistent
+                across variants of the same compound; the medication
+                table groups them visually because they share a name.
+     strength — the dosage / concentration. Combo products use the
+                hyphenated dose string (e.g. "4-1 mg" means 4 mg of
+                buprenorphine + 1 mg of naloxone per unit). */
 const MED_VARIANTS = [
   /* Buprenorphine/naloxone forms */
-  [{ name: 'buprenorphine-naloxone 4-1 MG', strength: '1 unit' },
-   { name: 'buprenorphine-naloxone 8-2 MG', strength: '1 unit' }],
-  [{ name: 'alprazolam 0.5 MG',  strength: '1 unit' },
-   { name: 'alprazolam 1 MG',    strength: '1 unit' },
-   { name: 'alprazolam 2 MG',    strength: '1 unit' }],
-  [{ name: 'acetaminophen-hydrocodone 325-5 MG',  strength: '1 unit' },
-   { name: 'acetaminophen-hydrocodone 325-7.5 MG', strength: '1 unit' },
-   { name: 'acetaminophen-hydrocodone 325-10 MG',  strength: '1 unit' }],
-  [{ name: 'lorazepam 0.5 MG', strength: '1 unit' },
-   { name: 'lorazepam 1 MG',   strength: '1 unit' },
-   { name: 'lorazepam 2 MG',   strength: '1 unit' }],
-  [{ name: 'phentermine 37.5 MG', strength: '1 unit' }],
-  [{ name: 'clonazepam 0.5 MG', strength: '1 unit' },
-   { name: 'clonazepam 1 MG',   strength: '1 unit' }],
-  [{ name: 'oxycodone 5 MG',  strength: '1 unit' },
-   { name: 'oxycodone 10 MG', strength: '1 unit' },
-   { name: 'oxycodone 15 MG', strength: '1 unit' }],
-  [{ name: 'amphetamine-dextroamphetamine 10 MG', strength: '1 unit' },
-   { name: 'amphetamine-dextroamphetamine 20 MG', strength: '1 unit' },
-   { name: 'amphetamine-dextroamphetamine 30 MG', strength: '1 unit' }],
-  [{ name: 'diazepam 5 MG',  strength: '1 unit' },
-   { name: 'diazepam 10 MG', strength: '1 unit' }],
-  [{ name: 'methylphenidate 5 MG',  strength: '1 unit' },
-   { name: 'methylphenidate 10 MG', strength: '1 unit' },
-   { name: 'methylphenidate 20 MG', strength: '1 unit' }],
+  [{ name: 'buprenorphine-naloxone', strength: '4-1 mg' },
+   { name: 'buprenorphine-naloxone', strength: '8-2 mg' }],
+  [{ name: 'alprazolam', strength: '0.5 mg' },
+   { name: 'alprazolam', strength: '1 mg' },
+   { name: 'alprazolam', strength: '2 mg' }],
+  [{ name: 'acetaminophen-hydrocodone', strength: '325-5 mg' },
+   { name: 'acetaminophen-hydrocodone', strength: '325-7.5 mg' },
+   { name: 'acetaminophen-hydrocodone', strength: '325-10 mg' }],
+  [{ name: 'lorazepam', strength: '0.5 mg' },
+   { name: 'lorazepam', strength: '1 mg' },
+   { name: 'lorazepam', strength: '2 mg' }],
+  [{ name: 'phentermine', strength: '37.5 mg' }],
+  [{ name: 'clonazepam', strength: '0.5 mg' },
+   { name: 'clonazepam', strength: '1 mg' }],
+  [{ name: 'oxycodone', strength: '5 mg' },
+   { name: 'oxycodone', strength: '10 mg' },
+   { name: 'oxycodone', strength: '15 mg' }],
+  [{ name: 'amphetamine-dextroamphetamine', strength: '10 mg' },
+   { name: 'amphetamine-dextroamphetamine', strength: '20 mg' },
+   { name: 'amphetamine-dextroamphetamine', strength: '30 mg' }],
+  [{ name: 'diazepam', strength: '5 mg' },
+   { name: 'diazepam', strength: '10 mg' }],
+  [{ name: 'methylphenidate', strength: '5 mg' },
+   { name: 'methylphenidate', strength: '10 mg' },
+   { name: 'methylphenidate', strength: '20 mg' }],
 ];
 
 /* Fictional users (rotated per row) */
+/* USERS — each entry carries both a display name and a unique system ID.
+   System IDs follow the pattern: first 3 letters of last name (upper) +
+   first initial (upper) + zero-padded 2-digit index. This mirrors common
+   health system EHR account naming conventions and provides unambiguous
+   legal accountability even when names overlap across a large IDN. */
 const USERS = [
-  'Jordan Reeves', 'Casey Whitman', 'Riley Foster', 'Morgan Avery',
-  'Taylor Bennett', 'Sage Holloway', 'Devon Marsh', 'Quinn Delgado',
-  'Avery Dunbar', 'Sloan Kavanaugh',
+  { name: 'Jordan Reeves',    id: 'REEJ01' },  { name: 'Casey Whitman',    id: 'WHIC02' },
+  { name: 'Riley Foster',     id: 'FOSR03' },  { name: 'Morgan Avery',     id: 'AVEM04' },
+  { name: 'Taylor Bennett',   id: 'BENT05' },  { name: 'Sage Holloway',    id: 'HOLS06' },
+  { name: 'Devon Marsh',      id: 'MARD07' },  { name: 'Quinn Delgado',    id: 'DELQ08' },
+  { name: 'Avery Dunbar',     id: 'DUNA09' },  { name: 'Sloan Kavanaugh',  id: 'KAVS10' },
+  { name: 'Cameron Ellis',    id: 'ELLC11' },  { name: 'Skylar Reyes',     id: 'REYS12' },
+  { name: 'Hayden Park',      id: 'PARH13' },  { name: 'Reese Whitfield',  id: 'WHIR14' },
+  { name: 'Emerson Walsh',    id: 'WALE15' },  { name: 'Logan Patel',      id: 'PATL16' },
+  { name: 'Parker Knox',      id: 'KNOP17' },  { name: 'Drew Mathis',      id: 'MATD18' },
+  { name: 'Sawyer Hayes',     id: 'HAYS19' },  { name: 'Finley Cross',     id: 'CROF20' },
+  { name: 'Ellis Boone',      id: 'BOOE21' },  { name: 'Rowan Tate',       id: 'TATR22' },
+  { name: 'Blake Sutton',     id: 'SUTB23' },  { name: 'Marlow Chen',      id: 'CHEM24' },
+  { name: 'Phoenix Vargas',   id: 'VARP25' },  { name: 'Harper Vance',     id: 'VANH26' },
+  { name: 'Jamie Lin',        id: 'LINJ27' },  { name: 'Spencer Yates',    id: 'YATS28' },
+  { name: 'Bennett Cole',     id: 'COLB29' },  { name: 'Adair Singh',      id: 'SINA30' },
+  { name: 'Toby Ramirez',     id: 'RAMT31' },  { name: 'Jules Castellano', id: 'CASJ32' },
 ];
+
+/* Fast name→id lookup for tx row generation */
+const USER_BY_NAME = Object.fromEntries(USERS.map(u => [u.name, u.id]));
+
+/* Mock patient names and RX numbers for dispense rows */
+const MOCK_PATIENTS = [
+  'Doe, Jane', 'Smith, John', 'Garcia, Maria', 'Johnson, Robert',
+  'Williams, Linda', 'Brown, David', 'Jones, Patricia', 'Miller, James',
+  'Davis, Barbara', 'Wilson, Charles', 'Moore, Susan', 'Taylor, Thomas',
+];
+
+/* ──────────────────────────────────────────────────────────
+   USER ↔ PHARMACY assignment
+
+   New model (this iteration): single-pharmacy assignment is the
+   norm — most users work at exactly one retail pharmacy. A small
+   minority (4 of 32) work at two pharmacies; those are represented
+   in the By-User view as two separate rows (the "treat as separate
+   people" rule), each with that user's name and the relevant
+   pharmacy as subtext.
+
+   USER_PHARMS is the canonical mapping (userIdx → pharmIdx[]).
+   USER_ROWS, below, flattens it to one entry per (user, pharm)
+   pair — that's what the heatmap iterates over.
+
+   Constraints satisfied by the build below:
+     • 28 users at 1 pharmacy + 4 users at 2 pharmacies = 36 rows.
+     • Every pharmacy gets at least 4 rows (load-balanced fill).
+     • Deterministic (seeded) so the layout is stable on reload.
+   ────────────────────────────────────────────────────────── */
+function _userPharmsRng(seed) {
+  let a = seed >>> 0;
+  return function() {
+    a += 0x6D2B79F5;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const USER_PHARMS = (() => {
+  const rng = _userPharmsRng(1337);
+  const USER_COUNT  = USERS.length;          // 32
+  const PHARM_COUNT = PHARMACIES.length;     // 8
+  const MULTI_PHARM_USERS = 4;               // out of 32 — the "rare" case
+
+  // Pick which user indices get the multi-pharmacy treatment. Spread
+  // across the list rather than clumping at the top so a casual scroll
+  // hits a couple of duplicates.
+  const multi = new Set();
+  while (multi.size < MULTI_PHARM_USERS) {
+    multi.add(Math.floor(rng() * USER_COUNT));
+  }
+
+  const assignments = USERS.map(() => []);
+
+  // Load-balanced fill: for each user, pick the least-loaded pharmacy
+  // (or two, if multi). Seeded tiebreaker keeps the distribution from
+  // locking into a too-tidy diagonal.
+  for (let u = 0; u < USER_COUNT; u++) {
+    const numPharms = multi.has(u) ? 2 : 1;
+    const loads = Array.from({ length: PHARM_COUNT }, (_, p) => ({
+      p,
+      load: assignments.filter(a => a.includes(p)).length,
+    }));
+    loads.sort((a, b) => a.load - b.load || (rng() < 0.5 ? -1 : 1));
+    for (let i = 0; i < numPharms; i++) {
+      assignments[u].push(loads[i].p);
+    }
+  }
+  return assignments.map(a => a.sort((x, y) => x - y));
+})();
+
+/* Flattened (user, pharmacy) rows for the By-User heatmap. Each
+   entry is one row in the table — multi-pharmacy users appear in
+   two consecutive rows with different `pharmIdx` values, treated
+   as separate people for purposes of the count breakdown. */
+const USER_ROWS = (() => {
+  const rows = [];
+  for (let u = 0; u < USERS.length; u++) {
+    for (const p of USER_PHARMS[u]) {
+      rows.push({ userIdx: u, pharmIdx: p });
+    }
+  }
+  return rows;
+})();
+
+/* All user-row indices at a given pharmacy. With the single-pharm
+   norm + per-row representation, this is just the rows whose
+   pharmIdx matches. */
+function getUsersInPharm(pharmIdx) {
+  const out = [];
+  for (let i = 0; i < USER_PHARMS.length; i++) {
+    if (USER_PHARMS[i].includes(pharmIdx)) out.push(i);
+  }
+  return out;
+}
+
+/* Adjustment count contributed by one user at one (pharmacy, drug) cell.
+   The per-pharmacy cell total HEATMAP[p][d].v is split deterministically
+   across the users assigned to that pharmacy via integer round-robin
+   with a (pharmacy, drug)-keyed rotation, so the split varies per cell
+   and no single user always gets the "+1 remainder". */
+function getUserPharmDrugCount(userIdx, pharmIdx, drugIdx) {
+  const usersHere = getUsersInPharm(pharmIdx);
+  const userPos = usersHere.indexOf(userIdx);
+  if (userPos < 0) return 0;
+  const total = (HEATMAP[pharmIdx] && HEATMAP[pharmIdx][drugIdx] && HEATMAP[pharmIdx][drugIdx].v) || 0;
+  if (total === 0) return 0;
+  const n = usersHere.length;
+  const base = Math.floor(total / n);
+  const extra = total % n;
+  const rotation = (pharmIdx * 101 + drugIdx * 19 + 7) % n;
+  const adjustedPos = (userPos - rotation + n) % n;
+  return base + (adjustedPos < extra ? 1 : 0);
+}
 
 /* Realistic comment patterns sourced from the customer session */
 const COMMENT_TEMPLATES = {
-  count_correction: [
+  correction: [
     'Stock verified after audit',
     'Balance off by 2 tablets — recount confirmed',
     'Back count short — see incident #41620',
     'Vault count reconciled to perpetual inventory',
     '',  // sometimes missing
     'Reconciled with second tech sign-off',
-  ],
-  cycle_count: [
-    '',
-    'Quarterly cycle count — no discrepancy',
-    'Daily cycle count, off by 1, recount matched',
-  ],
-  return_to_stock: [
-    'Patient cancelled prescription — RX #4108273',
-    'Returned, unopened, original lot intact',
-    'Returned by patient; expiration verified',
   ],
   waste: [
     'Two broken tablets — discarded per policy',
@@ -2431,26 +4175,46 @@ const COMMENT_TEMPLATES = {
     'Removed expired stock per monthly review',
     'Expired lot returned to vendor',
   ],
-  returned_to_vendor: [
-    'Returned to vendor via INMAR — confirmation #88421',
-    'Vendor return, 222 form #A01234567',
-    'Manufacturer recall — vendor return processed',
+  contaminated: [
+    'Contamination found during inspection',
+    'Compromised packaging — destroyed per policy',
+  ],
+  clinic_dispense: [
+    'Floor stock — administered to patient on unit 4B',
+    'Clinic floor dispense, anesthesia request',
+    'Dispensed to clinic per standing order',
+  ],
+  inpatient_pharmacy: [
+    'Transferred to inpatient pharmacy for patient care',
+    'Inpatient fill — order #IP-88421',
+    '',
   ],
   shrinkage: [
     'Unaccounted shrinkage during inventory audit',
     '',
     'Loss identified during cycle count — investigation pending',
   ],
-  contaminated: [
-    'Contamination found during inspection',
-    'Compromised packaging — destroyed per policy',
+  return_to_vendor: [
+    'Returned to vendor via INMAR — confirmation #88421',
+    'Vendor return, 222 form #A01234567',
+    'Manufacturer recall — vendor return processed',
   ],
-  ndc_change: [
-    'Source balance: NDC change to new lot',
-    'Destination balance: NDC change',
+  clinic_return: [
+    'Unused floor stock returned from unit 4B',
+    'Patient discharged, unused dose returned',
+    'Clinic return per policy — sealed, unexpired',
+  ],
+  // Cycle Count Reconciliation reasons — restricted to shared reason codes:
+  // Correction (data alignment), Shrinkage (unexplained loss), Other (catch-all).
+  // Manual-adjustment-only reasons (Expired, Waste, Contaminated, etc.) are
+  // not available on this activity type.
+  cycle_count_variance: [
+    'Correction',
+    'Shrinkage',
+    'Other',
   ],
   other: [
-    'See attached note',
+    'Unusual variance — flagged for review',
     '',
   ],
 };
@@ -2462,81 +4226,161 @@ function pickComment(typeKey, rand) {
 
 function renderMedTable(pharmIdx, drugIdx, rand, activeTypes) {
   const variants = MED_VARIANTS[drugIdx];
-  const total = HEATMAP[pharmIdx][drugIdx].v || 0;
+  const isAggregate = (PANEL_STATE.scope === 'aggregate');
 
-  // Distribute the total across variants (preserved from prior version)
-  const counts = variants.map(() => 0);
-  for (let i = 0; i < total; i++) {
-    counts[Math.floor(rand() * variants.length)] += 1;
+  // Canonical per-type totals for this panel. These MUST agree with
+  // what the heatmap shows — otherwise the type-stat cards and the
+  // filterable med-table will display different numbers than the
+  // cell that opened this panel.
+  //   - cell scope: pull from getCellBreakdown so every type-stat
+  //     card matches the corresponding cell in the By-Adjustment-
+  //     Type view.
+  //   - aggregate scope: the panel is pre-scoped to one type, so
+  //     the entire total is that type.
+  // cycle_count_verified has no balance change and is not a reason code —
+  // exclude both cycle count types from the med table type breakdown.
+  const adjustmentTypes = activeTypes.filter(t => t.key !== 'cycle_count_verified' && t.key !== 'cycle_count_variance');
+  const typeTotals = {};
+  adjustmentTypes.forEach(t => { typeTotals[t.key] = 0; });
+  if (isAggregate) {
+    if (adjustmentTypes.length) {
+      typeTotals[adjustmentTypes[0].key] = getTypeCellValue(PANEL_STATE.typeKey, drugIdx);
+    }
+  } else {
+    const breakdown = getCellBreakdown(pharmIdx, drugIdx);
+    adjustmentTypes.forEach(t => { typeTotals[t.key] = breakdown[t.key] || 0; });
   }
 
-  // For each variant, split its count across the active types so
-  // filter buttons map cleanly to row-level counts.
-  const variantState = variants.map((v, i) => {
-    const variantTotal = counts[i];
-    const byType = {};
-    const totalByType = {};
-    activeTypes.forEach(t => { byType[t.key] = 0; totalByType[t.key] = 0; });
-
-    // Bias toward count_correction / cycle_count if those are active
-    function pickType() {
-      const r = rand();
-      // Weighted preference within activeTypes
-      const ordered = activeTypes.slice().sort((a, b) => {
-        const w = { count_correction: 4, cycle_count: 3, return_to_stock: 2 };
-        return (w[b.key] || 1) - (w[a.key] || 1);
-      });
-      // Cumulative thresholds
-      let cum = 0;
-      const weights = ordered.map(t => (({count_correction:4,cycle_count:3,return_to_stock:2})[t.key] || 1));
-      const sum = weights.reduce((s,x)=>s+x,0);
-      for (let k = 0; k < ordered.length; k++) {
-        cum += weights[k]/sum;
-        if (r <= cum) return ordered[k].key;
-      }
-      return ordered[ordered.length - 1].key;
+  // Distribute each type's total across variants deterministically.
+  // Round-robin with a per-type rotation so the "+1 remainder" rotates
+  // around the variant list rather than always landing on variant 0.
+  // Sum across variants for any type equals typeTotals[type] — that's
+  // what keeps the panel honest.
+  const variantState = variants.map(v => ({
+    name: v.name, strength: v.strength,
+    byType: Object.fromEntries(adjustmentTypes.map(t => [t.key, 0])),
+    totalByType: Object.fromEntries(adjustmentTypes.map(t => [t.key, 0])),
+  }));
+  adjustmentTypes.forEach((t, ti) => {
+    const cnt = typeTotals[t.key];
+    if (cnt <= 0) return;
+    const n = variants.length;
+    const rotation = (pharmIdx * 17 + drugIdx * 11 + ti * 5 + 3) % n;
+    for (let k = 0; k < cnt; k++) {
+      const vi = (rotation + k) % n;
+      variantState[vi].byType[t.key] += 1;
     }
-    for (let j = 0; j < variantTotal; j++) {
-      byType[pickType()] += 1;
-    }
-    // Per-unit "Total Adjusted" amount factor for each type (deterministic)
-    activeTypes.forEach(t => {
-      const perUnit = 30 + Math.floor(rand() * 70);
-      totalByType[t.key] = byType[t.key] * perUnit;
-    });
-
-    return { name: v.name, strength: v.strength, byType, totalByType };
   });
 
-  MED_STATE = { variantState, activeTypes };
+  // Per-unit "Total Adjusted" amount factor for each (variant, type).
+  // Stays random for realism — only the count distribution above
+  // needs to be deterministic vs the heatmap.
+  variantState.forEach(v => {
+    adjustmentTypes.forEach(t => {
+      const perUnit = 30 + Math.floor(rand() * 70);
+      v.totalByType[t.key] = v.byType[t.key] * perUnit;
+    });
+  });
+
+  // Compute per-variant cycle count variance counts using the same seeded
+  // RNG as buildTxExpansion so the med table count and tx rows always agree.
+  const totalCC = getCellCycleCount(pharmIdx, drugIdx);
+  const variantCount = variants.length;
+  const ccVarByVariant = variants.map((_, vi) => {
+    const baseShare = Math.floor(totalCC / variantCount);
+    const remainder = totalCC % variantCount;
+    const myShare   = baseShare + (vi < remainder ? 1 : 0);
+    // Burn through prior variants' sessions on the shared seed
+    let ccSeed = (pharmIdx * 31 + drugIdx * 7 + 99) >>> 0;
+    const ccRand = () => {
+      ccSeed = (ccSeed + 0x6D2B79F5) >>> 0;
+      let s = ccSeed;
+      s = Math.imul(s ^ (s >>> 15), s | 1);
+      s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+      return ((s ^ (s >>> 14)) >>> 0) / 4294967296;
+    };
+    const priorSessions = baseShare * vi + Math.min(vi, remainder);
+    for (let k = 0; k < priorSessions; k++) ccRand();
+    let varCount = 0;
+    for (let k = 0; k < myShare; k++) {
+      if (ccRand() < 0.25) varCount++;
+    }
+    return varCount;
+  });
+
+  MED_STATE = { variantState, activeTypes, ccVarByVariant };
+  renderFilteredMedTable();
+}
+
+/* sortMedTable — called by column header clicks.
+   Toggles direction if the same column is clicked again; resets to
+   asc when switching columns. Updates header classes and re-renders. */
+function sortMedTable(col) {
+  if (MED_SORT.col === col) {
+    MED_SORT.dir = MED_SORT.dir === 'asc' ? 'desc' : 'asc';
+  } else {
+    MED_SORT.col = col;
+    MED_SORT.dir = col === 'count' || col === 'total' ? 'desc' : 'asc'; // numbers default desc
+  }
+  // Update header classes + icon direction
+  document.querySelectorAll('#med-table-head th[data-col]').forEach(th => {
+    const isActive = th.dataset.col === MED_SORT.col;
+    th.classList.toggle('active-sort', isActive);
+    const icon = th.querySelector('.sort-icon');
+    if (icon) icon.textContent = (isActive && MED_SORT.dir === 'desc') ? 'arrow_downward' : 'arrow_upward';
+  });
   renderFilteredMedTable();
 }
 
 /* Render (or re-render) the med table rows based on PANEL_FILTER + MED_STATE */
 function renderFilteredMedTable() {
   if (!MED_STATE) return;
-  const { variantState, activeTypes } = MED_STATE;
+  const { variantState, activeTypes, ccVarByVariant } = MED_STATE;
   const filterActive = PANEL_FILTER.activeTypes.size > 0;
   const keysToSum = filterActive
     ? activeTypes.filter(t => PANEL_FILTER.activeTypes.has(t.key)).map(t => t.key)
     : activeTypes.map(t => t.key);
 
-  let visibleRows = 0;
-  const html = variantState.map((row, i) => {
-    const count    = keysToSum.reduce((s, k) => s + (row.byType[k] || 0), 0);
-    const totalAdj = keysToSum.reduce((s, k) => s + (row.totalByType[k] || 0), 0);
-    if (count === 0) return ''; // hide rows with 0 of selected types
-    visibleRows += 1;
-    return `
-      <tr data-row="${i}" onclick="toggleMedRow(${PANEL_STATE.pharm},${PANEL_STATE.drug},${i}, this)">
+  // When a reason filter is active, only include CCR rows whose reasonKey matches.
+  // Since we don't know per-variant CCR reason distribution here, include all
+  // CCR when no filter is active, or exclude CCR when none of the active filter
+  // keys are shared reasons (correction, shrinkage, other).
+  const CCR_REASON_KEYS = new Set(['correction', 'shrinkage', 'other']);
+  const includeCCR = !filterActive || keysToSum.some(k => CCR_REASON_KEYS.has(k));
+
+  // Build visible row objects first so we can sort before rendering
+  const visibleRowData = variantState
+    .map((row, i) => {
+      const adjCount = keysToSum.reduce((s, k) => s + (row.byType[k] || 0), 0);
+      const ccrCount = includeCCR ? (ccVarByVariant?.[i] || 0) : 0;
+      const count    = adjCount + ccrCount;
+      const totalAdj = keysToSum.reduce((s, k) => s + (row.totalByType[k] || 0), 0);
+      return { row, i, count, totalAdj };
+    })
+    .filter(r => r.count > 0);
+
+  // Apply current sort
+  visibleRowData.sort((a, b) => {
+    const dir = MED_SORT.dir === 'asc' ? 1 : -1;
+    switch (MED_SORT.col) {
+      case 'name':     return dir * a.row.name.localeCompare(b.row.name);
+      case 'strength': return dir * a.row.strength.localeCompare(b.row.strength, undefined, { numeric: true });
+      case 'count':    return dir * (a.count - b.count);
+      case 'total':    return dir * (a.totalAdj - b.totalAdj);
+      default:         return 0;
+    }
+  });
+
+  let visibleRows = visibleRowData.length;
+  const html = visibleRowData.map(({ row, i, count, totalAdj }) => `
+      <tr data-row="${i}" data-pharm="${PANEL_STATE.pharm}" data-drug="${PANEL_STATE.drug}" onclick="toggleMedRow(${PANEL_STATE.pharm},${PANEL_STATE.drug},${i}, this)">
         <td class="med-name">${row.name}</td>
-        <td>${row.strength}</td>
+        <td class="med-strength">${row.strength}</td>
         <td class="num">${count}</td>
         <td class="num">${totalAdj.toLocaleString()}</td>
         <td class="num"><span class="material-icons chev">expand_more</span></td>
       </tr>
-    `;
-  }).join('');
+    `).join('');
 
   const body = document.getElementById('med-table-body');
   body.innerHTML = html || `
@@ -2547,22 +4391,43 @@ function renderFilteredMedTable() {
 }
 
 function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
-  // close any other expanded
-  document.querySelectorAll('#med-table-body tr.expanded').forEach(r => {
-    if (r !== tr) {
-      r.classList.remove('expanded');
-      const next = r.nextElementSibling;
-      if (next && next.classList.contains('expansion-row')) next.remove();
-    }
-  });
-
   const isOpen = tr.classList.toggle('expanded');
   const next = tr.nextElementSibling;
   if (!isOpen) {
     if (next && next.classList.contains('expansion-row')) next.remove();
     return;
   }
+  OPEN_TX_ROW = { pharmIdx, drugIdx, rowIdx, tr };
+  buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr);
+}
 
+/* sortTxTable — called by tx-table column header clicks.
+   Stores sort state per rowIdx in TX_SORT, then re-renders just that
+   expansion row in place. */
+function sortTxTable(rowIdx, col) {
+  const current = TX_SORT.get(rowIdx) || { col: 'date', dir: 'desc' };
+  const dir = current.col === col
+    ? (current.dir === 'asc' ? 'desc' : 'asc')
+    : (col === 'amount' || col === 'balance' ? 'desc' : 'asc');
+  // activity and reason sort asc by default (already handled by fallback 'asc')
+  TX_SORT.set(rowIdx, { col, dir });
+  // Find the tr for this rowIdx and re-render its expansion row
+  const tr = document.querySelector(`#med-table-body tr[data-row="${rowIdx}"]`);
+  if (!tr) return;
+  const existing = tr.nextElementSibling;
+  if (existing && existing.classList.contains('expansion-row')) existing.remove();
+  buildTxExpansion(
+    parseInt(tr.dataset.pharm, 10),
+    parseInt(tr.dataset.drug,  10),
+    rowIdx, tr
+  );
+}
+
+/* buildTxExpansion — generates and inserts the transaction expansion row
+   for a given (pharmIdx, drugIdx, rowIdx). Separated from toggleMedRow
+   so it can be called independently by reRenderOpenTxTable without
+   toggling the .expanded state. */
+function buildTxExpansion(pharmIdx, drugIdx, rowIdx, tr) {
   // Build expansion row (transactions table, with Comments column)
   function mulberry32(a) {
     return function() {
@@ -2572,7 +4437,10 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   }
-  const rand = mulberry32(pharmIdx * 91 + drugIdx * 13 + rowIdx + 1);
+  const isAggregate = (PANEL_STATE.scope === 'aggregate');
+  const rand = isAggregate
+    ? mulberry32(drugIdx * 71 + rowIdx * 23 + (PANEL_STATE.typeKey || '').length * 5 + 1337)
+    : mulberry32(pharmIdx * 91 + drugIdx * 13 + rowIdx + 1);
 
   // Pull row's adjustments count from the previous render's third column
   const adjustments = parseInt(tr.children[2].textContent, 10) || 0;
@@ -2597,15 +4465,66 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
     return `${mm} ${dd}, ${d.getFullYear()}`;
   }
 
-  // When a type filter is active, transactions in this expansion
-  // should only be of the filtered types so the count matches the
-  // displayed (filtered) Adjustments value.
+  // Build the exact ordered list of type keys for this variant's
+  // adjustment rows from MED_STATE — this guarantees the transaction
+  // rows match the type pill counts exactly.
+  // If a type filter is active, restrict to only the filtered types.
   const filterKeys = [...PANEL_FILTER.activeTypes];
-  function pickTxType() {
-    if (filterKeys.length > 0) {
-      return filterKeys[Math.floor(rand() * filterKeys.length)];
+  const variantByType = (MED_STATE && MED_STATE.variantState[rowIdx])
+    ? MED_STATE.variantState[rowIdx].byType
+    : null;
+
+  // Build a flat array: ['correction','correction','waste',...] in
+  // canonical ADJ_TYPES order so the deterministic shuffle is stable.
+  // Exclude cycle_count_variance and cycle_count_verified — these are
+  // generated exclusively by the dedicated cycle count loop below and
+  // carry extra fields (expected, actual, reason, reasonKey) that this
+  // loop doesn't set.
+  const MANUAL_ADJ_KEYS = new Set(
+    ADJ_TYPES.map(t => t.key).filter(k => k !== 'cycle_count_variance' && k !== 'cycle_count_verified')
+  );
+  let txTypeList = [];
+  if (variantByType) {
+    ADJ_TYPES.forEach(t => {
+      if (!MANUAL_ADJ_KEYS.has(t.key)) return;
+      if (filterKeys.length > 0 && !filterKeys.includes(t.key)) return;
+      const count = variantByType[t.key] || 0;
+      for (let k = 0; k < count; k++) txTypeList.push(t.key);
+    });
+  } else {
+    // Fallback if MED_STATE isn't populated yet
+    for (let k = 0; k < adjustments; k++) txTypeList.push(pickWeightedType(rand));
+  }
+
+  // Fisher-Yates shuffle so types are interleaved naturally by date
+  for (let k = txTypeList.length - 1; k > 0; k--) {
+    const j = Math.floor(rand() * (k + 1));
+    [txTypeList[k], txTypeList[j]] = [txTypeList[j], txTypeList[k]];
+  }
+  let txTypeIdx = 0;
+  function pickTxType() { return txTypeList[txTypeIdx++] || 'other'; }
+
+  /* Pick a user-name attribution for a transaction. Three layers:
+       1. If the panel was opened with a highlight user (entered from
+          the By User view), give that user ~35% of the rows so the
+          highlight isn't probabilistically invisible.
+       2. Otherwise, prefer users who actually work at this pharmacy
+          (since transactions at a retail location should be done by
+          staff who work there). Aggregate scope has no pharmacy,
+          so it falls through to step 3.
+       3. Fallback to a uniform pick across all USERS. */
+  function pickTxUser() {
+    const hl = PANEL_STATE.highlightUserIdx;
+    if (hl !== null && hl !== undefined && rand() < 0.35) {
+      return USERS[hl].name;
     }
-    return pickWeightedType(rand);
+    if (PANEL_STATE.scope === 'cell' && PANEL_STATE.pharm >= 0) {
+      const usersHere = getUsersInPharm(PANEL_STATE.pharm);
+      if (usersHere.length > 0) {
+        return USERS[usersHere[Math.floor(rand() * usersHere.length)]].name;
+      }
+    }
+    return USERS[Math.floor(rand() * USERS.length)].name;
   }
 
   // synthesize tx rows: manual adjustments + dispense events.
@@ -2614,98 +4533,324 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
   const txs = [];
   let bal = 2000 + Math.floor(rand() * 400);
 
-  // Manual adjustments — these get colored Type chips
-  for (let i = 0; i < Math.max(adjustments, 1); i++) {
+  // Manual adjustments only — cycle_count_variance and cycle_count_verified
+  // are excluded from txTypeList and generated by the dedicated loop below.
+  // Direction is constrained by typeDirection() per TYPE_DIRECTION map.
+  const adjCount2 = txTypeList.length || Math.max(adjustments, 1);
+  for (let i = 0; i < adjCount2; i++) {
     const typeKey = pickTxType();
-    const isInc   = rand() > 0.45;
-    const amt     = (isInc ? 1 : -1) * (1 + Math.floor(rand() * 90));
-    bal += amt;
     const d = txDate(i, adjustments);
     const hh = String(8 + Math.floor(rand() * 11)).padStart(2, '0');
     const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
+
+    const dir = typeDirection(typeKey);
+    let isInc;
+    if (dir === 'inc')      isInc = true;
+    else if (dir === 'dec') isInc = false;
+    else                    isInc = rand() > 0.45;     // either
+
+    const amt = (isInc ? 1 : -1) * (1 + Math.floor(rand() * 90));
+    bal += amt;
+    const txUser = pickTxUser();
     txs.push({
       date: fmt(d),
       time: `${hh}:${mn}`,
       ndc, type: typeKey, amount: amt, balance: bal,
-      user: USERS[Math.floor(rand() * USERS.length)],
+      user: txUser, userId: USER_BY_NAME[txUser] || '',
       comment: pickComment(typeKey, rand),
     });
   }
 
-  // Dispense events — non-adjustment, no chip, no comment.
-  // Generate ~1.5–3× the adjustment count for realism.
-  const dispenseCount = Math.max(2, Math.floor(adjustments * 1.5 + rand() * 5));
-  for (let i = 0; i < dispenseCount; i++) {
-    const amt = -(1 + Math.floor(rand() * 3));   // dispenses are always decreases
-    bal += amt;
-    const d  = txDate(i, dispenseCount);
-    const hh = String(7 + Math.floor(rand() * 13)).padStart(2, '0');
-    const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
-    txs.push({
-      date: fmt(d),
-      time: `${hh}:${mn}`,
-      ndc, type: 'dispense', amount: amt, balance: bal,
-      user: USERS[Math.floor(rand() * USERS.length)],
-      comment: '',                                // dispenses don't get analyst comments
+  // Cycle counts — unified audit log (Option B).
+  // Each cycle count event is either a variance (balance changes, shown as
+  // cycle_count_variance type) or a verified match (balance unchanged, shown
+  // as cycle_count_verified). Both appear in the table; only variance rows
+  // contribute to the heatmap cell totals.
+  // Suppressed when a type filter is active that doesn't include cycle counts.
+  const filterHasCycleVariance = filterKeys.includes('cycle_count_variance');
+  const showCycleCounts = filterKeys.length === 0 || filterHasCycleVariance;
+  if (showCycleCounts) {
+    let cellCC;
+    if (PANEL_STATE.scope === 'aggregate') {
+      cellCC = 0;
+      for (let pi = 0; pi < HEATMAP.length; pi++) cellCC += getCellCycleCount(pi, PANEL_STATE.drug);
+    } else {
+      cellCC = getCellCycleCount(PANEL_STATE.pharm, PANEL_STATE.drug);
+    }
+    const variantCount = MED_VARIANTS[drugIdx].length;
+    const baseShare = Math.floor(cellCC / variantCount);
+    const remainder = cellCC % variantCount;
+    const myShare   = baseShare + (rowIdx < remainder ? 1 : 0);
+
+    // Dedicated seeded RNG for variance decisions — must match the seed
+    // used in getCellCycleVarianceCount so the variance/verified split
+    // is consistent with what the Events Summary reports.
+    // We advance past the sessions assigned to earlier variants so this
+    // variant's decisions land on the same RNG positions.
+    let ccSeed = (pharmIdx * 31 + drugIdx * 7 + 99) >>> 0;
+    const ccRand = () => {
+      ccSeed = (ccSeed + 0x6D2B79F5) >>> 0;
+      let s = ccSeed;
+      s = Math.imul(s ^ (s >>> 15), s | 1);
+      s ^= s + Math.imul(s ^ (s >>> 7), s | 61);
+      return ((s ^ (s >>> 14)) >>> 0) / 4294967296;
+    };
+    // Burn through sessions assigned to earlier variants
+    const priorSessions = baseShare * rowIdx + Math.min(rowIdx, remainder);
+    for (let k = 0; k < priorSessions; k++) ccRand();
+
+    for (let i = 0; i < myShare; i++) {
+      const d = txDate(i, Math.max(myShare, 1));
+      const hh = String(7 + Math.floor(rand() * 12)).padStart(2, '0');
+      const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
+      // Use dedicated ccRand for variance decision — keeps in sync with getCellCycleVarianceCount
+      const hasVariance = ccRand() < 0.25;
+      const variance = hasVariance
+        ? (rand() < 0.5 ? -1 : 1) * (1 + Math.floor(rand() * 3))
+        : 0;
+      const expected = bal - variance;
+      if (hasVariance) {
+        bal += variance;
+        const ccvUser = pickTxUser();
+        const ccvReason = pickComment('cycle_count_variance', rand);
+        const ccvReasonKey = (() => {
+          if (ccvReason === 'Correction') return 'correction';
+          if (ccvReason === 'Shrinkage')  return 'shrinkage';
+          return 'other';
+        })();
+        txs.push({
+          date: fmt(d), time: `${hh}:${mn}`,
+          ndc, type: 'cycle_count_variance',
+          amount: variance,
+          balance: bal,
+          expected,
+          actual: bal,
+          user: ccvUser, userId: USER_BY_NAME[ccvUser] || '',
+          reason: ccvReason,
+          reasonKey: ccvReasonKey,
+          comment: '',
+        });
+      } else {
+        const ccvrUser = pickTxUser();
+        txs.push({
+          date: fmt(d), time: `${hh}:${mn}`,
+          ndc, type: 'cycle_count_verified',
+          amount: 0,
+          balance: bal,
+          expected: bal,
+          actual: bal,
+          user: ccvrUser, userId: USER_BY_NAME[ccvrUser] || '',
+          comment: '',
+        });
+      }
+    }
+  }
+
+  // Dispense events — generated only when the "Show dispenses" toggle
+  // is active. Off by default; the visibleTxs filter below is a safety
+  // net but the real gate is here so we don't build unused rows.
+  if (PANEL_FILTER.showDispenses) {
+    const dispenseCount = Math.max(2, Math.floor(adjustments * 1.5 + rand() * 5));
+    for (let i = 0; i < dispenseCount; i++) {
+      const amt = -(1 + Math.floor(rand() * 3));
+      bal += amt;
+      const d  = txDate(i, dispenseCount);
+      const hh = String(7 + Math.floor(rand() * 13)).padStart(2, '0');
+      const mn = String(Math.floor(rand() * 60)).padStart(2, '0');
+      const rxBase = 9800000 + Math.floor(rand() * 99999);
+      const patIdx = Math.floor(rand() * MOCK_PATIENTS.length);
+      const dispUser = pickTxUser();
+      txs.push({
+        date: fmt(d), time: `${hh}:${mn}`,
+        ndc, type: 'dispense', amount: amt, balance: bal,
+        user: dispUser, userId: USER_BY_NAME[dispUser] || '',
+        rxNum: `RX #${rxBase}`,
+        patient: MOCK_PATIENTS[patIdx],
+        comment: '',
+      });
+    }
+  }
+
+  let visibleTxs = txs.slice();
+
+  // Apply reason filter — matches manual adjustments by tx.type,
+  // and cycle count reconciliations by tx.reasonKey.
+  if (filterKeys.length > 0) {
+    visibleTxs = visibleTxs.filter(t => {
+      if (t.type === 'cycle_count_variance') return filterKeys.includes(t.reasonKey);
+      if (t.type === 'cycle_count_verified') return false;
+      if (t.type === 'dispense')             return true;
+      return filterKeys.includes(t.type);
     });
   }
 
-  // Sort by most recent first
-  txs.sort((a, b) => (a.date < b.date ? 1 : -1));
+  // cycle_count_verified: hidden by default — verified counts are audit
+  // records with no balance change. Show only when "Show all Cycle Counts" is on.
+  if (!PANEL_FILTER.showAllCycleCounts) {
+    visibleTxs = visibleTxs.filter(t => t.type !== 'cycle_count_verified');
+  }
 
-  const adjCount  = txs.filter(t => t.type !== 'dispense').length;
-  const dispCount = txs.filter(t => t.type === 'dispense').length;
+  // Dispenses: hidden by default, shown only when showDispenses is on
+  if (!PANEL_FILTER.showDispenses) {
+    visibleTxs = visibleTxs.filter(t => t.type !== 'dispense');
+  }
+
+  // Hide increases: remove rows where the net amount is positive
+  // (stock-increasing adjustments and positive cycle count variances).
+  // cycle_count_verified has amount=0 and is not hidden by this filter.
+  if (PANEL_FILTER.hideIncreases) {
+    visibleTxs = visibleTxs.filter(t => {
+      if (t.type === 'dispense') return true;        // dispenses always decrease
+      if (t.type === 'cycle_count_verified') return true; // neutral, keep
+      return (t.amount || 0) <= 0;
+    });
+  }
+
+  // Apply per-row tx sort (default: date desc — most recent first)
+  const txSort = TX_SORT.get(rowIdx) || { col: 'date', dir: 'desc' };
+  const txSortDir = txSort.dir === 'asc' ? 1 : -1;
+  visibleTxs.sort((a, b) => {
+    const activityLabel = t => {
+      if (t.type === 'cycle_count_variance') return 'Cycle Count Reconciliation';
+      if (t.type === 'cycle_count_verified') return 'Cycle Count (Verified)';
+      if (t.type === 'dispense')             return 'Dispense';
+      return 'Manual Adjustment';
+    };
+    const reasonLabel = t => (TYPE_BY_KEY[t.type]?.label || '');
+    switch (txSort.col) {
+      case 'date':     return txSortDir * ((a.date + a.time) < (b.date + b.time) ? -1 : 1);
+      case 'user':     return txSortDir * a.user.localeCompare(b.user);
+      case 'activity': return txSortDir * activityLabel(a).localeCompare(activityLabel(b));
+      case 'reason':   return txSortDir * reasonLabel(a).localeCompare(reasonLabel(b));
+      case 'amount':   return txSortDir * ((a.amount || 0) - (b.amount || 0));
+      case 'balance':  return txSortDir * ((a.balance || 0) - (b.balance || 0));
+      default:         return 0;
+    }
+  });
+
+  const adjCount  = visibleTxs.filter(t => TYPE_BY_KEY[t.type] && t.type !== 'cycle_count_variance' && t.type !== 'cycle_count_verified').length;
+  const ccVarCount = visibleTxs.filter(t => t.type === 'cycle_count_variance').length;
+  const ccVerCount = visibleTxs.filter(t => t.type === 'cycle_count_verified').length;
+  const dispCount  = visibleTxs.filter(t => t.type === 'dispense').length;
+
+  const ccSummary = (ccVarCount + ccVerCount) > 0
+    ? ` · ${ccVarCount} cycle count reconciliation${ccVarCount===1?'':'s'}${ccVerCount > 0 ? ` · ${ccVerCount} verified` : ''}`
+    : '';
+  const dispSummary = dispCount > 0 ? ` · ${dispCount} dispense${dispCount===1?'':'s'}` : '';
 
   const txHtml = `
     <tr class="expansion-row"><td colspan="5">
       <div class="tx-wrap">
         <div class="tx-wrap-header">
-          <span class="material-icons" style="font-size:16px;color:var(--teal);">history</span>
           Transactions
-          <span style="font-weight:500; color:var(--gray-600); margin-left: 8px; text-transform: none; letter-spacing:0;">${adjCount} adjustment${adjCount===1?'':'s'} · ${dispCount} dispense${dispCount===1?'':'s'} in selected range</span>
+          <span style="font-weight:500; color:var(--gray-600); margin-left: 8px; text-transform: none; letter-spacing:0;">${adjCount} adjustment${adjCount===1?'':'s'}${ccSummary}${dispSummary} in selected range</span>
         </div>
         <table class="tx-table">
           <thead>
             <tr>
-              <th>Date</th>
+              <th class="tx-sort-th ${txSort.col==='date'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'date')" style="cursor:pointer">Date <span class="material-icons tx-sort-icon">${txSort.col==='date'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
               <th>NDC</th>
-              <th>User</th>
-              <th>Type</th>
-              <th class="num">Amount</th>
-              <th class="num">Balance</th>
+              <th class="tx-sort-th ${txSort.col==='user'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'user')" style="cursor:pointer">User <span class="material-icons tx-sort-icon">${txSort.col==='user'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th ${txSort.col==='activity'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'activity')" style="cursor:pointer">Activity Type <span class="material-icons tx-sort-icon">${txSort.col==='activity'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th ${txSort.col==='reason'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'reason')" style="cursor:pointer">Reason <span class="material-icons tx-sort-icon">${txSort.col==='reason'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th num ${txSort.col==='amount'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'amount')" style="cursor:pointer">Amount <span class="material-icons tx-sort-icon">${txSort.col==='amount'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
+              <th class="tx-sort-th num ${txSort.col==='balance'?'tx-sort-active':''}" onclick="sortTxTable(${rowIdx},'balance')" style="cursor:pointer">Balance <span class="material-icons tx-sort-icon">${txSort.col==='balance'?(txSort.dir==='asc'?'arrow_upward':'arrow_downward'):'arrow_upward'}</span></th>
               <th>Comments</th>
             </tr>
           </thead>
           <tbody>
-            ${txs.map(tx => {
-              const t   = TYPE_BY_KEY[tx.type];                  // undefined if non-adjustment
-              const isAdj = !!t;
-              const amt = tx.amount;
-              const cls = amt < 0 ? 'neg' : 'pos';
+            ${visibleTxs.map(tx => {
+              const t              = TYPE_BY_KEY[tx.type];
+              const isManualAdj    = !!t && tx.type !== 'cycle_count_variance' && tx.type !== 'cycle_count_verified';
+              const isCycleVariance  = tx.type === 'cycle_count_variance';
+              const isCycleVerified  = tx.type === 'cycle_count_verified';
+              const isDispense     = tx.type === 'dispense';
+              const isCycle        = isCycleVariance || isCycleVerified;
+              const amt            = tx.amount;
+
+              // ── Activity Type cell ──────────────────────────────────
+              // Plain text label for the category of event.
+              let activityLabel, activityStyle = '';
+              if (isManualAdj)      { activityLabel = 'Manual Adjustment'; }
+              else if (isCycleVariance) { activityLabel = 'Cycle Count Reconciliation'; }
+              else if (isCycleVerified) { activityLabel = 'Cycle Count (Verified)'; activityStyle = 'color:var(--gray-500); font-style:italic;'; }
+              else if (isDispense)  { activityLabel = 'Dispense'; activityStyle = 'color:var(--gray-600);'; }
+              else                  { activityLabel = tx.type; }
+              const activityCell = `<td><span class="type-plain" style="${activityStyle}">${activityLabel}</span></td>`;
+
+              // ── Reason cell ─────────────────────────────────────────
+              // Manual adjustments: colored chip (the reason code label).
+              // Cycle count reconciliation: chip using cycle_count_variance color.
+              // Cycle count verified: em-dash (no reason, it matched).
+              // Dispense: RX number as the "reason" identifier.
+              let reasonCell;
+              if (isManualAdj && t) {
+                reasonCell = `<td><span class="type-chip" style="background:${t.color}; color:#fff;">${t.label}</span></td>`;
+              } else if (isCycleVariance) {
+                const reasonType = TYPE_BY_KEY[tx.reasonKey] || TYPE_BY_KEY['other'];
+                reasonCell = tx.reason
+                  ? `<td><span class="type-chip" style="background:${reasonType.color}; color:#fff;">${tx.reason}</span></td>`
+                  : `<td><span class="type-plain" style="color:var(--gray-400);">—</span></td>`;
+              } else if (isCycleVerified) {
+                reasonCell = `<td><span class="type-plain" style="color:var(--gray-400);">—</span></td>`;
+              } else if (isDispense) {
+                reasonCell = `<td><span class="type-plain" style="color:var(--gray-400);">–</span></td>`;
+              } else {
+                reasonCell = `<td><span class="type-plain" style="color:var(--gray-400);">—</span></td>`;
+              }
+
+              // ── Amount cell ─────────────────────────────────────────
+              const cls  = amt > 0 ? 'pos' : amt < 0 ? 'neg' : '';
               const sign = amt > 0 ? '+' : '';
+              const amountCell = `<td class="num ${cls}">${sign}${amt}</td>`;
 
-              // Type cell: chip only for manual adjustments;
-              // non-adjustment events render as plain text.
-              const typeCell = isAdj
-                ? `<td><span class="type-chip" style="background:${t.color}; color: #fff;">${t.label}</span></td>`
-                : `<td><span class="type-plain">${tx.type === 'dispense' ? 'Dispense' : tx.type}</span></td>`;
+              // ── User cell ───────────────────────────────────────────
+              // Dual identifier: name + system ID. Dispenses show "System (AUTO)".
+              const userDisplay = tx.userId
+                ? `<div class="user-cell">${tx.user}<span class="user-id">${tx.userId}</span></div>`
+                : `<div class="user-cell">${tx.user}</div>`;
 
-              // Comment cell: dispenses don't get the "no comment provided"
-              // placeholder — that placeholder is meaningful only for analyst-
-              // entered manual adjustments.
-              const commentCell = tx.comment
-                ? `<td class="comment-cell">"${tx.comment}"</td>`
-                : (isAdj
-                    ? `<td class="comment-cell empty">— No comment provided —</td>`
-                    : `<td class="comment-cell"></td>`);
+              // ── Comments cell ───────────────────────────────────────
+              // Manual adjustments: analyst comment or placeholder.
+              // Cycle count variance: Expected/Actual math + optional note.
+              // Cycle count verified: Expected/Matched confirmation.
+              // Dispense: patient identifier.
+              let commentCell;
+              if (isCycleVariance) {
+                const expectedStr = (tx.expected || 0).toLocaleString();
+                const actualStr   = (tx.actual   || 0).toLocaleString();
+                const vSign  = amt > 0 ? '+' : '';
+                const vClass = amt < 0 ? 'cc-variance neg' : 'cc-variance pos';
+                // Reason is shown in the Reason column; comment cell shows math only
+                commentCell = `<td class="comment-cell cc-comment">Expected: <strong>${expectedStr}</strong> · Actual: <strong>${actualStr}</strong> · <span class="${vClass}">Variance ${vSign}${amt}</span></td>`;
+              } else if (isCycleVerified) {
+                const expectedStr = (tx.expected || 0).toLocaleString();
+                commentCell = `<td class="comment-cell cc-comment">Expected: <strong>${expectedStr}</strong> · <span class="cc-match">Matched</span></td>`;
+              } else if (isDispense) {
+                commentCell = `<td class="comment-cell"><span style="color:var(--gray-400);">–</span></td>`;
+              } else if (tx.comment) {
+                commentCell = `<td class="comment-cell">"${tx.comment}"</td>`;
+              } else {
+                commentCell = `<td class="comment-cell empty">— No comment provided —</td>`;
+              }
+
+              const hl = PANEL_STATE.highlightUserIdx;
+              const isHighlighted = (hl !== null && hl !== undefined && tx.user === USERS[hl].name);
+              const rowClasses = [];
+              if (isCycleVerified) rowClasses.push('cc-row');
+              if (isCycleVariance) rowClasses.push('cc-variance-row');
+              if (isDispense)      rowClasses.push('dispense-row');
+              if (isHighlighted)   rowClasses.push('tx-row-highlighted');
+              const rowClassAttr = rowClasses.length ? ` class="${rowClasses.join(' ')}"` : '';
 
               return `
-                <tr>
+                <tr${rowClassAttr}>
                   <td>${tx.date} at ${tx.time}</td>
                   <td>${tx.ndc}</td>
-                  <td><div class="user-cell">${tx.user}</div></td>
-                  ${typeCell}
-                  <td class="num ${cls}">${sign}${amt}</td>
+                  <td>${userDisplay}</td>
+                  ${activityCell}
+                  ${reasonCell}
+                  ${amountCell}
                   <td class="num">${tx.balance.toLocaleString()}</td>
                   ${commentCell}
                 </tr>
@@ -2719,19 +4864,18 @@ function toggleMedRow(pharmIdx, drugIdx, rowIdx, tr) {
   tr.insertAdjacentHTML('afterend', txHtml);
 }
 
+
 function pickWeightedType(rand) {
-  // Bias toward count_correction & cycle_count since those are
-  // the most common in the source data.
   const r = rand();
-  if (r < 0.30) return 'count_correction';
-  if (r < 0.50) return 'cycle_count';
-  if (r < 0.62) return 'return_to_stock';
-  if (r < 0.72) return 'expired';
-  if (r < 0.80) return 'waste';
-  if (r < 0.86) return 'returned_to_vendor';
-  if (r < 0.92) return 'shrinkage';
-  if (r < 0.96) return 'contaminated';
-  if (r < 0.99) return 'ndc_change';
+  if (r < 0.22) return 'correction';
+  if (r < 0.34) return 'waste';
+  if (r < 0.44) return 'expired';
+  if (r < 0.52) return 'shrinkage';
+  if (r < 0.60) return 'clinic_dispense';
+  if (r < 0.67) return 'inpatient_pharmacy';
+  if (r < 0.73) return 'return_to_vendor';
+  if (r < 0.79) return 'contaminated';
+  if (r < 0.88) return 'clinic_return';
   return 'other';
 }
 
@@ -2740,9 +4884,7 @@ function pickWeightedType(rand) {
    ============================================================ */
 
 renderHeatmap();
-renderPharmacyOptions();
 renderDrugOptions();
-renderTypeOptions();
 </script>
 
 </body>
