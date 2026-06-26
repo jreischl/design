@@ -271,6 +271,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__TITLE__ — __DISPLAY_PATH__</title>
+<meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%20188.59%20188.76%22><circle%20fill=%22%23004987%22%20cx=%2297.4%22%20cy=%2292.72%22%20r=%2239.78%22/><path%20fill=%22%2392d9ee%22%20d=%22M184.16,92.16c3.46,69.11-71,113.72-131.41,81.72C-8.55,141.29-12.74,54.34,46.32,17.16A87.26,87.26,0,0,1,96.44,4.45,101.22,101.22,0,0,0,71.38,9.57C1.76,34.69-7.75,128.7,57.43,165.16c56.69,29.91,122.83-9.84,126.73-73Z%22/><path%20fill=%22%233cb4e5%22%20d=%22M96.44,147.91c-31.2,2.53-58.75-24.71-58.29-55.75-.47-31,27.09-58.3,58.29-55.74-29.11,1.5-53.69,26.74-53.22,55.74-.48,29,24.1,54.27,53.22,55.75Z%22/><path%20fill=%22%2354c8e8%22%20d=%22M59.91,155.44C2.74,122.29,12.67,36.32,76.4,17.39c40.62-12.3,85.18,13.4,94.84,54.73,15.5,64.67-54.06,116.27-111.33,83.32Zm0,0c34,19.95,79.56,7,97.59-28,17.88-32.59,5.17-76.34-27.07-94.14-31.53-19-75.8-8.19-95.08,23.62C14,90.05,25.62,136,59.91,155.44Z%22/></svg>">
 <style>
   :root {
@@ -1245,6 +1246,14 @@ def main():
     if not nojekyll.exists():
         nojekyll.write_text("", encoding="utf-8")
         print(f"Created {OUTPUT_DIR}/.nojekyll (prevents Jekyll filtering)")
+
+    # robots.txt: block crawlers by default. If the user provides their own
+    # robots.txt in source it'll have been copied to _site/ already and we
+    # leave it alone.
+    robots = out_root / "robots.txt"
+    if not robots.exists():
+        robots.write_text("User-agent: *\nDisallow: /\n", encoding="utf-8")
+        print(f"Created {OUTPUT_DIR}/robots.txt (blocks all crawlers)")
 
 
 if __name__ == "__main__":
