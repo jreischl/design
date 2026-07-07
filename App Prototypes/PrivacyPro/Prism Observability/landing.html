@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prism Observability — PrivacyPro Settings</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+<style>
+  :root {
+    --navy-900:#021E35; --navy-700:#0A3861; --navy-500:#044A82; --navy-300:#7097BB; --navy-100:#DCE4F4;
+    --blue-900:#003E4B; --blue-700:#00718A; --blue-500:#0096BB; --blue-300:#74C5D8; --blue-100:#E7F4F8;
+    --pink-900:#4D1732; --pink-700:#AB336F; --pink-500:#EB4699; --pink-300:#F390C2; --pink-100:#FBDAEB;
+    --gray-900:#222222; --gray-700:#555555; --gray-500:#757575; --gray-300:#9E9E9E; --gray-100:#E5E5E5;
+    --success-500:#16B434; --success-700:#0E7221; --success-100:#DBEDD7;
+    --warning-500:#F5DD67; --warning-700:#B5A031; --warning-100:#FDF9E5;
+    --danger-500:#F24335; --danger-700:#B53228; --danger-100:#FCD9D7;
+    --info-500:#4F77C6; --info-700:#3B5995; --info-100:#DCE4F4;
+    --snow:#FAFAFA; --white:#FFFFFF;
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--snow);
+    color: var(--gray-700);
+    font-size: 14px;
+  }
+  a { color: var(--blue-500); text-decoration: none; cursor: pointer; }
+  a:hover { text-decoration: underline; }
+
+  .app-nav {
+    background: var(--blue-500);
+    height: 46px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px;
+  }
+  .app-nav-left { display:flex; align-items:center; gap:2px; }
+  .app-nav-icon {
+    width: 34px; height: 34px; border-radius: 5px;
+    display:flex; align-items:center; justify-content:center;
+    color: rgba(255,255,255,0.85); cursor:pointer; position:relative;
+  }
+  .app-nav-icon .material-icons { font-size:19px; }
+  .app-nav-icon:hover { background: rgba(255,255,255,0.15); color:#fff; }
+  .app-nav-icon.active { background: rgba(255,255,255,0.22); color:#fff; }
+  .app-nav-right { display:flex; align-items:center; gap:2px; }
+  .app-nav-search {
+    display:flex; align-items:center; gap:6px;
+    background: var(--blue-900); border-radius: 18px;
+    padding: 5px 12px; margin-left:8px; height:30px;
+  }
+  .app-nav-search .material-icons { font-size:16px; color:rgba(255,255,255,0.75); }
+  .app-nav-search input {
+    background:transparent; border:none; outline:none; color:#fff;
+    font-size:13px; width:120px; font-family:inherit;
+  }
+  .app-nav-search input::placeholder { color: rgba(255,255,255,0.65); }
+  .app-nav-account {
+    width:30px;height:30px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,0.9); margin-left:6px; cursor:pointer;
+  }
+
+  .settings-tabs {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-100);
+    display:flex; align-items:center;
+    padding: 1rem;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  .settings-tab {
+    padding: 12px 16px;
+    font-size: 13.5px; font-weight:500;
+    color: var(--blue-500);
+    cursor:pointer;
+    border-bottom: 3px solid transparent;
+  }
+  .settings-tab:hover { color: var(--blue-700); }
+  .settings-tab.active {
+    background: var(--blue-500);
+    color: #fff;
+    border-radius: 4px;
+    font-weight:600;
+  }
+  .settings-tab.active:hover { color:#fff; }
+
+  .page {
+    padding: 20px 24px 40px;
+    max-width: 1500px;
+  }
+  .page-title {
+    font-size: 22px; font-weight:700; color: var(--navy-700);
+    margin-bottom: 4px;
+  }
+  .page-sub { font-size:12.5px; color:var(--gray-500); margin-bottom:20px; }
+
+  .filter-bar {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-bottom:16px;
+  }
+  .filter-bar .fb-label { font-size:13px; font-weight:600; color:var(--navy-700); margin-right:4px; }
+  .fb-clear { font-size:12.5px; font-weight:600; color: var(--blue-500); margin-right:6px; letter-spacing:0.3px; }
+  .pill-select {
+    display:inline-flex; align-items:center; gap:6px;
+    border: 1px solid var(--blue-300);
+    background: var(--white); color: var(--blue-700);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 12.5px; font-weight:600; cursor:pointer;
+  }
+  .pill-select.filled { background: var(--blue-500); color:#fff; border-color:var(--blue-500); }
+  .pill-select .material-icons { font-size:15px; }
+  .fb-spacer { flex:1; }
+  .fb-checkbox { display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--gray-700); }
+  .fb-checkbox input { width:15px;height:15px; accent-color:var(--blue-500); cursor:pointer; }
+  .icon-btn {
+    width:32px;height:32px;border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--blue-500); cursor:pointer; border:1px solid transparent;
+  }
+  .icon-btn:hover { background:var(--blue-100); }
+  .icon-btn .material-icons { font-size:19px; }
+
+  .filter-dropdown-wrap { position:relative; }
+  .filter-menu {
+    position:absolute; top: calc(100% + 6px); left:0;
+    background: var(--white); border:1px solid var(--gray-100);
+    border-radius:6px; box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    min-width:150px; z-index:50; overflow:hidden; display:none;
+  }
+  .filter-menu.open { display:block; }
+  .filter-menu-item {
+    padding: 9px 14px; font-size:12.5px; font-weight:500;
+    color: var(--gray-700); cursor:pointer; display:flex; align-items:center; gap:8px;
+  }
+  .filter-menu-item:hover { background: var(--blue-100); color: var(--blue-700); }
+  .filter-menu-item.selected { color: var(--blue-500); font-weight:700; }
+  .filter-menu-item .material-icons { font-size:16px; visibility:hidden; }
+  .filter-menu-item.selected .material-icons { visibility:visible; }
+  .filter-menu-divider { height:1px; background:var(--gray-100); margin:2px 0; }
+
+  /* Date filter combobox (mirrors PrivacyPro's react-widgets date filter pattern) */
+  .date-combo {
+    display:inline-flex; align-items:center; gap:10px;
+    border: 1px solid var(--blue-300);
+    background: var(--white);
+    border-radius: 100px; padding: 6px 8px 6px 14px;
+    font-size: 12.5px; cursor:pointer; color:var(--gray-700);
+  }
+  .date-combo .material-icons { font-size:17px; color:var(--blue-500); }
+  .date-combo-label strong { font-weight:700; color:var(--navy-700); margin: 0 3px; }
+  .date-combo-label b { color: var(--blue-700); font-weight:700; }
+  .date-range-expando {
+    display:flex; align-items:flex-end; gap:16px;
+    background: var(--white); border:1px solid var(--gray-100); border-top:none;
+    border-radius: 0 0 6px 6px; margin-top:-17px; padding: 16px 16px 14px;
+    position:relative; z-index:1;
+  }
+  .date-input-group { display:flex; flex-direction:column-reverse; gap:6px; }
+  .date-input-group label { font-size:11px; font-weight:600; color:var(--gray-500); }
+  .date-input-field {
+    display:flex; align-items:center; gap:8px;
+    border: 1px solid var(--gray-100); border-radius:5px;
+    padding: 6px 10px; background:var(--white);
+  }
+  .date-input-field input {
+    border:none; outline:none; font-family:inherit; font-size:13px; color:var(--gray-700);
+    width:110px; background:transparent;
+  }
+  .date-input-field .material-icons { font-size:16px; color:var(--blue-500); cursor:pointer; }
+
+  .table-card {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 6px;
+    overflow:hidden;
+  }
+  table.pp-obs-table { width:100%; border-collapse:collapse; }
+  .pp-obs-table thead th {
+    background: var(--snow);
+    text-align:left; font-size:11.5px; font-weight:700;
+    color: var(--gray-500); text-transform:uppercase; letter-spacing:0.4px;
+    padding: 11px 16px; border-bottom:1px solid var(--gray-100);
+    white-space:nowrap;
+  }
+  .pp-obs-table thead th.sortable { cursor:pointer; user-select:none; }
+  .pp-obs-table thead th .material-icons { font-size:14px; vertical-align:middle; color:var(--blue-500); }
+  .pp-obs-table tbody tr { cursor:pointer; border-bottom:1px solid var(--gray-100); transition:background .1s; }
+  .pp-obs-table tbody tr:last-child { border-bottom:none; }
+  .pp-obs-table tbody tr:hover { background: var(--blue-100); }
+  .pp-obs-table td { padding: 12px 16px; font-size:13px; color:var(--gray-700); vertical-align:top; }
+  .row-title { color: var(--blue-500); font-weight:600; }
+  .row-title:hover { text-decoration:underline; }
+  .row-id { font-size:11px; color:var(--gray-300); margin-top:2px; font-family: "SF Mono", Consolas, monospace; }
+  .row-user-email { font-size:11px; color:var(--gray-500); margin-top:1px; }
+
+  .status-pill {
+    display:inline-flex; align-items:center; gap:4px;
+    padding: 3px 10px; border-radius:100px;
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px;
+  }
+  .status-pill.success { background: var(--success-100); color: var(--success-700); }
+  .status-pill.failed { background: var(--danger-100); color: var(--danger-700); }
+
+  .feedback-icon.up { color: var(--success-500); }
+  .feedback-icon.down { color: var(--danger-500); }
+  .feedback-none { color: var(--gray-300); }
+
+  .table-footer {
+    display:flex; align-items:center; justify-content:flex-end; gap:16px;
+    padding: 12px 16px; border-top:1px solid var(--gray-100);
+    font-size:12.5px; color:var(--gray-500);
+  }
+  .table-footer select {
+    border:1px solid var(--gray-100); border-radius:4px; padding:4px 8px; font-size:12.5px;
+    font-family:inherit; color:var(--gray-700);
+  }
+  .pager-arrow { display:flex; align-items:center; justify-content:center; width:26px;height:26px; border-radius:4px; cursor:pointer; color:var(--gray-500); }
+  .pager-arrow:hover { background:var(--gray-100); }
+  .pager-arrow.disabled { color:var(--gray-100); cursor:default; }
+  .pager-arrow.disabled:hover { background:transparent; }
+
+  .scrim {
+    position:fixed; inset:0; background: rgba(2,30,53,0.35);
+    display:none; z-index:200;
+  }
+  .scrim.open { display:block; }
+  .detail-panel {
+    position:fixed; top:0; right:-68%; width:68%; height:100%;
+    background: var(--white);
+    box-shadow: -6px 0 24px rgba(0,0,0,0.15);
+    z-index:201; transition: right .22s ease;
+    display:flex; flex-direction:column;
+  }
+  .detail-panel.open { right:0; }
+  .dp-header {
+    padding: 18px 28px 14px; border-bottom:1px solid var(--gray-100);
+    display:flex; align-items:flex-start; justify-content:space-between;
+    flex-shrink:0;
+  }
+  .dp-title { font-size:18px; font-weight:700; color: var(--blue-500); margin-bottom:6px; }
+  .dp-meta { font-size:12px; color:var(--gray-500); display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .dp-meta b { color:var(--gray-700); font-weight:600; }
+  .dp-close { cursor:pointer; color:var(--gray-500); }
+  .dp-close:hover { color:var(--gray-900); }
+
+  .dp-tabs { display:flex; gap:0; padding: 0 28px; border-bottom:1px solid var(--gray-100); flex-shrink:0; }
+  .dp-tab {
+    padding: 12px 4px; margin-right:28px; font-size:13.5px; font-weight:600;
+    color:var(--gray-500); cursor:pointer; border-bottom:2px solid transparent;
+  }
+  .dp-tab.active { color: var(--blue-700); border-bottom-color: var(--blue-500); }
+
+  .dp-body { flex:1; overflow-y:auto; padding: 24px 28px 40px; }
+  .dp-pane { display:none; }
+  .dp-pane.active { display:block; }
+
+  .conv-user-msg {
+    display:flex; justify-content:flex-end; margin-bottom:18px;
+  }
+  .conv-user-bubble {
+    background: var(--navy-100); color: var(--navy-900);
+    padding:10px 16px; border-radius: 10px 10px 2px 10px;
+    font-size:13px; display:flex; align-items:center; gap:8px;
+  }
+  .conv-user-avatar {
+    width:24px;height:24px;border-radius:50%;background:var(--navy-500);color:#fff;
+    font-size:10.5px; font-weight:700; display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .ai-card {
+    border:1px solid var(--gray-100); border-radius:10px; overflow:hidden;
+  }
+  .ai-card h2 { font-size:17px; color:var(--navy-700); margin-bottom:2px; }
+  .ai-card-body { padding: 20px 22px; }
+  .ai-card-body .meta-line { font-size:12px; color:var(--gray-500); margin-bottom:16px; }
+  .ai-card-body h3 { font-size:14px; color:var(--blue-700); margin: 18px 0 8px; }
+  .ai-card-body h3:first-of-type { margin-top:0; }
+  .ai-card-body p { font-size:13px; line-height:1.6; margin-bottom:10px; }
+  .ai-table { width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:6px; }
+  .ai-table th { background:var(--snow); text-align:left; padding:8px 12px; font-weight:700; color:var(--gray-500); font-size:11px; text-transform:uppercase; letter-spacing:0.3px; border-bottom:1px solid var(--gray-100);}
+  .ai-table td { padding:8px 12px; border-bottom:1px solid var(--gray-100); }
+  .ai-table tr:last-child td { border-bottom:none; }
+  .notable-list { padding-left:18px; font-size:13px; line-height:1.7; margin-bottom:6px; }
+  .next-steps {
+    background: var(--blue-100); border-radius:8px; padding:14px 18px; margin-top:16px;
+  }
+  .next-steps-title { font-size:11.5px; font-weight:700; color:var(--blue-900); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+  .next-steps ol { padding-left:18px; font-size:12.5px; color:var(--blue-900); line-height:1.7; }
+  .gen-footnote { font-size:11px; color:var(--gray-300); margin-top:14px; font-style:italic; }
+
+  .tool-call-card { border:1px solid var(--gray-100); border-radius:8px; margin-bottom:12px; overflow:hidden; }
+  .tool-call-head {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 16px; background:var(--snow); cursor:pointer;
+  }
+  .tool-call-name { font-size:13px; font-weight:700; color:var(--navy-700); font-family:"SF Mono",Consolas,monospace; }
+  .tool-call-body { padding: 14px 16px; display:none; }
+  .tool-call-card.expanded .tool-call-body { display:block; }
+  .tool-call-body .tc-label { font-size:11px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.4px; margin: 10px 0 6px; }
+  .tool-call-body .tc-label:first-child { margin-top:0; }
+  .tool-call-body pre {
+    background: var(--navy-100); border-radius:6px; padding:12px 14px;
+    font-size:12px; font-family:"SF Mono",Consolas,monospace; color: var(--navy-900);
+    overflow-x:auto; line-height:1.5;
+  }
+
+  .inv-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+  .inv-table th { text-align:left; padding:9px 12px; font-size:11px; text-transform:uppercase; letter-spacing:0.3px; color:var(--gray-500); border-bottom:1px solid var(--gray-100); font-weight:700; }
+  .inv-table td { padding:10px 12px; border-bottom:1px solid var(--gray-100); }
+
+  .empty-pane { color:var(--gray-500); font-size:13px; padding: 30px 0; }
+
+  @media (max-width: 900px) {
+    .detail-panel { width:100%; right:-100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="app-nav">
+  <div class="app-nav-left">
+    <div class="app-nav-icon" title="Home"><span class="material-icons">radar</span></div>
+    <div class="app-nav-icon" title="Cases"><span class="material-icons">folder</span></div>
+    <div class="app-nav-icon" title="Case Bundles"><span class="material-icons">folder_copy</span></div>
+    <div class="app-nav-icon" title="Search"><span class="material-icons">manage_search</span></div>
+    <div class="app-nav-icon" title="VIP Registrations"><span class="material-icons">local_hospital</span></div>
+    <div class="app-nav-icon" title="Authorizations"><span class="material-icons">verified_user</span></div>
+    <div class="app-nav-icon" title="Watchlist"><span class="material-icons">star</span></div>
+    <div class="app-nav-icon" title="Monitoring"><span class="material-icons">visibility</span></div>
+    <div class="app-nav-icon" title="User Tags"><span class="material-icons">label</span></div>
+    <div class="app-nav-icon" title="Reports"><span class="material-icons">speed</span></div>
+    <div class="app-nav-icon" title="Data Feed"><span class="material-icons">power</span></div>
+    <div class="app-nav-icon" title="Lookback"><span class="material-icons">history</span></div>
+    <div class="app-nav-icon active" title="Settings"><span class="material-icons">settings</span></div>
+  </div>
+  <div class="app-nav-right">
+    <div class="app-nav-icon" title="Help"><span class="material-icons">info</span></div>
+    <div class="app-nav-icon" title="Community"><span class="material-icons">people</span></div>
+    <div class="app-nav-icon" title="Academy"><span class="material-icons">school</span></div>
+    <div class="app-nav-search">
+      <span class="material-icons">search</span>
+      <input type="text" placeholder="Search" />
+    </div>
+    <div class="app-nav-account"><span class="material-icons">account_circle</span></div>
+  </div>
+</nav>
+
+<nav class="settings-tabs">
+  <div class="settings-tab">Case Creation</div>
+  <div class="settings-tab">Templates</div>
+  <div class="settings-tab">General</div>
+  <div class="settings-tab">Case Actions</div>
+  <div class="settings-tab">User Types</div>
+  <div class="settings-tab">App Users</div>
+  <div class="settings-tab">Roles</div>
+  <div class="settings-tab">Alert Categories</div>
+  <div class="settings-tab">Alert Category Groups</div>
+  <div class="settings-tab active">Prism Observability</div>
+</nav>
+
+<div class="page">
+  <div class="page-title">Prism Observability</div>
+  <div class="page-sub">Review Prism Assistant sessions across your organization — conversation content, tool calls, token usage, and user feedback.</div>
+
+  <div class="filter-bar">
+    <span class="fb-label">Session List Explorer</span>
+    <span class="fb-clear" onclick="clearFilters()">CLEAR</span>
+    <div class="pill-select" id="filterUser" onclick="toggleDummy(this)">User <span class="material-icons">expand_more</span></div>
+    <div class="filter-dropdown-wrap">
+      <div class="pill-select filled" id="filterStatusBtn" onclick="toggleStatusMenu(event)">Status: All <span class="material-icons">expand_more</span></div>
+      <div class="filter-menu" id="filterStatusMenu">
+        <div class="filter-menu-item selected" data-value="all" onclick="setStatusFilter('all')"><span class="material-icons">check</span>All</div>
+        <div class="filter-menu-item" data-value="success" onclick="setStatusFilter('success')"><span class="material-icons">check</span>Success</div>
+        <div class="filter-menu-item" data-value="failed" onclick="setStatusFilter('failed')"><span class="material-icons">check</span>Failure</div>
+      </div>
+    </div>
+    <div class="filter-dropdown-wrap">
+      <div class="date-combo" id="dateComboBtn" onclick="toggleDateMenu(event)">
+        <span class="date-combo-label"><b id="dateComboValue">Past Month</b></span>
+        <span class="material-icons">expand_more</span>
+      </div>
+      <div class="filter-menu" id="dateMenu">
+        <div class="filter-menu-item" data-value="Show All" onclick="setDateFilter('Show All')"><span class="material-icons">check</span>Show All</div>
+        <div class="filter-menu-item" data-value="Today" onclick="setDateFilter('Today')"><span class="material-icons">check</span>Today</div>
+        <div class="filter-menu-item" data-value="Past Week" onclick="setDateFilter('Past Week')"><span class="material-icons">check</span>Past Week</div>
+        <div class="filter-menu-item selected" data-value="Past Month" onclick="setDateFilter('Past Month')"><span class="material-icons">check</span>Past Month</div>
+        <div class="filter-menu-item" data-value="Past 90 Days" onclick="setDateFilter('Past 90 Days')"><span class="material-icons">check</span>Past 90 Days</div>
+        <div class="filter-menu-item" data-value="Previous Quarter" onclick="setDateFilter('Previous Quarter')"><span class="material-icons">check</span>Previous Quarter</div>
+        <div class="filter-menu-item" data-value="Past Year" onclick="setDateFilter('Past Year')"><span class="material-icons">check</span>Past Year</div>
+        <div class="filter-menu-divider"></div>
+        <div class="filter-menu-item" data-value="Custom" onclick="setDateFilter('Custom')"><span class="material-icons">check</span>Custom</div>
+      </div>
+    </div>
+    <div class="fb-spacer"></div>
+    <label class="fb-checkbox"><input type="checkbox" id="negFeedback" /> Negative Feedback Only</label>
+    <div class="icon-btn" title="Export"><span class="material-icons">download</span></div>
+  </div>
+
+  <div class="date-range-expando" id="dateRangeExpando" style="display:none;">
+    <div class="date-input-group">
+      <div class="date-input-field">
+        <input type="text" id="startDateInput" value="6/7/2026" onfocus="this.type='date'; this.showPicker && this.showPicker();" onblur="if(!this.value) this.type='text';" />
+        <span class="material-icons" onclick="document.getElementById('startDateInput').type='date'; document.getElementById('startDateInput').showPicker && document.getElementById('startDateInput').showPicker();">calendar_today</span>
+      </div>
+      <label>Start Date</label>
+    </div>
+    <div class="date-input-group">
+      <div class="date-input-field">
+        <input type="text" id="endDateInput" value="7/7/2026" onfocus="this.type='date'; this.showPicker && this.showPicker();" onblur="if(!this.value) this.type='text';" />
+        <span class="material-icons" onclick="document.getElementById('endDateInput').type='date'; document.getElementById('endDateInput').showPicker && document.getElementById('endDateInput').showPicker();">calendar_today</span>
+      </div>
+      <label>End Date</label>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table class="pp-obs-table">
+      <thead>
+        <tr>
+          <th class="sortable">Title <span class="material-icons">arrow_upward</span></th>
+          <th>User</th>
+          <th>Invocations</th>
+          <th>Tokens</th>
+          <th>Status</th>
+          <th>Feedback</th>
+          <th>Last Activity</th>
+        </tr>
+      </thead>
+      <tbody id="sessionTableBody"></tbody>
+    </table>
+    <div class="table-footer">
+      <span>Items per page</span>
+      <select><option>25</option></select>
+      <span id="footerCount">1 – 9 of 9</span>
+      <div class="pager-arrow disabled"><span class="material-icons">chevron_left</span></div>
+      <div class="pager-arrow disabled"><span class="material-icons">chevron_right</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="dp-header">
+    <div>
+      <div class="dp-title" id="dpTitle">Session</div>
+      <div class="dp-meta" id="dpMeta"></div>
+    </div>
+    <span class="dp-close material-icons" onclick="closePanel()">close</span>
+  </div>
+  <div class="dp-tabs">
+    <div class="dp-tab active" data-pane="conversation" onclick="switchTab(this)">Conversation</div>
+    <div class="dp-tab" data-pane="toolcalls" onclick="switchTab(this)">Tool Calls</div>
+    <div class="dp-tab" data-pane="invocations" onclick="switchTab(this)">Invocations</div>
+    <div class="dp-tab" data-pane="evaluations" onclick="switchTab(this)">Evaluations</div>
+  </div>
+  <div class="dp-body">
+    <div class="dp-pane active" id="pane-conversation"></div>
+    <div class="dp-pane" id="pane-toolcalls"></div>
+    <div class="dp-pane" id="pane-invocations"></div>
+    <div class="dp-pane" id="pane-evaluations"></div>
+  </div>
+</div>
+
+<script>
+const SESSIONS = [
+  {
+    id: "17a8962d-3865-41c7-8e97-e817f33116ed",
+    title: "Case PP-2847 — Access Summary",
+    userName: "Sarah Chen", userEmail: "sarah.chen@bluesight.com",
+    invocations: 1, tokens: 18421, status:"success", feedback:"up",
+    lastActivity: "7/7/26, 12:55 PM",
+    userMsg: "Summarize the access between Emily Torres and John Rivera, including whether she has any other suspicious accesses in the last 30 days.",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Case PP-2847 — Access Summary: Emily Torres → John Rivera</h2>
+          <div class="meta-line">Generated by Prism Assistant · Feb 14, 2026 activity</div>
+          <h3>Access on Feb 14, 2026 (3 accesses, 09:14–09:19 AM)</h3>
+          <table class="ai-table">
+            <thead><tr><th>Time</th><th>Module</th><th>Action</th><th>Duration</th></tr></thead>
+            <tbody>
+              <tr><td>09:14</td><td>Demographics</td><td>View (Name Search)</td><td>45 sec</td></tr>
+              <tr><td>09:16</td><td>Lab Results</td><td>View</td><td>2 min 2 sec</td></tr>
+              <tr><td>09:19</td><td>Medication History</td><td>View</td><td>1 min 27 sec</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Search method:</strong> Name search — query "Rivera, John"<br>
+          <strong>Department link:</strong> None. Torres is in Pediatric ICU; Rivera's last encounter was Cardiology.<br>
+          <strong>Prior access:</strong> No prior accesses to Rivera's record on file.</p>
+          <h3>Other Suspicious Accesses — Last 30 Days</h3>
+          <table class="ai-table">
+            <thead><tr><th>Date</th><th>Patient</th><th>Note</th><th>Score</th></tr></thead>
+            <tbody>
+              <tr><td>Jan 30, 2026</td><td>Robert Torres (PT-48902)</td><td>Same last name — potential family member access</td><td>74</td></tr>
+              <tr><td>Jan 15, 2026</td><td>Taylor Swift (PT-39817)</td><td>VIP patient — no clinical relationship</td><td>81</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Overall suspicion score: 87</strong></p>
+          <div class="next-steps">
+            <div class="next-steps-title">Recommended Next Steps</div>
+            <ol>
+              <li>Contact Torres's manager (M-304) to request explanation for the Rivera access</li>
+              <li>Open a separate review for the Robert Torres access — possible family member pattern</li>
+              <li>Consider escalation to HR given 3 suspicious accesses in a 30-day window</li>
+            </ol>
+          </div>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:55 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___access_event_summary", input:{ emr_user_id:"U-10042", patient_id:"PT-55821", occurred_after_date:"2026-01-14", occurred_before_date:"2026-02-14" }, output:{ total_results:3, results:[{module:"Demographics", duration_seconds:45},{module:"Lab Results", duration_seconds:122},{module:"Medication History", duration_seconds:87}]} },
+      { name:"privacypro-Target___department_lookup", input:{ user_id:"U-10042", patient_id:"PT-55821"}, output:{ user_department:"Pediatric ICU", patient_last_encounter_department:"Cardiology", shared_encounter:false } },
+      { name:"privacypro-Target___user_suspicious_access_search", input:{ emr_user_id:"U-10042", occurred_after_date:"2026-01-15", occurred_before_date:"2026-02-14"}, output:{ total_results:2, results:[{patient_id:"PT-48902", score:74},{patient_id:"PT-39817", score:81}]} },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id: 5124, status:"success", input_tokens:16980, output_tokens:1441, total:18421, trace:"—", failure:"—", invoked:"7/7/26, 12:55 PM" }
+    ]
+  },
+  {
+    id:"f2c74fe7-b682-4ded-b0de-3258d4a45f79",
+    title: "Taylor Swift VIP Search — Last 6 Months",
+    userName:"Sarah Chen", userEmail:"sarah.chen@bluesight.com",
+    invocations:2, tokens:41207, status:"success", feedback:"up",
+    lastActivity:"7/7/26, 12:53 PM",
+    userMsg: "Show me all users who searched for Taylor Swift in the last 6 months",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>VIP Patient Search Report — "Taylor Swift" (PT-39817)</h2>
+          <div class="meta-line">Last 6 months · 4 users identified</div>
+          <table class="ai-table">
+            <thead><tr><th>Date</th><th>User</th><th>Role / Dept</th><th>Modules</th><th>Duration</th><th>Score</th></tr></thead>
+            <tbody>
+              <tr><td>Jan 15</td><td>Emily Torres</td><td>RN · Pediatric ICU</td><td>Demographics</td><td>1m 29s</td><td>81</td></tr>
+              <tr><td>Jan 12</td><td>James Thompson</td><td>ER Tech · Emergency</td><td>Demographics</td><td>52s</td><td>82</td></tr>
+              <tr><td>Jan 10</td><td>Priya Patel</td><td>Billing · Finance</td><td><strong>Lab Results</strong></td><td>2m 58s</td><td><strong>94</strong></td></tr>
+              <tr><td>Jan 10</td><td>David Kim</td><td>MA · Cardiology</td><td>Medication Hx</td><td>1m 35s</td><td>74</td></tr>
+            </tbody>
+          </table>
+          <p><strong>0 of 4 users</strong> have a documented clinical relationship to this patient. Priya Patel (Finance) accessing Lab Results is the most anomalous.</p>
+          <div class="next-steps">
+            <div class="next-steps-title">Recommended Next Steps</div>
+            <ol>
+              <li>Open reactive cases for all 4 users per VIP protocol</li>
+              <li>Prioritize Patel and Thompson (prior violations on file)</li>
+              <li>Notify the VIP coordination team per standard protocol</li>
+            </ol>
+          </div>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:53 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___vip_patient_search", input:{ patient_name:"Taylor Swift", vip:true, occurred_after_date:"2026-01-07", occurred_before_date:"2026-07-07" }, output:{ total_results:1, results:[{patient_id:"PT-39817", vip_type:"news"}]} },
+      { name:"privacypro-Target___access_event_summary", input:{ patient_id:"PT-39817", group_by:["emr_user_id"] }, output:{ total_results:4, results:[{emr_user_id:"U-10042", score:81},{emr_user_id:"U-10203", score:82},{emr_user_id:"U-10156", score:94},{emr_user_id:"U-10091", score:74}]} },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:5099, status:"success", input_tokens:36980, output_tokens:4227, total:41207, trace:"—", failure:"—", invoked:"7/7/26, 12:53 PM" }
+    ]
+  },
+  {
+    id:"eaa2227f-fa9b-4a01-bcc2-ea134ae24bbd",
+    title: "Q1 2026 Executive Summary",
+    userName:"Sarah Chen", userEmail:"sarah.chen@bluesight.com",
+    invocations:1, tokens:52990, status:"success", feedback:null,
+    lastActivity:"7/7/26, 12:51 PM",
+    userMsg: "Generate my Q1 2026 executive summary — cases, violations, trends",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Q1 2026 Executive Summary — Privacy Program</h2>
+          <div class="meta-line">Prepared Mar 11, 2026 · Period Jan 1 – Mar 11, 2026</div>
+          <table class="ai-table">
+            <tbody>
+              <tr><td>Total cases opened</td><td><strong>143</strong> (+11.7% vs Q4 2025)</td></tr>
+              <tr><td>Confirmed violations</td><td><strong>21</strong> (14.7% violation rate)</td></tr>
+              <tr><td>Patients impacted</td><td><strong>312</strong></td></tr>
+              <tr><td>Avg. resolution time</td><td><strong>16.4 days</strong></td></tr>
+            </tbody>
+          </table>
+          <h3>Attention Items</h3>
+          <ul class="notable-list">
+            <li>7 cases open &gt;30 days — SLA breach, requires immediate review</li>
+            <li>Finance/Admin dept: 33.3% violation rate — non-clinical staff accessing clinical records</li>
+            <li>Repeat offender rate at 8% — above the 5% Q4 benchmark</li>
+          </ul>
+          <div class="next-steps">
+            <div class="next-steps-title">Recommended Next Steps</div>
+            <ol>
+              <li>Review 7 overdue cases with team leads this week</li>
+              <li>Escalate the Finance/Admin pattern to the Chief Compliance Officer</li>
+              <li>Brief compliance leadership on the VIP case trend before Q2</li>
+            </ol>
+          </div>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:51 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___case_summary_agg_counts", input:{ group_by:["case_type"], occurred_after_date:"2026-01-01", occurred_before_date:"2026-03-11" }, output:{ total_results:7, results:[{case_type:"Co-Worker", count:52},{case_type:"Family Member", count:21},{case_type:"Self-Access", count:19},{case_type:"VIP", count:18}]} },
+      { name:"privacypro-Target___case_summary_agg_counts", input:{ group_by:["resolution"], states:["closed"] }, output:{ total_results:2, results:[{resolution:"violation", count:21},{resolution:"not_a_violation", count:98}]} },
+      { name:"privacypro-Target___department_variance_search", input:{ group_by:["department"], resolution:"violation" }, output:{ total_results:5, results:[{department:"Emergency", count:7},{department:"Finance/Admin", count:4}]} },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:5081, status:"success", input_tokens:47210, output_tokens:5780, total:52990, trace:"—", failure:"—", invoked:"7/7/26, 12:51 PM" }
+    ]
+  },
+  {
+    id:"56ea9684-c037-44be-867d-d907a0e136fc",
+    title: "Risk Coverage Report — February 2026",
+    userName:"Heather Arthur", userEmail:"heather.arthur@protenus.com",
+    invocations:1, tokens:22087, status:"success", feedback:"down",
+    lastActivity:"7/7/26, 12:50 PM",
+    userMsg: "What am I missing? Show me alerts that didn't become cases last month and my risk coverage percentage.",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Risk Coverage Report — February 2026</h2>
+          <table class="ai-table">
+            <tbody>
+              <tr><td>Alerts triggered</td><td><strong>847</strong></td></tr>
+              <tr><td>Cases created from alerts</td><td><strong>147</strong></td></tr>
+              <tr><td>Risk coverage</td><td><strong>17.4%</strong> — reviewing 1 in 6 potential risk events</td></tr>
+            </tbody>
+          </table>
+          <h3>Highest Risk Unreviewed Alert</h3>
+          <p><strong>Alert A-18510 — Score 94.</strong> Priya Patel (Finance) accessed VIP patient Maria Delgado off-hours, including Lab Results. Not promoted because Patel's Suspicious Activity threshold is set to 95.</p>
+          <div class="next-steps">
+            <div class="next-steps-title">Recommended Next Steps</div>
+            <ol>
+              <li>Manually promote A-18510 to a case immediately</li>
+              <li>Lower the Suspicious Activity threshold from 95 → 85</li>
+              <li>Present the 17.4% coverage rate to leadership as a case for resource expansion</li>
+            </ol>
+          </div>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:50 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___alert_summary_agg_counts", input:{ occurred_after_date:"2026-02-01", occurred_before_date:"2026-02-28", group_by:["category"] }, output:{ total_results:5, results:[{category:"Co-Worker", count:312},{category:"Break the Glass", count:98}]} },
+      { name:"privacypro-Target___alert_search", input:{ promoted_to_case:false, sort:"score_desc", limit:5 }, output:{ total_results:5, results:[{alert_id:"A-18510", score:94}]} },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:5064, status:"success", input_tokens:19640, output_tokens:2447, total:22087, trace:"—", failure:"—", invoked:"7/7/26, 12:50 PM" }
+    ]
+  },
+  {
+    id:"bf3e91c8-7b8d-4def-9904-284ba9797108",
+    title: "Threshold Impact Analysis — Co-Worker",
+    userName:"Ashley DiPietro", userEmail:"ashley.dipietro@bluesight.com",
+    invocations:1, tokens:15173, status:"success", feedback:null,
+    lastActivity:"7/7/26, 12:46 PM",
+    userMsg: "If I increase my Co-Worker category threshold by 10 (from 65 to 75), how many more cases would that generate?",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Threshold Impact Analysis — Co-Worker Category</h2>
+          <table class="ai-table">
+            <thead><tr><th>Metric</th><th>Current (≥65)</th><th>Proposed (≥75)</th><th>Change</th></tr></thead>
+            <tbody>
+              <tr><td>Cases created / month</td><td>52</td><td>74</td><td><strong>+22</strong></td></tr>
+              <tr><td>Estimated true violations</td><td>9</td><td>~13</td><td>+4</td></tr>
+              <tr><td>Investigator hours / month</td><td>~104</td><td>~148</td><td>+44</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Recommendation:</strong> Consider a +5 point increase (to 70) first — adds ~11 manageable cases/month while capturing ~6 high-confidence violations.</p>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:46 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___threshold_simulation", input:{ category:"Co-Worker", current_threshold:65, proposed_threshold:75, lookback_days:90 }, output:{ current_cases_per_month:52, proposed_cases_per_month:74 } },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:5041, status:"success", input_tokens:13290, output_tokens:1883, total:15173, trace:"—", failure:"—", invoked:"7/7/26, 12:46 PM" }
+    ]
+  },
+  {
+    id:"59f3a6bb-5203-4eb7-95e5-9b053073c10d",
+    title: "Repeat Suspicious Access Patterns — 6mo",
+    userName:"Jon Reischl", userEmail:"jon.reischl@bluesight.com",
+    invocations:1, tokens:17960, status:"success", feedback:"up",
+    lastActivity:"7/7/26, 12:40 PM",
+    userMsg: "Are there any EMR users with repeat suspicious access patterns in the last 6 months who haven't been escalated to HR?",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Repeat Suspicious Access Patterns — Last 6 Months (Not Escalated)</h2>
+          <p>Found <strong>2 users</strong> matching criteria.</p>
+          <h3>James Thompson (U-10203) — ER Tech, Emergency</h3>
+          <p>2 prior violations on record. 3 flagged accesses in the last 45 days, including a VIP after-hours access (score 88). Case PP-2799 opened, HR notification not yet sent. <strong>Risk: High.</strong></p>
+          <h3>Emily Torres (U-10042) — RN, Pediatric ICU</h3>
+          <p>3 suspicious accesses in a 30-day window. Case PP-2847 open 38 days — SLA exceeded. Manager responded but took no action. <strong>Risk: Medium-High.</strong></p>
+          <div class="next-steps">
+            <div class="next-steps-title">Recommended Next Steps</div>
+            <ol>
+              <li>Immediately notify HR of Thompson — repeat offender plus VIP after-hours access</li>
+              <li>Escalate Torres to HR this week — manager non-responsive for 3+ weeks</li>
+            </ol>
+          </div>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:40 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___repeat_offender_search", input:{ occurred_after_date:"2026-01-07", occurred_before_date:"2026-07-07", hr_escalated:false }, output:{ total_results:2, results:[{emr_user_id:"U-10203"},{emr_user_id:"U-10042"}]} },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:5022, status:"success", input_tokens:15490, output_tokens:2470, total:17960, trace:"—", failure:"—", invoked:"7/7/26, 12:40 PM" }
+    ]
+  },
+  {
+    id:"b0178e4a-8673-4d26-be6d-aa84921181a9",
+    title: "Emily Torres — 90 Day Access Review",
+    userName:"Sarah Chen", userEmail:"sarah.chen@bluesight.com",
+    invocations:3, tokens:63501, status:"success", feedback:null,
+    lastActivity:"7/7/26, 12:38 PM",
+    userMsg: "What is the complete access history for Emily Torres over the past 90 days?",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Complete Access History — Emily Torres (90-Day Window)</h2>
+          <p>3 flagged accesses on record across 3 patients. No prior access to any of the 3 patients before the flagged event.</p>
+          <table class="ai-table">
+            <thead><tr><th>Date</th><th>Patient</th><th>Category</th><th>Score</th></tr></thead>
+            <tbody>
+              <tr><td>Feb 14</td><td>John Rivera</td><td>Co-Worker</td><td>87</td></tr>
+              <tr><td>Jan 30</td><td>Robert Torres</td><td>Family Member</td><td>74</td></tr>
+              <tr><td>Jan 15</td><td>Taylor Swift</td><td>VIP</td><td>81</td></tr>
+            </tbody>
+          </table>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:38 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___access_event_summary", input:{ emr_user_id:"U-10042", occurred_after_date:"2026-04-09", occurred_before_date:"2026-07-07" }, output:{ total_results:3 } },
+      { name:"privacypro-Target___department_lookup", input:{ user_id:"U-10042" }, output:{ department:"Pediatric ICU" } },
+      { name:"privacypro-Target___user_suspicious_access_search", input:{ emr_user_id:"U-10042" }, output:{ total_results:3 } },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:4998, status:"success", input_tokens:20100, output_tokens:2200, total:22300, trace:"—", failure:"—", invoked:"7/7/26, 12:35 PM" },
+      { id:5001, status:"success", input_tokens:18990, output_tokens:2011, total:21001, trace:"—", failure:"—", invoked:"7/7/26, 12:37 PM" },
+      { id:5006, status:"success", input_tokens:18450, output_tokens:1750, total:20200, trace:"—", failure:"—", invoked:"7/7/26, 12:38 PM" }
+    ]
+  },
+  {
+    id:"58c55c31-e01e-49a5-b966-6a97554cffb2",
+    title: "Non-Existent Patient Name Search Audit",
+    userName:"Samir Neyazi", userEmail:"samir.neyazi@bluesight.com",
+    invocations:4, tokens:88112, status:"failed", feedback:"down",
+    lastActivity:"7/7/26, 12:35 PM",
+    userMsg: "Show me all accesses where an EMR user searched for a patient name that doesn't exist in our system.",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Non-Existent Patient Name Search Report</h2>
+          <p>Analyzed all name-search access logs. <strong>0 accesses</strong> found where the queried name returned no patient record in this environment — failed-search logging is not currently enabled.</p>
+          <div class="next-steps">
+            <div class="next-steps-title">Recommended Next Steps</div>
+            <ol>
+              <li>Enable failed-search logging in the EMR if not already active — this is a data gap</li>
+              <li>Create a monthly report of name searches that return 0 results once available</li>
+            </ol>
+          </div>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:35 PM — one downstream tool call failed (timeout) during this session.</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___failed_search_log_query", input:{ occurred_after_date:"2026-06-01", occurred_before_date:"2026-07-07" }, output:{ error:"upstream_timeout", detail:"failed_search_log source not configured for this hospital" } },
+      { name:"privacypro-Target___name_search_audit", input:{ resolved:false }, output:{ total_results:0 } },
+      { name:"privacypro-Target___name_search_audit", input:{ resolved:true, anomalous_department_only:true }, output:{ total_results:2, results:[{emr_user_id:"U-10156"},{emr_user_id:"U-10203"}]} },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:4970, status:"failed", input_tokens:9200, output_tokens:0, total:9200, trace:"dd-trc-88a2f1", failure:"Tool timeout: failed_search_log_query", invoked:"7/7/26, 12:33 PM" },
+      { id:4975, status:"success", input_tokens:21800, output_tokens:3100, total:24900, trace:"—", failure:"—", invoked:"7/7/26, 12:34 PM" },
+      { id:4981, status:"success", input_tokens:38200, output_tokens:5812, total:44012, trace:"—", failure:"—", invoked:"7/7/26, 12:35 PM" },
+      { id:4989, status:"success", input_tokens:8600, output_tokens:1400, total:10000, trace:"—", failure:"—", invoked:"7/7/26, 12:35 PM" }
+    ]
+  },
+  {
+    id:"bf3e91c8-7b8d-4def-9904-284ba9797108-b",
+    title: "Escalation Email Draft — Case PP-2847",
+    userName:"Sarah Chen", userEmail:"sarah.chen@bluesight.com",
+    invocations:1, tokens:9884, status:"success", feedback:"up",
+    lastActivity:"7/7/26, 12:04 PM",
+    userMsg: "Draft an escalation email to Emily Torres's manager for case PP-2847.",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Draft Escalation Email — Case PP-2847</h2>
+          <p style="background:var(--snow);border:1px solid var(--gray-100);border-radius:8px;padding:14px 16px;font-family:'SF Mono',Consolas,monospace;font-size:12.5px;line-height:1.7;">
+          To: [Manager M-304, Pediatric ICU]<br>
+          Subject: Follow-Up Required — Privacy Case PP-2847, Emily Torres<br><br>
+          Dear [Manager Name],<br><br>
+          I am following up on our previous communication regarding a privacy investigation involving Emily Torres (U-10042). Our review has identified a total of 3 suspicious access events in the past 30 days.<br><br>
+          Per our protocol, we require a formal meeting with Ms. Torres within 5 business days. Please confirm a time by March 18, 2026.<br><br>
+          Thank you,<br>Sarah Chen · Privacy Investigator</p>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:04 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___case_detail_lookup", input:{ case_id:"PP-2847" }, output:{ owner:"Sarah Chen", manager_id:"M-304", days_open:38 } },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:4820, status:"success", input_tokens:8200, output_tokens:1684, total:9884, trace:"—", failure:"—", invoked:"7/7/26, 12:04 PM" }
+    ]
+  },
+  {
+    id:"17a8962d-3865-41c7-8e97-e817f33116ed-c",
+    title: "Open Cases for Sarah Chen",
+    userName:"Jon Reischl", userEmail:"jon.reischl@bluesight.com",
+    invocations:1, tokens:11065, status:"success", feedback:null,
+    lastActivity:"7/7/26, 12:04 PM",
+    userMsg: "Show me all cases assigned to Sarah Chen that are still open and their current status.",
+    conversationHTML: `
+      <div class="ai-card"><div class="ai-card-body">
+          <h2>Open Cases — Sarah Chen</h2>
+          <table class="ai-table">
+            <thead><tr><th>Case</th><th>Category</th><th>Days Open</th><th>Score</th></tr></thead>
+            <tbody>
+              <tr><td>PP-2847</td><td>Co-Worker</td><td><strong>38 days</strong></td><td>87</td></tr>
+              <tr><td>PP-2756</td><td>Break the Glass</td><td>29 days</td><td>79</td></tr>
+            </tbody>
+          </table>
+          <p><strong>PP-2847 is overdue</strong> — open 38 days against a ≤30 day expected resolution window.</p>
+          <div class="gen-footnote">Generated by Prism Assistant on Jul 07, 2026 at 12:04 PM</div>
+      </div></div>`,
+    toolCalls: [
+      { name:"privacypro-Target___case_search", input:{ owner:"Sarah Chen", state:"open" }, output:{ total_results:2, results:[{case_id:"PP-2847", days_open:38},{case_id:"PP-2756", days_open:29}] } },
+      { name:"current_hospital_id", input:{}, output:null }
+    ],
+    invocationRows: [
+      { id:4801, status:"success", input_tokens:9450, output_tokens:1615, total:11065, trace:"—", failure:"—", invoked:"7/7/26, 12:04 PM" }
+    ]
+  }
+];
+
+let statusFilter = "all";
+const STATUS_LABELS = { all:"All", success:"Success", failed:"Failure" };
+
+function initials(name){ return name.split(" ").map(p=>p[0]).join("").slice(0,2).toUpperCase(); }
+function feedbackIcon(fb){
+  if(fb==="up") return '<span class="material-icons feedback-icon up" title="Positive feedback">thumb_up</span>';
+  if(fb==="down") return '<span class="material-icons feedback-icon down" title="Negative feedback">thumb_down</span>';
+  return '<span class="feedback-none">—</span>';
+}
+function statusPill(status){
+  if(status==="failed") return '<span class="status-pill failed">Failed</span>';
+  return '<span class="status-pill success">Success</span>';
+}
+function renderTable(){
+  const body = document.getElementById("sessionTableBody");
+  const filtered = statusFilter === "all" ? SESSIONS : SESSIONS.filter(s => s.status === statusFilter);
+  body.innerHTML = filtered.map((s) => `
+    <tr onclick="openPanel(${SESSIONS.indexOf(s)})">
+      <td>
+        <div class="row-title">${s.title}</div>
+        <div class="row-id">${s.id}</div>
+      </td>
+      <td>
+        ${s.userName}
+        <div class="row-user-email">${s.userEmail}</div>
+      </td>
+      <td>${s.invocations}</td>
+      <td>${s.tokens.toLocaleString()}</td>
+      <td>${statusPill(s.status)}</td>
+      <td>${feedbackIcon(s.feedback)}</td>
+      <td>${s.lastActivity}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="7" style="text-align:center; color:var(--gray-500); padding:28px;">No sessions match the current filters.</td></tr>`;
+  updateFooterCount(filtered.length);
+}
+function updateFooterCount(n){
+  const countEl = document.getElementById("footerCount");
+  if(countEl) countEl.textContent = n === 0 ? "0 of 0" : `1 – ${n} of ${n}`;
+}
+renderTable();
+
+function openPanel(idx){
+  const s = SESSIONS[idx];
+  document.getElementById("dpTitle").textContent = s.title;
+  document.getElementById("dpMeta").innerHTML =
+    `<b>${s.userName}</b> · ${s.userEmail} · ${s.invocations} Invocation${s.invocations>1?'s':''} · ${s.tokens.toLocaleString()} Tokens · ${s.lastActivity}`;
+
+  document.getElementById("pane-conversation").innerHTML = `
+    <div class="conv-user-msg">
+      <div class="conv-user-bubble">
+        <div class="conv-user-avatar">${initials(s.userName)}</div>
+        ${s.userMsg}
+      </div>
+    </div>
+    ${s.conversationHTML}
+  `;
+
+  document.getElementById("pane-toolcalls").innerHTML = s.toolCalls.map((tc,i) => `
+    <div class="tool-call-card" id="tc-${i}">
+      <div class="tool-call-head" onclick="toggleToolCall(${i})">
+        <span class="tool-call-name">${tc.name}</span>
+        ${statusPillForTool(tc)}
+      </div>
+      <div class="tool-call-body">
+        <div class="tc-label">Input</div>
+        <pre>${JSON.stringify(tc.input, null, 2)}</pre>
+        <div class="tc-label">Output</div>
+        <pre>${JSON.stringify(tc.output, null, 2)}</pre>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("pane-invocations").innerHTML = `
+    <table class="inv-table">
+      <thead>
+        <tr><th>Invocation ID</th><th>Status</th><th>Input Tokens</th><th>Output Tokens</th><th>Total Tokens</th><th>Datadog Trace ID</th><th>Failure Reason</th><th>Invoked At</th></tr>
+      </thead>
+      <tbody>
+        ${s.invocationRows.map(r => `
+          <tr>
+            <td>${r.id}</td>
+            <td>${statusPill(r.status)}</td>
+            <td>${r.input_tokens.toLocaleString()}</td>
+            <td>${r.output_tokens.toLocaleString()}</td>
+            <td>${r.total.toLocaleString()}</td>
+            <td>${r.trace}</td>
+            <td>${r.failure}</td>
+            <td>${r.invoked}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+
+  document.getElementById("pane-evaluations").innerHTML =
+    `<div class="empty-pane">No evaluations for this session.</div>`;
+
+  document.querySelectorAll(".dp-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelector('.dp-tab[data-pane="conversation"]').classList.add("active");
+  document.querySelectorAll(".dp-pane").forEach(p=>p.classList.remove("active"));
+  document.getElementById("pane-conversation").classList.add("active");
+
+  document.getElementById("scrim").classList.add("open");
+  document.getElementById("detailPanel").classList.add("open");
+}
+function statusPillForTool(tc){
+  const failed = tc.output && tc.output.error;
+  return failed ? '<span class="status-pill failed">Failed</span>' : '<span class="status-pill success">Success</span>';
+}
+function toggleToolCall(i){ document.getElementById("tc-"+i).classList.toggle("expanded"); }
+function closePanel(){
+  document.getElementById("scrim").classList.remove("open");
+  document.getElementById("detailPanel").classList.remove("open");
+}
+function switchTab(el){
+  document.querySelectorAll(".dp-tab").forEach(t=>t.classList.remove("active"));
+  el.classList.add("active");
+  document.querySelectorAll(".dp-pane").forEach(p=>p.classList.remove("active"));
+  document.getElementById("pane-"+el.dataset.pane).classList.add("active");
+}
+function clearFilters(){
+  document.getElementById("negFeedback").checked = false;
+  setStatusFilter("all");
+  setDateFilter("Past Month");
+}
+function toggleDummy(el){ /* placeholder for dropdown interaction in prototype */ }
+
+function toggleStatusMenu(e){
+  e.stopPropagation();
+  document.getElementById("filterStatusMenu").classList.toggle("open");
+}
+function setStatusFilter(value){
+  statusFilter = value;
+  document.getElementById("filterStatusBtn").innerHTML =
+    `Status: ${STATUS_LABELS[value]} <span class="material-icons">expand_more</span>`;
+  document.querySelectorAll("#filterStatusMenu .filter-menu-item").forEach(item => {
+    item.classList.toggle("selected", item.dataset.value === value);
+  });
+  document.getElementById("filterStatusMenu").classList.remove("open");
+  renderTable();
+}
+document.addEventListener("click", function(e){
+  const menu = document.getElementById("filterStatusMenu");
+  if (menu && !menu.contains(e.target) && e.target.id !== "filterStatusBtn" && !e.target.closest("#filterStatusBtn")) {
+    menu.classList.remove("open");
+  }
+  const dateMenu = document.getElementById("dateMenu");
+  if (dateMenu && !dateMenu.contains(e.target) && !e.target.closest("#dateComboBtn")) {
+    dateMenu.classList.remove("open");
+  }
+});
+
+function toggleDateMenu(e){
+  e.stopPropagation();
+  document.getElementById("dateMenu").classList.toggle("open");
+}
+function setDateFilter(value){
+  document.getElementById("dateComboValue").textContent = value;
+  document.querySelectorAll("#dateMenu .filter-menu-item").forEach(item => {
+    item.classList.toggle("selected", item.dataset.value === value);
+  });
+  document.getElementById("dateMenu").classList.remove("open");
+  document.getElementById("dateRangeExpando").style.display = (value === "Custom") ? "flex" : "none";
+}
+</script>
+</body>
+</html>
