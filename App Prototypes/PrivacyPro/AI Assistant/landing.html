@@ -546,12 +546,36 @@
   .coverage-bar-fill { height: 100%; background: linear-gradient(90deg, var(--bs-green), var(--bs-cyan)); border-radius: 100px; width: 17.4%; }
   .coverage-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--bs-text-muted); margin-top: 4px; }
 
-  /* Typing indicator */
+  /* Typing indicator (legacy dots — kept for reference/back-compat) */
   .typing-indicator { display: flex; align-items: center; gap: 4px; padding: 14px 16px; }
   .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bs-text-muted); animation: typing 1.4s ease-in-out infinite; }
   .typing-dot:nth-child(2) { animation-delay: 0.2s; }
   .typing-dot:nth-child(3) { animation-delay: 0.4s; }
   @keyframes typing { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-6px); opacity: 1; } }
+
+  /* ─── THINKING INDICATOR (contextual loading state) ──────── */
+  .thinking-bubble {
+    background: white; border: 1px solid var(--bs-border);
+    border-radius: 2px 12px 12px 12px;
+    padding: 0; overflow: hidden;
+  }
+  .thinking-indicator {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; min-width: 220px;
+  }
+  .thinking-spinner {
+    width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+    border: 2px solid rgba(171,51,111,0.15);
+    border-top-color: #AB336F;
+    animation: thinking-spin 0.75s linear infinite;
+  }
+  .thinking-text {
+    font-size: 12.5px; font-weight: 500; color: var(--bs-text-muted);
+    transition: opacity 0.18s ease;
+    line-height: 1.4;
+  }
+  .thinking-text.thinking-fade { opacity: 0; }
+  @keyframes thinking-spin { to { transform: rotate(360deg); } }
 
   /* Chat input */
   .chat-input-area {
@@ -2627,6 +2651,40 @@
     }
   };
 
+  // Contextual "thinking" status messages shown while each response type is being prepared.
+  // Falls back to GENERIC_THINKING_STEPS for free-text queries that don't match a known prompt.
+  const THINKING_STEPS = {
+    reactive: [
+      'Searching access logs for patient name matches…',
+      'Cross-referencing user–patient relationships…',
+      'Ranking results by suspicion score…'
+    ],
+    coverage: [
+      'Pulling alert volume for the selected period…',
+      'Comparing alerts against current case thresholds…',
+      'Calculating risk coverage…'
+    ],
+    report: [
+      'Aggregating case and violation data…',
+      'Comparing against prior quarter benchmarks…',
+      'Drafting executive summary…'
+    ],
+    investigate: [
+      'Retrieving access history for this user and patient…',
+      'Checking for a clinical relationship…',
+      'Reviewing other suspicious activity in the last 30 days…'
+    ],
+    escalation: [
+      'Reviewing case history and prior communications…',
+      'Drafting escalation email…'
+    ]
+  };
+  const GENERIC_THINKING_STEPS = [
+    'Reading your question…',
+    'Searching relevant access logs and cases…',
+    'Preparing a response…'
+  ];
+
   function startRename(titleId) {
     const id = titleId || 'sessionTitle';
     const titleEl = document.getElementById(id);
@@ -2771,7 +2829,7 @@
     startChat();
     setSessionTitle(titleFromText(val));
     appendUserMsg(val);
-    showTyping(() => {
+    showThinking(GENERIC_THINKING_STEPS, () => {
       removeTyping();
       appendAIResponse(buildGenericResponse(val));
     });
@@ -2784,7 +2842,7 @@
     startChat();
     setSessionTitle(PROMPT_TITLES[key] || titleFromText(r.userMsg));
     appendUserMsg(r.userMsg);
-    showTyping(() => {
+    showThinking(THINKING_STEPS[key] || GENERIC_THINKING_STEPS, () => {
       removeTyping();
       appendAIResponse(r.fn());
     });
@@ -2811,7 +2869,7 @@
       setSessionTitle(key ? PROMPT_TITLES[key] : titleFromText(val));
     }
 
-    showTyping(() => {
+    showThinking(THINKING_STEPS[key] || GENERIC_THINKING_STEPS, () => {
       removeTyping();
       if (key) appendAIResponse(RESPONSES[key].fn());
       else appendAIResponse(buildGenericResponse(val));
@@ -2848,25 +2906,50 @@
     msgs.scrollTop = msgs.scrollHeight;
   }
 
-  function showTyping(cb) {
+  function showThinking(steps, cb) {
+    const list = (steps && steps.length) ? steps : GENERIC_THINKING_STEPS;
     const msgs = document.getElementById('chatMessages');
     msgs.insertAdjacentHTML('beforeend', `
       <div class="msg ai fade-in" id="typingMsg">
         <div class="msg-avatar"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:white">assistant</i></div>
-        <div class="msg-bubble" style="padding:0">
-          <div class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
+        <div class="msg-bubble thinking-bubble">
+          <div class="thinking-indicator">
+            <div class="thinking-spinner"></div>
+            <div class="thinking-text" id="thinkingText">${list[0]}</div>
           </div>
         </div>
       </div>
     `);
     msgs.scrollTop = msgs.scrollHeight;
-    setTimeout(cb, 1400);
+
+    // Cycle through contextual status messages so long-running queries always show
+    // *something* changing, rather than a static/frozen indicator.
+    const STEP_MS = 850;
+    let idx = 0;
+    const cycle = setInterval(() => {
+      idx++;
+      if (idx >= list.length) return; // hold on the final message until the response is ready
+      const el = document.getElementById('thinkingText');
+      if (!el) return;
+      el.classList.add('thinking-fade');
+      setTimeout(() => {
+        const el2 = document.getElementById('thinkingText');
+        if (!el2) return;
+        el2.textContent = list[idx];
+        el2.classList.remove('thinking-fade');
+      }, 180);
+    }, STEP_MS);
+    window.__thinkingCycle = cycle;
+
+    // Guarantee the indicator is visible for a consistent minimum duration regardless of
+    // how many contextual steps there are, so it never flashes for queries that resolve fast.
+    const totalMs = Math.max(list.length * STEP_MS, 1400) + 300;
+    window.__thinkingTimeout = setTimeout(cb, totalMs);
   }
 
   function removeTyping() {
+    if (window.__thinkingCycle) { clearInterval(window.__thinkingCycle); window.__thinkingCycle = null; }
+    if (window.__thinkingTimeout) { clearTimeout(window.__thinkingTimeout); window.__thinkingTimeout = null; }
     const t = document.getElementById('typingMsg');
     if (t) t.remove();
   }
