@@ -1,9 +1,9 @@
-# Policy & Procedure
+# HRSA Audit Preparation & Response
 
-Prototype for the **Policy & Procedure** feature in 340B Check. This covers the core flows a compliance admin would use to manage and review policies and procedures mapped to the 14 HRSA compliance categories — from uploading a policy, linking procedures, tracking review cycles, to maintaining version history and an audit-ready activity log.
+Prototype for the HRSA Audit Preparation & Response feature in 340B Check. This covers the core flows a compliance admin would use to manage a real or mock HRSA audit — from creating an audit, working through each request, managing tasks and supporting documents, to downloading a response package.
 
-> **Note:** Not everything is wired (some sidebar items and task card details are visual only). You're able to navigate: the Compliance Central dashboard with the P&P tile, the Categories tab with category rows and category drawer, the Policies & Procedures tab with expandable policy rows and unlinked procedures, full policy and procedure drawers (Details, Notes, Versions, Activity tabs), and all primary modals: Upload Policy, Upload Procedure, Link Policy, Add Procedure from Policy, Mark as Reviewed, Amend/Update Policy (with downstream impact prompt), Confirm Accuracy, Edit Review Date, Edit Policy, Edit Procedure, and Edit Linked Categories/Procedures.
+> **Note:** Not everything is wired (filters, pagination, and most sidebar items are visual only). You're able to navigate: creating a Real and Mock audit (step-by-step wizards), the audit workspace with all 13 request drawers, resolve/reopen modals, download package, and audit status changes.
 
 ---
 
-For questions, refer to the [Figma File](https://www.figma.com/design/MHAij37wpd37bBb3rORcXN/C.-Central--Policy---Procedure?node-id=8011-3589) or the [initiative page on Notion](https://app.notion.com/p/kitcheck/Policy-and-Procedure-Workflow-2941ab025d15809489bec922a5314778?source=copy_link).
+For questions, refer to the [Figma file](https://www.figma.com/design/fsaj2WomQgYy2yFhjTT4Fz/HRSA-Audits?node-id=101-979) or the [initiative page on Notion](https://app.notion.com/p/kitcheck/HRSA-Audit-Preparation-Response-2941ab025d1580819be3d4ca9cfd7693?source=copy_link).
