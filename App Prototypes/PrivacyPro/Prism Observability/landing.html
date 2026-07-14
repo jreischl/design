@@ -153,13 +153,14 @@
   .date-combo-label strong { font-weight:700; color:var(--navy-700); margin: 0 3px; }
   .date-combo-label b { color: var(--blue-700); font-weight:700; }
   .date-range-expando {
-    display:flex; align-items:flex-end; gap:16px;
-    background: var(--white); border:1px solid var(--gray-100); border-top:none;
-    border-radius: 0 0 6px 6px; margin-top:-17px; padding: 16px 16px 14px;
-    position:relative; z-index:1;
+    display:flex; align-items:center; gap:12px;
   }
-  .date-input-group { display:flex; flex-direction:column-reverse; gap:6px; }
-  .date-input-group label { font-size:11px; font-weight:600; color:var(--gray-500); }
+  .date-input-group { display:flex; align-items:center; gap:6px; }
+  .date-range-to { font-size:12.5px; color:var(--gray-500); }
+  .sr-only {
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
   .date-input-field {
     display:flex; align-items:center; gap:8px;
     border: 1px solid var(--gray-100); border-radius:5px;
@@ -169,7 +170,6 @@
     border:none; outline:none; font-family:inherit; font-size:13px; color:var(--gray-700);
     width:110px; background:transparent;
   }
-  .date-input-field .material-icons { font-size:16px; color:var(--blue-500); cursor:pointer; }
 
   .table-card {
     background: var(--white);
@@ -393,26 +393,24 @@
         <div class="filter-menu-item" data-value="Custom" onclick="setDateFilter('Custom')"><span class="material-icons">check</span>Custom</div>
       </div>
     </div>
+    <div class="date-range-expando" id="dateRangeExpando" style="display:none;">
+      <div class="date-input-group">
+        <div class="date-input-field">
+          <input type="date" id="startDateInput" value="2026-06-07" aria-label="Start Date" />
+        </div>
+        <label class="sr-only" for="startDateInput">Start Date</label>
+      </div>
+      <span class="date-range-to">to</span>
+      <div class="date-input-group">
+        <div class="date-input-field">
+          <input type="date" id="endDateInput" value="2026-07-07" aria-label="End Date" />
+        </div>
+        <label class="sr-only" for="endDateInput">End Date</label>
+      </div>
+    </div>
     <div class="fb-spacer"></div>
-    <label class="fb-checkbox"><input type="checkbox" id="negFeedback" /> Negative Feedback Only</label>
+    <label class="fb-checkbox"><input type="checkbox" id="negFeedback" onchange="renderTable()" /> Negative Feedback Only</label>
     <div class="icon-btn" title="Export"><span class="material-icons">download</span></div>
-  </div>
-
-  <div class="date-range-expando" id="dateRangeExpando" style="display:none;">
-    <div class="date-input-group">
-      <div class="date-input-field">
-        <input type="text" id="startDateInput" value="6/7/2026" onfocus="this.type='date'; this.showPicker && this.showPicker();" onblur="if(!this.value) this.type='text';" />
-        <span class="material-icons" onclick="document.getElementById('startDateInput').type='date'; document.getElementById('startDateInput').showPicker && document.getElementById('startDateInput').showPicker();">calendar_today</span>
-      </div>
-      <label>Start Date</label>
-    </div>
-    <div class="date-input-group">
-      <div class="date-input-field">
-        <input type="text" id="endDateInput" value="7/7/2026" onfocus="this.type='date'; this.showPicker && this.showPicker();" onblur="if(!this.value) this.type='text';" />
-        <span class="material-icons" onclick="document.getElementById('endDateInput').type='date'; document.getElementById('endDateInput').showPicker && document.getElementById('endDateInput').showPicker();">calendar_today</span>
-      </div>
-      <label>End Date</label>
-    </div>
   </div>
 
   <div class="table-card">
@@ -839,7 +837,9 @@ function statusPill(status){
 }
 function renderTable(){
   const body = document.getElementById("sessionTableBody");
-  const filtered = statusFilter === "all" ? SESSIONS : SESSIONS.filter(s => s.status === statusFilter);
+  const negOnly = document.getElementById("negFeedback").checked;
+  let filtered = statusFilter === "all" ? SESSIONS : SESSIONS.filter(s => s.status === statusFilter);
+  if (negOnly) filtered = filtered.filter(s => s.feedback === "down");
   body.innerHTML = filtered.map((s) => `
     <tr onclick="openPanel(${SESSIONS.indexOf(s)})">
       <td>
