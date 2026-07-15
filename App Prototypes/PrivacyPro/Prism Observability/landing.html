@@ -312,6 +312,17 @@
 
   .empty-pane { color:var(--gray-500); font-size:13px; padding: 30px 0; }
 
+  .eval-card {
+    border:1px solid var(--gray-100); border-radius:8px;
+    padding: 16px 20px; margin-bottom:12px;
+  }
+  .eval-card-head { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .eval-card-head .material-icons { font-size:18px; color: var(--danger-500); }
+  .eval-card-head span.eval-title { font-size:14px; font-weight:700; color: var(--gray-900); }
+  .eval-comment { font-size:13px; color:var(--gray-700); margin-bottom:12px; }
+  .eval-meta { display:flex; gap:20px; font-size:12px; color:var(--gray-500); flex-wrap:wrap; }
+  .eval-meta a { font-weight:600; }
+
   @media (max-width: 900px) {
     .detail-panel { width:100%; right:-100%; }
   }
@@ -449,9 +460,9 @@
   </div>
   <div class="dp-tabs">
     <div class="dp-tab active" data-pane="conversation" onclick="switchTab(this)">Conversation</div>
-    <div class="dp-tab" data-pane="toolcalls" onclick="switchTab(this)">Tool Calls</div>
-    <div class="dp-tab" data-pane="invocations" onclick="switchTab(this)">Invocations</div>
-    <div class="dp-tab" data-pane="evaluations" onclick="switchTab(this)">Evaluations</div>
+    <div class="dp-tab" id="tab-toolcalls" data-pane="toolcalls" onclick="switchTab(this)">Tool Calls</div>
+    <div class="dp-tab" id="tab-invocations" data-pane="invocations" onclick="switchTab(this)">Invocations</div>
+    <div class="dp-tab" id="tab-evaluations" data-pane="evaluations" onclick="switchTab(this)">Evaluations</div>
   </div>
   <div class="dp-body">
     <div class="dp-pane active" id="pane-conversation"></div>
@@ -605,6 +616,10 @@ const SESSIONS = [
     title: "Risk Coverage Report — February 2026",
     userName:"Dana Whitcombe", userEmail:"dana.whitcombe@stcloudhealth.org",
     invocations:1, tokens:22087, status:"success", feedback:"down",
+    feedbackComment: "This alert should have already been promoted to a case given the score — the assistant just told me it wasn't.",
+    feedbackEvent: "0000005604128712344#a1e02c19",
+    feedbackTrace: "4c682f91000000063281bdfa1120837",
+    feedbackSpan: "2094671938271940552",
     lastActivity:"7/7/26, 12:50 PM",
     userMsg: "What am I missing? Show me alerts that didn't become cases last month and my risk coverage percentage.",
     conversationHTML: `
@@ -737,6 +752,10 @@ const SESSIONS = [
     title: "Non-Existent Patient Name Search Audit",
     userName:"Layla Bertrand", userEmail:"layla.bertrand@stcloudhealth.org",
     invocations:4, tokens:88112, status:"failed", feedback:"down",
+    feedbackComment: "One of the tool calls timed out and the assistant didn't flag that the answer was incomplete — it just presented the report as final.",
+    feedbackEvent: "0000005604128809912#7c3ee841",
+    feedbackTrace: "dd-trc-88a2f1000000063281bdfa9273",
+    feedbackSpan: "8817263940552019740",
     lastActivity:"7/7/26, 12:35 PM",
     userMsg: "Show me all accesses where an EMR user searched for a patient name that doesn't exist in our system.",
     conversationHTML: `
@@ -918,8 +937,24 @@ function openPanel(idx){
     </table>
   `;
 
-  document.getElementById("pane-evaluations").innerHTML =
-    `<div class="empty-pane">No evaluations for this session.</div>`;
+  document.getElementById("tab-toolcalls").textContent = `Tool Calls: ${s.toolCalls.length}`;
+  document.getElementById("tab-invocations").textContent = `Invocations: ${s.invocationRows.length}`;
+  document.getElementById("tab-evaluations").textContent = `Evaluations: ${s.feedback === "down" ? 1 : 0}`;
+
+  document.getElementById("pane-evaluations").innerHTML = (s.feedback === "down") ? `
+    <div class="eval-card">
+      <div class="eval-card-head">
+        <span class="material-icons">thumb_down</span>
+        <span class="eval-title">Negative Feedback</span>
+      </div>
+      <div class="eval-comment">"${s.feedbackComment}"</div>
+      <div class="eval-meta">
+        <span>Event: <a href="#">${s.feedbackEvent}</a></span>
+        <span>Trace: ${s.feedbackTrace}</span>
+        <span>Span: ${s.feedbackSpan}</span>
+      </div>
+    </div>
+  ` : `<div class="empty-pane">No evaluations for this session.</div>`;
 
   document.querySelectorAll(".dp-tab").forEach(t=>t.classList.remove("active"));
   document.querySelector('.dp-tab[data-pane="conversation"]').classList.add("active");
