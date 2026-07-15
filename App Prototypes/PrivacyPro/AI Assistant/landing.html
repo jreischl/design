@@ -719,6 +719,17 @@
   }
   .copy-email-btn:hover { background: #E7F4F8; color: #00718A; border-color: #00718A; }
   .copy-email-btn .mi { font-family: 'Material Icons'; font-style: normal; font-weight: normal; font-size: 16px; line-height: 1; vertical-align: middle; }
+  .ai-download-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 6px; flex-shrink: 0;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--bs-text-muted);
+    transition: color 0.15s, background 0.15s;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 18px; line-height: 1; text-transform: none; letter-spacing: normal;
+    position: relative;
+  }
+  .ai-download-btn:hover { color: #0096B8; background: #E7F4F8; }
   .case-panel-delete-icon { font-family: 'Material Icons'; font-style: normal; font-weight: normal; font-size: 18px; color: #B53228; text-transform: none; letter-spacing: normal; }
 
   /* Assessment toggle */
@@ -2648,6 +2659,10 @@
     escalation: {
       userMsg: "Draft an escalation email to Emily Torres's manager",
       fn: buildEscalationEmailResponse
+    },
+    dataviz: {
+      userMsg: "Show me a table and chart of cases by department for Q1 2026",
+      fn: buildDataVizResponse
     }
   };
 
@@ -2677,6 +2692,11 @@
     escalation: [
       'Reviewing case history and prior communications…',
       'Drafting escalation email…'
+    ],
+    dataviz: [
+      'Aggregating case volume by department…',
+      'Calculating violation rates…',
+      'Building table and chart views…'
     ]
   };
   const GENERIC_THINKING_STEPS = [
@@ -2797,7 +2817,8 @@
     coverage:    'Risk Coverage — February 2026',
     report:      'Q1 2026 Executive Summary',
     investigate: 'Emily Torres · PP-2847 Investigation',
-    escalation:  'PP-2847 Escalation Email'
+    escalation:  'PP-2847 Escalation Email',
+    dataviz:     'Cases by Department — Q1 2026'
   };
 
   function setSessionTitle(title) {
@@ -2813,6 +2834,7 @@
     if (lower.includes('q1') || lower.includes('executive'))       return 'Q1 2026 Executive Summary';
     if (lower.includes('torres') || lower.includes('rivera'))      return 'Emily Torres Investigation';
     if (lower.includes('escalat'))                                  return 'Escalation Draft';
+    if (lower.includes('department') || (lower.includes('table') && lower.includes('chart'))) return 'Cases by Department — Q1 2026';
     // Fallback: capitalise first ~40 chars of the prompt
     const trimmed = text.replace(/\s+/g, ' ').trim();
     return trimmed.length > 42 ? trimmed.slice(0, 40).trimEnd() + '…' : trimmed;
@@ -2863,6 +2885,7 @@
     else if (lower.includes('q1') || lower.includes('executive') || lower.includes('summary') || lower.includes('report')) key = 'report';
     else if (lower.includes('torres') || lower.includes('rivera')) key = 'investigate';
     else if (lower.includes('escalat') || lower.includes('email') && lower.includes('manager')) key = 'escalation';
+    else if (lower.includes('department') || (lower.includes('table') && lower.includes('chart'))) key = 'dataviz';
 
     // Only set title on the first message of a session
     if (document.getElementById('sessionTitle').textContent === 'Untitled Session') {
@@ -3276,6 +3299,195 @@
   }
 
 
+  function buildDataVizResponse() {
+    return `
+      <div class="ai-response-card" data-label="Cases by Department · Q1 2026">
+        <div class="ai-response-body">
+          <div class="ai-response-title">Cases by Department · Q1 2026</div>
+          <div class="ai-section-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <span>Case Volume &amp; Violation Rate by Department</span>
+            <button class="ai-download-btn" data-tip="Download as CSV" onclick="downloadDeptTableCSV(this)">file_download</button>
+          </div>
+          <table class="ai-table">
+            <thead><tr><th>Department</th><th>Cases</th><th>Violations</th><th>Violation Rate</th></tr></thead>
+            <tbody>
+              <tr><td>Nursing</td><td>52</td><td>4</td><td>7.7%</td></tr>
+              <tr><td>Emergency</td><td>38</td><td>3</td><td>7.9%</td></tr>
+              <tr><td>Finance/Admin</td><td>21</td><td>7</td><td><strong>33.3%</strong></td></tr>
+              <tr><td>Cardiology</td><td>19</td><td>4</td><td>21.1%</td></tr>
+              <tr><td>Pharmacy</td><td>13</td><td>3</td><td>23.1%</td></tr>
+            </tbody>
+          </table>
+
+          <div style="background:#FAFAFA;border-radius:8px;padding:14px 16px;margin-top:14px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;">
+              <div style="font-size:10px;font-weight:700;color:#003E4B;text-transform:uppercase;letter-spacing:0.5px;">Same Data, Charted</div>
+              <button class="ai-download-btn" data-tip="Download as PNG" onclick="downloadDeptChartPNG(this)">file_download</button>
+            </div>
+            <div class="dept-chart">
+              <div class="dept-bar-row" data-label="Nursing" data-value="52" data-color="#0096B8" style="margin-bottom:12px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;color:#555555;">Nursing</span>
+                  <span style="font-size:13px;font-weight:600;color:#555555;">52</span>
+                </div>
+                <div style="background:#E5E5E5;border-radius:4px;height:12px;overflow:hidden;">
+                  <div style="background:#0096B8;width:100%;height:100%;border-radius:4px;"></div>
+                </div>
+              </div>
+              <div class="dept-bar-row" data-label="Emergency" data-value="38" data-color="#74C5D8" style="margin-bottom:12px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;color:#555555;">Emergency</span>
+                  <span style="font-size:13px;font-weight:600;color:#555555;">38</span>
+                </div>
+                <div style="background:#E5E5E5;border-radius:4px;height:12px;overflow:hidden;">
+                  <div style="background:#74C5D8;width:73.1%;height:100%;border-radius:4px;"></div>
+                </div>
+              </div>
+              <div class="dept-bar-row" data-label="Finance/Admin" data-value="21" data-color="#B53228" data-flagged="true" style="margin-bottom:12px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;color:#555555;">Finance/Admin</span>
+                  <span style="font-size:13px;font-weight:700;color:#B53228;">21</span>
+                </div>
+                <div style="background:#E5E5E5;border-radius:4px;height:12px;overflow:hidden;">
+                  <div style="background:#B53228;width:40.4%;height:100%;border-radius:4px;"></div>
+                </div>
+              </div>
+              <div class="dept-bar-row" data-label="Cardiology" data-value="19" data-color="#003E4B" style="margin-bottom:12px;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;color:#555555;">Cardiology</span>
+                  <span style="font-size:13px;font-weight:600;color:#555555;">19</span>
+                </div>
+                <div style="background:#E5E5E5;border-radius:4px;height:12px;overflow:hidden;">
+                  <div style="background:#003E4B;width:36.5%;height:100%;border-radius:4px;"></div>
+                </div>
+              </div>
+              <div class="dept-bar-row" data-label="Pharmacy" data-value="13" data-color="#9E9E9E">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:13px;color:#555555;">Pharmacy</span>
+                  <span style="font-size:13px;font-weight:600;color:#555555;">13</span>
+                </div>
+                <div style="background:#E5E5E5;border-radius:4px;height:12px;overflow:hidden;">
+                  <div style="background:#9E9E9E;width:25%;height:100%;border-radius:4px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-section-title">Assessment</div>
+          <div class="ai-bullet"><strong>Finance/Admin</strong> has the highest violation rate (33.3%) despite ranking third in case volume — a disproportionate concentration of risk.</div>
+          <div class="ai-bullet">Nursing carries the highest case volume (52) but one of the lowest violation rates (7.7%) — volume alone isn't a reliable risk signal here.</div>
+          <div class="ai-next-steps">
+            <div class="ai-next-steps-title"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#0096B8">add_task</i> Recommended Next Steps</div>
+            <div class="ai-bullet">Audit Finance/Admin access policies — violation rate is nearly 3x the department average</div>
+            <div class="ai-bullet">Share this breakdown with department leads ahead of Q2 planning</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Builds a CSV from the .ai-table inside the same response card as the button, then downloads it.
+  function downloadDeptTableCSV(btn) {
+    const card = btn.closest('.ai-response-card');
+    const table = card ? card.querySelector('table.ai-table') : null;
+    if (!table) return;
+    const rows = Array.from(table.querySelectorAll('tr')).map(tr =>
+      Array.from(tr.querySelectorAll('th,td')).map(cell => {
+        let text = cell.textContent.trim().replace(/\s+/g, ' ');
+        if (/[",\n]/.test(text)) text = '"' + text.replace(/"/g, '""') + '"';
+        return text;
+      }).join(',')
+    );
+    const csv = rows.join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cases-by-department-q1-2026.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Draws the department chart onto a canvas from its data attributes, then downloads a PNG.
+  function downloadDeptChartPNG(btn) {
+    const card = btn.closest('.ai-response-card');
+    const chart = card ? card.querySelector('.dept-chart') : null;
+    if (!chart) return;
+    const rows = Array.from(chart.querySelectorAll('.dept-bar-row')).map(row => ({
+      label: row.dataset.label,
+      value: parseFloat(row.dataset.value),
+      color: row.dataset.color,
+      flagged: row.dataset.flagged === 'true'
+    }));
+    if (!rows.length) return;
+
+    const maxVal = Math.max(...rows.map(r => r.value));
+    const dpr = 2; // crisp, fixed-resolution export regardless of on-screen card width
+    const cssWidth = 640, rowHeight = 56, topPad = 16, sidePad = 20, barHeight = 14;
+    const cssHeight = topPad * 2 + rowHeight * rows.length;
+    const canvas = document.createElement('canvas');
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.fillStyle = '#FAFAFA';
+    ctx.fillRect(0, 0, cssWidth, cssHeight);
+
+    const trackWidth = cssWidth - sidePad * 2;
+
+    rows.forEach((row, i) => {
+      const rowTop = topPad + i * rowHeight;
+      const labelY = rowTop + 12;
+      const trackY = rowTop + 20;
+
+      ctx.textBaseline = 'alphabetic';
+      ctx.font = '13px DM Sans, sans-serif';
+      ctx.fillStyle = row.flagged ? '#B53228' : '#555555';
+      ctx.textAlign = 'left';
+      ctx.fillText(row.label, sidePad, labelY);
+
+      ctx.font = (row.flagged ? 'bold ' : '600 ') + '13px DM Sans, sans-serif';
+      ctx.fillStyle = row.flagged ? '#B53228' : '#555555';
+      ctx.textAlign = 'right';
+      ctx.fillText(String(row.value), cssWidth - sidePad, labelY);
+
+      roundRect(ctx, sidePad, trackY, trackWidth, barHeight, 4);
+      ctx.fillStyle = '#E5E5E5';
+      ctx.fill();
+
+      const pct = row.value / maxVal;
+      roundRect(ctx, sidePad, trackY, Math.max(trackWidth * pct, barHeight), barHeight, 4);
+      ctx.fillStyle = row.color;
+      ctx.fill();
+    });
+
+    canvas.toBlob(function(blob) {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cases-by-department-q1-2026-chart.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  // Draws a rounded rectangle path on a 2D canvas context (used by downloadDeptChartPNG).
+  function roundRect(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
   function buildGenericResponse(query) {
     return `
       <div class="msg-bubble" style="background:white;border:1px solid var(--bs-border);border-radius:2px 12px 12px 12px;max-width:100%;font-size:13px;line-height:1.6;padding:12px 16px;color:var(--bs-text)">
@@ -3285,6 +3497,7 @@
           <button onclick="runPrompt(\'coverage\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> What am I missing? Show my risk coverage and unreviewed alerts</button>
           <button onclick="runPrompt(\'report\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Generate my Q1 2026 executive summary</button>
           <button onclick="runPrompt(\'investigate\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Summarize the access between Emily Torres and John Rivera</button>
+          <button onclick="runPrompt(\'dataviz\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Show me a table and chart of cases by department for Q1 2026</button>
         </div>
       </div>
     `;
