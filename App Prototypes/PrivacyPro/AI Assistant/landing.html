@@ -522,6 +522,24 @@
   .ai-next-steps-title { font-size: 11px; font-weight: 700; color: #003E4B; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
   .ai-next-steps-title i { text-transform: none; letter-spacing: normal; color: #0096B8; font-size: 20px !important; vertical-align: middle; margin-right: 2px; }
 
+  .ai-error-bubble {
+    background: #FCD9D7; border: 1px solid #F78E86; border-radius: 2px 12px 12px 12px;
+    padding: 12px 16px; max-width: 420px; font-size: 13px; line-height: 1.5;
+  }
+  .ai-error-title { display: flex; align-items: center; gap: 6px; font-weight: 700; color: #631B16; margin-bottom: 4px; }
+  .ai-error-title i { flex-shrink: 0; }
+  .ai-error-detail { color: #631B16; margin-bottom: 10px; }
+  .ai-error-retry-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: white; border: 1.5px solid #B53228; color: #B53228;
+    border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .ai-error-retry-btn:hover:not(:disabled) { background: #B53228; color: white; }
+  .ai-error-retry-btn:disabled { opacity: 0.6; cursor: default; }
+  .ai-error-retried-note { font-size: 12px; font-style: italic; color: #631B16; opacity: 0.75; }
+
   .ai-metric-row { display: flex; gap: 12px; margin: 12px 0; }
   .ai-metric {
     flex: 1; background: #FAFAFA; border-radius: 8px; padding: 12px;
@@ -1392,6 +1410,8 @@
                 <div class="prompt-chip" onclick="runPrompt('coverage')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> What am I missing? Show my risk coverage and unreviewed alerts</div>
                 <div class="prompt-chip" onclick="runPrompt('report')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Generate my Q1 2026 executive summary</div>
                 <div class="prompt-chip" onclick="runPrompt('investigate')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Summarize the access between Emily Torres and John Rivera</div>
+                <div class="prompt-chip" onclick="runPrompt('dataviz')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Show me a table and chart of cases by department for Q1 2026</div>
+                <div class="prompt-chip" onclick="runErrorDemo()"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Show me what happens if the assistant can't respond</div>
               </div>
             </div>
           </div>
@@ -2429,6 +2449,8 @@
           <div class="prompt-chip" onclick="runPrompt('coverage')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> What am I missing? Show my risk coverage and unreviewed alerts</div>
           <div class="prompt-chip" onclick="runPrompt('report')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Generate my Q1 2026 executive summary</div>
           <div class="prompt-chip" onclick="runPrompt('investigate')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Summarize the access between Emily Torres and John Rivera</div>
+          <div class="prompt-chip" onclick="runPrompt('dataviz')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Show me a table and chart of cases by department for Q1 2026</div>
+          <div class="prompt-chip" onclick="runErrorDemo()"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Show me what happens if the assistant can't respond</div>
         </div>
       </div>`;
     }
@@ -2638,6 +2660,8 @@
 
   // ─── CHAT LOGIC ─────────────────────────────────────────
   let chatStarted = false;
+
+  const PANDA_AVATAR_URI = 'data:image/png;base64,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';
 
   const RESPONSES = {
     reactive: {
@@ -2870,10 +2894,120 @@
     });
   }
 
+  // ─── ERROR STATE DEMO ────────────────────────────────────
+  // Demonstrates the two distinct failure modes (timeout vs. agent-unavailable),
+  // an inline (non-modal) error bubble with Retry, input disabled while a
+  // request is in flight and re-enabled the moment it resolves (success OR
+  // error), and confirms the error doesn't linger once a turn succeeds.
+  let __errorDemoAttempt = 0;
+
+  function runErrorDemo(userMsgText) {
+    showScreen('chat');
+    startChat();
+    if (document.getElementById('sessionTitle').textContent === 'Untitled Session') {
+      setSessionTitle('Error State Demo');
+    }
+    appendUserMsg(userMsgText || 'Show me all users with undocumented access in the last 7 days');
+    __errorDemoAttempt = 0;
+    beginErrorDemoAttempt();
+  }
+
+  function beginErrorDemoAttempt() {
+    setChatInputEnabled(false);
+    const steps = __errorDemoAttempt === 0
+      ? ['Connecting to Prism…', 'Waiting for a response…']
+      : ['Reconnecting…', 'Waiting for a response…'];
+    showThinking(steps, () => {
+      removeTyping();
+      __errorDemoAttempt++;
+      if (__errorDemoAttempt === 1) {
+        appendErrorMessage('timeout');
+      } else if (__errorDemoAttempt === 2) {
+        appendErrorMessage('unavailable');
+      } else {
+        setChatInputEnabled(true);
+        appendAIResponse(buildErrorDemoSuccessResponse());
+      }
+    });
+  }
+
+  function retryErrorDemo(btn) {
+    const timestamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const note = document.createElement('span');
+    note.className = 'ai-error-retried-note';
+    note.textContent = 'Retried at ' + timestamp;
+    btn.replaceWith(note);
+    beginErrorDemoAttempt();
+  }
+
+  // Appends a non-modal, inline error bubble to the message list and immediately
+  // re-enables the input so the person can retry OR simply type something new.
+  function appendErrorMessage(type) {
+    const msgs = document.getElementById('chatMessages');
+    const isTimeout = type === 'timeout';
+    const icon = isTimeout ? 'schedule' : 'cloud_off';
+    const title = isTimeout ? 'Response timed out' : 'Assistant unavailable';
+    const detail = isTimeout
+      ? 'Prism didn\u2019t receive a response in time. This is usually temporary — try again.'
+      : 'Prism couldn\u2019t be reached. The service may be temporarily down, or your connection may have dropped.';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'msg ai fade-in';
+    wrapper.innerHTML = `
+      <div class="msg-avatar" style="background:transparent;padding:0;overflow:hidden;"><img src="${PANDA_AVATAR_URI}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+      <div class="ai-error-bubble">
+        <div class="ai-error-title"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:#B53228">${icon}</i> ${title}</div>
+        <div class="ai-error-detail">${detail}</div>
+        <button class="ai-error-retry-btn" onclick="retryErrorDemo(this)"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">refresh</i> Retry</button>
+      </div>
+    `;
+    msgs.appendChild(wrapper);
+    msgs.scrollTop = msgs.scrollHeight;
+    setChatInputEnabled(true);
+  }
+
+  // Enables/disables the chat input + textarea while a request is in flight.
+  function setChatInputEnabled(enabled) {
+    const wrap = document.getElementById('chatInputArea');
+    const input = document.getElementById('chatInput');
+    if (!wrap || !input) return;
+    input.disabled = !enabled;
+    wrap.style.opacity = enabled ? '1' : '0.5';
+    wrap.style.pointerEvents = enabled ? 'auto' : 'none';
+  }
+
+  // The successful turn that follows a retry — deliberately a plain, self-contained
+  // response with no reference to the prior errors, so nothing about the failure
+  // persists once the conversation turn actually succeeds.
+  function buildErrorDemoSuccessResponse() {
+    return `
+      <div class="ai-response-card" data-label="Undocumented Access · Last 7 Days">
+        <div class="ai-response-body">
+          <div class="ai-response-title">Undocumented Access · Last 7 Days</div>
+          <table class="ai-table">
+            <thead><tr><th>User</th><th>Department</th><th>Records Accessed</th><th>Reason Documented</th></tr></thead>
+            <tbody>
+              <tr><td>James Thompson</td><td>Finance/Admin</td><td>6</td><td><span class="chip red">No</span></td></tr>
+              <tr><td>Priya Patel</td><td>Nursing</td><td>3</td><td><span class="chip red">No</span></td></tr>
+              <tr><td>Daniel Kim</td><td>Cardiology</td><td>1</td><td><span class="chip red">No</span></td></tr>
+            </tbody>
+          </table>
+          <div class="ai-bullet" style="margin-top:8px">3 users accessed records without a documented reason in the last 7 days — none flagged as VIP or high-risk cases.</div>
+        </div>
+      </div>
+    `;
+  }
+
   function sendFromInput() {
     const input = document.getElementById('chatInput');
     const val = input.value.trim();
     if (!val) return;
+    const earlyLower = val.toLowerCase();
+    if (earlyLower.includes('timeout') || earlyLower.includes('time out') || earlyLower.includes('unavailable') ||
+        earlyLower.includes("can't reach") || earlyLower.includes('cannot reach') || earlyLower.includes('error state')) {
+      input.value = '';
+      runErrorDemo(val);
+      return;
+    }
     startChat();
     appendUserMsg(val);
     input.value = '';
@@ -3498,6 +3632,7 @@
           <button onclick="runPrompt(\'report\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Generate my Q1 2026 executive summary</button>
           <button onclick="runPrompt(\'investigate\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Summarize the access between Emily Torres and John Rivera</button>
           <button onclick="runPrompt(\'dataviz\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Show me a table and chart of cases by department for Q1 2026</button>
+          <button onclick="runErrorDemo()" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Show me what happens if the assistant can\'t respond</button>
         </div>
       </div>
     `;
