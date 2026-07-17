@@ -309,18 +309,21 @@
   .dp-pane { display:none; }
   .dp-pane.active { display:block; }
 
-  .conv-user-msg {
-    display:flex; justify-content:flex-end; margin-bottom:18px;
+  .msg { display:flex; gap:10px; margin-bottom:18px; }
+  .msg.user { flex-direction: row-reverse; }
+  .msg-avatar {
+    width:28px; height:28px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:600; color:#fff;
   }
-  .conv-user-bubble {
-    background: var(--navy-100); color: var(--navy-900);
-    padding:10px 16px; border-radius: 10px 10px 2px 10px;
-    font-size:13px; display:flex; align-items:center; gap:8px;
+  .msg.user .msg-avatar { background: var(--navy-500); }
+  .msg.ai .msg-avatar { background: var(--pink-700); }
+  .msg-bubble {
+    max-width:80%; padding:12px 16px;
+    border-radius:12px; font-size:13px; line-height:1.6;
   }
-  .conv-user-avatar {
-    width:24px;height:24px;border-radius:50%;background:var(--navy-500);color:#fff;
-    font-size:10.5px; font-weight:700; display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  }
+  .msg.user .msg-bubble { background: var(--gray-100); color: var(--gray-900); border-radius: 12px 2px 12px 12px; }
+  .msg-ai-content { max-width:88%; }
   .ai-card {
     border:1px solid var(--gray-100); border-radius:10px; overflow:hidden;
   }
@@ -982,13 +985,16 @@ function openPanel(idx){
     `<b>${s.userName}</b> · ${s.userEmail} · ${s.invocations} Invocation${s.invocations>1?'s':''} · ${s.tokens.toLocaleString()} Tokens · ${s.lastActivity}`;
 
   document.getElementById("pane-conversation").innerHTML = `
-    <div class="conv-user-msg">
-      <div class="conv-user-bubble">
-        <div class="conv-user-avatar">${initials(s.userName)}</div>
-        ${s.userMsg}
+    <div class="msg user">
+      <div class="msg-avatar">${initials(s.userName)}</div>
+      <div class="msg-bubble">${s.userMsg}</div>
+    </div>
+    <div class="msg ai" style="align-items:flex-start; margin-bottom:0;">
+      <div class="msg-avatar" style="margin-top:4px"><span class="material-icons" style="font-size:15px;">assistant</span></div>
+      <div class="msg-ai-content">
+        ${s.conversationHTML}
       </div>
     </div>
-    ${s.conversationHTML}
   `;
 
   document.getElementById("pane-toolcalls").innerHTML = s.toolCalls.map((tc,i) => `
