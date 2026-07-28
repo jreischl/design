@@ -299,6 +299,11 @@
     }
     
     .pillter-wrapper { position: relative; display: inline-block; }
+
+    /* Comparison Score temporarily hidden per request — kept in DOM/JS so it
+       can be re-enabled later. !important overrides the inline display style
+       switchView() sets when toggling table/graph view. */
+    #pillter-comp-score { display: none !important; }
     
     .filter-chip {
       display: inline-flex; align-items: center; gap: 4px;
@@ -4053,7 +4058,7 @@
             textStyle: { fontSize: 18, fontWeight: 600, color: '#044a82' }
           },
           {
-            text: `${filteredUsers.length} users \u00b7 Time Elapsed: ${timeThreshold} min`,
+            text: `${filteredUsers.length} users \u00b7 Time Threshold: ${timeThreshold} min`,
             left: 'right',
             top: 20,
             textStyle: { fontSize: 13, color: '#727272', fontWeight: 400 }
@@ -5352,31 +5357,13 @@
 
             <!-- ── Secondary pillter filters ── -->
             <!-- Comparison Score: Tabular only (table-comp-score column).
-                 Time Elapsed: both views — it scales avgTime / retention. -->
+                 Time Threshold: both views — it scales avgTime / retention. -->
             <div class="content-toolbar">
               <div class="toolbar-left">
-                <!-- Comparison Score pillter (single-select) — hidden on graph view -->
-                <div class="pillter-wrapper" id="pillter-comp-score">
-                  <button class="filter-chip secondary active" id="chip-comp-score" onclick="togglePillter('pillter-comp-score')">
-                    <span class="cs-label">Comparison Score:</span>
-                    <span id="comp-score-label">Overall IRIS</span>
-                  </button>
-                  <div class="pillter-menu" style="width:220px">
-                    <div class="menu-options">
-                      <div class="menu-item selected-item" onclick="setCompScore('overall', this)">Overall IRIS</div>
-                      <div class="menu-item" onclick="setCompScore('varianceTrends', this)">Variance Trends</div>
-                      <div class="menu-item" onclick="setCompScore('dispensePatterns', this)">Dispense Patterns</div>
-                      <div class="menu-item" onclick="setCompScore('medTrends', this)">Med Trends</div>
-                      <div class="menu-item" onclick="setCompScore('fullPackageWaste', this)">Full Package Waste</div>
-                      <div class="menu-item" onclick="setCompScore('shiftAnalysis', this)">Shift Analysis</div>
-                    </div>
-                  </div>
-                </div>
-                
-                <!-- Time Elapsed pillter (preset chips + custom + live preview) -->
+                <!-- Time Threshold pillter (preset chips + custom + live preview) -->
                 <div class="pillter-wrapper" id="pillter-time-threshold">
                   <button class="filter-chip secondary active" id="chip-time-threshold" onclick="togglePillter('pillter-time-threshold')">
-                    <span class="cs-label">Time Elapsed:</span>
+                    <span class="cs-label">Time Threshold:</span>
                     <span id="time-threshold-label">240 Minutes</span>
                   </button>
                   <div class="pillter-menu" style="width:340px">
@@ -5407,6 +5394,24 @@
                     <div class="menu-footer">
                       <button class="btn-cancel" onclick="cancelTimeThreshold()">Cancel</button>
                       <button class="btn-apply" onclick="applyTimeThreshold()">Apply</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Comparison Score pillter (single-select) — hidden on graph view -->
+                <div class="pillter-wrapper" id="pillter-comp-score">
+                  <button class="filter-chip secondary active" id="chip-comp-score" onclick="togglePillter('pillter-comp-score')">
+                    <span class="cs-label">Comparison Score:</span>
+                    <span id="comp-score-label">Overall IRIS</span>
+                  </button>
+                  <div class="pillter-menu" style="width:220px">
+                    <div class="menu-options">
+                      <div class="menu-item selected-item" onclick="setCompScore('overall', this)">Overall IRIS</div>
+                      <div class="menu-item" onclick="setCompScore('varianceTrends', this)">Variance Trends</div>
+                      <div class="menu-item" onclick="setCompScore('dispensePatterns', this)">Dispense Patterns</div>
+                      <div class="menu-item" onclick="setCompScore('medTrends', this)">Med Trends</div>
+                      <div class="menu-item" onclick="setCompScore('fullPackageWaste', this)">Full Package Waste</div>
+                      <div class="menu-item" onclick="setCompScore('shiftAnalysis', this)">Shift Analysis</div>
                     </div>
                   </div>
                 </div>
