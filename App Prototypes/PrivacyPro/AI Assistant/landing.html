@@ -548,6 +548,15 @@
   }
   .ai-error-retry-btn:hover:not(:disabled) { background: #B53228; color: white; }
   .ai-error-retry-btn:disabled { opacity: 0.6; cursor: default; }
+  .ai-error-login-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #B53228; border: 1.5px solid #B53228; color: white;
+    border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .ai-error-login-btn:hover:not(:disabled) { background: #631B16; border-color: #631B16; }
+  .ai-error-login-btn:disabled { opacity: 0.6; cursor: default; }
   .ai-error-retried-note { font-size: 12px; font-style: italic; color: #631B16; opacity: 0.75; }
 
   .ai-metric-row { display: flex; gap: 12px; margin: 12px 0; }
@@ -2934,6 +2943,8 @@
         appendErrorMessage('timeout');
       } else if (__errorDemoAttempt === 2) {
         appendErrorMessage('unavailable');
+      } else if (__errorDemoAttempt === 3) {
+        appendErrorMessage('logged_out');
       } else {
         setChatInputEnabled(true);
         appendAIResponse(buildErrorDemoSuccessResponse());
@@ -2950,16 +2961,34 @@
     beginErrorDemoAttempt();
   }
 
+  // Handles the "Log in" action on the logged-out error bubble. Unlike a plain
+  // retry, this represents the person re-authenticating — swap the button for
+  // a confirmation note, then resume the same attempt flow so the next turn succeeds.
+  function loginErrorDemo(btn) {
+    const timestamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const note = document.createElement('span');
+    note.className = 'ai-error-retried-note';
+    note.textContent = 'Logged in at ' + timestamp;
+    btn.replaceWith(note);
+    beginErrorDemoAttempt();
+  }
+
   // Appends a non-modal, inline error bubble to the message list and immediately
   // re-enables the input so the person can retry OR simply type something new.
   function appendErrorMessage(type) {
     const msgs = document.getElementById('chatMessages');
     const isTimeout = type === 'timeout';
-    const icon = isTimeout ? 'schedule' : 'cloud_off';
-    const title = isTimeout ? 'Response timed out' : 'Assistant unavailable';
+    const isLoggedOut = type === 'logged_out';
+    const icon = isTimeout ? 'schedule' : isLoggedOut ? 'lock_person' : 'cloud_off';
+    const title = isTimeout ? 'Response timed out' : isLoggedOut ? 'You\u2019ve been logged out' : 'Assistant unavailable';
     const detail = isTimeout
       ? 'Prism didn\u2019t receive a response in time. This is usually temporary — try again.'
-      : 'Prism couldn\u2019t be reached. The service may be temporarily down, or your connection may have dropped.';
+      : isLoggedOut
+        ? 'Your session has ended, so Prism can\u2019t respond right now. Log in again to pick up where you left off.'
+        : 'Prism couldn\u2019t be reached. The service may be temporarily down, or your connection may have dropped.';
+    const actionBtn = isLoggedOut
+      ? `<button class="ai-error-login-btn" onclick="loginErrorDemo(this)"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">login</i> Log in</button>`
+      : `<button class="ai-error-retry-btn" onclick="retryErrorDemo(this)"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">refresh</i> Retry</button>`;
     const wrapper = document.createElement('div');
     wrapper.className = 'msg ai fade-in';
     wrapper.innerHTML = `
@@ -2968,7 +2997,7 @@
         <button class="ai-error-dismiss-btn" onclick="dismissErrorMessage(this)" aria-label="Dismiss" title="Dismiss"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle">close</i></button>
         <div class="ai-error-title"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:#B53228">${icon}</i> ${title}</div>
         <div class="ai-error-detail">${detail}</div>
-        <button class="ai-error-retry-btn" onclick="retryErrorDemo(this)"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">refresh</i> Retry</button>
+        ${actionBtn}
       </div>
     `;
     msgs.appendChild(wrapper);
@@ -3020,7 +3049,8 @@
     if (!val) return;
     const earlyLower = val.toLowerCase();
     if (earlyLower.includes('timeout') || earlyLower.includes('time out') || earlyLower.includes('unavailable') ||
-        earlyLower.includes("can't reach") || earlyLower.includes('cannot reach') || earlyLower.includes('error state')) {
+        earlyLower.includes("can't reach") || earlyLower.includes('cannot reach') || earlyLower.includes('error state') ||
+        earlyLower.includes('logged out') || earlyLower.includes('log out') || earlyLower.includes('session expired')) {
       input.value = '';
       runErrorDemo(val);
       return;
