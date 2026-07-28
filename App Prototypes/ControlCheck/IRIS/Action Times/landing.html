@@ -990,7 +990,7 @@
       text-decoration: none;
       cursor: pointer;
     }
-    .investigate-link .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    .investigate-link .material-icons { font-size: 16px; width: 16px; height: 16px; }
 
     /* Interactive elements should still show pointer cursor */
     .data-table .user-name a,
@@ -3710,8 +3710,8 @@
             <td class="num col-rnea-time hidden">${fmtAvgTime(user.recordedNotEqualAction)}</td>
             <td class="center fixed-col-right">
               <a href="#" class="investigate-link" onclick="event.stopPropagation(); openInvestigate('${user.name}')">
-                Investigate
                 <span class="material-icons">open_in_new</span>
+                Investigate
               </a>
             </td>
           </tr>
@@ -5503,7 +5503,7 @@
                         <th class="center sortable col-rnea-time" data-col="recordedNotEqualAction.avgTime" onclick="sortUsersTable('recordedNotEqualAction.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center fixed-col-right">Investigate</th>
+                        <th class="center fixed-col-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody id="usersTableBody">
