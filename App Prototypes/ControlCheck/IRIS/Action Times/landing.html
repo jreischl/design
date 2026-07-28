@@ -530,11 +530,25 @@
       background: var(--teal);
       height: 2px;
     }
-    .tab-bar-download { margin-left: auto; }
+    .legacy-switch-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font);
+      font-size: .813rem;
+      font-weight: 600;
+      color: var(--teal);
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .legacy-switch-link:hover { color: var(--teal-dark); text-decoration: underline; }
+    .legacy-switch-link .material-icons { font-size: 16px; width: 16px; height: 16px; }
 
     /* ── Toolbar ── */
     .content-toolbar {
       display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap;
       margin-bottom: 16px;
     }
     .toolbar-left { display: flex; align-items: center; gap: 24px; flex: 1; }
@@ -678,6 +692,12 @@
       color: var(--text-87);
       font-weight: 600;
     }
+    .table-row-count-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
     
     /* Single-select list used by Comparison Score */
     .pillter-menu .menu-item {
@@ -690,57 +710,51 @@
     .pillter-menu .menu-item.selected-item {
       color: var(--teal); font-weight: 500;
     }
-    /* ── Rules Chips ── */
+    /* ── Rules Checkboxes ── */
     .rules-chips-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 24px;
+      gap: 20px;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 8px 16px 16px 16px;
     }
     
-    .rule-chip {
+    .rules-chips-row legend {
+      padding: 0 6px;
+      font-family: var(--font);
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--text-54);
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+    
+    .rule-checkbox {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 0 12px;
-      min-height: 32px;
-      border-radius: 20px;
-      border: 1px solid var(--teal);
-      background: #fff;
-      color: var(--teal);
+      gap: 8px;
+      cursor: pointer;
       font-family: var(--font);
       font-size: .813rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .2s ease;
+      font-weight: 400;
+      color: var(--text-87);
       white-space: nowrap;
     }
     
-    .rule-chip:hover {
-      background: rgba(0,150,184,.05);
-    }
-    
-    .rule-chip.selected {
-      background: var(--teal);
-      color: #fff;
-      border-color: var(--teal);
-    }
-    
-    .rule-chip.selected:hover {
-      background: var(--teal-dark);
-      border-color: var(--teal-dark);
-    }
-    
-    .chip-icon {
-      font-size: 16px;
+    .rule-checkbox input[type="checkbox"] {
+      accent-color: var(--teal);
       width: 16px;
       height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
     }
     
     .chip-text {
       font-size: .813rem;
-      font-weight: 600;
+      font-weight: 400;
     }
 
     /* Checkboxes */
@@ -800,22 +814,40 @@
     .data-table td.fixed-col:nth-child(1) {
       left: 0;
       z-index: 12;
+      width: 130px;
+      max-width: 130px;
     }
+    .data-table td.fixed-col:nth-child(1) { overflow: hidden; }
+    .data-table th.fixed-col:nth-child(1) { white-space: nowrap !important; }
     
     .data-table th.fixed-col:nth-child(2),
     .data-table td.fixed-col:nth-child(2) {
-      left: 120px;
+      left: 130px;
       z-index: 11;
+      width: 150px;
+      max-width: 150px;
     }
+    .data-table td.fixed-col:nth-child(2) { overflow: hidden; }
+    .data-table th.fixed-col:nth-child(2) { white-space: nowrap !important; }
     
     .data-table th.fixed-col:nth-child(3),
     .data-table td.fixed-col:nth-child(3) {
-      left: 240px;
+      left: 280px;
       z-index: 11;
       min-width: 200px;
       border-right: 1px solid var(--gray-300);
     }
-    
+
+    .data-table th.fixed-col:nth-child(1) .th-inner,
+    .data-table th.fixed-col:nth-child(2) .th-inner {
+      white-space: nowrap;
+      flex-wrap: nowrap;
+    }
+    .data-table th.fixed-col:nth-child(1) .sort-icon,
+    .data-table th.fixed-col:nth-child(2) .sort-icon {
+      flex-shrink: 0;
+    }
+
     /* Fixed right column */
     .data-table th.fixed-col-right,
     .data-table td.fixed-col-right {
@@ -3722,6 +3754,8 @@
       // Rule chips affect table columns — only meaningful on the Tabular tab.
       // On Visualized Data, ECharts' legend handles series visibility instead.
       document.getElementById('rules-chips-row').style.display = mode === 'table' ? '' : 'none';
+      // Row count line sits directly above the table, so it only applies to Tabular Data.
+      document.getElementById('table-row-count-row').style.display = mode === 'table' ? '' : 'none';
       // Comparison Score only affects the table's comp-score column, so hide it
       // on the chart. Time Elapsed stays — it scales avgTime / retention rate
       // and re-inits the chart on Apply.
@@ -4071,7 +4105,7 @@
         }
         visibleRules = nextRules;
         updateRuleVisibility();   // sync table columns
-        syncRuleChips();          // sync rule-chip visuals
+        syncRuleChips();          // sync rule checkbox visuals
       });
       
       // Handle window resize
@@ -4273,27 +4307,21 @@
     // menus open via togglePillter() defined further below. Temp values for the
     // slider are reset inside togglePillter when that pillter opens.
 
-    function toggleRuleChip(ruleKey) {
-      const chip = document.getElementById(`chip-${ruleKey}`);
-      const isSelected = chip.classList.contains('selected');
+    function toggleRuleChip(ruleKey, checkboxEl) {
+      const checkbox = checkboxEl || document.querySelector(`#chip-${ruleKey} input[type="checkbox"]`);
       
-      if (isSelected) {
+      if (!checkbox.checked) {
         // Don't allow deselecting the last rule
         if (visibleRules.length > 1) {
           visibleRules = visibleRules.filter(rule => rule !== ruleKey);
-          chip.classList.remove('selected');
-          const icon = chip.querySelector('.chip-icon');
-          if (icon) icon.remove();
+        } else {
+          checkbox.checked = true;
+          return;
         }
       } else {
         if (!visibleRules.includes(ruleKey)) {
           visibleRules.push(ruleKey);
         }
-        chip.classList.add('selected');
-        const icon = document.createElement('span');
-        icon.className = 'material-icons chip-icon';
-        icon.textContent = 'check';
-        chip.insertBefore(icon, chip.querySelector('.chip-text'));
       }
       
       updateRuleVisibility();
@@ -4316,31 +4344,15 @@
       }
     }
     
-    // Update rule-chip visual state (selected class + checkmark icon) to match
+    // Update rule checkbox visual state (checked) to match
     // visibleRules. Used when the chart legend drives the change instead of the
     // chip itself.
     function syncRuleChips() {
       const allRules = ['firstDispenseFirstAdmin','lastAdminLastWaste','adminBeforeDispense','firstDispenseFirstWaste','recordedNotEqualAction'];
       allRules.forEach(rule => {
-        const chip = document.getElementById(`chip-${rule}`);
-        if (!chip) return;
-        const shouldBeSelected = visibleRules.includes(rule);
-        const isSelected = chip.classList.contains('selected');
-        
-        if (shouldBeSelected && !isSelected) {
-          chip.classList.add('selected');
-          if (!chip.querySelector('.chip-icon')) {
-            const icon = document.createElement('span');
-            icon.className = 'material-icons chip-icon';
-            icon.textContent = 'check';
-            const target = chip.querySelector('.chip-text') || chip.firstChild;
-            chip.insertBefore(icon, target);
-          }
-        } else if (!shouldBeSelected && isSelected) {
-          chip.classList.remove('selected');
-          const icon = chip.querySelector('.chip-icon');
-          if (icon) icon.remove();
-        }
+        const checkbox = document.querySelector(`#chip-${rule} input[type="checkbox"]`);
+        if (!checkbox) return;
+        checkbox.checked = visibleRules.includes(rule);
       });
     }
     
@@ -4369,29 +4381,8 @@
     }
     
     function updateRuleChips() {
-      // Update chips to reflect current state
-      const allRules = ['firstDispenseFirstAdmin', 'lastAdminLastWaste', 'adminBeforeDispense', 'firstDispenseFirstWaste', 'recordedNotEqualAction'];
-      allRules.forEach(rule => {
-        const chip = document.getElementById(`chip-${rule}`);
-        if (chip) {
-          const isVisible = visibleRules.includes(rule);
-          if (isVisible) {
-            chip.classList.add('selected');
-            // Ensure checkmark icon exists
-            if (!chip.querySelector('.chip-icon')) {
-              const icon = document.createElement('span');
-              icon.className = 'material-icons chip-icon';
-              icon.textContent = 'check';
-              chip.insertBefore(icon, chip.querySelector('.chip-text'));
-            }
-          } else {
-            chip.classList.remove('selected');
-            // Remove checkmark icon
-            const icon = chip.querySelector('.chip-icon');
-            if (icon) icon.remove();
-          }
-        }
-      });
+      // Update checkboxes to reflect current state
+      syncRuleChips();
     }
 
     /* Time-threshold handlers — preset chips + custom input.
@@ -4441,7 +4432,7 @@
       const total = ACTION_TIMES_USERS.length;
       const el = document.getElementById('threshold-summary');
       if (el) {
-        el.innerHTML = `<strong>${count}</strong> of ${total} users above this threshold`;
+        el.innerHTML = `<strong>${count}</strong> of ${total} users`;
       }
     }
     
@@ -5353,9 +5344,10 @@
                 </span>
               </button>
               </div>
-              <button class="download-btn tab-bar-download" title="Download data" data-tooltip="Download CSV">
-                <span class="material-icons">download</span>
-              </button>
+              <a class="legacy-switch-link" href="#" onclick="return false;">
+                Switch to legacy Action Times
+                <span class="material-icons">arrow_forward</span>
+              </a>
             </div>
 
             <!-- ── Secondary pillter filters ── -->
@@ -5418,31 +5410,41 @@
                     </div>
                   </div>
                 </div>
-                
-                <!-- Persistent threshold impact summary (visible after Apply) -->
-                <span class="toolbar-threshold-summary" id="threshold-summary">
-                  <strong>10</strong> of 100 users above this threshold
-                </span>
               </div>
+
+              <!-- ── Rules Fieldset (Tabular Data only) ── -->
+              <fieldset class="rules-chips-row" id="rules-chips-row">
+                <legend>Submetric Columns</legend>
+                <label class="rule-checkbox" id="chip-adminBeforeDispense">
+                  <input type="checkbox" checked onchange="toggleRuleChip('adminBeforeDispense', this)" />
+                  <span class="chip-text">Admin Before Dispense</span>
+                </label>
+                <label class="rule-checkbox" id="chip-firstDispenseFirstAdmin">
+                  <input type="checkbox" onchange="toggleRuleChip('firstDispenseFirstAdmin', this)" />
+                  <span class="chip-text">First Dispense → First Admin</span>
+                </label>
+                <label class="rule-checkbox" id="chip-firstDispenseFirstWaste">
+                  <input type="checkbox" onchange="toggleRuleChip('firstDispenseFirstWaste', this)" />
+                  <span class="chip-text">First Dispense → First Waste</span>
+                </label>
+                <label class="rule-checkbox" id="chip-lastAdminLastWaste">
+                  <input type="checkbox" onchange="toggleRuleChip('lastAdminLastWaste', this)" />
+                  <span class="chip-text">Last Admin → Last Waste</span>
+                </label>
+                <label class="rule-checkbox" id="chip-recordedNotEqualAction">
+                  <input type="checkbox" onchange="toggleRuleChip('recordedNotEqualAction', this)" />
+                  <span class="chip-text">Recorded Admin ≠ Action Time</span>
+                </label>
+              </fieldset>
             </div>
 
-            <!-- ── Rules Chips (Tabular Data only) ── -->
-            <div class="rules-chips-row" id="rules-chips-row">
-              <button class="rule-chip selected" id="chip-adminBeforeDispense" onclick="toggleRuleChip('adminBeforeDispense')">
-                <span class="material-icons chip-icon">check</span>
-                <span class="chip-text">Admin Before Dispense</span>
-              </button>
-              <button class="rule-chip" id="chip-firstDispenseFirstAdmin" onclick="toggleRuleChip('firstDispenseFirstAdmin')">
-                <span class="chip-text">First Dispense → First Admin</span>
-              </button>
-              <button class="rule-chip" id="chip-firstDispenseFirstWaste" onclick="toggleRuleChip('firstDispenseFirstWaste')">
-                <span class="chip-text">First Dispense → First Waste</span>
-              </button>
-              <button class="rule-chip" id="chip-lastAdminLastWaste" onclick="toggleRuleChip('lastAdminLastWaste')">
-                <span class="chip-text">Last Admin → Last Waste</span>
-              </button>
-              <button class="rule-chip" id="chip-recordedNotEqualAction" onclick="toggleRuleChip('recordedNotEqualAction')">
-                <span class="chip-text">Recorded Admin ≠ Action Time</span>
+            <!-- Persistent threshold impact summary (visible after Apply) — row count, own line above table -->
+            <div class="table-row-count-row" id="table-row-count-row">
+              <span class="toolbar-threshold-summary" id="threshold-summary">
+                <strong>10</strong> of 100 users
+              </span>
+              <button class="download-btn" title="Download data" data-tooltip="Download CSV">
+                <span class="material-icons">download</span>
               </button>
             </div>
 
@@ -5452,6 +5454,15 @@
                 <div class="table-scroll-container">
                   <table class="data-table" id="usersTable">
                     <thead>
+                      <tr class="col-group-header">
+                        <th colspan="3" class="fixed-col-group">Users Above Time Threshold</th>
+                        <th colspan="2" id="group-abd" class="col-abd-group">Admin Before Dispense</th>
+                        <th colspan="2" id="group-fdfa" class="col-fdfa-group hidden">First Dispense → First Admin</th>
+                        <th colspan="2" id="group-fdfw" class="col-fdfw-group hidden">First Dispense → First Waste</th>
+                        <th colspan="2" id="group-lalw" class="col-lalw-group hidden">Last Admin → Last Waste</th>
+                        <th colspan="2" id="group-rnea" class="col-rnea-group hidden">Recorded Admin ≠ Action Time</th>
+                        <th class="fixed-col-group-right"></th>
+                      </tr>
                       <tr>
                         <th class="center sortable fixed-col" data-col="outlierScore" onclick="sortUsersTable('outlierScore')">
                           <span class="th-inner">Metric Score <span class="material-icons sort-icon">arrow_upward</span></span>
@@ -5493,15 +5504,6 @@
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center fixed-col-right">Investigate</th>
-                      </tr>
-                      <tr class="col-group-header">
-                        <th colspan="3" class="fixed-col-group"></th>
-                        <th colspan="2" id="group-abd" class="col-abd-group">Admin Before Dispense</th>
-                        <th colspan="2" id="group-fdfa" class="col-fdfa-group hidden">First Dispense → First Admin</th>
-                        <th colspan="2" id="group-fdfw" class="col-fdfw-group hidden">First Dispense → First Waste</th>
-                        <th colspan="2" id="group-lalw" class="col-lalw-group hidden">Last Admin → Last Waste</th>
-                        <th colspan="2" id="group-rnea" class="col-rnea-group hidden">Recorded Admin ≠ Action Time</th>
-                        <th class="fixed-col-group-right"></th>
                       </tr>
                     </thead>
                     <tbody id="usersTableBody">
