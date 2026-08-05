@@ -3535,7 +3535,7 @@
     let currentView = 'table';
     let sortState = { col: 'name', asc: true };
     let actionChart = null;
-    let visibleRules = ['firstDispenseFirstAdmin']; // Selected rules — drives BOTH the table columns AND the chart legend. Default: First Dispense → First Admin checked; Last Admin → Last Waste available via the Submetric Columns checkboxes.
+    let visibleRules = ['firstDispenseFirstAdmin', 'lastAdminLastWaste']; // Selected rules — drives BOTH the table columns AND the chart legend. Both submetrics are checked by default.
     let selectedComparisonScore = 'overall'; // Current comparison score metric
     let timeThreshold = 60; // Current time threshold in minutes
     let showMetricScoreLine = false; // toggle for outlier-score overlay on chart
@@ -5269,7 +5269,7 @@
                   <span class="chip-text">First Dispense → First Admin</span>
                 </label>
                 <label class="rule-checkbox" id="chip-lastAdminLastWaste">
-                  <input type="checkbox" onchange="toggleRuleChip('lastAdminLastWaste', this)" />
+                  <input type="checkbox" checked onchange="toggleRuleChip('lastAdminLastWaste', this)" />
                   <span class="chip-text">Last Admin → Last Waste</span>
                 </label>
               </fieldset>
@@ -5294,7 +5294,7 @@
                       <tr class="col-group-header">
                         <th colspan="3" class="fixed-col-group">Users Above Time Threshold</th>
                         <th colspan="2" id="group-fdfa" class="col-fdfa-group">First Dispense → First Admin</th>
-                        <th colspan="2" id="group-lalw" class="col-lalw-group hidden">Last Admin → Last Waste</th>
+                        <th colspan="2" id="group-lalw" class="col-lalw-group">Last Admin → Last Waste</th>
                         <th class="fixed-col-group-right"></th>
                       </tr>
                       <tr>
@@ -5313,10 +5313,10 @@
                         <th class="center sortable col-fdfa-time" data-col="firstDispenseFirstAdmin.avgTime" onclick="sortUsersTable('firstDispenseFirstAdmin.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center sortable col-lalw-events hidden" data-col="lastAdminLastWaste.events" onclick="sortUsersTable('lastAdminLastWaste.events')">
+                        <th class="center sortable col-lalw-events" data-col="lastAdminLastWaste.events" onclick="sortUsersTable('lastAdminLastWaste.events')">
                           <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center sortable col-lalw-time hidden" data-col="lastAdminLastWaste.avgTime" onclick="sortUsersTable('lastAdminLastWaste.avgTime')">
+                        <th class="center sortable col-lalw-time" data-col="lastAdminLastWaste.avgTime" onclick="sortUsersTable('lastAdminLastWaste.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center fixed-col-right">Actions</th>
