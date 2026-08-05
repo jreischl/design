@@ -358,53 +358,6 @@
       color: var(--teal);
     }
     
-    /* ── Rules Checkboxes ── */
-    .rules-chips-row {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: nowrap;
-      flex-shrink: 0;
-      border: 1px solid var(--gray-300);
-      border-radius: var(--radius);
-      padding: 8px 16px 16px 16px;
-    }
-    
-    .rules-chips-row legend {
-      padding: 0 6px;
-      font-family: var(--font);
-      font-size: .75rem;
-      font-weight: 600;
-      color: var(--text-54);
-      text-transform: uppercase;
-      letter-spacing: .02em;
-    }
-    
-    .rule-checkbox {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-family: var(--font);
-      font-size: .813rem;
-      font-weight: 400;
-      color: var(--text-87);
-      white-space: nowrap;
-    }
-    
-    .rule-checkbox input[type="checkbox"] {
-      accent-color: var(--teal);
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-      cursor: pointer;
-    }
-    
-    .chip-text {
-      font-size: .813rem;
-      font-weight: 400;
-    }
-    
     /* Pillter menus */
     .pillter-menu {
       display: none;
@@ -668,26 +621,63 @@
       font-weight: 400;
     }
     
-    /* Time-threshold menu — slider + numeric input, matching the app's
-       native pattern for numeric threshold pillters. */
-    .pillter-menu .threshold-section { padding: 16px 16px 4px; }
+    /* Time-threshold menu — preset chips + custom input + live preview.
+       Replaces the old slider since Kaiser's "before" value (10 min) wasn't
+       reachable with step=15, and the test intervals from IRIS Logic
+       Refinement (10/30/60/120/240) deserve to be first-class. */
+    .pillter-menu .threshold-section { padding: 14px 16px 4px; }
     .pillter-menu .threshold-section h5 {
-      margin: 0 0 14px;
-      font-size: 13px; font-weight: 600;
+      margin: 0 0 10px;
+      font-size: 12px; font-weight: 600;
       color: var(--text-87);
     }
-    .pillter-menu .threshold-slider-row {
-      display: flex; align-items: center; gap: 12px;
+    .pillter-menu .threshold-preset-row {
+      display: flex; flex-wrap: wrap; gap: 6px;
     }
-    .pillter-menu .threshold-slider-row input[type="range"] {
-      flex: 1;
-      accent-color: var(--teal);
+    .pillter-menu .threshold-preset-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0 12px; min-height: 28px;
+      border-radius: 14px;
+      border: 1px solid var(--teal);
+      background: #fff;
+      color: var(--teal);
+      font-family: var(--font);
+      font-size: .75rem; font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+      white-space: nowrap;
     }
-    .pillter-menu .threshold-slider-row input[type="number"] {
-      width: 56px; height: 36px;
-      border: 1px solid var(--gray-300); border-radius: 4px;
+    .pillter-menu .threshold-preset-chip:hover { background: rgba(0,150,184,.05); }
+    .pillter-menu .threshold-preset-chip.selected {
+      background: var(--teal); color: #fff; border-color: var(--teal);
+    }
+    .pillter-menu .threshold-custom-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .pillter-menu .threshold-custom-row input[type="number"] {
+      width: 72px; height: 30px;
+      border: 1px solid #cfcfcf; border-radius: 4px;
       padding: 0 6px; text-align: center;
-      font-family: var(--font); font-size: 14px;
+      font-family: var(--font); font-size: 13px;
+    }
+    .pillter-menu .threshold-unit {
+      font-size: 12px; color: var(--text-54);
+    }
+    .pillter-menu .threshold-preview {
+      display: flex; align-items: flex-start; gap: 6px;
+      margin: 12px 16px 0;
+      padding: 8px 10px;
+      background: rgba(0,150,184,.08);
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--text-87);
+      line-height: 1.35;
+    }
+    .pillter-menu .threshold-preview .preview-icon {
+      font-size: 16px; width: 16px; height: 16px;
+      color: var(--teal);
+      flex-shrink: 0;
+      margin-top: 1px;
     }
     .pillter-menu .threshold-help {
       padding: 10px 16px 4px;
@@ -725,6 +715,53 @@
     .pillter-menu .menu-item.selected-item {
       color: var(--teal); font-weight: 500;
     }
+    /* ── Rules Checkboxes ── */
+    .rules-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: nowrap;
+      flex-shrink: 0;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      padding: 8px 16px 16px 16px;
+    }
+    
+    .rules-chips-row legend {
+      padding: 0 6px;
+      font-family: var(--font);
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--text-54);
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+    
+    .rule-checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: .813rem;
+      font-weight: 400;
+      color: var(--text-87);
+      white-space: nowrap;
+    }
+    
+    .rule-checkbox input[type="checkbox"] {
+      accent-color: var(--teal);
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    
+    .chip-text {
+      font-size: .813rem;
+      font-weight: 400;
+    }
+
     /* Checkboxes */
     .checkbox {
       width: 16px; height: 16px; border: 2px solid var(--gray-400);
@@ -849,11 +886,17 @@
       border-left: 1px solid var(--gray-300);
     }
     
-    /* Rule column group separators - border before each sub-metric group */
+    /* Rule column group separators - add borders before each new rule group */
+    .data-table th.col-lalw-events,
+    .data-table td.col-lalw-events,
+    .data-table th.col-abd-events,
+    .data-table td.col-abd-events,
     .data-table th.col-fdfa-events,
     .data-table td.col-fdfa-events,
-    .data-table th.col-lalw-events,
-    .data-table td.col-lalw-events {
+    .data-table th.col-fdfw-events,
+    .data-table td.col-fdfw-events,
+    .data-table th.col-rnea-events,
+    .data-table td.col-rnea-events {
       border-left: 1px solid var(--gray-300);
     }
     .data-table {
@@ -1183,8 +1226,38 @@
       color: var(--gray-600);
     }
     
-    /* Metric-score toggle is disabled — Distribution (scatter) is the only
-       chart type in this scoped prototype, and the overlay doesn't
+    /* Segmented chart-type selector (Bar / Scatter), aligned with med-trends. */
+    .chart-type-selector {
+      display: inline-flex;
+      border: 1px solid var(--gray-300);
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .chart-type-selector .ct-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: #fff;
+      border: none;
+      border-right: 1px solid var(--gray-300);
+      color: var(--text-87);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .chart-type-selector .ct-btn:last-child { border-right: none; }
+    .chart-type-selector .ct-btn:hover { background: var(--gray-50); }
+    .chart-type-selector .ct-btn.active {
+      background: #e7f4f8;
+      color: var(--teal);
+    }
+    .chart-type-selector .ct-btn .mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    
+    /* Metric-score toggle is hidden in scatter mode — the overlay doesn't
        translate to a category y-axis. */
     .toggle-switch.disabled {
       opacity: .4;
@@ -3535,12 +3608,12 @@
     let currentView = 'table';
     let sortState = { col: 'name', asc: true };
     let actionChart = null;
-    let visibleRules = ['firstDispenseFirstAdmin']; // Selected rules — drives BOTH the table columns AND the chart legend. Default: First Dispense → First Admin checked; Last Admin → Last Waste available via the Submetric Columns checkboxes.
+    let visibleRules = ['adminBeforeDispense']; // Selected rules — drives BOTH the table columns AND the chart legend. Default: Admin Before Dispense (the Kaiser-driving sub-metric per IRIS Logic Refinement scope).
     let selectedComparisonScore = 'overall'; // Current comparison score metric
-    let timeThreshold = 60; // Current time threshold in minutes
+    let timeThreshold = 240; // Current time threshold in minutes
     let showMetricScoreLine = false; // toggle for outlier-score overlay on chart
-    let chartType = 'scatter'; // Distribution is the only supported chart type in this scoped prototype.
-    let tempTimeThreshold = 60; // Temporary value while adjusting
+    let chartType = 'bar'; // 'bar' | 'scatter' — toggles between aggregated-avg-time bars and record-distribution scatter
+    let tempTimeThreshold = 240; // Temporary value while adjusting
     let filteredUsers = [...ACTION_TIMES_USERS]; // Users visible based on time threshold
 
     function getActionScoreClass(score) {
@@ -3632,10 +3705,16 @@
               </div>
               <div class="user-role-dept">${user.role}${user.dept ? ' • ' + user.dept : ''}</div>
             </td>
-            <td class="num col-fdfa-events">${fmtEvents(user.firstDispenseFirstAdmin)}</td>
-            <td class="num col-fdfa-time">${fmtAvgTime(user.firstDispenseFirstAdmin)}</td>
+            <td class="num col-abd-events">${fmtEvents(user.adminBeforeDispense)}</td>
+            <td class="num col-abd-time">${fmtAvgTime(user.adminBeforeDispense)}</td>
+            <td class="num col-fdfa-events hidden">${fmtEvents(user.firstDispenseFirstAdmin)}</td>
+            <td class="num col-fdfa-time hidden">${fmtAvgTime(user.firstDispenseFirstAdmin)}</td>
+            <td class="num col-fdfw-events hidden">${fmtEvents(user.firstDispenseFirstWaste)}</td>
+            <td class="num col-fdfw-time hidden">${fmtAvgTime(user.firstDispenseFirstWaste)}</td>
             <td class="num col-lalw-events hidden">${fmtEvents(user.lastAdminLastWaste)}</td>
             <td class="num col-lalw-time hidden">${fmtAvgTime(user.lastAdminLastWaste)}</td>
+            <td class="num col-rnea-events hidden">${fmtEvents(user.recordedNotEqualAction)}</td>
+            <td class="num col-rnea-time hidden">${fmtAvgTime(user.recordedNotEqualAction)}</td>
             <td class="center fixed-col-right">
               <a href="#" class="investigate-link" onclick="event.stopPropagation(); openInvestigate('${user.name}')">
                 <span class="material-icons">open_in_new</span>
@@ -3722,6 +3801,29 @@
       }
     }
     
+    // Toggle between Bar (average time) and Scatter (record distribution) views.
+    function setChartType(type) {
+      if (type !== 'bar' && type !== 'scatter') return;
+      if (type === chartType) return;
+      chartType = type;
+      
+      // Update segmented-control visual state
+      document.querySelectorAll('.chart-type-selector .ct-btn').forEach(btn => {
+        const active = btn.dataset.type === type;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active);
+      });
+      
+      // Metric-score overlay only makes sense for the Bar chart (user on x-axis).
+      const toggleWrap = document.getElementById('metric-score-toggle-wrap');
+      if (toggleWrap) toggleWrap.classList.toggle('disabled', type === 'scatter');
+      
+      // Re-init the chart with the new layout
+      if (currentView === 'graph') {
+        if (actionChart) { actionChart.dispose(); actionChart = null; }
+        actionChart = initActionChart();
+      }
+    }
 
     function initActionChart() {
       const container = document.getElementById('action-times-graph-view');
@@ -3756,7 +3858,10 @@
       
       const ruleNames = {
         firstDispenseFirstAdmin: 'First Dispense \u2192 Admin',
-        lastAdminLastWaste:      'Last Admin \u2192 Waste'
+        lastAdminLastWaste:      'Last Admin \u2192 Waste',
+        adminBeforeDispense:     'Admin Before Dispense',
+        firstDispenseFirstWaste: 'First Dispense \u2192 Waste',
+        recordedNotEqualAction:  'Recorded Admin \u2260 Action'
       };
       
       // Legend selection mirrors visibleRules — same source of truth as the
@@ -3990,8 +4095,11 @@
       // off, we re-enable it immediately.
       chart.on('legendselectchanged', function (e) {
         const reverseLookup = {
-          'First Dispense \u2192 Admin': 'firstDispenseFirstAdmin',
-          'Last Admin \u2192 Waste':      'lastAdminLastWaste'
+          'First Dispense \u2192 Admin':   'firstDispenseFirstAdmin',
+          'Last Admin \u2192 Waste':       'lastAdminLastWaste',
+          'Admin Before Dispense':         'adminBeforeDispense',
+          'First Dispense \u2192 Waste':   'firstDispenseFirstWaste',
+          'Recorded Admin \u2260 Action':  'recordedNotEqualAction'
         };
         // Ignore non-rule legend toggles (like the Metric Score line).
         if (!(e.name in reverseLookup)) return;
@@ -4068,7 +4176,7 @@
     }
     
     function prepareChartData() {
-      const allRules = ['firstDispenseFirstAdmin', 'lastAdminLastWaste'];
+      const allRules = ['firstDispenseFirstAdmin','lastAdminLastWaste','adminBeforeDispense','firstDispenseFirstWaste','recordedNotEqualAction'];
       const data = {
         users: [],            // short labels for category axis
         fullNames: [],        // full names for tooltips
@@ -4113,12 +4221,18 @@
     function generateChartSeries(data) {
       const ruleNames = {
         firstDispenseFirstAdmin: 'First Dispense \u2192 Admin',
-        lastAdminLastWaste:      'Last Admin \u2192 Waste'
+        lastAdminLastWaste:      'Last Admin \u2192 Waste',
+        adminBeforeDispense:     'Admin Before Dispense',
+        firstDispenseFirstWaste: 'First Dispense \u2192 Waste',
+        recordedNotEqualAction:  'Recorded Admin \u2260 Action'
       };
       // One distinct color per rule, from the Bluesight Palette's 500 tier.
       const ruleColors = {
         firstDispenseFirstAdmin: '#0096B8',   // Blue 500
-        lastAdminLastWaste:      '#F5A623'    // Orange 500
+        lastAdminLastWaste:      '#F5A623',   // Orange 500
+        adminBeforeDispense:     '#9CA6F1',   // UC 500 (Periwinkle)
+        firstDispenseFirstWaste: '#EB4699',   // Pink 500
+        recordedNotEqualAction:  '#16B434'    // Success 500
       };
       
       if (chartType === 'scatter') {
@@ -4224,7 +4338,10 @@
       if (currentView === 'graph' && actionChart) {
         const ruleNameMap = {
           firstDispenseFirstAdmin: 'First Dispense \u2192 Admin',
-          lastAdminLastWaste:      'Last Admin \u2192 Waste'
+          lastAdminLastWaste:      'Last Admin \u2192 Waste',
+          adminBeforeDispense:     'Admin Before Dispense',
+          firstDispenseFirstWaste: 'First Dispense \u2192 Waste',
+          recordedNotEqualAction:  'Recorded Admin \u2260 Action'
         };
         const name = ruleNameMap[ruleKey];
         actionChart.dispatchAction({
@@ -4238,7 +4355,7 @@
     // visibleRules. Used when the chart legend drives the change instead of the
     // chip itself.
     function syncRuleChips() {
-      const allRules = ['firstDispenseFirstAdmin', 'lastAdminLastWaste'];
+      const allRules = ['firstDispenseFirstAdmin','lastAdminLastWaste','adminBeforeDispense','firstDispenseFirstWaste','recordedNotEqualAction'];
       allRules.forEach(rule => {
         const checkbox = document.querySelector(`#chip-${rule} input[type="checkbox"]`);
         if (!checkbox) return;
@@ -4249,7 +4366,10 @@
     function updateRuleVisibility() {
       const ruleColumnMap = {
         'firstDispenseFirstAdmin': ['col-fdfa-events', 'col-fdfa-time', 'col-fdfa-group'],
-        'lastAdminLastWaste': ['col-lalw-events', 'col-lalw-time', 'col-lalw-group']
+        'lastAdminLastWaste': ['col-lalw-events', 'col-lalw-time', 'col-lalw-group'],
+        'adminBeforeDispense': ['col-abd-events', 'col-abd-time', 'col-abd-group'],
+        'firstDispenseFirstWaste': ['col-fdfw-events', 'col-fdfw-time', 'col-fdfw-group'],
+        'recordedNotEqualAction': ['col-rnea-events', 'col-rnea-time', 'col-rnea-group']
       };
       
       // Hide all rule columns first
@@ -4272,21 +4392,44 @@
       syncRuleChips();
     }
 
-    /* Time-threshold handlers — slider + numeric input.
+    /* Time-threshold handlers — preset chips + custom input.
        tempTimeThreshold holds the in-flight value while the menu is open;
        Apply commits it to timeThreshold and re-filters the dataset. */
     
-    function updateSliderThreshold(value) {
+    function setThresholdPreset(value) {
       tempTimeThreshold = parseInt(value);
       document.getElementById('time-input').value = tempTimeThreshold;
+      syncThresholdPresetChips();
+      updateThresholdPreview();
     }
     
-    function updateThresholdFromNumber(value) {
+    function setThresholdCustom(value) {
       const parsed = parseInt(value);
       tempTimeThreshold = Math.max(0, Math.min(480, isNaN(parsed) ? 0 : parsed));
       // Don't snap the input back while the user is mid-type — only re-snap on
       // out-of-bounds. The number input's own min/max also catches it on blur.
-      document.getElementById('time-threshold-slider').value = tempTimeThreshold;
+      syncThresholdPresetChips();
+      updateThresholdPreview();
+    }
+    
+    // Highlight the preset chip whose value matches tempTimeThreshold (if any).
+    // When the user picks a custom value, no preset is highlighted.
+    function syncThresholdPresetChips() {
+      document.querySelectorAll('.threshold-preset-chip').forEach(chip => {
+        const matches = parseInt(chip.dataset.value) === tempTimeThreshold;
+        chip.classList.toggle('selected', matches);
+      });
+    }
+    
+    // Live preview inside the menu — recomputes the user count for the
+    // currently-staged threshold so the user can see the impact before Apply.
+    function updateThresholdPreview() {
+      const count = calculateUserCountAtThreshold(tempTimeThreshold);
+      const total = ACTION_TIMES_USERS.length;
+      const el = document.getElementById('threshold-preview-text');
+      if (el) {
+        el.innerHTML = `~<strong>${count}</strong> of ${total} users above this threshold`;
+      }
     }
     
     // Persistent summary that sits next to the Time Elapsed chip in the
@@ -4508,8 +4651,9 @@
     function cancelTimeThreshold() {
       // Reset to current applied values
       tempTimeThreshold = timeThreshold;
-      document.getElementById('time-threshold-slider').value = timeThreshold;
       document.getElementById('time-input').value = timeThreshold;
+      syncThresholdPresetChips();
+      updateThresholdPreview();
       closePillter('pillter-time-threshold');
     }
     
@@ -4569,14 +4713,14 @@
         if (chip) chip.classList.add('active');
         
         // Reset temp values for the time-threshold menu each time it opens
-        // so Cancel reverts cleanly, syncing the slider + input to the
+        // so Cancel reverts cleanly, and sync the preset chip + preview to the
         // currently-applied threshold.
         if (wrapperId === 'pillter-time-threshold') {
           tempTimeThreshold = timeThreshold;
-          const slider = document.getElementById('time-threshold-slider');
           const input = document.getElementById('time-input');
-          if (slider) slider.value = tempTimeThreshold;
           if (input) input.value = tempTimeThreshold;
+          syncThresholdPresetChips();
+          updateThresholdPreview();
         }
       }
     }
@@ -4743,8 +4887,9 @@
       // Initialize comparison score header
       updateCompScoreHeader();
       
-      // Initialize persistent threshold summary (next to chip in toolbar)
-      // so it reflects the default 60-min state.
+      // Initialize time-threshold preview (inside menu) and persistent summary
+      // (next to chip in toolbar) so both reflect the default 240-min state.
+      updateThresholdPreview();
       updateThresholdSummary();
     });
 
@@ -5221,19 +5366,32 @@
                 <div class="pillter-wrapper" id="pillter-time-threshold">
                   <button class="filter-chip secondary active" id="chip-time-threshold" onclick="togglePillter('pillter-time-threshold')">
                     <span class="cs-label">Time Threshold:</span>
-                    <span id="time-threshold-label">60 Minutes</span>
+                    <span id="time-threshold-label">240 Minutes</span>
                   </button>
-                  <div class="pillter-menu" style="width:300px; left:0; right:auto;">
+                  <div class="pillter-menu" style="width:340px">
                     <div class="threshold-section">
-                      <h5>Minutes</h5>
-                      <div class="threshold-slider-row">
-                        <input type="range" id="time-threshold-slider" min="0" max="480" value="60"
-                               oninput="updateSliderThreshold(this.value)" />
-                        <input type="number" id="time-input" min="0" max="480" value="60"
-                               oninput="updateThresholdFromNumber(this.value)" />
+                      <h5>Preset thresholds</h5>
+                      <div class="threshold-preset-row">
+                        <button class="threshold-preset-chip" data-value="10" onclick="setThresholdPreset(10)">10 min</button>
+                        <button class="threshold-preset-chip" data-value="30" onclick="setThresholdPreset(30)">30 min</button>
+                        <button class="threshold-preset-chip" data-value="60" onclick="setThresholdPreset(60)">60 min</button>
+                        <button class="threshold-preset-chip" data-value="120" onclick="setThresholdPreset(120)">120 min</button>
+                        <button class="threshold-preset-chip selected" data-value="240" onclick="setThresholdPreset(240)">240 min</button>
                       </div>
-                      <p class="threshold-help">Adjust the minimum time that has elapsed between events.</p>
                     </div>
+                    <div class="threshold-section">
+                      <h5>Custom</h5>
+                      <div class="threshold-custom-row">
+                        <input type="number" id="time-input" min="0" max="480" value="240"
+                               oninput="setThresholdCustom(this.value)" />
+                        <span class="threshold-unit">minutes (0–480)</span>
+                      </div>
+                    </div>
+                    <div class="threshold-preview">
+                      <span class="material-icons preview-icon">info_outline</span>
+                      <span id="threshold-preview-text">~10 of 100 users above this threshold</span>
+                    </div>
+                    <p class="threshold-help">Only flag events where the time between actions exceeds this threshold. Raising the threshold reduces false-positive variances from documentation timing.</p>
                     <div class="menu-divider"></div>
                     <div class="menu-footer">
                       <button class="btn-cancel" onclick="cancelTimeThreshold()">Cancel</button>
@@ -5261,16 +5419,28 @@
                 </div>
               </div>
 
-              <!-- Rules Fieldset (Tabular Data only) -->
+              <!-- ── Rules Fieldset (Tabular Data only) ── -->
               <fieldset class="rules-chips-row" id="rules-chips-row">
                 <legend>Submetric Columns</legend>
+                <label class="rule-checkbox" id="chip-adminBeforeDispense">
+                  <input type="checkbox" checked onchange="toggleRuleChip('adminBeforeDispense', this)" />
+                  <span class="chip-text">Admin Before Dispense</span>
+                </label>
                 <label class="rule-checkbox" id="chip-firstDispenseFirstAdmin">
-                  <input type="checkbox" checked onchange="toggleRuleChip('firstDispenseFirstAdmin', this)" />
+                  <input type="checkbox" onchange="toggleRuleChip('firstDispenseFirstAdmin', this)" />
                   <span class="chip-text">First Dispense → First Admin</span>
+                </label>
+                <label class="rule-checkbox" id="chip-firstDispenseFirstWaste">
+                  <input type="checkbox" onchange="toggleRuleChip('firstDispenseFirstWaste', this)" />
+                  <span class="chip-text">First Dispense → First Waste</span>
                 </label>
                 <label class="rule-checkbox" id="chip-lastAdminLastWaste">
                   <input type="checkbox" onchange="toggleRuleChip('lastAdminLastWaste', this)" />
                   <span class="chip-text">Last Admin → Last Waste</span>
+                </label>
+                <label class="rule-checkbox" id="chip-recordedNotEqualAction">
+                  <input type="checkbox" onchange="toggleRuleChip('recordedNotEqualAction', this)" />
+                  <span class="chip-text">Recorded Admin ≠ Action Time</span>
                 </label>
               </fieldset>
             </div>
@@ -5293,8 +5463,11 @@
                     <thead>
                       <tr class="col-group-header">
                         <th colspan="3" class="fixed-col-group">Users Above Time Threshold</th>
-                        <th colspan="2" id="group-fdfa" class="col-fdfa-group">First Dispense → First Admin</th>
+                        <th colspan="2" id="group-abd" class="col-abd-group">Admin Before Dispense</th>
+                        <th colspan="2" id="group-fdfa" class="col-fdfa-group hidden">First Dispense → First Admin</th>
+                        <th colspan="2" id="group-fdfw" class="col-fdfw-group hidden">First Dispense → First Waste</th>
                         <th colspan="2" id="group-lalw" class="col-lalw-group hidden">Last Admin → Last Waste</th>
+                        <th colspan="2" id="group-rnea" class="col-rnea-group hidden">Recorded Admin ≠ Action Time</th>
                         <th class="fixed-col-group-right"></th>
                       </tr>
                       <tr>
@@ -5307,16 +5480,34 @@
                         <th class="sortable sort-asc fixed-col" data-col="name" onclick="sortUsersTable('name')">
                           <span class="th-inner">User <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
+                        <th class="center sortable col-abd-events" data-col="adminBeforeDispense.events" onclick="sortUsersTable('adminBeforeDispense.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-abd-time" data-col="adminBeforeDispense.avgTime" onclick="sortUsersTable('adminBeforeDispense.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
                         <th class="center sortable col-fdfa-events" data-col="firstDispenseFirstAdmin.events" onclick="sortUsersTable('firstDispenseFirstAdmin.events')">
                           <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center sortable col-fdfa-time" data-col="firstDispenseFirstAdmin.avgTime" onclick="sortUsersTable('firstDispenseFirstAdmin.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center sortable col-lalw-events hidden" data-col="lastAdminLastWaste.events" onclick="sortUsersTable('lastAdminLastWaste.events')">
+                        <th class="center sortable col-fdfw-events" data-col="firstDispenseFirstWaste.events" onclick="sortUsersTable('firstDispenseFirstWaste.events')">
                           <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center sortable col-lalw-time hidden" data-col="lastAdminLastWaste.avgTime" onclick="sortUsersTable('lastAdminLastWaste.avgTime')">
+                        <th class="center sortable col-fdfw-time" data-col="firstDispenseFirstWaste.avgTime" onclick="sortUsersTable('firstDispenseFirstWaste.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-lalw-events" data-col="lastAdminLastWaste.events" onclick="sortUsersTable('lastAdminLastWaste.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-lalw-time" data-col="lastAdminLastWaste.avgTime" onclick="sortUsersTable('lastAdminLastWaste.avgTime')">
+                          <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-rnea-events" data-col="recordedNotEqualAction.events" onclick="sortUsersTable('recordedNotEqualAction.events')">
+                          <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
+                        </th>
+                        <th class="center sortable col-rnea-time" data-col="recordedNotEqualAction.avgTime" onclick="sortUsersTable('recordedNotEqualAction.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center fixed-col-right">Actions</th>
@@ -5332,8 +5523,16 @@
             <!-- Action Times Graph -->
             <div id="action-times-graph-wrap" style="display: none;">
               <div class="graph-toolbar">
-                <label class="toggle-switch disabled" id="metric-score-toggle-wrap">
-                  <input type="checkbox" id="metric-score-toggle" onchange="toggleMetricScoreLine(this.checked)" disabled />
+                <div class="chart-type-selector" role="tablist" aria-label="Chart type">
+                  <button class="ct-btn active" data-type="bar" onclick="setChartType('bar')" aria-pressed="true">
+                    <span class="material-icons mat-icon">bar_chart</span> Average Time
+                  </button>
+                  <button class="ct-btn" data-type="scatter" onclick="setChartType('scatter')" aria-pressed="false">
+                    <span class="material-icons mat-icon">scatter_plot</span> Distribution
+                  </button>
+                </div>
+                <label class="toggle-switch" id="metric-score-toggle-wrap">
+                  <input type="checkbox" id="metric-score-toggle" onchange="toggleMetricScoreLine(this.checked)" />
                   <span class="toggle-slider"></span>
                   <span class="toggle-label">Show metric scores</span>
                 </label>
