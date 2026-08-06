@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en" class="mat-typography">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Med Trends (Descoped) – ControlCheck</title>
+  <link rel="stylesheet" href="https://use.typekit.net/jan0wzl.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" crossorigin="anonymous">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue-dark:   #044a82;
+      --blue-darker: #0a3861;
+      --teal:        #0096b8;
+      --teal-dark:   #0083a8;
+      --teal-light:  #74c5d8;
+      --pink:        #eb4699;
+      --red:         #f24335;
+      --red-700:     #b53228;
+      --green-700:   #0e7221;
+      --yellow-900:  #655b2a;
+      --green:       #16b434;
+      --yellow:      #f5dd67;
+      --orange:      #f5a623;
+      --gray-50:     #fafafa;
+      --gray-100:    #f6f6f6;
+      --gray-200:    #f5f5f5;
+      --gray-300:    #e5e5e5;
+      --gray-400:    #adadad;
+      --gray-600:    #757575;
+      --gray-700:    #555;
+      --border:      rgba(0,0,0,.12);
+      --text-87:     rgba(0,0,0,.87);
+      --text-54:     rgba(0,0,0,.54);
+      --font:        'Proxima Nova', proxima-nova, Helvetica, sans-serif;
+      --radius:      4px;
+    }
+    html, body {
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      background: var(--gray-50);
+      height: 100%;
+      line-height: 1.25rem;
+      -webkit-font-smoothing: antialiased;
+    }
+    body { display: flex; flex-direction: column; overflow: hidden; }
+
+    app-component, navigation, nav-menu, user-menu,
+    mat-accordion, mat-expansion-panel, mat-expansion-panel-header,
+    mat-panel-title, mat-card, mat-drawer-container,
+    mat-drawer-content, mat-drawer, router-outlet { display: block; }
+    mat-toolbar { display: flex; }
+    nav-menu { display: inline-flex; margin-right: auto; }
+    router-outlet { display: none; }
+    .flex-col-100 { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+
+    /* ── mat-toolbar / navbar ────────────────────────────── */
+    .mat-toolbar.navbar {
+      background: #fff;
+      border-bottom: 1px solid var(--gray-300);
+      height: 80px;
+      padding: 16px 32px;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 0;
+    }
+    .mat-toolbar.navbar > a.nav-link {
+      display: flex; align-items: center; border-radius: var(--radius);
+      flex-direction: row; text-decoration: none; flex-shrink: 0;
+    }
+    .navigation { display: inline-flex; flex-direction: row; flex-wrap: nowrap; margin-left: 1rem; }
+    .mdc-button.mat-mdc-button {
+      background: none; border: none; font-family: var(--font); font-size: 1rem;
+      font-weight: 500; color: var(--blue-dark); cursor: pointer; padding: 0 12px;
+      height: 48px; border-radius: var(--radius); transition: background .15s;
+      display: inline-flex; align-items: center; gap: 2px; text-decoration: none;
+      white-space: nowrap;
+    }
+    .mdc-button.mat-mdc-button:hover { background: rgba(4,74,130,.06); }
+    .nav-link.active .mdc-button__label { box-shadow: 0 2px; line-height: 32px; }
+    .mat-badge { display: inline-flex; align-items: center; gap: 4px; }
+    .mat-badge-content {
+      background: var(--red); color: #fff; font-size: 9px; font-weight: 700;
+      border-radius: 50%; width: 14px; height: 14px; text-align: center; line-height: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .mat-badge-hidden .mat-badge-content { display: none; }
+    .header-info { align-items: center; display: flex; flex: 1 1 auto; flex-flow: row; }
+    .header-user-button {
+      align-items: center; background: transparent; border: none; border-radius: 1.5rem;
+      cursor: pointer; display: flex; flex-direction: row; padding: 4px 8px;
+    }
+    .header-user-button:hover { background: rgba(0,0,0,.04); }
+    .header-customer-name {
+      color: var(--blue-dark); font-size: .813rem; line-height: 1.25rem;
+      padding-left: 1rem; text-align: right; display: flex; flex-direction: column; justify-content: center;
+    }
+    .header-customer-fullName { font-size: 1rem; line-height: 1.5rem; font-weight: 700; }
+    .header-customer-hospitalName { color: var(--gray-700); font-weight: 400; }
+    .user-circle {
+      background: var(--blue-dark); color: #fff; border-radius: 50%; width: 36px; height: 36px;
+      display: inline-flex; align-items: center; justify-content: center; font-size: .75rem;
+      font-weight: 700; margin-left: 8px; flex-shrink: 0;
+    }
+    button.mdc-icon-button.help-resources-icon {
+      border-radius: 50%; background: none; border: none; cursor: pointer; width: 40px; height: 40px;
+      display: inline-flex; align-items: center; justify-content: center; padding: 0;
+    }
+    button.mdc-icon-button.help-resources-icon:hover { background: rgba(0,0,0,.06); }
+    button.mdc-icon-button.help-resources-icon .material-icons { font-size: 1.75rem; color: var(--blue-dark); }
+    button.mdc-icon-button.inline-avatar { background: none; border: none; cursor: default; padding: 0; display: inline-flex; }
+
+    footer {
+      color: var(--gray-600); display: block; font-size: 11px; padding: 7px 0;
+      text-align: center; width: 100%; border-top: 1px solid var(--gray-300); flex-shrink: 0;
+    }
+    footer a { color: var(--gray-600); }
+
+    /* ── layout ── */
+    #app-view { flex: 1 1 auto; min-height: 0; }
+    mat-drawer-container { display: flex; flex-direction: row; flex: 1 1 auto; overflow: hidden; position: relative; min-height: 0; height: 100%; }
+    mat-drawer-content { display: flex; flex-direction: column; flex: 1 1 auto; overflow: hidden; position: relative; min-height: 0; }
+    mat-drawer {
+      display: block; position: relative; overflow: visible; background: #fff;
+      border-right: 1px solid var(--gray-300); width: 220px; flex-shrink: 0;
+      transition: width .3s cubic-bezier(.4,0,.2,1);
+    }
+    mat-drawer.collapsed { width: 48px; }
+    .mat-drawer-inner-container { width: 100%; height: 100%; overflow: auto; display: flex; flex-direction: column; }
+    .mdc-fab.mat-mdc-mini-fab {
+      width: 24px; height: 24px; min-height: 24px; border-radius: 50%; border: none; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; background: var(--teal); color: #fff;
+      box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
+      transition: background .15s, transform .3s cubic-bezier(.4,0,.2,1);
+      position: absolute; right: -12px; top: 10px; z-index: 99; padding: 0;
+    }
+    .mdc-fab.mat-mdc-mini-fab:hover { background: var(--teal-dark); }
+    .mdc-fab.mat-mdc-mini-fab .mat-icon { font-size: 18px; width: 18px; height: 18px; color: #fff; transition: transform .3s; }
+    mat-drawer.collapsed .mdc-fab.mat-mdc-mini-fab .mat-icon { transform: rotate(180deg); }
+
+    .navigation-accordion.mat-accordion { display: block; flex: 1; overflow: hidden; }
+    .navigation-accordion mat-expansion-panel { background: #fff; border-radius: 0; box-shadow: none; border-bottom: none; }
+    .navigation-accordion mat-expansion-panel-header { height: 45px !important; padding: 0 16px; cursor: pointer; display: flex; align-items: center; transition: background .15s; }
+    .navigation-accordion mat-expansion-panel-header:hover { background: rgba(0,0,0,.04); }
+    .mat-content { display: flex; flex: 1; align-items: center; }
+    .navigation-accordion mat-panel-title { font-size: .75rem; font-weight: 600; color: var(--gray-600); flex-grow: 1; text-transform: uppercase; }
+    .mat-expansion-indicator { display: flex; align-items: center; flex-shrink: 0; }
+    .mat-expansion-indicator svg { width: 24px; height: 24px; fill: var(--gray-600); transition: transform 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-header.mat-expanded .mat-expansion-indicator svg { transform: rotate(0deg); }
+    .mat-expansion-panel-header:not(.mat-expanded) .mat-expansion-indicator svg { transform: rotate(-90deg); }
+    .mat-expansion-panel-content-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 225ms cubic-bezier(.4,0,.2,1); }
+    .mat-expansion-panel-content-wrapper[inert] { grid-template-rows: 0fr; }
+    mat-expansion-panel.mat-expanded > .mat-expansion-panel-content-wrapper { grid-template-rows: 1fr; }
+    .mat-expansion-panel-content { overflow: hidden; min-height: 0; }
+    .mat-expansion-panel-body { padding: 0; }
+    .mat-mdc-nav-list { padding: 4px 0; list-style: none; }
+    a.mat-mdc-list-item {
+      display: flex; align-items: center; height: 44px; padding: 0 16px; text-decoration: none; cursor: pointer;
+      position: relative; border-left: 3px solid transparent; transition: background .15s, border-left-color .15s;
+      box-sizing: border-box; color: inherit;
+    }
+    a.mat-mdc-list-item:hover { background: rgba(0,0,0,.04); }
+    a.mat-mdc-list-item.active { background: rgba(4,74,130,.08); border-left-color: var(--blue-dark); }
+    .mdc-list-item__content { display: flex; flex: 1; overflow: hidden; }
+    .mdc-list-item__primary-text { display: flex; align-items: center; gap: 12px; font-size: .875rem; font-weight: 500; color: var(--text-87); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text { color: var(--blue-dark); font-weight: 600; }
+    .mdc-list-item__primary-text .mat-icon { font-size: 20px; width: 20px; height: 20px; flex-shrink: 0; color: var(--gray-600); }
+    a.mat-mdc-list-item.active .mdc-list-item__primary-text .mat-icon { color: var(--blue-dark); }
+    mat-drawer.collapsed a.mat-mdc-list-item { padding: 0; justify-content: center; }
+    mat-drawer.collapsed .mdc-list-item__primary-text span { display: none; }
+    mat-drawer.collapsed .navigation-accordion mat-panel-title { display: none; }
+
+    /* ── page content ── */
+    .page-content { padding: 1.5rem 2rem; overflow: auto; flex: 1 1 auto; }
+    h2.page-title { font-size: 24px; line-height: 30px; font-weight: 600; color: var(--text-87); }
+    h2.page-title .title-sep { color: var(--gray-400); font-weight: 400; margin: 0 2px; }
+    h2.page-title .title-indicator { color: var(--text-87); }
+    .page-header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+    .filter-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .reset-all-btn, .clear-all-btn { background: none; border: none; color: var(--teal); font-size: .8125rem; font-weight: 600; cursor: pointer; padding: 4px 6px; }
+    .reset-all-btn:hover, .clear-all-btn:hover { text-decoration: underline; }
+
+    /* ── Pillter chips ── */
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px;
+      border-radius: 24px; font: 600 14px/1 var(--font); border: 1px solid rgba(0,113,138,.5);
+      cursor: pointer; user-select: none; transition: background .15s,border-color .15s,color .15s;
+      position: relative; white-space: nowrap; background: transparent; color: #00718a;
+    }
+    .chip:hover { background: #e7f4f8; }
+    .chip::after { content: '▾'; font-size: 11px; opacity: .7; margin-left: 2px; }
+    .chip.no-arrow::after { display: none; }
+    .chip.selected { background: #e7f4f8; }
+    .chip.active, .chip.active.selected { background: #0096b8; color: #fff; border-color: #0096b8; }
+    /* Secondary pillter — no border, transparent by default, light hover fill,
+       solid teal + white text while its menu is open (Std. Deviation). */
+    .chip.secondary { background: transparent; color: #00718a; border-color: transparent; }
+    .chip.secondary:hover { background: #e7f4f8; }
+    .filter-wrap.open .chip.secondary { background: var(--teal); color: #fff; border-color: var(--teal); }
+    .chip-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: #00718a; color: #fff; font-size: 11px; font-weight: 500; margin-right: 2px; }
+    .filter-wrap { position: relative; display: inline-block; }
+    .filter-menu { display: none; position: absolute; top: calc(100% + 4px); left: 0; background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.22); z-index: 200; min-width: 260px; overflow: hidden; }
+    .filter-wrap.open .filter-menu { display: block; }
+    .filter-menu .menu-search { padding: 8px 12px 4px; border-bottom: 1px solid var(--gray-300); }
+    .filter-menu .menu-search input { width: 100%; height: 32px; padding: 0 8px; border: 1px solid var(--gray-300); border-radius: 4px; font-size: 13px; outline: none; font-family: Roboto, sans-serif; }
+    .filter-menu .menu-actions { display: flex; align-items: center; justify-content: space-between; padding: 4px 12px; }
+    .link-btn { background: none; border: none; color: #0096b8; font-size: 12px; font-weight: 500; cursor: pointer; padding: 4px 0; font-family: Roboto, sans-serif; }
+    .link-btn:hover { text-decoration: underline; }
+    .menu-options { max-height: 220px; overflow-y: auto; }
+    .menu-option { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; font-size: 13px; cursor: pointer; }
+    .menu-option:hover { background: var(--gray-50); }
+    .menu-option input[type="checkbox"] { accent-color: #0096b8; width: 16px; height: 16px; flex-shrink: 0; }
+    .menu-item { display: flex; align-items: center; height: 36px; padding: 0 16px; font-size: 13px; cursor: pointer; color: var(--gray-700); }
+    .menu-item:hover { background: var(--gray-50); }
+    .menu-item.selected { color: #00718a; font-weight: 600; }
+    .filter-menu .menu-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--gray-300); }
+    .btn-cancel { background: none; border: none; font: 500 13px Roboto,sans-serif; color: var(--gray-700); cursor: pointer; padding: 6px 12px; }
+    .btn-cancel:hover { background: var(--gray-50); border-radius: 4px; }
+    .btn-apply { background: var(--pink); border: none; border-radius: 4px; color: #fff; font: 500 13px Roboto,sans-serif; cursor: pointer; padding: 6px 16px; }
+    .btn-apply:hover { background: #d93d88; }
+
+    /* kebab menu */
+    .kebab-wrap { position: relative; }
+    .kebab-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--gray-300); background: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--gray-600); }
+    .kebab-btn:hover { background: var(--gray-100); }
+    .kebab-menu { display: none; position: absolute; top: calc(100% + 4px); right: 0; background: #fff; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.22); z-index: 200; min-width: 260px; padding: 8px 0; }
+    .kebab-wrap.open .kebab-menu { display: block; }
+    .kebab-menu-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 16px; cursor: pointer; }
+    .kebab-menu-item:hover { background: var(--gray-50); }
+    .kebab-menu-item .material-icons { font-size: 18px; color: var(--gray-600); margin-top: 2px; }
+    .kebab-menu-item .kb-title { font-size: .875rem; color: var(--text-87); font-weight: 600; }
+    .kebab-menu-item .kb-sub { font-size: .75rem; color: var(--gray-600); font-weight: 400; margin-top: 2px; }
+
+    /* ── view tab bar ── */
+    .view-tab-bar { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gray-300); flex-shrink: 0; margin-bottom: 1rem; }
+    .tab-bar-tabs { display: flex; gap: 1rem; }
+    .view-tab-bar .mdc-tab {
+      min-width: 90px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+      border: none; background: none; outline: none; white-space: nowrap; cursor: pointer; height: 48px;
+      font-family: var(--font); font-size: .875rem; font-weight: 500; color: var(--text-54); position: relative; transition: color .15s;
+    }
+    .view-tab-bar .mdc-tab:hover { color: var(--text-87); }
+    .view-tab-bar .mdc-tab.mdc-tab--active { color: var(--blue-dark); }
+    .view-tab-bar .mdc-tab__content { display: flex; align-items: center; justify-content: center; height: 100%; gap: 8px; }
+    .view-tab-bar .mdc-tab .material-icons { font-size: 18px; }
+    .view-tab-bar .mdc-tab-indicator__content--underline {
+      align-self: flex-end; width: 100%; border-top: 2px solid transparent; transform: scaleX(0); opacity: 0;
+      transition: transform 250ms cubic-bezier(.4,0,.2,1);
+    }
+    .view-tab-bar .mdc-tab.mdc-tab--active .mdc-tab-indicator__content--underline { border-top-color: var(--blue-dark); transform: scaleX(1); opacity: 1; }
+    .legacy-link { font-size: .875rem; color: var(--teal); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .legacy-link:hover { text-decoration: underline; }
+
+    .subtoolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+    .subtoolbar-left { display: flex; align-items: center; gap: 12px; }
+    .search-box { display: flex; align-items: center; gap: 6px; border: 1px solid var(--gray-300); border-radius: 4px; height: 36px; padding: 0 10px; background: #fff; width: 220px; }
+    .search-box input { border: none; outline: none; font-family: var(--font); font-size: .875rem; flex: 1; }
+    .search-box .material-icons { font-size: 18px; color: var(--gray-600); }
+    .user-count { font-size: .875rem; color: var(--gray-600); }
+    .user-count-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .download-icon-btn { background: none; border: none; cursor: pointer; color: var(--teal); display: inline-flex; }
+    .download-icon-btn .material-icons { font-size: 22px; }
+
+    /* ── data table ── */
+    .data-table-wrap { overflow-x: auto; background: #fff; border-radius: var(--radius); border: 1px solid var(--gray-300); }
+    table.data-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    table.data-table thead th {
+      font-size: .75rem; font-weight: 700; color: var(--text-54); letter-spacing: .03em;
+      text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--gray-300); white-space: nowrap; background: #fff;
+      cursor: pointer;
+    }
+    table.data-table thead th.num, table.data-table tbody td.num { text-align: center; }
+    table.data-table thead th .material-icons { font-size: 14px; vertical-align: -2px; }
+    table.data-table tbody td { padding: 12px 16px; font-size: .875rem; color: var(--text-87); border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+    table.data-table tbody tr:hover td { background: var(--gray-50); }
+    table.data-table tbody tr:last-child td { border-bottom: none; }
+    .user-link { color: var(--blue-dark); font-weight: 700; text-decoration: none; cursor: pointer; }
+    .user-link:hover { text-decoration: underline; }
+    .user-link.drug-name-static { cursor: default; }
+    .user-link.drug-name-static:hover { text-decoration: none; }
+    .user-role-dept { font-size: .75rem; color: var(--gray-600); font-weight: 400; margin-top: 2px; }
+    .view-drugs-link {
+      color: var(--teal); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;
+      background: transparent; padding: 7px 10px 7px 14px; border-radius: var(--radius); transition: background .15s;
+    }
+    .view-drugs-link:hover { background: #e7f4f8; text-decoration: none; }
+    .view-drugs-link .material-icons { font-size: 16px; }
+    .metric-badge {
+      display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 26px;
+      border-radius: 4px; font-weight: 700; font-size: .875rem; padding: 0 8px;
+    }
+    .metric-badge.green  { background: var(--green); color: #063e12; }
+    .metric-badge.yellow { background: var(--yellow); color: var(--yellow-900); }
+    .metric-badge.red    { background: var(--red); color: #fff; }
+    .iris-value { font-weight: 700; }
+    /* ── Overall IRIS text color, same thresholds as the Metric Score badge ── */
+    .score-green  { color: var(--green-700); }
+    .score-yellow { color: var(--yellow-900); }
+    .score-red    { color: var(--red-700); }
+    .stat-item .stat-value.score-green, .iris-flag-item .value.score-green, table.data-table tbody td.score-green   { color: var(--green-700); }
+    .stat-item .stat-value.score-yellow, .iris-flag-item .value.score-yellow, table.data-table tbody td.score-yellow { color: var(--yellow-900); }
+    .stat-item .stat-value.score-red, .iris-flag-item .value.score-red, table.data-table tbody td.score-red       { color: var(--red-700); }
+    .compare-link {
+      color: var(--teal); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;
+      background: transparent; padding: 7px 10px 7px 14px; border-radius: var(--radius); transition: background .15s;
+    }
+    .compare-link:hover { background: #e7f4f8; text-decoration: none; }
+    .compare-link .material-icons { font-size: 16px; }
+    .drugtable-group-head th { text-align: center; border-bottom: none; padding-bottom: 4px; color: var(--text-54); }
+
+    /* ── L2 drug drill-in table: extra padding, group dividers, sticky Drug/Actions cols ── */
+    .table-l2 thead th, .table-l2 tbody td { padding: 16px 20px; }
+    .table-l2 .group-start { border-left: 1px solid var(--gray-300); }
+    .table-l2 .col-drug, .table-l2 .col-actions { position: sticky; z-index: 2; background: #fff; }
+    .table-l2 .col-drug { left: 0; }
+    .table-l2 .col-actions { right: 0; }
+    .table-l2 tbody tr:hover td.col-drug, .table-l2 tbody tr:hover td.col-actions { background: var(--gray-50); }
+
+    /* ── L1 main table: sticky Actions column ── */
+    .table-l1 .col-actions { position: sticky; right: 0; z-index: 2; background: #fff; }
+    .table-l1 tbody tr:hover td.col-actions { background: var(--gray-50); }
+
+    /* ── stacked bar chart (visualized) ── */
+    .chart-wrap { background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 20px 20px 8px; }
+    .chart-title { font-size: 1rem; font-weight: 600; color: var(--text-87); text-align: center; margin-bottom: 20px; }
+    .chart-legend { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 8px; }
+    .chart-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: .8125rem; color: var(--text-54); }
+    .chart-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .dot-dispense { background: #0096b8; } .dot-admin { background: #9575cd; } .dot-waste { background: var(--orange); } .dot-return { background: #43a047; }
+    .hbar-row { display: grid; grid-template-columns: 130px 1fr; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .hbar-name { font-size: .8125rem; color: var(--text-87); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hbar-track { display: flex; height: 20px; position: relative; }
+    .hbar-seg { height: 20px; }
+    .hbar-axis { display: grid; grid-template-columns: 130px 1fr; margin-top: 8px; }
+    .hbar-axis-scale { display: flex; justify-content: space-between; font-size: .6875rem; color: var(--gray-600); padding: 0 2px; }
+
+    /* ── chart pagination ── */
+    .chart-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 20px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--gray-200); font-size: .8125rem; color: var(--gray-700); flex-wrap: wrap; }
+    .chart-pagination label.fit-screen { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .chart-pagination input[type="checkbox"] { accent-color: #0096b8; width: 15px; height: 15px; }
+    .page-size-select { color: var(--teal); font-weight: 600; cursor: pointer; background: none; border: none; font-size: .8125rem; display: inline-flex; align-items: center; gap: 2px; font-family: var(--font); }
+    .page-range-text { color: var(--gray-700); }
+    .page-nav-btns { display: flex; align-items: center; gap: 2px; }
+    .page-nav-btn { width: 28px; height: 28px; border: none; background: none; border-radius: 4px; cursor: pointer; color: var(--gray-600); display: inline-flex; align-items: center; justify-content: center; }
+    .page-nav-btn:hover:not(:disabled) { background: var(--gray-100); }
+    .page-nav-btn:disabled { color: var(--gray-300); cursor: default; }
+    .page-nav-btn .material-icons { font-size: 18px; }
+
+    /* ── chart tooltip ── */
+    .chart-tooltip {
+      position: fixed; z-index: 900; background: #1b2b3a; color: #fff; border-radius: 6px; padding: 10px 14px;
+      font-size: .75rem; line-height: 1.6; pointer-events: none; box-shadow: 0 4px 14px rgba(0,0,0,.28);
+      display: none; min-width: 150px;
+    }
+    .chart-tooltip.show { display: block; }
+    .chart-tooltip::before {
+      content: ''; position: absolute; left: -6px; top: 16px; width: 0; height: 0;
+      border-width: 6px 6px 6px 0; border-style: solid; border-color: transparent #1b2733 transparent transparent;
+    }
+    .chart-tooltip .tt-title { font-weight: 700; margin-bottom: 4px; white-space: nowrap; }
+    .chart-tooltip .tt-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .chart-tooltip .tt-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .chart-tooltip .tt-total { font-weight: 700; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,.2); white-space: nowrap; }
+
+    /* ── right-side IRIS drawer ── */
+    .iris-drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.15); z-index: 500; display: none; }
+    .iris-drawer-overlay.show { display: block; }
+    .iris-drawer {
+      position: fixed; top: 0; right: -560px; width: 560px; height: 100%; background: #fff; z-index: 501;
+      box-shadow: -4px 0 16px rgba(0,0,0,.15); transition: right .25s cubic-bezier(.4,0,.2,1);
+      display: flex; flex-direction: column;
+    }
+    .iris-drawer.show { right: 0; }
+    .iris-drawer-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 24px 0; }
+    .iris-drawer-header h3 { font-size: 1.125rem; font-weight: 700; color: var(--text-87); }
+    .iris-drawer-header .role { font-size: .8125rem; color: var(--gray-600); margin-top: 2px; }
+    .iris-drawer-actions { display: flex; align-items: center; gap: 12px; }
+    .move-to-btn { font-size: .8125rem; font-weight: 600; color: var(--gray-600); border: none; background: none; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .icon-btn { width: 32px; height: 32px; border-radius: 4px; border: none; background: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--gray-600); }
+    .icon-btn:hover { background: var(--gray-100); }
+    .icon-btn.teal { background: var(--teal); color: #fff; }
+    .icon-btn.teal:hover { background: var(--teal-dark); }
+    .iris-drawer-tabs { display: flex; gap: 4px; padding: 0 24px; border-bottom: 1px solid var(--gray-300); margin-top: 16px; }
+    .iris-tab-btn { background: none; border: none; padding: 10px 4px; font-size: .875rem; font-weight: 600; color: var(--text-54); cursor: pointer; position: relative; }
+    .iris-tab-btn.active { color: var(--blue-dark); }
+    .iris-tab-btn.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--blue-dark); }
+    .iris-tab-btn.disabled { color: var(--gray-400); cursor: not-allowed; }
+    .iris-drawer-body { padding: 20px 24px; overflow: auto; flex: 1 1 auto; }
+    .iris-flag-card { display: flex; align-items: center; gap: 24px; border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px; }
+    .iris-flag-item .label { font-size: .75rem; font-weight: 700; text-transform: uppercase; color: var(--gray-600); }
+    .iris-flag-item .value { font-size: .9375rem; color: var(--text-87); margin-top: 2px; }
+    .iris-flag-item .value.big { font-size: 1.25rem; font-weight: 700; }
+    .section-label { font-size: .8125rem; font-weight: 700; color: var(--text-87); margin-bottom: 10px; }
+    .iris-chart-card { border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 16px; margin-bottom: 20px; }
+    .iris-chart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .iris-chart-head .chart-title-sm { font-weight: 700; color: var(--text-87); }
+    .dept-avg-legend { font-size: .75rem; color: var(--gray-600); display: flex; align-items: center; gap: 6px; }
+    .dept-avg-line { width: 18px; height: 0; border-top: 2px solid var(--text-54); display: inline-block; }
+    .iris-bars { display: flex; align-items: flex-end; justify-content: space-between; height: 130px; padding: 0 4px; position: relative; }
+    .iris-bar-col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 40px; position: relative; }
+    .iris-bar { width: 26px; border-radius: 2px 2px 0 0; position: relative; }
+    .iris-bar-val { position: absolute; top: -18px; font-size: .6875rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+    .iris-bar-month { font-size: .6875rem; color: var(--gray-600); margin-top: 6px; }
+    .iris-bar-nodata { font-size: .6875rem; color: var(--gray-400); text-align: center; }
+    .avg-table { width: 100%; border-collapse: collapse; }
+    .avg-table th { font-size: .6875rem; font-weight: 700; color: var(--gray-600); padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--gray-300); }
+    .avg-table td { font-size: .8125rem; text-align: center; padding: 8px 4px; color: var(--text-87); }
+
+    /* ── drill-in header ── */
+    .drillin-back { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .back-arrow-btn { background: none; border: none; cursor: pointer; color: var(--teal); display: inline-flex; }
+    .back-arrow-btn .material-icons { font-size: 22px; }
+    .drillin-title h3 { font-size: 1.25rem; font-weight: 700; color: var(--text-87); }
+    .drillin-title .role { font-size: .8125rem; color: var(--gray-600); }
+    .stat-card { background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .stat-card h4 { color: var(--blue-dark); font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
+    .stat-group { display: flex; gap: 40px; }
+    .stat-item .stat-label { font-size: .6875rem; font-weight: 700; text-transform: uppercase; color: var(--gray-600); margin-bottom: 4px; }
+    .stat-item .stat-value { font-size: 1.0625rem; font-weight: 700; color: var(--text-87); }
+    .iris-detail-btn { background: var(--pink); color: #fff; border: none; border-radius: 4px; padding: 8px 18px; font-weight: 700; font-size: .8125rem; cursor: pointer; }
+    .iris-detail-btn:hover { background: #d93d88; }
+
+    /* ── compare panel: expands inline below the L2 table row that opened it ── */
+    .compare-expand-row td { padding: 0; border-bottom: 1px solid var(--gray-300); }
+    .compare-panel { background: #e3ecf4; width: 100%; display: flex; flex-direction: column; }
+    .compare-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(4,74,130,.12); }
+    .compare-header h4 { font-size: 1rem; font-weight: 700; color: var(--blue-dark); }
+    .compare-view-toggle { display: inline-flex; border: 1px solid var(--gray-300); border-radius: 4px; overflow: hidden; }
+    .compare-view-toggle button { width: 34px; height: 30px; border: none; background: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--gray-600); }
+    .compare-view-toggle button.active { background: var(--teal); color: #fff; }
+    .compare-body { padding: 16px 20px; }
+    .compare-link.active { background: #e7f4f8; }
+    tr.focus-user td { background: #fdf5e5 !important; font-weight: 700; }
+    .compare-scatter-wrap { padding: 8px 4px 20px; }
+    .event-type-chip { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; border-radius: 24px; font: 600 13px var(--font); color: #00718a; cursor: pointer; margin-bottom: 16px; }
+    .event-type-chip:hover { background: #e7f4f8; }
+    .scatter-plot { position: relative; height: 340px; border-left: 1px solid var(--gray-300); border-bottom: 1px solid var(--gray-300); margin-left: 40px; margin-right: 10px; }
+    .scatter-plot .grid-line { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--gray-200); }
+    .scatter-dot { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: var(--teal); transform: translate(-50%,50%); }
+    .scatter-dot.focus { width: 18px; height: 18px; background: var(--orange); z-index: 2; }
+    .scatter-ylabel { position: absolute; left: -34px; top: 50%; transform: rotate(-90deg) translateX(50%); font-size: .6875rem; color: var(--gray-600); white-space: nowrap; }
+    .scatter-xlabel { text-align: center; font-size: .6875rem; color: var(--gray-600); margin: 6px 40px 0 40px; }
+    .scatter-yaxis-vals span, .scatter-xaxis-vals span { position: absolute; font-size: .6875rem; color: var(--gray-600); }
+
+    /* ── compare table row actions (⋮ menu) ── */
+    .row-actions-btn { background: none; border: none; cursor: pointer; color: var(--gray-600); display: inline-flex; padding: 6px; border-radius: 50%; }
+    .row-actions-btn:hover { background: var(--gray-200); }
+    .row-actions-cell { position: relative; }
+    .row-actions-menu { display: none; position: absolute; right: 8px; top: 34px; background: #fff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.18); padding: 6px; min-width: 172px; z-index: 50; }
+    .row-actions-menu.show { display: block; }
+    .row-actions-menu button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 8px 10px; border-radius: 6px; font-size: .8125rem; font-weight: 600; color: var(--text-87); white-space: nowrap; }
+    .row-actions-menu button:hover { background: var(--gray-100); }
+    .row-actions-menu .material-icons { font-size: 18px; color: var(--gray-600); }
+
+    /* ── investigate panel ── */
+    .investigate-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 700; display: none; align-items: center; justify-content: center; }
+    .investigate-overlay.show { display: flex; }
+    .investigate-panel { background: #fff; width: 100%; max-width: 980px; max-height: 84vh; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; }
+    .investigate-header { padding: 20px 24px 0; display: flex; align-items: flex-start; justify-content: space-between; }
+    .investigate-header h4 { font-size: 1.0625rem; font-weight: 700; color: var(--text-87); margin-bottom: 6px; }
+    .investigate-header p { font-size: .8125rem; color: var(--gray-600); line-height: 1.4; }
+    .investigate-count { font-size: .8125rem; font-weight: 700; color: var(--text-87); padding: 12px 24px 0; }
+    .investigate-body { padding: 12px 24px 20px; overflow: auto; flex: 1 1 auto; }
+    .es-card { border: 1px solid var(--gray-300); border-radius: 4px; padding: 12px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 20px; }
+    .es-card .es-patient { flex: 1 1 0; min-width: 0; }
+    .es-card .es-patient a { color: var(--teal); font-weight: 700; text-decoration: none; }
+    .es-card .es-date { font-weight: 700; font-size: .875rem; margin: 2px 0; }
+    .es-card .es-dept { font-size: .8125rem; color: var(--gray-600); }
+    .es-card .es-drug { flex: 1.4 1 0; min-width: 0; }
+    .es-card .es-drug h5 { font-size: .9375rem; font-weight: 700; margin-bottom: 6px; }
+    .es-stats { display: flex; gap: 16px; }
+    .es-stat { font-size: .75rem; color: var(--gray-600); }
+    .es-stat strong { display: block; font-size: .8125rem; color: var(--text-87); }
+    .es-stat.missing strong { color: var(--red-700); }
+    .es-card .es-actions { flex-shrink: 0; text-align: right; }
+    .es-actions .es-id { font-weight: 700; font-size: .8125rem; margin-bottom: 6px; }
+    .es-actions a { display: block; font-size: .8125rem; color: var(--teal); text-decoration: none; margin-top: 2px; }
+    .es-actions a:hover { text-decoration: underline; }
+    .close-btn { background: none; border: none; cursor: pointer; color: var(--gray-600); }
+
+    .modal-close-x { background: none; border: none; cursor: pointer; color: var(--gray-600); }
+    .modal-close-x .material-icons { font-size: 22px; }
+
+    .view { display: none; }
+    .view.active { display: block; }
+  </style>
+</head>
+<body class="mat-typography">
+
+<app-component class="flex-col-100">
+<div class="app-container flex-col-100">
+
+  <navigation>
+    <header>
+      <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
+        <a class="nav-link" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
+            <g><g><g><path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.63,34.63,0,0,1,187.35,28.25,40.73,40.73,0,0,1,202.84,25.48Z"/></g></g></g>
+          </svg>
+        </a>
+        <nav-menu>
+          <div class="navigation">
+            <button class="mdc-button mat-mdc-button nav-link"><span class="mdc-button__label">Audit</span></button>
+            <a class="mdc-button mat-mdc-button nav-link active" href="#"><span class="mdc-button__label">Analyze</span></a>
+            <button class="mdc-button mat-mdc-button nav-link"><span class="mdc-button__label">Cases</span></button>
+            <button class="mdc-button mat-mdc-button nav-link"><span class="mdc-button__label">Report</span></button>
+            <button class="mdc-button mat-mdc-button nav-link"><span class="mdc-button__label">Upload</span></button>
+            <a class="mdc-button mat-mdc-button nav-link" href="#">
+              <span class="mdc-button__label">
+                <span class="mat-badge mat-badge-warn mat-badge-small">Manage&nbsp;<span class="mat-badge-content">!</span></span>
+              </span>
+            </a>
+            <a class="mdc-button mat-mdc-button nav-link" href="#"><span class="mdc-button__label"><strong>Prism Assistant</strong></span></a>
+          </div>
+        </nav-menu>
+        <user-menu>
+          <div class="header-info">
+            <button class="mdc-button mat-mdc-button header-user-button nav-link">
+              <span class="mdc-button__label">
+                <div class="header-customer-name">
+                  <div class="header-customer-fullName">Jon Reischl</div>
+                  <div class="header-customer-hospitalName">[33128] Vitalina 15</div>
+                </div>
+                <button tabindex="-1" class="mdc-icon-button inline-avatar"><div class="user-circle">JR</div></button>
+              </span>
+            </button>
+            <button class="mdc-icon-button help-resources-icon nav-link"><span class="material-icons">help</span></button>
+          </div>
+        </user-menu>
+      </mat-toolbar>
+    </header>
+  </navigation>
+
+  <div id="app-view">
+    <mat-drawer-container>
+
+      <!-- ═══ LEFT ANALYZE NAV SIDEBAR ═══ -->
+      <mat-drawer mode="side" opened class="mat-drawer mat-drawer-opened mat-drawer-side" id="analyze-drawer">
+        <div class="mat-drawer-inner-container">
+          <button class="mdc-fab mat-mdc-mini-fab" onclick="toggleDrawer()" title="Collapse sidebar" aria-label="Collapse sidebar">
+            <span class="material-icons mat-icon">chevron_left</span>
+          </button>
+          <mat-accordion class="mat-accordion navigation-accordion mat-accordion-multi">
+            <mat-expansion-panel class="mat-expansion-panel">
+              <mat-expansion-panel-header class="mat-expansion-panel-header" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title>Health System</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert>
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">list_alt</span><span>Active IRIS Reviews</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">domain_add</span><span>Multi-Hospital Users</span></span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="mat-expansion-panel mat-expanded">
+              <mat-expansion-panel-header class="mat-expansion-panel-header mat-expanded" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title>Nursing</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper">
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span><span>IRIS Worklist</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">timeline</span><span>Variance Trends</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">vaccines</span><span>Dispense Patterns</span></span></span></a>
+                    <a class="mat-mdc-list-item active" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">query_stats</span><span>Med Trends</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">schedule</span><span>Action Times</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">supervised_user_circle</span><span>User Mobility</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">hub</span><span>Waste Networks</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">delete_outline</span><span>Full Package Waste</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">event_card</span><span>Shift Analysis</span></span></span></a>
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">sentiment_dissatisfied</span><span>Pain Analysis</span></span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+            <mat-expansion-panel class="mat-expansion-panel">
+              <mat-expansion-panel-header class="mat-expansion-panel-header" onclick="togglePanel(this)">
+                <span class="mat-content"><mat-panel-title>OR</mat-panel-title></span>
+                <span class="mat-expansion-indicator"><svg viewBox="0 -960 960 960"><path d="M480-345 240-585l56-56 184 184 184-184 56 56-240 240Z"/></svg></span>
+              </mat-expansion-panel-header>
+              <div class="mat-expansion-panel-content-wrapper" inert>
+                <div class="mat-expansion-panel-content"><div class="mat-expansion-panel-body">
+                  <nav class="mat-mdc-nav-list">
+                    <a class="mat-mdc-list-item" href="#"><span class="mdc-list-item__content"><span class="mdc-list-item__primary-text"><span class="material-icons mat-icon">dns</span><span>IRIS Worklist</span></span></span></a>
+                  </nav>
+                </div></div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </mat-drawer>
+
+      <!-- ═══ PAGE CONTENT ═══ -->
+      <mat-drawer-content>
+        <div class="page-content">
+
+          <!-- ═══ PAGE HEADER — shared across L1 (main list) and L2 (drill-in) ═══ -->
+          <div class="page-header-row">
+            <h2 class="page-title" id="pageTitle">Med Trends<span class="title-sep" id="titleSep" style="display:none"> / </span><span class="title-indicator" id="titleIndicator" style="display:none">By User</span></h2>
+            <div class="filter-bar">
+              <span class="chip active" id="dateChip">07/03/2026 - 08/02/2026</span>
+
+              <div class="filter-wrap" id="deptWrap">
+                <span class="chip" id="deptChip" onclick="toggleFilter('deptWrap')">Department</span>
+                <div class="filter-menu" style="width:260px">
+                  <div class="menu-search"><input type="text" placeholder="Search..."></div>
+                  <div class="menu-actions"><button class="link-btn">SELECT ALL</button><button class="link-btn">CLEAR</button></div>
+                  <div class="menu-options">
+                    <label class="menu-option"><input type="checkbox">ICU</label>
+                    <label class="menu-option"><input type="checkbox">Med North</label>
+                    <label class="menu-option"><input type="checkbox">Med South</label>
+                    <label class="menu-option"><input type="checkbox">Oncology</label>
+                    <label class="menu-option"><input type="checkbox">OR</label>
+                    <label class="menu-option"><input type="checkbox">Pharmacy</label>
+                  </div>
+                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilter('deptWrap')">Cancel</button><button class="btn-apply" onclick="closeFilter('deptWrap')">Apply</button></div>
+                </div>
+              </div>
+
+              <div class="filter-wrap" id="userWrap">
+                <span class="chip" id="userChip" onclick="toggleFilter('userWrap')">User</span>
+                <div class="filter-menu" style="width:260px">
+                  <div class="menu-search"><input type="text" placeholder="Search..."></div>
+                  <div class="menu-actions"><button class="link-btn">SELECT ALL</button><button class="link-btn">CLEAR</button></div>
+                  <div class="menu-options" id="userFilterOptions"></div>
+                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilter('userWrap')">Cancel</button><button class="btn-apply" onclick="closeFilter('userWrap')">Apply</button></div>
+                </div>
+              </div>
+
+              <div class="filter-wrap" id="roleWrap">
+                <span class="chip" id="roleChip" onclick="toggleFilter('roleWrap')">Role</span>
+                <div class="filter-menu" style="width:220px">
+                  <div class="menu-options" id="roleFilterOptions"></div>
+                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilter('roleWrap')">Cancel</button><button class="btn-apply" onclick="closeFilter('roleWrap')">Apply</button></div>
+                </div>
+              </div>
+
+              <button class="clear-all-btn" onclick="resetAll()">Clear All</button>
+
+              <div class="kebab-wrap" id="kebabWrap">
+                <button class="kebab-btn" onclick="toggleKebab()" title="More actions"><span class="material-icons">more_vert</span></button>
+                <div class="kebab-menu">
+                  <div class="kebab-menu-item">
+                    <span class="material-icons">print</span>
+                    <div><div class="kb-title">Save as PDF or Print</div><div class="kb-sub">Set the Destination to Save as PDF in the Print window.</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ MAIN LIST VIEW ═══ -->
+          <div class="view active" id="view-main">
+            <div class="view-tab-bar">
+              <div class="tab-bar-tabs">
+                <button class="mdc-tab mdc-tab--active" id="mainTab0" onclick="switchMainTab(0)"><span class="mdc-tab__content"><span class="material-icons">table_chart</span>Tabular Data<span class="mdc-tab-indicator__content--underline"></span></span></button>
+                <button class="mdc-tab" id="mainTab1" onclick="switchMainTab(1)"><span class="mdc-tab__content"><span class="material-icons">bar_chart</span>Visualized Data<span class="mdc-tab-indicator__content--underline"></span></span></button>
+              </div>
+              <a class="legacy-link" href="#">Switch to legacy Med Trends <span class="material-icons" style="font-size:16px">arrow_forward</span></a>
+            </div>
+
+            <!-- Tabular Data -->
+            <div id="mainBody0">
+              <div class="subtoolbar">
+                <div class="subtoolbar-left">
+                  <div class="filter-wrap" id="stdDevWrap">
+                    <span class="chip secondary" id="stdDevChip" onclick="toggleFilter('stdDevWrap')">Std. Deviation: None</span>
+                    <div class="filter-menu" style="width:140px">
+                      <div class="menu-item selected" onclick="setStdDev('None')">None</div>
+                      <div class="menu-item" onclick="setStdDev('+1σ')">+1σ</div>
+                      <div class="menu-item" onclick="setStdDev('+2σ')">+2σ</div>
+                      <div class="menu-item" onclick="setStdDev('+3σ')">+3σ</div>
+                      <div class="menu-item" onclick="setStdDev('+4σ')">+4σ</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="search-box"><span class="material-icons">search</span><input type="text" placeholder="Search"></div>
+              </div>
+              <div class="user-count-bar">
+                <span class="user-count" id="userCountLabel">— users</span>
+                <button class="download-icon-btn" title="Download"><span class="material-icons">file_download</span></button>
+              </div>
+              <div class="data-table-wrap">
+                <table class="data-table table-l1">
+                  <thead>
+                    <tr>
+                      <th class="num">Metric Score <span class="material-icons">arrow_downward</span></th>
+                      <th class="num">Overall IRIS</th>
+                      <th>User</th>
+                      <th class="num">Total Events</th>
+                      <th class="num">Dispenses</th>
+                      <th class="num">Admins</th>
+                      <th class="num">Wastes</th>
+                      <th class="num">Returns</th>
+                      <th class="num">Drugs</th>
+                      <th class="col-actions">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mainTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Visualized Data -->
+            <div id="mainBody1" style="display:none">
+              <div class="subtoolbar">
+                <div class="subtoolbar-left">
+                  <div class="filter-wrap" id="stdDevWrap2">
+                    <span class="chip secondary" id="stdDevChip2" onclick="toggleFilter('stdDevWrap2')">Std. Deviation: None</span>
+                  </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <div class="search-box"><span class="material-icons">search</span><input type="text" placeholder="Search"></div>
+                  <button class="download-icon-btn"><span class="material-icons">file_download</span></button>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <div class="chart-title">Total Events by User</div>
+                <div class="chart-legend">
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-dispense"></span>Dispense</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-admin"></span>Admin</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-waste"></span>Waste</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-return"></span>Return</span>
+                </div>
+                <div id="hbarChart"></div>
+                <div class="hbar-axis">
+                  <div></div>
+                  <div class="hbar-axis-scale"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span><span>120</span></div>
+                </div>
+                <div class="chart-pagination" id="mainChartPagination">
+                  <label class="fit-screen"><input type="checkbox" id="fitScreenMain" onchange="toggleFitScreen()"> Fit to screen</label>
+                  <div class="filter-wrap" id="pageSizeWrapMain">
+                    <span class="page-size-select" onclick="toggleFilter('pageSizeWrapMain')">Show at a time: <span id="pageSizeValMain">10</span> <span class="material-icons" style="font-size:16px">arrow_drop_down</span></span>
+                    <div class="filter-menu" style="width:110px">
+                      <div class="menu-item" onclick="setPageSize(5)">5</div>
+                      <div class="menu-item" onclick="setPageSize(10)">10</div>
+                      <div class="menu-item" onclick="setPageSize(15)">15</div>
+                      <div class="menu-item" onclick="setPageSize(20)">20</div>
+                    </div>
+                  </div>
+                  <span class="page-range-text" id="pageRangeMain">1–10 of 20</span>
+                  <div class="page-nav-btns">
+                    <button class="page-nav-btn" onclick="gotoPage('first')" title="First page"><span class="material-icons">first_page</span></button>
+                    <button class="page-nav-btn" onclick="gotoPage('prev')" title="Previous page"><span class="material-icons">chevron_left</span></button>
+                    <button class="page-nav-btn" onclick="gotoPage('next')" title="Next page"><span class="material-icons">chevron_right</span></button>
+                    <button class="page-nav-btn" onclick="gotoPage('last')" title="Last page"><span class="material-icons">last_page</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ USER DRILL-IN VIEW (drug list) ═══ -->
+          <div class="view" id="view-drillin">
+            <div class="drillin-back" style="margin-bottom:16px">
+              <button class="back-arrow-btn" onclick="showMainView()"><span class="material-icons">arrow_back</span></button>
+              <div class="drillin-title">
+                <h3 id="drillinName">—</h3>
+                <div class="role" id="drillinRole">—</div>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div>
+                <h4>Med Trends</h4>
+                <div class="stat-group">
+                  <div class="stat-item"><div class="stat-label">Metric Score</div><span class="metric-badge yellow" id="drillinMetric">—</span></div>
+                  <div class="stat-item"><div class="stat-label">IRIS</div><div class="stat-value" id="drillinIris">—</div></div>
+                  <div class="stat-item"><div class="stat-label">Drugs</div><div class="stat-value" id="drillinDrugs">—</div></div>
+                  <div class="stat-item"><div class="stat-label">Total Events</div><div class="stat-value" id="drillinEvents">—</div></div>
+                </div>
+              </div>
+              <button class="iris-detail-btn" onclick="openIrisDrawer()">IRIS Detail</button>
+            </div>
+
+            <div class="view-tab-bar">
+              <div class="tab-bar-tabs">
+                <button class="mdc-tab mdc-tab--active" id="drugTab0" onclick="switchDrugTab(0)"><span class="mdc-tab__content"><span class="material-icons">table_chart</span>Tabular Data<span class="mdc-tab-indicator__content--underline"></span></span></button>
+                <button class="mdc-tab" id="drugTab1" onclick="switchDrugTab(1)"><span class="mdc-tab__content"><span class="material-icons">bar_chart</span>Visualized Data<span class="mdc-tab-indicator__content--underline"></span></span></button>
+              </div>
+              <a class="legacy-link" href="#">Switch to legacy Med Trends <span class="material-icons" style="font-size:16px">arrow_forward</span></a>
+            </div>
+
+            <div id="drugBody0">
+              <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="download-icon-btn"><span class="material-icons">file_download</span></button></div>
+              <div class="data-table-wrap">
+                <table class="data-table table-l2">
+                  <thead>
+                    <tr>
+                      <th class="col-drug" rowspan="2" style="vertical-align:bottom">Drug <span class="material-icons">arrow_upward</span></th>
+                      <th rowspan="2" class="num" style="vertical-align:bottom">Total Events</th>
+                      <th colspan="2" class="drugtable-group-head group-start">Dispense</th>
+                      <th colspan="2" class="drugtable-group-head group-start">Admin</th>
+                      <th colspan="2" class="drugtable-group-head group-start">Waste</th>
+                      <th colspan="2" class="drugtable-group-head group-start">Return</th>
+                      <th class="col-actions group-start" rowspan="2" style="vertical-align:bottom">Actions</th>
+                    </tr>
+                    <tr>
+                      <th class="num group-start">Events</th><th class="num">Mass</th>
+                      <th class="num group-start">Events</th><th class="num">Mass</th>
+                      <th class="num group-start">Events</th><th class="num">Mass</th>
+                      <th class="num group-start">Events</th><th class="num">Mass</th>
+                    </tr>
+                  </thead>
+                  <tbody id="drugTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div id="drugBody1" style="display:none">
+              <div class="chart-wrap">
+                <div class="chart-title" id="drugChartTitle">Total Events by Drug</div>
+                <div class="chart-legend">
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-dispense"></span>Dispense</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-admin"></span>Admin</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-waste"></span>Waste</span>
+                  <span class="chart-legend-item"><span class="chart-legend-dot dot-return"></span>Return</span>
+                </div>
+                <div id="drugHbarChart"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div>
+
+  <footer>
+    Copyright © 2011–2026 by Bluesight, Inc. • 24/7 Support: 786-548-2432 ext. 3 or
+    <a href="mailto:help@bluesight.com">help@bluesight.com</a>
+    • All Rights Reserved | <a href="http://bluesight.com/patent/" target="_blank">Patents Granted/Pending</a>
+  </footer>
+
+</div>
+</app-component>
+
+<!-- ═══ RIGHT-SIDE IRIS DETAIL DRAWER ═══ -->
+<div class="iris-drawer-overlay" id="irisDrawerOverlay" onclick="closeIrisDrawer()"></div>
+<div class="iris-drawer" id="irisDrawer">
+  <div class="iris-drawer-header">
+    <div>
+      <h3 id="irisDrawerName">—</h3>
+      <div class="role" id="irisDrawerRole">—</div>
+    </div>
+    <div class="iris-drawer-actions">
+      <button class="move-to-btn">MOVE TO... <span class="material-icons" style="font-size:16px">arrow_drop_down</span></button>
+      <button class="icon-btn teal"><span class="material-icons">add</span></button>
+      <button class="modal-close-x" onclick="closeIrisDrawer()"><span class="material-icons">close</span></button>
+    </div>
+  </div>
+  <div class="iris-drawer-tabs">
+    <button class="iris-tab-btn active" id="irisTab0" onclick="switchIrisDrawerTab(0)">IRIS</button>
+    <button class="iris-tab-btn" id="irisTab1" onclick="switchIrisDrawerTab(1)">Historical IRIS</button>
+    <button class="iris-tab-btn" id="irisTab2" onclick="switchIrisDrawerTab(2)">Reviews &amp; Cases <span id="irisReviewCount"></span></button>
+    <button class="iris-tab-btn disabled">Documentation</button>
+  </div>
+  <div class="iris-drawer-body">
+    <div id="irisTabBody0">
+      <div class="iris-flag-card">
+        <div class="iris-flag-item"><div class="label">Flagged IRIS</div><div class="value" id="irisFlagValue">No flagged score</div></div>
+        <div class="iris-flag-item"><div class="label">Current IRIS</div><div class="value big" id="irisCurrentValue">—</div></div>
+        <div class="iris-flag-item"><div class="label">&nbsp;</div><div class="value" id="irisCurrentRange">—</div></div>
+      </div>
+      <div class="section-label">6 Month IRIS &amp; Activity History</div>
+      <div class="iris-chart-card">
+        <div class="iris-chart-head">
+          <span class="chart-title-sm">IRIS Score</span>
+          <span class="dept-avg-legend"><span class="dept-avg-line"></span>Department Average</span>
+        </div>
+        <div class="iris-bars" id="irisBarsChart"></div>
+      </div>
+      <div class="section-label">Average CS Dispenses Per Shift / Department Average</div>
+      <div class="iris-chart-card" style="padding:8px 16px">
+        <table class="avg-table" id="avgDispenseTable"></table>
+      </div>
+    </div>
+    <div id="irisTabBody1" style="display:none">
+      <p style="font-size:.875rem;color:var(--gray-600)">Historical IRIS scores by evaluation period appear here.</p>
+    </div>
+    <div id="irisTabBody2" style="display:none">
+      <p style="font-size:.875rem;color:var(--gray-600)">Open reviews and cases associated with this user appear here.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COMPARE PANEL — parked here; moved into the invoking L2 table row's expand slot when opened ═══ -->
+<div id="comparePanelPark" style="display:none">
+  <div class="compare-panel" id="comparePanel">
+    <div class="compare-header">
+      <h4 id="compareTitle">Comparing —</h4>
+      <div style="display:flex;align-items:center;gap:16px">
+        <div class="compare-view-toggle">
+          <button class="active" id="compareViewTab0" onclick="switchCompareView(0)"><span class="material-icons" style="font-size:18px">table_chart</span></button>
+          <button id="compareViewTab1" onclick="switchCompareView(1)"><span class="material-icons" style="font-size:18px">scatter_plot</span></button>
+        </div>
+        <button class="modal-close-x" onclick="closeCompare()"><span class="material-icons">close</span></button>
+      </div>
+    </div>
+    <div class="compare-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span class="user-count" style="margin:0" id="compareCount">147 users</span>
+        <button class="download-icon-btn"><span class="material-icons">file_download</span></button>
+      </div>
+      <div id="compareView0">
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="vertical-align:bottom">User</th>
+                <th rowspan="2" class="num" style="vertical-align:bottom">Total Events</th>
+                <th colspan="2" class="drugtable-group-head">Dispense</th>
+                <th colspan="2" class="drugtable-group-head">Admin</th>
+                <th colspan="2" class="drugtable-group-head">Waste</th>
+                <th colspan="2" class="drugtable-group-head">Return</th>
+                <th rowspan="2"></th>
+              </tr>
+              <tr><th class="num">Events</th><th class="num">Mass</th><th class="num">Events</th><th class="num">Mass</th><th class="num">Events</th><th class="num">Mass</th><th class="num">Events</th><th class="num">Mass</th></tr>
+            </thead>
+            <tbody id="compareTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div id="compareView1" style="display:none">
+        <div class="compare-scatter-wrap">
+          <span class="event-type-chip" id="eventTypeChip">Event Type: All <span class="material-icons" style="font-size:16px">arrow_drop_down</span></span>
+          <div class="scatter-plot" id="scatterPlot">
+            <span class="scatter-ylabel">Total Mass (mg)</span>
+          </div>
+          <div class="scatter-xlabel">Total Events</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INVESTIGATE OVERLAY ═══ -->
+<div class="investigate-overlay" id="investigateOverlay">
+  <div class="investigate-panel">
+    <div class="investigate-header">
+      <div>
+        <h4 id="investigateTitle">Investigate Data from the Med Trends: Nursing</h4>
+        <p>Review, download, and make notes on event summaries from this page.<br>To edit the status of an event summary or assign it to another user, click the Event Summary ID to open the Audit page.</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <button class="btn-apply" style="border-radius:4px"><span class="material-icons" style="font-size:16px;vertical-align:-3px">expand_more</span> Download</button>
+        <button class="modal-close-x" onclick="closeInvestigate()"><span class="material-icons">close</span></button>
+      </div>
+    </div>
+    <div class="investigate-count" id="investigateCount">7 Event Summaries</div>
+    <div class="investigate-body" id="investigateBody"></div>
+  </div>
+</div>
+
+<!-- ═══ CHART TOOLTIP ═══ -->
+<div class="chart-tooltip" id="chartTooltip"></div>
+
+<script>
+  /* ══════════════════════════ DATA (reused from med-trends-aspirational.html) ══════════════════════════ */
+  var USERS = [
+    { name:'Francis Overby', role:'RN', dept:'Med North', drugs:[
+      {drug:'fentaNYL Inj', events:29, dispense:18, admin:5, waste:4, ret:2, massDispense:21.3, massAdmin:4.6, massWaste:6.6, massReturn:2.2, score:9.1, compScore:8.2},
+      {drug:'HYDROmorphone Inj', events:18, dispense:12, admin:4, waste:2, ret:0, massDispense:12.4, massAdmin:3.1, massWaste:4.2, massReturn:0.8, score:7.8, compScore:7.2},
+      {drug:'morphine Sulfate Inj', events:11, dispense:8, admin:2, waste:1, ret:0, massDispense:9.2, massAdmin:2.0, massWaste:3.1, massReturn:0.5, score:6.5, compScore:6.1},
+      {drug:'LORazepam Inj', events:6, dispense:4, admin:1, waste:1, ret:0, massDispense:2.1, massAdmin:0.4, massWaste:0.9, massReturn:0.2, score:4.2, compScore:4.0}
+    ]},
+    { name:'Evan Westcott', role:'Travel Nurse', dept:'Med North', drugs:[
+      {drug:'fentaNYL Inj', events:24, dispense:15, admin:4, waste:3, ret:2, massDispense:16.1, massAdmin:3.5, massWaste:5.5, massReturn:2.1, score:8.7, compScore:7.9},
+      {drug:'HYDROmorphone Inj', events:14, dispense:10, admin:3, waste:1, ret:0, massDispense:10.1, massAdmin:2.2, massWaste:2.9, massReturn:0.4, score:6.8, compScore:6.3},
+      {drug:'midazolam Inj', events:9, dispense:6, admin:2, waste:1, ret:0, massDispense:4.8, massAdmin:1.6, massWaste:1.8, massReturn:0.3, score:5.4, compScore:5.2}
+    ]},
+    { name:'Destiny Bloss', role:'Pharmacist', dept:'Pharmacy', drugs:[
+      {drug:'fentaNYL Inj', events:22, dispense:14, admin:3, waste:3, ret:2, massDispense:14.5, massAdmin:3.1, massWaste:5.1, massReturn:1.7, score:8.2, compScore:7.4},
+      {drug:'OXYcodone Oral', events:20, dispense:18, admin:1, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:7.5, compScore:7.0},
+      {drug:'HYDROcodone-Acetaminophen Oral', events:17, dispense:15, admin:1, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:6.2, compScore:5.8},
+      {drug:'methadone Oral', events:10, dispense:9, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:5.1, compScore:4.8},
+      {drug:'ALPRAZolam Oral', events:8, dispense:7, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:4.6, compScore:4.4}
+    ]},
+    { name:'Kristel Dorsey', role:'CRNA', dept:'ICU', drugs:[
+      {drug:'fentaNYL Inj', events:21, dispense:13, admin:4, waste:3, ret:1, massDispense:13.3, massAdmin:3.7, massWaste:4.9, massReturn:1.6, score:7.9, compScore:7.1},
+      {drug:'midazolam Inj', events:14, dispense:9, admin:3, waste:2, ret:0, massDispense:7.1, massAdmin:2.4, massWaste:3.0, massReturn:0.5, score:6.4, compScore:6.0},
+      {drug:'morphine Sulfate Inj', events:9, dispense:6, admin:2, waste:1, ret:0, massDispense:5.4, massAdmin:1.8, massWaste:2.1, massReturn:0.3, score:5.3, compScore:5.0}
+    ]},
+    { name:'Claire Fraser', role:'RN', dept:'Med North', drugs:[
+      {drug:'HYDROmorphone Inj', events:26, dispense:17, admin:5, waste:3, ret:1, massDispense:18.2, massAdmin:4.1, massWaste:5.4, massReturn:1.3, score:4.3, compScore:3.9},
+      {drug:'morphine Sulfate Inj', events:18, dispense:12, admin:4, waste:2, ret:0, massDispense:11.8, massAdmin:3.2, massWaste:4.2, massReturn:0.6, score:3.6, compScore:3.4},
+      {drug:'OXYcodone Oral', events:12, dispense:10, admin:1, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:2.9, compScore:2.7}
+    ]},
+    { name:'Shila Layne', role:'Float Nurse', dept:'Med North', drugs:[
+      {drug:'fentaNYL Inj', events:18, dispense:11, admin:3, waste:3, ret:1, massDispense:12.1, massAdmin:3.0, massWaste:5.4, massReturn:1.9, score:4.1, compScore:3.8},
+      {drug:'HYDROmorphone Inj', events:12, dispense:8, admin:3, waste:1, ret:0, massDispense:7.8, massAdmin:2.3, massWaste:2.8, massReturn:0.4, score:3.4, compScore:3.2},
+      {drug:'OXYcodone Oral', events:9, dispense:8, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:2.8, compScore:2.6}
+    ]},
+    { name:'Bulah Vahle', role:'RN', dept:'Oncology', drugs:[
+      {drug:'fentaNYL Inj', events:17, dispense:10, admin:3, waste:3, ret:1, massDispense:11.7, massAdmin:3.3, massWaste:5.3, massReturn:1.5, score:3.9, compScore:3.7},
+      {drug:'morphine Sulfate Inj', events:11, dispense:7, admin:3, waste:1, ret:0, massDispense:6.8, massAdmin:2.5, massWaste:2.7, massReturn:0.4, score:3.1, compScore:2.9},
+      {drug:'OXYcodone Oral', events:8, dispense:7, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:2.5, compScore:2.4}
+    ]},
+    { name:'Violeta Colmenero', role:'Nursing Student', dept:'ICU', drugs:[
+      {drug:'fentaNYL Inj', events:16, dispense:10, admin:2, waste:2, ret:2, massDispense:10.8, massAdmin:2.4, massWaste:4.1, massReturn:1.8, score:3.7, compScore:3.6},
+      {drug:'LORazepam Inj', events:7, dispense:5, admin:1, waste:1, ret:0, massDispense:2.4, massAdmin:0.5, massWaste:1.0, massReturn:0.3, score:2.8, compScore:2.7}
+    ]},
+    { name:'Magda Bonelli', role:'RN', dept:'Med South', drugs:[
+      {drug:'fentaNYL Inj', events:16, dispense:10, admin:3, waste:2, ret:1, massDispense:11.1, massAdmin:2.9, massWaste:4.5, massReturn:1.6, score:3.5, compScore:3.3},
+      {drug:'HYDROmorphone Inj', events:11, dispense:8, admin:2, waste:1, ret:0, massDispense:7.1, massAdmin:2.0, massWaste:2.4, massReturn:0.3, score:2.9, compScore:2.7},
+      {drug:'midazolam Inj', events:8, dispense:6, admin:1, waste:1, ret:0, massDispense:3.8, massAdmin:1.1, massWaste:1.6, massReturn:0.2, score:2.4, compScore:2.3}
+    ]},
+    { name:'Norene Turcotte', role:'Anesthesiologist', dept:'OR', drugs:[
+      {drug:'fentaNYL Inj', events:15, dispense:9, admin:2, waste:2, ret:2, massDispense:9.8, massAdmin:2.3, massWaste:4.5, massReturn:1.8, score:3.3, compScore:3.2},
+      {drug:'midazolam Inj', events:11, dispense:7, admin:2, waste:2, ret:0, massDispense:5.5, massAdmin:1.7, massWaste:2.9, massReturn:0.4, score:2.9, compScore:2.7}
+    ]},
+    { name:'Samantha Taggart', role:'Pharmacy Technician', dept:'Pharmacy', drugs:[
+      {drug:'OXYcodone Oral', events:19, dispense:17, admin:1, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:4.0, compScore:3.8},
+      {drug:'HYDROcodone-Acetaminophen Oral', events:16, dispense:14, admin:1, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:3.6, compScore:3.3},
+      {drug:'traMADol Oral', events:11, dispense:10, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:2.8, compScore:2.6},
+      {drug:'codeine Oral', events:9, dispense:8, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:2.3, compScore:2.2}
+    ]},
+    { name:'Pamala Linke', role:'Pharmacy Technician', dept:'Pharmacy', drugs:[
+      {drug:'fentaNYL Inj', events:12, dispense:7, admin:2, waste:2, ret:1, massDispense:9.0, massAdmin:2.5, massWaste:3.8, massReturn:1.5, score:3.1, compScore:3.0},
+      {drug:'OXYcodone Oral', events:13, dispense:12, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:3.0, compScore:2.9},
+      {drug:'HYDROcodone-Acetaminophen Oral', events:10, dispense:9, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:2.7, compScore:2.6},
+      {drug:'buprenorphine Sublingual', events:6, dispense:5, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:1.8, compScore:1.7}
+    ]},
+    { name:'Margaret Houlihan', role:'RN', dept:'Med South', drugs:[
+      {drug:'morphine Sulfate Inj', events:16, dispense:11, admin:3, waste:1, ret:1, massDispense:10.4, massAdmin:2.7, massWaste:3.4, massReturn:0.5, score:3.8, compScore:3.6},
+      {drug:'OXYcodone Oral', events:12, dispense:11, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:3.1, compScore:3.0},
+      {drug:'HYDROcodone-Acetaminophen Oral', events:10, dispense:9, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:2.6, compScore:2.5}
+    ]},
+    { name:'Jennifer Marlowe', role:'Nursing Student', dept:'ICU', drugs:[
+      {drug:'LORazepam Inj', events:13, dispense:9, admin:2, waste:2, ret:0, massDispense:5.2, massAdmin:1.0, massWaste:2.1, massReturn:0.3, score:2.9, compScore:2.7},
+      {drug:'midazolam Inj', events:9, dispense:6, admin:2, waste:1, ret:0, massDispense:4.5, massAdmin:1.4, massWaste:1.8, massReturn:0.2, score:2.3, compScore:2.2}
+    ]},
+    { name:'Rhoda Klemm', role:'RN', dept:'Med North', drugs:[
+      {drug:'fentaNYL Inj', events:11, dispense:7, admin:2, waste:1, ret:1, massDispense:7.9, massAdmin:2.3, massWaste:3.1, massReturn:1.4, score:2.4, compScore:2.4},
+      {drug:'HYDROmorphone Inj', events:8, dispense:6, admin:1, waste:1, ret:0, massDispense:5.2, massAdmin:1.1, massWaste:2.0, massReturn:0.2, score:2.0, compScore:1.9}
+    ]},
+    { name:'Betsy Duvall', role:'CRNA', dept:'OR', drugs:[
+      {drug:'morphine Sulfate Inj', events:9, dispense:6, admin:2, waste:1, ret:0, massDispense:5.1, massAdmin:1.7, massWaste:2.0, massReturn:0.3, score:2.1, compScore:2.0},
+      {drug:'midazolam Inj', events:8, dispense:5, admin:2, waste:1, ret:0, massDispense:3.8, massAdmin:1.3, massWaste:1.6, massReturn:0.2, score:1.9, compScore:1.8},
+      {drug:'fentaNYL Inj', events:6, dispense:4, admin:1, waste:1, ret:0, massDispense:3.8, massAdmin:1.1, massWaste:1.8, massReturn:0.1, score:1.7, compScore:1.6}
+    ]},
+    { name:'Ann Perkins', role:'CRNA', dept:'OR', drugs:[
+      {drug:'fentaNYL Inj', events:9, dispense:5, admin:2, waste:1, ret:1, massDispense:6.4, massAdmin:2.1, massWaste:2.7, massReturn:1.3, score:1.8, compScore:1.8},
+      {drug:'midazolam Inj', events:7, dispense:5, admin:1, waste:1, ret:0, massDispense:3.1, massAdmin:1.0, massWaste:1.4, massReturn:0.2, score:1.6, compScore:1.5},
+      {drug:'morphine Sulfate Inj', events:6, dispense:4, admin:1, waste:1, ret:0, massDispense:3.8, massAdmin:1.0, massWaste:1.6, massReturn:0.2, score:1.3, compScore:1.3}
+    ]},
+    { name:'Sue Barton', role:'Pharmacist', dept:'Pharmacy', drugs:[
+      {drug:'ALPRAZolam Oral', events:11, dispense:10, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:1.2, compScore:1.2},
+      {drug:'traMADol Oral', events:9, dispense:8, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:1.0, compScore:1.0},
+      {drug:'codeine Oral', events:7, dispense:6, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:0.9, compScore:0.8},
+      {drug:'buprenorphine Sublingual', events:5, dispense:4, admin:0, waste:0, ret:1, massDispense:0, massAdmin:0, massWaste:0, massReturn:0, score:0.7, compScore:0.6}
+    ]},
+    { name:'Rina Harper', role:'RN', dept:'Med South', drugs:[
+      {drug:'HYDROmorphone Inj', events:8, dispense:5, admin:2, waste:1, ret:0, massDispense:4.2, massAdmin:1.3, massWaste:1.9, massReturn:0.2, score:0.9, compScore:0.8},
+      {drug:'morphine Sulfate Inj', events:6, dispense:4, admin:1, waste:1, ret:0, massDispense:3.2, massAdmin:0.9, massWaste:1.4, massReturn:0.1, score:0.7, compScore:0.7}
+    ]},
+    { name:'Evelyn Frazer', role:'Travel Nurse', dept:'Med North', drugs:[
+      {drug:'fentaNYL Inj', events:5, dispense:3, admin:1, waste:1, ret:0, massDispense:3.0, massAdmin:0.9, massWaste:1.5, massReturn:0.1, score:0.5, compScore:0.5},
+      {drug:'HYDROmorphone Inj', events:4, dispense:3, admin:1, waste:0, ret:0, massDispense:2.4, massAdmin:0.8, massWaste:0, massReturn:0, score:0.4, compScore:0.4}
+    ]}
+  ];
+
+  /* ── Derived lookups ── */
+  function fmtMass(v) { return (Math.round(v*10)/10) + ' mg'; }
+
+  function badgeClass(v) {
+    if (v <= 1.3) return 'green';
+    if (v <= 4.5) return 'yellow';
+    return 'red';
+  }
+
+  function aggregateUser(u) {
+    var top = u.drugs.reduce(function(a,b){ return b.score > a.score ? b : a; }, u.drugs[0]);
+    function sum(k) { return u.drugs.reduce(function(acc,d){ return acc + (d[k]||0); }, 0); }
+    return {
+      name: u.name, role: u.role, dept: u.dept,
+      metric: top.score, iris: top.compScore,
+      events: sum('events'), disp: sum('dispense'), admin: sum('admin'), waste: sum('waste'), ret: sum('ret'),
+      drugs: u.drugs.length
+    };
+  }
+
+  var mainRows = USERS.map(aggregateUser).sort(function(a,b){ return b.metric - a.metric; });
+
+  var drugData = {};
+  USERS.forEach(function(u) {
+    drugData[u.name] = u.drugs.map(function(d) {
+      return {
+        drug: d.drug, total: d.events,
+        dEv: d.dispense, dM: fmtMass(d.massDispense),
+        aEv: d.admin, aM: fmtMass(d.massAdmin),
+        wEv: d.waste, wM: fmtMass(d.massWaste),
+        rEv: d.ret, rM: fmtMass(d.massReturn)
+      };
+    });
+  });
+
+  var visualizedUsers = mainRows.map(function(r) { return {name:r.name, disp:r.disp, admin:r.admin, waste:r.waste, ret:r.ret}; })
+    .sort(function(a,b){ return (b.disp+b.admin+b.waste+b.ret) - (a.disp+a.admin+a.waste+a.ret); });
+
+  // All distinct drug names, for the "same drug across users" comparison
+  function getUsersForDrug(drugName, focusName) {
+    var rows = [];
+    USERS.forEach(function(u) {
+      var d = u.drugs.find(function(x){ return x.drug === drugName; });
+      if (d) rows.push({
+        name: u.name, role: u.role, dept: u.dept, total: d.events,
+        dEv: d.dispense, dM: fmtMass(d.massDispense),
+        aEv: d.admin, aM: fmtMass(d.massAdmin),
+        wEv: d.waste, wM: fmtMass(d.massWaste),
+        rEv: d.ret, rM: fmtMass(d.massReturn),
+        totalMass: d.massDispense + d.massAdmin + d.massWaste + d.massReturn,
+        focus: u.name === focusName
+      });
+    });
+    rows.sort(function(a,b){ return b.total - a.total; });
+    return rows;
+  }
+
+  /* Synthesize representative event-summary entries for the Investigate panel,
+     derived from a user's drug totals (no real patient data is used anywhere here). */
+  function generateInvestigateItems(userName, drugName) {
+    var d = drugData[userName].find(function(x){ return x.drug === drugName; });
+    var count = Math.min(d.total, 7);
+    var codes = ['7RmZ','Hg32','R9eB','a1_u','q3Lp','m4Wk','Ty6s'];
+    var fins = ['FINSmgc','FINS2il','FINXTOQ','FINFUvQ','FINQ9pL','FINM4wk','FINTy6s'];
+    var dates = ['Jul 4, 2026','Jul 8, 2026','Jul 10, 2026','Jul 14, 2026','Jul 19, 2026','Jul 23, 2026','Jul 28, 2026'];
+    var items = [];
+    for (var i=0;i<count;i++) {
+      var amt = 25 * (i%4 + 1);
+      items.push({
+        patient: codes[i%codes.length], fin: fins[i%fins.length], date: dates[i%dates.length],
+        dept: 'water', drug: drugName, disp: amt + ' mcg', missing: '-' + amt + ' mcg',
+        esId: (1765400 + i*17 + userName.length*3)
+      });
+    }
+    return items;
+  }
+
+  var currentUser = null;
+
+  /* ══════════════════════════ RENDER MAIN TABLE ══════════════════════════ */
+  function renderMainTable() {
+    var body = document.getElementById('mainTableBody');
+    body.innerHTML = mainRows.map(function(r, i) {
+      var deptStr = r.dept ? (r.role + ' · ' + r.dept) : r.role;
+      return '<tr>' +
+        '<td class="num"><span class="metric-badge ' + badgeClass(r.metric) + '">' + r.metric.toFixed(1) + '</span></td>' +
+        '<td class="num iris-value score-' + badgeClass(r.iris) + '">' + r.iris.toFixed(1) + '</td>' +
+        '<td><a class="user-link" onclick="event.stopPropagation();openIrisFromMain(' + i + ');return false;">' + r.name + '</a><div class="user-role-dept">' + deptStr + '</div></td>' +
+        '<td class="num">' + r.events + '</td><td class="num">' + r.disp + '</td><td class="num">' + r.admin + '</td><td class="num">' + r.waste + '</td><td class="num">' + r.ret + '</td><td class="num">' + r.drugs + '</td>' +
+        '<td class="col-actions"><a class="view-drugs-link" onclick="openDrillin(' + i + ')">View Drugs <span class="material-icons">chevron_right</span></a></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  /* ══════════════════════════ HORIZONTAL STACKED BAR CHART ══════════════════════════ */
+  function esc(s) { return String(s).replace(/'/g, "\\'"); }
+
+  function renderHbarChart(containerId, rows, maxScale) {
+    var el = document.getElementById(containerId);
+    var max = maxScale || Math.max.apply(null, rows.map(function(r){ return r.disp+r.admin+r.waste+r.ret; })) || 1;
+    el.innerHTML = rows.map(function(r) {
+      var segs = [
+        {v:r.disp, c:'#0096b8'}, {v:r.admin, c:'#9575cd'}, {v:r.waste, c:'#f5a623'}, {v:r.ret, c:'#43a047'}
+      ];
+      var segHtml = segs.map(function(s) {
+        if (!s.v) return '';
+        var w = (s.v / max * 100).toFixed(2);
+        return '<div class="hbar-seg" style="width:' + w + '%;background:' + s.c + '"></div>';
+      }).join('');
+      var onmove = 'showHbarTooltip(event,\'' + esc(r.name) + '\',' + r.disp + ',' + r.admin + ',' + r.waste + ',' + r.ret + ')';
+      return '<div class="hbar-row" onmousemove="' + onmove + '" onmouseleave="hideTooltip()"><div class="hbar-name">' + r.name + '</div><div class="hbar-track">' + segHtml + '</div></div>';
+    }).join('');
+  }
+
+  /* ══════════════════════════ CHART TOOLTIP ══════════════════════════ */
+  function showTooltip(x, y, title, items, total) {
+    var el = document.getElementById('chartTooltip');
+    var rowsHtml = items.map(function(it) {
+      return '<div class="tt-row"><span class="tt-dot" style="background:' + it.color + '"></span>' + it.label + ': ' + it.value + '</div>';
+    }).join('');
+    var totalHtml = (total === undefined || total === null || total === '') ? '' : '<div class="tt-total">Total: ' + total + '</div>';
+    el.innerHTML = '<div class="tt-title">' + title + '</div>' + rowsHtml + totalHtml;
+    el.style.left = (x + 16) + 'px';
+    el.style.top = (y - 12) + 'px';
+    el.classList.add('show');
+  }
+  function hideTooltip() { document.getElementById('chartTooltip').classList.remove('show'); }
+  function showHbarTooltip(e, name, disp, admin, waste, ret) {
+    showTooltip(e.clientX, e.clientY, name, [
+      {label:'Dispense', value:disp, color:'#0096b8'},
+      {label:'Admin', value:admin, color:'#9575cd'},
+      {label:'Waste', value:waste, color:'#f5a623'},
+      {label:'Return', value:ret, color:'#43a047'}
+    ], disp + admin + waste + ret);
+  }
+  function showScatterTooltip(e, name, events, mass) {
+    showTooltip(e.clientX, e.clientY, name, [
+      {label:'Total Events', value:events, color:'#0096b8'},
+      {label:'Total Mass', value:mass + ' mg', color:'#f5a623'}
+    ]);
+  }
+
+  /* ══════════════════════════ MAIN CHART PAGINATION ══════════════════════════ */
+  var mainChartState = { size: 10, page: 0, fit: false };
+  function renderMainChart() {
+    var total = visualizedUsers.length;
+    var size = mainChartState.fit ? total : mainChartState.size;
+    var maxPage = Math.max(0, Math.ceil(total / size) - 1);
+    if (mainChartState.page > maxPage) mainChartState.page = maxPage;
+    var start = mainChartState.page * size;
+    var end = Math.min(start + size, total);
+    renderHbarChart('hbarChart', visualizedUsers.slice(start, end), 120);
+    document.getElementById('pageRangeMain').textContent = (total ? start + 1 : 0) + '–' + end + ' of ' + total;
+    document.getElementById('pageSizeValMain').textContent = size;
+    var btns = document.querySelectorAll('#mainChartPagination .page-nav-btn');
+    btns[0].disabled = btns[1].disabled = (mainChartState.page === 0);
+    btns[2].disabled = btns[3].disabled = (mainChartState.page >= maxPage);
+  }
+  function toggleFitScreen() {
+    mainChartState.fit = document.getElementById('fitScreenMain').checked;
+    mainChartState.page = 0;
+    renderMainChart();
+  }
+  function setPageSize(n) {
+    mainChartState.size = n;
+    mainChartState.page = 0;
+    mainChartState.fit = false;
+    document.getElementById('fitScreenMain').checked = false;
+    closeFilter('pageSizeWrapMain');
+    renderMainChart();
+  }
+  function gotoPage(dir) {
+    var total = visualizedUsers.length;
+    var size = mainChartState.fit ? total : mainChartState.size;
+    var maxPage = Math.max(0, Math.ceil(total / size) - 1);
+    if (dir === 'first') mainChartState.page = 0;
+    else if (dir === 'prev') mainChartState.page = Math.max(0, mainChartState.page - 1);
+    else if (dir === 'next') mainChartState.page = Math.min(maxPage, mainChartState.page + 1);
+    else if (dir === 'last') mainChartState.page = maxPage;
+    renderMainChart();
+  }
+
+  /* ══════════════════════════ VIEW SWITCHING: main tabs ══════════════════════════ */
+  function switchMainTab(idx) {
+    document.getElementById('mainTab0').classList.toggle('mdc-tab--active', idx===0);
+    document.getElementById('mainTab1').classList.toggle('mdc-tab--active', idx===1);
+    document.getElementById('mainBody0').style.display = idx===0 ? '' : 'none';
+    document.getElementById('mainBody1').style.display = idx===1 ? '' : 'none';
+    if (idx===1) renderMainChart();
+  }
+
+  function switchDrugTab(idx) {
+    document.getElementById('drugTab0').classList.toggle('mdc-tab--active', idx===0);
+    document.getElementById('drugTab1').classList.toggle('mdc-tab--active', idx===1);
+    document.getElementById('drugBody0').style.display = idx===0 ? '' : 'none';
+    document.getElementById('drugBody1').style.display = idx===1 ? '' : 'none';
+    if (idx===1) {
+      var rows = drugData[currentUser.name].map(function(d){
+        return {name:d.drug, disp: d.dEv, admin: d.aEv, waste: d.wEv, ret: d.rEv};
+      });
+      renderHbarChart('drugHbarChart', rows);
+    }
+  }
+
+  /* ══════════════════════════ DRILL-IN VIEW ══════════════════════════ */
+  function openDrillin(idx) {
+    currentUser = mainRows[idx];
+    document.getElementById('titleSep').style.display = '';
+    document.getElementById('titleIndicator').style.display = '';
+    document.getElementById('drillinName').textContent = currentUser.name;
+    document.getElementById('drillinRole').textContent = currentUser.dept ? (currentUser.role + ' · ' + currentUser.dept) : currentUser.role;
+    var badge = document.getElementById('drillinMetric');
+    badge.textContent = currentUser.metric.toFixed(1);
+    badge.className = 'metric-badge ' + badgeClass(currentUser.metric);
+    var irisStatEl = document.getElementById('drillinIris');
+    irisStatEl.textContent = currentUser.iris.toFixed(1);
+    irisStatEl.className = 'stat-value score-' + badgeClass(currentUser.iris);
+    document.getElementById('drillinDrugs').textContent = currentUser.drugs;
+    document.getElementById('drillinEvents').textContent = currentUser.events;
+
+    var rows = drugData[currentUser.name];
+    if (!rows) {
+      // Generic fallback: single representative drug row scaled to this user's totals
+      rows = [{
+        drug: 'tramadol Oral', total: currentUser.events,
+        dEv: currentUser.disp, dM: (currentUser.disp*50)+' mg',
+        aEv: currentUser.admin, aM: (currentUser.admin*50)+' mg',
+        wEv: currentUser.waste, wM: (currentUser.waste*50)+' mg',
+        rEv: currentUser.ret, rM: (currentUser.ret*50)+' mg'
+      }];
+      drugData[currentUser.name] = rows;
+    }
+    parkComparePanel();
+    document.getElementById('drugTableBody').innerHTML = rows.map(function(d, i) {
+      var safeDrug = d.drug.replace(/'/g,"\\'");
+      return '<tr>' +
+        '<td class="col-drug"><a class="user-link drug-name-static">' + d.drug + '</a></td><td class="num">' + d.total + '</td>' +
+        '<td class="num group-start">' + d.dEv + '</td><td class="num">' + d.dM + '</td>' +
+        '<td class="num group-start">' + d.aEv + '</td><td class="num">' + d.aM + '</td>' +
+        '<td class="num group-start">' + d.wEv + '</td><td class="num">' + d.wM + '</td>' +
+        '<td class="num group-start">' + d.rEv + '</td><td class="num">' + d.rM + '</td>' +
+        '<td class="col-actions group-start"><a class="compare-link" id="compareBtn-' + i + '" onclick="openCompare(\'' + safeDrug + '\', ' + i + ')"><span class="material-icons">groups</span>Compare</a> ' +
+        '<a class="compare-link" onclick="openInvestigate(\'' + safeDrug + '\')"><span class="material-icons">open_in_new</span>Investigate</a></td>' +
+        '</tr>' +
+        '<tr class="compare-expand-row" id="compareExpandRow-' + i + '" style="display:none"><td colspan="11" id="compareSlot-' + i + '"></td></tr>';
+    }).join('');
+
+    switchDrugTab(0);
+    document.getElementById('view-main').classList.remove('active');
+    document.getElementById('view-drillin').classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function showMainView() {
+    document.getElementById('view-drillin').classList.remove('active');
+    document.getElementById('view-main').classList.add('active');
+    document.getElementById('titleSep').style.display = 'none';
+    document.getElementById('titleIndicator').style.display = 'none';
+  }
+
+  /* ══════════════════════════ RIGHT IRIS DRAWER ══════════════════════════ */
+  function openIrisFromMain(idx) {
+    currentUser = mainRows[idx];
+    openIrisDrawer();
+  }
+  function openIrisFromUserName(name) {
+    var u = mainRows.find(function(r) { return r.name === name; });
+    if (!u) return;
+    currentUser = u;
+    openIrisDrawer();
+  }
+  function openIrisDrawer() {
+    document.getElementById('irisDrawerName').textContent = currentUser.name;
+    document.getElementById('irisDrawerRole').textContent = currentUser.role;
+    var irisCurEl = document.getElementById('irisCurrentValue');
+    irisCurEl.textContent = currentUser.iris.toFixed(1);
+    irisCurEl.className = 'value big score-' + badgeClass(currentUser.iris);
+    document.getElementById('irisCurrentRange').innerHTML = '<div class="label">&nbsp;</div><div style="font-size:.8125rem;color:var(--gray-600)">For Jul 3, 2026 &ndash; Aug 2, 2026</div>';
+
+    var months = [
+      {m:'FEB', v:2.0}, {m:'MAR', v:0.6}, {m:'APR', v:1.4}, {m:'MAY', v:1.0}, {m:'JUN', v:1.6}, {m:'JUL', v:null}
+    ];
+    var avgLine = 1.0;
+    var maxV = 2.2;
+    document.getElementById('irisBarsChart').innerHTML = months.map(function(mo) {
+      if (mo.v === null) {
+        return '<div class="iris-bar-col"><div class="iris-bar-nodata">No Data<br>Available</div><div class="iris-bar-month">' + mo.m + '</div></div>';
+      }
+      var h = (mo.v / maxV * 100).toFixed(0);
+      var cls = badgeClass(mo.v);
+      var bg = cls==='green' ? '#79d186' : cls==='yellow' ? '#f5dd67' : '#f78e86';
+      var lineTop = 100 - (avgLine / maxV * 100);
+      return '<div class="iris-bar-col">' +
+        '<div style="position:absolute;left:0;right:0;top:' + lineTop + '%;border-top:2px solid #555;"></div>' +
+        '<div class="iris-bar" style="height:' + h + '%;background:' + bg + '">' +
+        '<span class="iris-bar-val" style="background:' + bg + '">' + mo.v.toFixed(1) + '</span></div>' +
+        '<div class="iris-bar-month">' + mo.m + '</div></div>';
+    }).join('');
+
+    var avgRows = [['FEB','5 / 2'],['MAR','1 / 2'],['APR','2 / 2'],['MAY','1 / 2'],['JUN','2 / 3'],['JUL','- / -']];
+    document.getElementById('avgDispenseTable').innerHTML =
+      '<tr>' + avgRows.map(function(r){return '<th>'+r[0]+'</th>';}).join('') + '</tr>' +
+      '<tr>' + avgRows.map(function(r){return '<td>'+r[1]+'</td>';}).join('') + '</tr>';
+
+    switchIrisDrawerTab(0);
+    document.getElementById('irisDrawerOverlay').classList.add('show');
+    document.getElementById('irisDrawer').classList.add('show');
+  }
+  function closeIrisDrawer() {
+    document.getElementById('irisDrawerOverlay').classList.remove('show');
+    document.getElementById('irisDrawer').classList.remove('show');
+  }
+  function switchIrisDrawerTab(idx) {
+    for (var i=0;i<3;i++) {
+      document.getElementById('irisTab'+i).classList.toggle('active', i===idx);
+      document.getElementById('irisTabBody'+i).style.display = i===idx ? '' : 'none';
+    }
+  }
+
+  /* ══════════════════════════ COMPARE PANEL (inline row expansion) ══════════════════════════ */
+  var compareRows = [];
+  var openCompareIdx = null;
+
+  /* Moves the (single, shared) compare panel node back to its hidden parking
+     spot outside the table. Must be called before drugTableBody's innerHTML
+     is replaced — otherwise the panel node would be destroyed along with the
+     old rows, since it may currently live inside one of them. */
+  function parkComparePanel() {
+    var panel = document.getElementById('comparePanel');
+    var park = document.getElementById('comparePanelPark');
+    if (panel && park) park.appendChild(panel);
+    if (panel) panel.style.display = 'none';
+    openCompareIdx = null;
+  }
+
+  function openCompare(drugName, idx) {
+    if (openCompareIdx === idx) { closeCompare(); return; }
+    if (openCompareIdx !== null) {
+      var prevRow = document.getElementById('compareExpandRow-' + openCompareIdx);
+      if (prevRow) prevRow.style.display = 'none';
+      var prevBtn = document.getElementById('compareBtn-' + openCompareIdx);
+      if (prevBtn) prevBtn.classList.remove('active');
+    }
+    compareRows = getUsersForDrug(drugName, currentUser.name);
+    document.getElementById('compareTitle').textContent = "Comparing " + currentUser.name + "'s " + drugName + " activity with other users";
+    document.getElementById('compareCount').textContent = compareRows.length + ' users';
+    document.getElementById('compareTableBody').innerHTML = compareRows.map(function(u) {
+      var deptStr = u.dept ? (u.role + ' · ' + u.dept) : u.role;
+      var safeName = esc(u.name);
+      return '<tr class="' + (u.focus ? 'focus-user' : '') + '"><td><a class="user-link" onclick="event.stopPropagation();openIrisFromUserName(\'' + safeName + '\');return false;">' + u.name + '</a><div class="user-role-dept">' + deptStr + '</div></td><td class="num">' + u.total + '</td>' +
+        '<td class="num">' + u.dEv + '</td><td class="num">' + u.dM + '</td><td class="num">' + u.aEv + '</td><td class="num">' + u.aM + '</td>' +
+        '<td class="num">' + u.wEv + '</td><td class="num">' + u.wM + '</td><td class="num">' + u.rEv + '</td><td class="num">' + u.rM + '</td>' +
+        '<td class="row-actions-cell">' +
+          '<button class="row-actions-btn" title="Actions" onclick="event.stopPropagation();toggleRowActions(this)"><span class="material-icons">more_vert</span></button>' +
+          '<div class="row-actions-menu">' +
+            '<button onclick="event.stopPropagation();closeRowActionsMenus();openInvestigate(\'' + esc(drugName) + '\',\'' + safeName + '\')"><span class="material-icons">open_in_new</span>Investigate Data</button>' +
+            '<button onclick="event.stopPropagation();closeRowActionsMenus();drillinByUserName(\'' + safeName + '\')"><span class="material-icons">show_chart</span>Med Trends</button>' +
+          '</div>' +
+        '</td></tr>';
+    }).join('');
+    renderScatter();
+    switchCompareView(0);
+
+    var panel = document.getElementById('comparePanel');
+    var slot = document.getElementById('compareSlot-' + idx);
+    slot.appendChild(panel);
+    panel.style.display = '';
+    document.getElementById('compareExpandRow-' + idx).style.display = '';
+    var btn = document.getElementById('compareBtn-' + idx);
+    if (btn) btn.classList.add('active');
+    openCompareIdx = idx;
+  }
+  function closeCompare() {
+    if (openCompareIdx === null) return;
+    document.getElementById('comparePanel').style.display = 'none';
+    var row = document.getElementById('compareExpandRow-' + openCompareIdx);
+    if (row) row.style.display = 'none';
+    var btn = document.getElementById('compareBtn-' + openCompareIdx);
+    if (btn) btn.classList.remove('active');
+    openCompareIdx = null;
+  }
+  function switchCompareView(idx) {
+    document.getElementById('compareViewTab0').classList.toggle('active', idx===0);
+    document.getElementById('compareViewTab1').classList.toggle('active', idx===1);
+    document.getElementById('compareView0').style.display = idx===0 ? '' : 'none';
+    document.getElementById('compareView1').style.display = idx===1 ? '' : 'none';
+  }
+  function renderScatter() {
+    var el = document.getElementById('scatterPlot');
+    var maxX = Math.max(4, Math.ceil(Math.max.apply(null, compareRows.map(function(r){return r.total;})) * 1.1));
+    var maxY = Math.max(50, Math.ceil(Math.max.apply(null, compareRows.map(function(r){return r.totalMass;})) / 50) * 50 * 1.15);
+    var xStep = Math.max(1, Math.round(maxX/6));
+    var yStep = Math.max(10, Math.round(maxY/6/10)*10);
+    var html = '<span class="scatter-ylabel">Total Mass (mg)</span>';
+    for (var v=0; v<=maxY; v+=yStep) {
+      var top = 100 - (v/maxY*100);
+      html += '<span style="position:absolute;left:-34px;top:' + top + '%;font-size:.6875rem;color:var(--gray-600);transform:translateY(-50%)">' + Math.round(v) + '</span>';
+      html += '<div class="grid-line" style="top:' + top + '%"></div>';
+    }
+    compareRows.forEach(function(p) {
+      var left = (p.total/maxX*100).toFixed(1);
+      var bottom = (p.totalMass/maxY*100).toFixed(1);
+      var onmove = 'showScatterTooltip(event,\'' + esc(p.name) + '\',' + p.total + ',' + p.totalMass.toFixed(1) + ')';
+      html += '<div class="scatter-dot' + (p.focus?' focus':'') + '" style="left:' + left + '%;bottom:' + bottom + '%" onmousemove="' + onmove + '" onmouseleave="hideTooltip()"></div>';
+    });
+    for (var vx=0; vx<=maxX; vx+=xStep) {
+      var leftx = (vx/maxX*100);
+      html += '<span style="position:absolute;bottom:-18px;left:' + leftx + '%;font-size:.6875rem;color:var(--gray-600);transform:translateX(-50%)">' + vx + '</span>';
+    }
+    el.innerHTML = html;
+  }
+
+  /* ══════════════════════════ INVESTIGATE OVERLAY ══════════════════════════ */
+  function openInvestigate(drugName, userName) {
+    var investigateItems = generateInvestigateItems(userName || currentUser.name, drugName);
+    document.getElementById('investigateCount').textContent = investigateItems.length + ' Event Summaries';
+    document.getElementById('investigateBody').innerHTML = investigateItems.map(function(e) {
+      return '<div class="es-card">' +
+        '<div class="es-patient"><a href="#">' + e.patient + ', Patient</a> ' + e.fin + '<div class="es-date">' + e.date + '</div><div class="es-dept">Department: ' + e.dept + '</div></div>' +
+        '<div class="es-drug"><h5>' + e.drug + '</h5><div class="es-stats">' +
+          '<div class="es-stat">Dispense<strong>' + e.disp + '</strong></div>' +
+          '<div class="es-stat">Admin<strong>-</strong></div>' +
+          '<div class="es-stat">Waste<strong>-</strong></div>' +
+          '<div class="es-stat">Return<strong>-</strong></div>' +
+          '<div class="es-stat missing">Missing<strong>' + e.missing + '</strong></div>' +
+        '</div></div>' +
+        '<div class="es-actions"><div class="es-id">ES ID ' + e.esId + '</div><a href="#"><span class="material-icons" style="font-size:14px;vertical-align:-2px">folder_open</span> Open</a><a href="#"><span class="material-icons" style="font-size:14px;vertical-align:-2px">person_add</span> Assign</a></div>' +
+      '</div>';
+    }).join('');
+    document.getElementById('investigateOverlay').classList.add('show');
+  }
+  function closeInvestigate() { document.getElementById('investigateOverlay').classList.remove('show'); }
+
+  /* Jump to another user's own Med Trends drill-in from a Compare row. */
+  function drillinByUserName(name) {
+    var idx = mainRows.findIndex(function(r) { return r.name === name; });
+    if (idx === -1) return;
+    openDrillin(idx);
+  }
+
+  /* ══════════════════════════ COMPARE ROW ACTIONS (⋮ MENU) ══════════════════════════ */
+  function closeRowActionsMenus() {
+    document.querySelectorAll('.row-actions-menu.show').forEach(function(m) { m.classList.remove('show'); });
+  }
+  function toggleRowActions(btn) {
+    var menu = btn.nextElementSibling;
+    var isOpen = menu.classList.contains('show');
+    closeRowActionsMenus();
+    if (!isOpen) menu.classList.add('show');
+  }
+
+  /* ══════════════════════════ FILTER / KEBAB / ETC. ══════════════════════════ */
+  function toggleFilter(id) {
+    var wasOpen = document.getElementById(id).classList.contains('open');
+    document.querySelectorAll('.filter-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+    if (!wasOpen) document.getElementById(id).classList.add('open');
+  }
+  function closeFilter(id) { document.getElementById(id).classList.remove('open'); }
+  function toggleKebab() {
+    var w = document.getElementById('kebabWrap');
+    w.classList.toggle('open');
+  }
+  function setStdDev(v) {
+    document.getElementById('stdDevChip').textContent = 'Std. Deviation: ' + v;
+    document.getElementById('stdDevChip2').textContent = 'Std. Deviation: ' + v;
+    closeFilter('stdDevWrap');
+  }
+  function resetAll() { location.reload(); }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.filter-wrap')) document.querySelectorAll('.filter-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+    if (!e.target.closest('.kebab-wrap')) document.querySelectorAll('.kebab-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+    if (!e.target.closest('.row-actions-cell')) closeRowActionsMenus();
+  });
+
+  /* ══════════════════════════ LEFT NAV ACCORDION ══════════════════════════ */
+  function togglePanel(header) {
+    var panel = header.closest('mat-expansion-panel');
+    var wrapper = panel.querySelector('.mat-expansion-panel-content-wrapper');
+    var isOpen = panel.classList.contains('mat-expanded');
+    panel.classList.toggle('mat-expanded', !isOpen);
+    header.classList.toggle('mat-expanded', !isOpen);
+    if (isOpen) wrapper.setAttribute('inert',''); else wrapper.removeAttribute('inert');
+  }
+  function toggleDrawer() { document.getElementById('analyze-drawer').classList.toggle('collapsed'); }
+
+  /* ══════════════════════════ INIT ══════════════════════════ */
+  function renderFilterOptions() {
+    document.getElementById('userCountLabel').textContent = mainRows.length + ' users';
+    document.getElementById('userFilterOptions').innerHTML = mainRows.map(function(r) {
+      return '<label class="menu-option"><input type="checkbox">' + r.name + '</label>';
+    }).join('');
+    var roles = [];
+    USERS.forEach(function(u){ if (roles.indexOf(u.role) === -1) roles.push(u.role); });
+    document.getElementById('roleFilterOptions').innerHTML = roles.map(function(r) {
+      return '<label class="menu-option"><input type="checkbox">' + r + '</label>';
+    }).join('');
+  }
+  renderFilterOptions();
+  renderMainTable();
+</script>
+</body>
+</html>
