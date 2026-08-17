@@ -465,7 +465,7 @@
     <div class="dp-tab active" data-pane="conversation" onclick="switchTab(this)">Conversation</div>
     <div class="dp-tab" id="tab-toolcalls" data-pane="toolcalls" onclick="switchTab(this)">Tool Calls</div>
     <div class="dp-tab" id="tab-invocations" data-pane="invocations" onclick="switchTab(this)">Invocations</div>
-    <div class="dp-tab" id="tab-evaluations" data-pane="evaluations" onclick="switchTab(this)">Evaluations</div>
+    <div class="dp-tab" id="tab-evaluations" data-pane="evaluations" onclick="switchTab(this)">User Feedback</div>
   </div>
   <div class="dp-body">
     <div class="dp-pane active" id="pane-conversation"></div>
@@ -945,7 +945,7 @@ function openPanel(idx){
 
   document.getElementById("tab-toolcalls").textContent = `Tool Calls: ${s.toolCalls.length}`;
   document.getElementById("tab-invocations").textContent = `Invocations: ${s.invocationRows.length}`;
-  document.getElementById("tab-evaluations").textContent = `Evaluations: ${s.feedback === "down" ? 1 : 0}`;
+  document.getElementById("tab-evaluations").textContent = `User Feedback: ${s.feedback === "down" ? 1 : 0}`;
 
   document.getElementById("pane-evaluations").innerHTML = (s.feedback === "down") ? `
     <div class="eval-card">
@@ -960,7 +960,7 @@ function openPanel(idx){
         <span>Span: ${s.feedbackSpan}</span>
       </div>
     </div>
-  ` : `<div class="empty-pane">No evaluations for this session.</div>`;
+  ` : `<div class="empty-pane">No user feedback for this session.</div>`;
 
   document.querySelectorAll(".dp-tab").forEach(t=>t.classList.remove("active"));
   document.querySelector('.dp-tab[data-pane="conversation"]').classList.add("active");
