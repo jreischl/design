@@ -140,6 +140,58 @@
   .filter-menu-item .material-icons { font-size:16px; visibility:hidden; }
   .filter-menu-item.selected .material-icons { visibility:visible; }
   .filter-menu-divider { height:1px; background:var(--gray-100); margin:2px 0; }
+  .export-menu { min-width:230px; left:auto; right:0; }
+  .export-menu .filter-menu-item .material-icons { font-size:16px; color:var(--blue-500); margin-right:2px; }
+
+  /* Generate Report Modal */
+  .modal-scrim {
+    position:fixed; inset:0; background: rgba(2,30,53,0.45);
+    display:none; align-items:center; justify-content:center; z-index:300;
+  }
+  .modal-scrim.open { display:flex; }
+  .modal-box {
+    background: var(--white); border-radius:8px; width:420px;
+    padding: 28px 30px 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  }
+  .modal-title { font-size:19px; font-weight:700; color: var(--navy-700); margin-bottom:10px; }
+  .modal-desc { font-size:13px; color:var(--gray-700); line-height:1.6; margin-bottom:18px; }
+  .modal-field-label { font-size:12px; font-weight:700; color: var(--blue-700); margin-bottom:6px; }
+  .modal-field-label .required-star { color: var(--danger-500); }
+  .modal-input {
+    width:100%; border:1.5px solid var(--gray-100); border-radius:5px;
+    padding: 10px 12px; font-size:14px; font-family:inherit; outline:none;
+    color:var(--gray-900);
+  }
+  .modal-input:focus { border-color: var(--blue-500); }
+  .modal-char-count { text-align:right; font-size:11px; color:var(--gray-300); margin-top:4px; }
+  .modal-actions { display:flex; justify-content:flex-end; gap:20px; margin-top:22px; align-items:center; }
+  .modal-cancel { font-size:13.5px; font-weight:700; color: var(--blue-700); cursor:pointer; }
+  .modal-export-btn {
+    background: var(--pink-300); color:#fff; border:none; border-radius:100px;
+    padding: 9px 28px; font-size:13.5px; font-weight:700; cursor:not-allowed;
+    transition: background .15s;
+  }
+  .modal-export-btn.enabled { background: var(--pink-500); cursor:pointer; }
+
+  /* Reports panel (narrower slide-over, reuses .scrim) */
+  .reports-panel {
+    position:fixed; top:0; right:-380px; width:380px; height:100%;
+    background: var(--white); box-shadow: -6px 0 24px rgba(0,0,0,0.15);
+    z-index:201; transition: right .22s ease; display:flex; flex-direction:column;
+  }
+  .reports-panel.open { right:0; }
+  .reports-list { flex:1; overflow-y:auto; padding: 8px 0; }
+  .report-row { padding: 14px 24px; border-bottom:1px solid var(--gray-100); display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .report-row-title { font-size:13.5px; font-weight:600; color:var(--gray-900); margin-bottom:3px; }
+  .report-row-date { font-size:11.5px; color:var(--gray-500); }
+  .report-row .icon-btn { flex-shrink:0; }
+  .report-row-pending { display:flex; align-items:center; gap:6px; font-size:11.5px; color: var(--blue-500); font-weight:600; }
+  .report-spinner {
+    width:15px; height:15px; border-radius:50%;
+    border: 2px solid var(--blue-100); border-top-color: var(--blue-500);
+    animation: report-spin 0.7s linear infinite; flex-shrink:0;
+  }
+  @keyframes report-spin { to { transform: rotate(360deg); } }
 
   /* Date filter combobox (mirrors PrivacyPro's react-widgets date filter pattern) */
   .date-combo {
@@ -240,7 +292,7 @@
     display:flex; align-items:flex-start; justify-content:space-between;
     flex-shrink:0;
   }
-  .dp-title { font-size:18px; font-weight:700; color: var(--navy-700); margin-bottom:6px; }
+  .dp-title { font-size:18px; font-weight:700; color: var(--blue-500); margin-bottom:6px; }
   .dp-meta { font-size:12px; color:var(--gray-500); display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
   .dp-meta b { color:var(--gray-700); font-weight:600; }
   .dp-close { cursor:pointer; color:var(--gray-500); }
@@ -424,7 +476,13 @@
     </div>
     <div class="fb-spacer"></div>
     <label class="fb-checkbox"><input type="checkbox" id="negFeedback" onchange="renderTable()" /> Negative Feedback Only</label>
-    <div class="icon-btn" title="Export CSV"><span class="material-icons">download</span></div>
+    <div class="filter-dropdown-wrap">
+      <div class="icon-btn" id="exportMenuBtn" title="Export" onclick="toggleExportMenu(event)"><span class="material-icons">download</span></div>
+      <div class="filter-menu export-menu" id="exportMenu">
+        <div class="filter-menu-item" onclick="openGenerateReportModal()"><span class="material-icons" style="visibility:visible;">description</span>Generate Sessions Report</div>
+        <div class="filter-menu-item" onclick="openReportsPanel()"><span class="material-icons" style="visibility:visible;">folder_open</span>View Session Reports</div>
+      </div>
+    </div>
   </div>
 
   <div class="table-card">
@@ -452,7 +510,7 @@
   </div>
 </div>
 
-<div class="scrim" id="scrim" onclick="closePanel()"></div>
+<div class="scrim" id="scrim" onclick="closeAllSidePanels()"></div>
 <div class="detail-panel" id="detailPanel">
   <div class="dp-header">
     <div>
@@ -473,6 +531,33 @@
     <div class="dp-pane" id="pane-invocations"></div>
     <div class="dp-pane" id="pane-evaluations"></div>
   </div>
+</div>
+
+<!-- ============ GENERATE REPORT MODAL ============ -->
+<div class="modal-scrim" id="modalScrim" onclick="closeGenerateReportModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-title">Export Sessions Report</div>
+    <div class="modal-desc">Enter a title for this report. It will be delivered to your Session Reports.</div>
+    <div class="modal-field-label">Report Title<span class="required-star">*</span></div>
+    <input type="text" class="modal-input" id="reportTitleInput" maxlength="50" oninput="onReportTitleInput()" autocomplete="off" />
+    <div class="modal-char-count" id="reportCharCount">0/50</div>
+    <div class="modal-actions">
+      <span class="modal-cancel" onclick="closeGenerateReportModal()">Cancel</span>
+      <button class="modal-export-btn" id="reportExportBtn" onclick="submitGenerateReport()">Export</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REPORTS PANEL ============ -->
+<div class="reports-panel" id="reportsPanel">
+  <div class="dp-header">
+    <div>
+      <div class="dp-title">Session Reports</div>
+      <div class="dp-meta">Previously generated Prism Observability session exports</div>
+    </div>
+    <span class="dp-close material-icons" onclick="closeReportsPanel()">close</span>
+  </div>
+  <div class="reports-list" id="reportsList"></div>
 </div>
 
 <script>
@@ -847,6 +932,12 @@ const SESSIONS = [
 let statusFilter = "all";
 const STATUS_LABELS = { all:"All", success:"Success", failed:"Failure" };
 
+const REPORTS = [
+  { title: "March Prism Sessions — Compliance Review", dateGenerated: "3/2/26, 9:14 AM" },
+  { title: "Q1 2026 Prism Usage Export", dateGenerated: "4/1/26, 7:40 AM" },
+  { title: "Negative Feedback Sessions — Feb", dateGenerated: "3/1/26, 11:02 AM" },
+];
+
 function initials(name){ return name.split(" ").map(p=>p[0]).join("").slice(0,2).toUpperCase(); }
 function feedbackIcon(fb){
   if(fb==="up") return '<span class="material-icons feedback-icon up" title="Positive feedback">thumb_up</span>';
@@ -979,6 +1070,21 @@ function closePanel(){
   document.getElementById("scrim").classList.remove("open");
   document.getElementById("detailPanel").classList.remove("open");
 }
+function closeAllSidePanels(){
+  document.getElementById("scrim").classList.remove("open");
+  document.getElementById("detailPanel").classList.remove("open");
+  document.getElementById("reportsPanel").classList.remove("open");
+}
+function openReportsPanel(){
+  document.getElementById("exportMenu").classList.remove("open");
+  renderReportsList();
+  document.getElementById("scrim").classList.add("open");
+  document.getElementById("reportsPanel").classList.add("open");
+}
+function closeReportsPanel(){
+  document.getElementById("scrim").classList.remove("open");
+  document.getElementById("reportsPanel").classList.remove("open");
+}
 function switchTab(el){
   document.querySelectorAll(".dp-tab").forEach(t=>t.classList.remove("active"));
   el.classList.add("active");
@@ -1030,6 +1136,72 @@ function setDateFilter(value){
   document.getElementById("dateRangeExpando").style.display = (value === "Custom") ? "flex" : "none";
 }
 
+/* ============================================================
+   EXPORT MENU / GENERATE REPORT MODAL / REPORTS PANEL
+   ============================================================ */
+function toggleExportMenu(e){
+  e.stopPropagation();
+  document.getElementById("exportMenu").classList.toggle("open");
+}
+document.addEventListener("click", function(e){
+  const exportMenu = document.getElementById("exportMenu");
+  if (exportMenu && !exportMenu.contains(e.target) && !e.target.closest("#exportMenuBtn")) {
+    exportMenu.classList.remove("open");
+  }
+});
+
+function openGenerateReportModal(){
+  document.getElementById("exportMenu").classList.remove("open");
+  document.getElementById("reportTitleInput").value = "";
+  document.getElementById("reportCharCount").textContent = "0/50";
+  document.getElementById("reportExportBtn").classList.remove("enabled");
+  document.getElementById("modalScrim").classList.add("open");
+  setTimeout(() => document.getElementById("reportTitleInput").focus(), 50);
+}
+function closeGenerateReportModal(e){
+  document.getElementById("modalScrim").classList.remove("open");
+}
+function onReportTitleInput(){
+  const val = document.getElementById("reportTitleInput").value;
+  document.getElementById("reportCharCount").textContent = `${val.length}/50`;
+  document.getElementById("reportExportBtn").classList.toggle("enabled", val.trim().length > 0);
+}
+function submitGenerateReport(){
+  const val = document.getElementById("reportTitleInput").value.trim();
+  if (!val) return;
+  document.getElementById("modalScrim").classList.remove("open");
+
+  const newReport = { title: val, dateGenerated: null, status: "pending" };
+  REPORTS.unshift(newReport);
+  openReportsPanel();
+
+  setTimeout(() => {
+    newReport.status = "ready";
+    newReport.dateGenerated = new Date().toLocaleString([], { month:"numeric", day:"numeric", year:"2-digit", hour:"numeric", minute:"2-digit" });
+    renderReportsList();
+  }, 2600);
+}
+
+function renderReportsList(){
+  const list = document.getElementById("reportsList");
+  if (REPORTS.length === 0) {
+    list.innerHTML = `<div class="empty-pane" style="padding:24px;">No reports generated yet.</div>`;
+    return;
+  }
+  list.innerHTML = REPORTS.map(r => `
+    <div class="report-row">
+      <div>
+        <div class="report-row-title">${r.title}</div>
+        ${r.status === "pending"
+          ? `<div class="report-row-pending"><span class="report-spinner"></span>Generating…</div>`
+          : `<div class="report-row-date">${r.dateGenerated}</div>`}
+      </div>
+      ${r.status === "pending"
+        ? ``
+        : `<div class="icon-btn" title="Download CSV"><span class="material-icons">download</span></div>`}
+    </div>
+  `).join("");
+}
 </script>
 </body>
 </html>
