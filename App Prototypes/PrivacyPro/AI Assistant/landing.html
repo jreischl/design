@@ -354,6 +354,7 @@
     flex-direction: column;
     gap: 16px;
     background: #FAFAFA;
+    position: relative;
   }
 
   /* Welcome state */
@@ -548,16 +549,15 @@
   }
   .ai-error-retry-btn:hover:not(:disabled) { background: #B53228; color: white; }
   .ai-error-retry-btn:disabled { opacity: 0.6; cursor: default; }
+  .ai-error-retried-note { font-size: 12px; font-style: italic; color: #631B16; opacity: 0.75; }
   .ai-error-login-btn {
     display: inline-flex; align-items: center; gap: 6px;
-    background: #B53228; border: 1.5px solid #B53228; color: white;
+    background: #EB4699; border: 1.5px solid #EB4699; color: white;
     border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
     font-family: 'DM Sans', sans-serif; cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
   }
-  .ai-error-login-btn:hover:not(:disabled) { background: #631B16; border-color: #631B16; }
-  .ai-error-login-btn:disabled { opacity: 0.6; cursor: default; }
-  .ai-error-retried-note { font-size: 12px; font-style: italic; color: #631B16; opacity: 0.75; }
+  .ai-error-login-btn:hover { background: #AB336F; border-color: #AB336F; }
 
   .ai-metric-row { display: flex; gap: 12px; margin: 12px 0; }
   .ai-metric {
@@ -643,6 +643,21 @@
   .chat-send-btn:hover { background: #AB336F; border-color: #AB336F; }
   .chat-send-btn:disabled { background: rgba(235,70,153,0.3); border-color: transparent; cursor: not-allowed; }
   .chat-input-hint { font-size: 11px; color: var(--bs-text-muted); text-align: center; margin-top: 8px; }
+  .chat-stop-bar {
+    position: absolute; left: 0; right: 0; bottom: 16px;
+    display: flex; justify-content: center; pointer-events: none; z-index: 5;
+  }
+  .chat-stop-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.6); color: var(--bs-text);
+    border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer; pointer-events: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .chat-stop-btn:hover { background: rgba(255,255,255,0.8); border-color: rgba(158,158,158,0.5); }
+  .chat-stop-icon { width: 9px; height: 9px; background: #555555; border-radius: 2px; flex-shrink: 0; }
 
   /* ─── CASE ASSESSMENT SCREEN ──────────────────────────────── */
   .case-screen {
@@ -1432,6 +1447,10 @@
                 <div class="prompt-chip" onclick="runPrompt('dataviz')"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Show me a table and chart of cases by department for Q1 2026</div>
                 <div class="prompt-chip" onclick="runErrorDemo()"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Show me what happens if the assistant can't respond</div>
               </div>
+            </div>
+
+            <div class="chat-stop-bar" id="chatStopBar" style="display:none;">
+              <button class="chat-stop-btn" onclick="stopGenerating()"><span class="chat-stop-icon"></span> Stop generating</button>
             </div>
           </div>
 
@@ -2944,7 +2963,7 @@
       } else if (__errorDemoAttempt === 2) {
         appendErrorMessage('unavailable');
       } else if (__errorDemoAttempt === 3) {
-        appendErrorMessage('logged_out');
+        appendErrorMessage('loggedOut');
       } else {
         setChatInputEnabled(true);
         appendAIResponse(buildErrorDemoSuccessResponse());
@@ -2961,42 +2980,39 @@
     beginErrorDemoAttempt();
   }
 
-  // Handles the "Log in" action on the logged-out error bubble. Unlike a plain
-  // retry, this represents the person re-authenticating — swap the button for
-  // a confirmation note, then resume the same attempt flow so the next turn succeeds.
-  function loginErrorDemo(btn) {
-    const timestamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    const note = document.createElement('span');
-    note.className = 'ai-error-retried-note';
-    note.textContent = 'Logged in at ' + timestamp;
-    btn.replaceWith(note);
-    beginErrorDemoAttempt();
-  }
-
   // Appends a non-modal, inline error bubble to the message list and immediately
   // re-enables the input so the person can retry OR simply type something new.
   function appendErrorMessage(type) {
     const msgs = document.getElementById('chatMessages');
-    const isTimeout = type === 'timeout';
-    const isLoggedOut = type === 'logged_out';
-    const icon = isTimeout ? 'schedule' : isLoggedOut ? 'lock_person' : 'cloud_off';
-    const title = isTimeout ? 'Response timed out' : isLoggedOut ? 'You\u2019ve been logged out' : 'Assistant unavailable';
-    const detail = isTimeout
-      ? 'Prism didn\u2019t receive a response in time. This is usually temporary — try again.'
-      : isLoggedOut
-        ? 'Your session has ended, so Prism can\u2019t respond right now. Log in again to pick up where you left off.'
-        : 'Prism couldn\u2019t be reached. The service may be temporarily down, or your connection may have dropped.';
+    const copy = {
+      timeout: {
+        icon: 'schedule',
+        title: 'Response timed out',
+        detail: 'Prism didn\u2019t receive a response in time. This is usually temporary — try again.'
+      },
+      unavailable: {
+        icon: 'cloud_off',
+        title: 'Assistant unavailable',
+        detail: 'Prism couldn\u2019t be reached. The service may be temporarily down, or your connection may have dropped.'
+      },
+      loggedOut: {
+        icon: 'lock',
+        title: 'You\u2019ve been signed out',
+        detail: 'Your session expired for security reasons. Log in again to continue.'
+      }
+    }[type];
+    const isLoggedOut = type === 'loggedOut';
     const actionBtn = isLoggedOut
-      ? `<button class="ai-error-login-btn" onclick="loginErrorDemo(this)"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">login</i> Log in</button>`
-      : `<button class="ai-error-retry-btn" onclick="retryErrorDemo(this)"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">refresh</i> Retry</button>`;
+      ? '<button class="ai-error-login-btn" onclick="loginErrorDemo(this)"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">login</i> Log In</button>'
+      : '<button class="ai-error-retry-btn" onclick="retryErrorDemo(this)"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle">refresh</i> Retry</button>';
     const wrapper = document.createElement('div');
     wrapper.className = 'msg ai fade-in';
     wrapper.innerHTML = `
       <div class="msg-avatar" style="background:transparent;padding:0;overflow:hidden;"><img src="${PANDA_AVATAR_URI}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
       <div class="ai-error-bubble">
         <button class="ai-error-dismiss-btn" onclick="dismissErrorMessage(this)" aria-label="Dismiss" title="Dismiss"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle">close</i></button>
-        <div class="ai-error-title"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:#B53228">${icon}</i> ${title}</div>
-        <div class="ai-error-detail">${detail}</div>
+        <div class="ai-error-title"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:15px;line-height:1;vertical-align:middle;color:#B53228">${copy.icon}</i> ${copy.title}</div>
+        <div class="ai-error-detail">${copy.detail}</div>
         ${actionBtn}
       </div>
     `;
@@ -3009,6 +3025,22 @@
   function dismissErrorMessage(btn) {
     const msg = btn.closest('.msg.ai');
     if (msg) msg.remove();
+  }
+
+  // Signing back in is treated as reliable (unlike a flaky-connection retry),
+  // so it goes straight through to a successful turn rather than re-rolling
+  // another error.
+  function loginErrorDemo(btn) {
+    const note = document.createElement('span');
+    note.className = 'ai-error-retried-note';
+    note.textContent = 'Signed in successfully';
+    btn.replaceWith(note);
+    setChatInputEnabled(false);
+    showThinking(['Signing in…', 'Resuming your request…'], () => {
+      removeTyping();
+      setChatInputEnabled(true);
+      appendAIResponse(buildErrorDemoSuccessResponse());
+    });
   }
 
   // Enables/disables the chat input + textarea while a request is in flight.
@@ -3049,8 +3081,7 @@
     if (!val) return;
     const earlyLower = val.toLowerCase();
     if (earlyLower.includes('timeout') || earlyLower.includes('time out') || earlyLower.includes('unavailable') ||
-        earlyLower.includes("can't reach") || earlyLower.includes('cannot reach') || earlyLower.includes('error state') ||
-        earlyLower.includes('logged out') || earlyLower.includes('log out') || earlyLower.includes('session expired')) {
+        earlyLower.includes("can't reach") || earlyLower.includes('cannot reach') || earlyLower.includes('error state')) {
       input.value = '';
       runErrorDemo(val);
       return;
@@ -3108,6 +3139,9 @@
       </div>
     `);
     msgs.scrollTop = msgs.scrollHeight;
+    // Remembered so Stop can pull this back into the input for editing.
+    window.__lastUserMsgText = text;
+    window.__lastUserMsgEl = msgs.lastElementChild;
   }
 
   function showThinking(steps, cb) {
@@ -3125,6 +3159,7 @@
       </div>
     `);
     msgs.scrollTop = msgs.scrollHeight;
+    showStopBar();
 
     // Cycle through contextual status messages so long-running queries always show
     // *something* changing, rather than a static/frozen indicator.
@@ -3154,8 +3189,39 @@
   function removeTyping() {
     if (window.__thinkingCycle) { clearInterval(window.__thinkingCycle); window.__thinkingCycle = null; }
     if (window.__thinkingTimeout) { clearTimeout(window.__thinkingTimeout); window.__thinkingTimeout = null; }
+    hideStopBar();
     const t = document.getElementById('typingMsg');
     if (t) t.remove();
+  }
+
+  function showStopBar() {
+    const bar = document.getElementById('chatStopBar');
+    if (bar) bar.style.display = 'flex';
+  }
+
+  function hideStopBar() {
+    const bar = document.getElementById('chatStopBar');
+    if (bar) bar.style.display = 'none';
+  }
+
+  // Cancels whatever the assistant is "thinking" about (works across every flow —
+  // normal prompts, the error-state demo's retries, and its login step, since they
+  // all route through showThinking/removeTyping), removes the pending user turn
+  // from the transcript, and hands the text back to the input so it can be edited
+  // and resent rather than leaving an unanswered message stuck in the conversation.
+  function stopGenerating() {
+    removeTyping();
+    setChatInputEnabled(true);
+    if (window.__lastUserMsgEl && window.__lastUserMsgEl.parentNode) {
+      window.__lastUserMsgEl.remove();
+    }
+    const input = document.getElementById('chatInput');
+    if (input && window.__lastUserMsgText) {
+      input.value = window.__lastUserMsgText;
+      input.focus();
+    }
+    window.__lastUserMsgText = null;
+    window.__lastUserMsgEl = null;
   }
 
   function appendAIResponse(html) {
