@@ -358,20 +358,17 @@
       color: var(--teal);
     }
     
-    /* ── Rules Checkboxes ── */
+    /* ── Rules Checkboxes — now live inside the Submetrics dropdown menu ── */
     .rules-chips-row {
       display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: nowrap;
-      flex-shrink: 0;
-      border: 1px solid var(--gray-300);
-      border-radius: var(--radius);
-      padding: 8px 16px 16px 16px;
+      flex-direction: column;
+      gap: 14px;
+      border: none;
+      padding: 14px 16px;
     }
     
     .rules-chips-row legend {
-      padding: 0 6px;
+      padding: 0 0 4px;
       font-family: var(--font);
       font-size: .75rem;
       font-weight: 600;
@@ -543,8 +540,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--gray-300);
+      margin-bottom: 20px;
+    }
+    .section-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--blue-dark);
     }
     .tab-bar-tabs { display: flex; }
     .mdc-tab {
@@ -603,7 +605,7 @@
       flex-wrap: wrap;
       margin-bottom: 16px;
     }
-    .toolbar-left { display: flex; align-items: center; gap: 24px; flex: 1; }
+    .toolbar-left { display: flex; align-items: center; gap: 16px; }
 
     .download-btn {
       display: inline-flex; align-items: center; justify-content: center;
@@ -694,25 +696,56 @@
       font-size: 11px; color: #9e9e9e; line-height: 1.4;
     }
     
-    /* Persistent impact summary that sits next to the Time Elapsed chip in the
-       toolbar — keeps the threshold's effect visible after Apply, not just in
-       the configuration menu. */
-    .toolbar-threshold-summary {
-      font-size: 12px;
+    /* Plain-text row count next to the toolbar filters — replaces the old
+       "X of Y users" impact summary with a simple provider count, matching
+       the app's native Action Times toolbar. */
+    .provider-count-text {
+      font-size: 13px;
       color: var(--text-54);
-      font-weight: 400;
       white-space: nowrap;
     }
-    .toolbar-threshold-summary strong {
-      color: var(--text-87);
-      font-weight: 600;
+    
+    .toolbar-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    
+    /* Segmented icon-only view toggle (Tabular / Distribution), replacing the
+       old underlined text tabs. Active option shows a check + its icon. */
+    .view-toggle {
+      display: inline-flex;
+      border: 1px solid var(--teal);
+      border-radius: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
     }
-    .table-row-count-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
+    .view-toggle-btn {
+      display: inline-flex; align-items: center; gap: 2px;
+      height: 32px; padding: 0 10px;
+      background: #fff; border: none;
+      border-right: 1px solid var(--teal);
+      color: var(--teal);
+      cursor: pointer;
+      transition: background .15s, color .15s;
     }
+    .view-toggle-btn:last-child { border-right: none; }
+    .view-toggle-btn:hover { background: #e7f4f8; }
+    .view-toggle-btn.active { background: var(--teal); color: #fff; }
+    .view-toggle-btn.active:hover { background: var(--teal-dark); }
+    .view-toggle-btn .material-icons { font-size: 18px; width: 18px; height: 18px; }
+    .view-toggle-btn .check-icon { font-size: 16px; width: 16px; height: 16px; display: none; }
+    .view-toggle-btn.active .check-icon { display: inline-flex; }
+    
+    /* Search box, right-aligned in the toolbar */
+    .toolbar-search {
+      display: flex; align-items: center; gap: 6px;
+      height: 36px; width: 220px; padding: 0 10px;
+      border: 1px solid var(--gray-300); border-radius: 4px;
+      background: #fff;
+    }
+    .toolbar-search .material-icons { font-size: 18px; color: var(--text-54); }
+    .toolbar-search input {
+      flex: 1; border: none; outline: none;
+      font-family: var(--font); font-size: 13px; color: var(--text-87);
+    }
+    .toolbar-search input::placeholder { color: var(--text-54); }
     
     /* Single-select list used by Comparison Score */
     .pillter-menu .menu-item {
@@ -815,22 +848,6 @@
     .data-table th.fixed-col:nth-child(2) .sort-icon {
       flex-shrink: 0;
     }
-
-    /* Fixed right column */
-    .data-table th.fixed-col-right,
-    .data-table td.fixed-col-right {
-      position: sticky;
-      right: 0;
-      background: #fff;
-      z-index: 10;
-      border-left: 1px solid var(--gray-300);
-      min-width: 120px;
-    }
-    
-    /* Hover effect for right fixed column */
-    .data-table tbody tr:hover td.fixed-col-right {
-      background: #fafafa !important;
-    }
     
     /* Group headers for fixed columns */
     .fixed-col-group,
@@ -856,6 +873,29 @@
     .data-table td.col-lalw-events {
       border-left: 1px solid var(--gray-300);
     }
+    
+    /* Compact per-submetric investigate button — one per column group instead
+       of a single shared Actions column at the end of the table. */
+    .data-table th.col-fdfa-action,
+    .data-table td.col-fdfa-action,
+    .data-table th.col-lalw-action,
+    .data-table td.col-lalw-action {
+      width: 40px;
+      padding-left: 4px;
+      padding-right: 12px;
+    }
+    .investigate-icon-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border: none;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--teal);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .investigate-icon-btn:hover { background: #e7f4f8; }
+    .investigate-icon-btn .material-icons { font-size: 16px; width: 16px; height: 16px; }
     .data-table {
       width: 100%; border-collapse: collapse;
       font-family: var(--font); font-size: .875rem;
@@ -925,40 +965,15 @@
 
     /* User name cell */
     .user-name { font-weight: 600; color: var(--text-87); line-height: 1.3; }
-    .user-name a { color: #0096b8; text-decoration: none; }
+    .user-name a { color: #044a82; text-decoration: none; }
     .user-name a:hover { color: #00718a; text-decoration: none; }
     .user-role-dept {
       font-size: .75rem; color: var(--text-54);
       font-weight: 400; line-height: 1.3;
     }
 
-    /* Investigate link */
-    .investigate-link {
-      display: inline-flex; 
-      align-items: center; 
-      gap: 6px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      background: transparent;
-      color: #007BA3;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 700;
-      transition: all .15s ease;
-      white-space: nowrap;
-    }
-    .investigate-link:hover { 
-      background: #e7f4f8;
-      color: #007BA3;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .investigate-link .material-icons { font-size: 16px; width: 16px; height: 16px; }
-
     /* Interactive elements should still show pointer cursor */
-    .data-table .user-name a,
-    .data-table .investigate-link {
+    .data-table .user-name a {
       cursor: pointer;
     }
 
@@ -3542,6 +3557,7 @@
     let chartType = 'scatter'; // Distribution is the only supported chart type in this scoped prototype.
     let tempTimeThreshold = 60; // Temporary value while adjusting
     let filteredUsers = [...ACTION_TIMES_USERS]; // Users visible based on time threshold
+    let searchQuery = ''; // Lowercased text from the toolbar search box, filters by user name
 
     function getActionScoreClass(score) {
       if (score >= 4.6) return 'score-high';
@@ -3571,6 +3587,20 @@
     function fmtAvgTime(rule) {
       return rule.events === 0 ? '<span class="no-data">&mdash;</span>' : rule.avgTime;
     }
+    // Total Minutes = events × avg time — derived rather than stored, so it
+    // always stays consistent with the other two columns.
+    function fmtTotalMinutes(rule) {
+      return rule.events === 0 ? '<span class="no-data">&mdash;</span>' : rule.events * rule.avgTime;
+    }
+    // Per-submetric investigate button — only rendered when the user has
+    // events for that submetric, matching the "blank when nothing to
+    // investigate" pattern from the reference.
+    function renderInvestigateIcon(userName, rule, ruleLabel) {
+      if (rule.events === 0) return '';
+      return `<button class="investigate-icon-btn" data-tooltip="Investigate Data" onclick="event.stopPropagation(); openInvestigate('${userName}', '${ruleLabel}')">
+        <span class="material-icons">open_in_new</span>
+      </button>`;
+    }
 
     function getTooltipText(user) {
       if (user.isOutlier) {
@@ -3587,7 +3617,11 @@
       const tbody = document.getElementById('usersTableBody');
       let html = '';
       
-      const sorted = [...filteredUsers].sort((a, b) => {
+      const searched = searchQuery
+        ? filteredUsers.filter(u => u.name.toLowerCase().includes(searchQuery))
+        : filteredUsers;
+      
+      const sorted = [...searched].sort((a, b) => {
         let aVal = a[sortState.col];
         let bVal = b[sortState.col];
         
@@ -3634,14 +3668,12 @@
             </td>
             <td class="num col-fdfa-events">${fmtEvents(user.firstDispenseFirstAdmin)}</td>
             <td class="num col-fdfa-time">${fmtAvgTime(user.firstDispenseFirstAdmin)}</td>
+            <td class="num col-fdfa-total">${fmtTotalMinutes(user.firstDispenseFirstAdmin)}</td>
+            <td class="center col-fdfa-action">${renderInvestigateIcon(user.name, user.firstDispenseFirstAdmin, 'First Dispense → First Admin')}</td>
             <td class="num col-lalw-events hidden">${fmtEvents(user.lastAdminLastWaste)}</td>
             <td class="num col-lalw-time hidden">${fmtAvgTime(user.lastAdminLastWaste)}</td>
-            <td class="center fixed-col-right">
-              <a href="#" class="investigate-link" onclick="event.stopPropagation(); openInvestigate('${user.name}')">
-                <span class="material-icons">open_in_new</span>
-                Investigate
-              </a>
-            </td>
+            <td class="num col-lalw-total hidden">${fmtTotalMinutes(user.lastAdminLastWaste)}</td>
+            <td class="center col-lalw-action hidden">${renderInvestigateIcon(user.name, user.lastAdminLastWaste, 'Last Admin → Last Waste')}</td>
           </tr>
         `;
       });
@@ -3653,6 +3685,17 @@
       // rule cells. Reapply column visibility from visibleRules so any rules the
       // user has toggled on stay visible after the re-render.
       updateRuleVisibility();
+    }
+    
+    // Filters the table (and, if open, the chart) by user name as the person
+    // types in the toolbar search box.
+    function handleUserSearch(value) {
+      searchQuery = value.trim().toLowerCase();
+      renderUsersTable();
+      if (currentView === 'graph' && actionChart) {
+        actionChart.dispose();
+        actionChart = initActionChart();
+      }
     }
 
     function sortUsersTable(col) {
@@ -3679,22 +3722,13 @@
       currentView = mode;
       document.getElementById('action-times-table-view').style.display = mode === 'table' ? '' : 'none';
       document.getElementById('action-times-graph-wrap').style.display = mode === 'graph' ? '' : 'none';
-      // Rule chips affect table columns — only meaningful on the Tabular tab.
-      // On Visualized Data, ECharts' legend handles series visibility instead.
-      document.getElementById('rules-chips-row').style.display = mode === 'table' ? '' : 'none';
-      // Row count line sits directly above the table, so it only applies to Tabular Data.
-      document.getElementById('table-row-count-row').style.display = mode === 'table' ? '' : 'none';
-      // Comparison Score only affects the table's comp-score column, so hide it
-      // on the chart. Time Elapsed stays — it scales avgTime / retention rate
-      // and re-inits the chart on Apply.
-      document.getElementById('pillter-comp-score').style.display = mode === 'table' ? '' : 'none';
       
-      const tabular = document.getElementById('action-times-tabular-tab');
-      const visual = document.getElementById('action-times-visual-tab');
-      tabular.classList.toggle('mdc-tab--active', mode === 'table');
-      visual.classList.toggle('mdc-tab--active', mode === 'graph');
-      tabular.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'table');
-      visual.querySelector('.mdc-tab-indicator').classList.toggle('mdc-tab-indicator--active', mode === 'graph');
+      const tableBtn = document.getElementById('view-toggle-table');
+      const graphBtn = document.getElementById('view-toggle-graph');
+      tableBtn.classList.toggle('active', mode === 'table');
+      graphBtn.classList.toggle('active', mode === 'graph');
+      tableBtn.setAttribute('aria-pressed', mode === 'table');
+      graphBtn.setAttribute('aria-pressed', mode === 'graph');
       
       if (mode === 'graph') {
         if (actionChart) { 
@@ -3807,7 +3841,15 @@
           data: chartData.users,
           inverse: true,    // first user at the top
           axisLabel: { color: '#444', fontSize: 12 },
-          axisTick: { show: false }
+          axisTick: { show: false },
+          splitArea: {
+            show: true,
+            areaStyle: { color: ['#fafafa', 'rgba(0,0,0,0)'] }
+          },
+          splitLine: {
+            show: true,
+            lineStyle: { color: '#e5e5e5', type: 'solid' }
+          }
         }];
       } else {
         // Bar mode — primary y for avg time, optional secondary for metric score.
@@ -4005,6 +4047,7 @@
         visibleRules = nextRules;
         updateRuleVisibility();   // sync table columns
         syncRuleChips();          // sync rule checkbox visuals
+        updateSubmetricsBadge();  // sync toolbar chip badge count
       });
       
       // Handle window resize
@@ -4081,7 +4124,11 @@
         data.scatterByRule[r] = [];
       });
       
-      filteredUsers.forEach((user, userIdx) => {
+      const searched = searchQuery
+        ? filteredUsers.filter(u => u.name.toLowerCase().includes(searchQuery))
+        : filteredUsers;
+      
+      searched.forEach((user, userIdx) => {
         const parts = user.name.split(' ');
         const shortName = parts[0] + ' ' + (parts[1] ? parts[1].charAt(0) + '.' : '');
         data.users.push(shortName);
@@ -4170,8 +4217,8 @@
       return series;
     }
 
-    function openInvestigate(userName) {
-      alert(`Opening investigation for: ${userName}`);
+    function openInvestigate(userName, ruleLabel) {
+      alert(`Opening investigation for: ${userName} — ${ruleLabel}`);
     }
 
     // Sidebar functions
@@ -4218,6 +4265,7 @@
       }
       
       updateRuleVisibility();
+      updateSubmetricsBadge();
       
       // If the chart is currently rendered, sync its legend to match — no
       // need to dispose/re-init, just dispatch a legend action.
@@ -4234,6 +4282,12 @@
       }
     }
     
+    // Keeps the "N" badge on the Submetrics chip in sync with visibleRules.
+    function updateSubmetricsBadge() {
+      const badge = document.getElementById('chip-submetrics-badge');
+      if (badge) badge.textContent = visibleRules.length;
+    }
+    
     // Update rule checkbox visual state (checked) to match
     // visibleRules. Used when the chart legend drives the change instead of the
     // chip itself.
@@ -4248,8 +4302,8 @@
     
     function updateRuleVisibility() {
       const ruleColumnMap = {
-        'firstDispenseFirstAdmin': ['col-fdfa-events', 'col-fdfa-time', 'col-fdfa-group'],
-        'lastAdminLastWaste': ['col-lalw-events', 'col-lalw-time', 'col-lalw-group']
+        'firstDispenseFirstAdmin': ['col-fdfa-events', 'col-fdfa-time', 'col-fdfa-total', 'col-fdfa-action', 'col-fdfa-group'],
+        'lastAdminLastWaste': ['col-lalw-events', 'col-lalw-time', 'col-lalw-total', 'col-lalw-action', 'col-lalw-group']
       };
       
       // Hide all rule columns first
@@ -4289,14 +4343,14 @@
       document.getElementById('time-threshold-slider').value = tempTimeThreshold;
     }
     
-    // Persistent summary that sits next to the Time Elapsed chip in the
-    // toolbar — reflects the *applied* threshold, not the in-flight one.
+    // Provider count that sits at the end of the toolbar filters — reflects
+    // the *applied* threshold (how many users are currently above it), not
+    // the in-flight slider value.
     function updateThresholdSummary() {
       const count = calculateUserCountAtThreshold(timeThreshold);
-      const total = ACTION_TIMES_USERS.length;
-      const el = document.getElementById('threshold-summary');
+      const el = document.getElementById('provider-count-text');
       if (el) {
-        el.innerHTML = `<strong>${count}</strong> of ${total} users`;
+        el.textContent = `${count} providers`;
       }
     }
     
@@ -4321,7 +4375,7 @@
     
     function applyTimeThreshold() {
       timeThreshold = tempTimeThreshold;
-      document.getElementById('time-threshold-label').textContent = `${timeThreshold} Minutes`;
+      document.getElementById('time-threshold-label').textContent = `${timeThreshold} minutes`;
       closePillter('pillter-time-threshold');
       
       // Filter and re-render table based on time threshold
@@ -4739,6 +4793,7 @@
       // Initialize rule visibility
       updateRuleVisibility();
       updateRuleChips();
+      updateSubmetricsBadge();
       
       // Initialize comparison score header
       updateCompScoreHeader();
@@ -5184,44 +5239,56 @@
         <div class="view visible">
           <div class="content-area">
 
-            <!-- ── Tab bar ── -->
+            <!-- ── Section title bar ── -->
             <div class="view-tab-bar">
-              <div class="tab-bar-tabs">
-              <button class="mdc-tab mdc-tab--active" id="action-times-tabular-tab" onclick="switchView('table')">
-                <span class="mdc-tab__content">
-                  <span class="material-icons mat-icon">table_chart</span>
-                  <span class="mdc-tab__text-label">Tabular Data</span>
-                </span>
-                <span class="mdc-tab-indicator mdc-tab-indicator--active">
-                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                </span>
-              </button>
-              <button class="mdc-tab" id="action-times-visual-tab" onclick="switchView('graph')">
-                <span class="mdc-tab__content">
-                  <span class="material-icons mat-icon">bar_chart</span>
-                  <span class="mdc-tab__text-label">Visualized Data</span>
-                </span>
-                <span class="mdc-tab-indicator">
-                  <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
-                </span>
-              </button>
-              </div>
+              <h2 class="section-title">Time Elapsed Between Actions By User</h2>
               <a class="legacy-switch-link" href="#" onclick="return false;">
                 Switch to legacy Action Times
                 <span class="material-icons">arrow_forward</span>
               </a>
             </div>
 
-            <!-- ── Secondary pillter filters ── -->
-            <!-- Comparison Score: Tabular only (table-comp-score column).
-                 Time Threshold: both views — it scales avgTime / retention. -->
+            <!-- ── Toolbar: view toggle, filters, provider count, search, download ── -->
             <div class="content-toolbar">
               <div class="toolbar-left">
-                <!-- Time Threshold pillter (preset chips + custom + live preview) -->
+                <!-- View toggle: Tabular Data / Distribution -->
+                <div class="view-toggle" role="tablist" aria-label="View">
+                  <button class="view-toggle-btn active" id="view-toggle-table" onclick="switchView('table')" aria-pressed="true" title="Tabular Data">
+                    <span class="material-icons check-icon">check</span>
+                    <span class="material-icons">table_chart</span>
+                  </button>
+                  <button class="view-toggle-btn" id="view-toggle-graph" onclick="switchView('graph')" aria-pressed="false" title="Visualized Data">
+                    <span class="material-icons check-icon">check</span>
+                    <span class="material-icons">scatter_plot</span>
+                  </button>
+                </div>
+
+                <!-- Submetrics pillter (multi-select checkboxes, moved from the old always-open fieldset) -->
+                <div class="pillter-wrapper" id="pillter-submetrics">
+                  <button class="filter-chip secondary active" id="chip-submetrics" onclick="togglePillter('pillter-submetrics')">
+                    <span class="chip-badge" id="chip-submetrics-badge">2</span>
+                    <span>Submetrics</span>
+                  </button>
+                  <div class="pillter-menu" style="width:260px">
+                    <fieldset class="rules-chips-row" id="rules-chips-row">
+                      <legend>Submetric Columns</legend>
+                      <label class="rule-checkbox" id="chip-firstDispenseFirstAdmin">
+                        <input type="checkbox" checked onchange="toggleRuleChip('firstDispenseFirstAdmin', this)" />
+                        <span class="chip-text">First Dispense → First Admin</span>
+                      </label>
+                      <label class="rule-checkbox" id="chip-lastAdminLastWaste">
+                        <input type="checkbox" checked onchange="toggleRuleChip('lastAdminLastWaste', this)" />
+                        <span class="chip-text">Last Admin → Last Waste</span>
+                      </label>
+                    </fieldset>
+                  </div>
+                </div>
+
+                <!-- Time Elapsed pillter (slider + custom input) -->
                 <div class="pillter-wrapper" id="pillter-time-threshold">
                   <button class="filter-chip secondary active" id="chip-time-threshold" onclick="togglePillter('pillter-time-threshold')">
-                    <span class="cs-label">Time Threshold:</span>
-                    <span id="time-threshold-label">60 Minutes</span>
+                    <span class="cs-label">Time Elapsed:</span>
+                    <span id="time-threshold-label">60 minutes</span>
                   </button>
                   <div class="pillter-menu" style="width:300px; left:0; right:auto;">
                     <div class="threshold-section">
@@ -5242,7 +5309,7 @@
                   </div>
                 </div>
 
-                <!-- Comparison Score pillter (single-select) — hidden on graph view -->
+                <!-- Comparison Score pillter (single-select) — hidden per prior request, kept in DOM/JS -->
                 <div class="pillter-wrapper" id="pillter-comp-score">
                   <button class="filter-chip secondary active" id="chip-comp-score" onclick="togglePillter('pillter-comp-score')">
                     <span class="cs-label">Comparison Score:</span>
@@ -5259,30 +5326,19 @@
                     </div>
                   </div>
                 </div>
+
+                <span class="provider-count-text" id="provider-count-text">100 providers</span>
               </div>
 
-              <!-- Rules Fieldset (Tabular Data only) -->
-              <fieldset class="rules-chips-row" id="rules-chips-row">
-                <legend>Submetric Columns</legend>
-                <label class="rule-checkbox" id="chip-firstDispenseFirstAdmin">
-                  <input type="checkbox" checked onchange="toggleRuleChip('firstDispenseFirstAdmin', this)" />
-                  <span class="chip-text">First Dispense → First Admin</span>
-                </label>
-                <label class="rule-checkbox" id="chip-lastAdminLastWaste">
-                  <input type="checkbox" checked onchange="toggleRuleChip('lastAdminLastWaste', this)" />
-                  <span class="chip-text">Last Admin → Last Waste</span>
-                </label>
-              </fieldset>
-            </div>
-
-            <!-- Persistent threshold impact summary (visible after Apply) — row count, own line above table -->
-            <div class="table-row-count-row" id="table-row-count-row">
-              <span class="toolbar-threshold-summary" id="threshold-summary">
-                <strong>10</strong> of 100 users
-              </span>
-              <button class="download-btn" title="Download data" data-tooltip="Download CSV">
-                <span class="material-icons">download</span>
-              </button>
+              <div class="toolbar-right">
+                <div class="toolbar-search">
+                  <span class="material-icons">search</span>
+                  <input type="text" id="user-search-input" placeholder="Search" oninput="handleUserSearch(this.value)" />
+                </div>
+                <button class="download-btn" title="Download data" data-tooltip="Download CSV">
+                  <span class="material-icons">download</span>
+                </button>
+              </div>
             </div>
 
             <!-- Action Times Table -->
@@ -5293,9 +5349,8 @@
                     <thead>
                       <tr class="col-group-header">
                         <th colspan="3" class="fixed-col-group">Users Above Time Threshold</th>
-                        <th colspan="2" id="group-fdfa" class="col-fdfa-group">First Dispense → First Admin</th>
-                        <th colspan="2" id="group-lalw" class="col-lalw-group">Last Admin → Last Waste</th>
-                        <th class="fixed-col-group-right"></th>
+                        <th colspan="4" id="group-fdfa" class="col-fdfa-group">First Dispense → First Admin</th>
+                        <th colspan="4" id="group-lalw" class="col-lalw-group">Last Admin → Last Waste</th>
                       </tr>
                       <tr>
                         <th class="center sortable fixed-col" data-col="outlierScore" onclick="sortUsersTable('outlierScore')">
@@ -5313,13 +5368,16 @@
                         <th class="center sortable col-fdfa-time" data-col="firstDispenseFirstAdmin.avgTime" onclick="sortUsersTable('firstDispenseFirstAdmin.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
+                        <th class="center col-fdfa-total">Total Minutes</th>
+                        <th class="col-fdfa-action"></th>
                         <th class="center sortable col-lalw-events" data-col="lastAdminLastWaste.events" onclick="sortUsersTable('lastAdminLastWaste.events')">
                           <span class="th-inner">Events <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
                         <th class="center sortable col-lalw-time" data-col="lastAdminLastWaste.avgTime" onclick="sortUsersTable('lastAdminLastWaste.avgTime')">
                           <span class="th-inner">Avg Time (min) <span class="material-icons sort-icon">arrow_upward</span></span>
                         </th>
-                        <th class="center fixed-col-right">Actions</th>
+                        <th class="center col-lalw-total">Total Minutes</th>
+                        <th class="col-lalw-action"></th>
                       </tr>
                     </thead>
                     <tbody id="usersTableBody">
