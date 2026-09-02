@@ -269,6 +269,42 @@
     .kebab-menu-item .kb-title { font-size: .875rem; color: var(--text-87); font-weight: 600; }
     .kebab-menu-item .kb-sub { font-size: .75rem; color: var(--gray-600); font-weight: 400; margin-top: 2px; }
 
+    /* ── Departments tab: Compare action + inline expand panel ── */
+    .compare-link { display: inline-flex; align-items: center; gap: 4px; color: var(--blue-dark); font-size: .8125rem; font-weight: 600; text-decoration: none; cursor: pointer; padding: 4px 8px; border-radius: 4px; margin-right: 6px; }
+    .compare-link:hover { background: var(--gray-100); }
+    .compare-link.active { background: #e7f4f8; }
+    .compare-link .material-icons { font-size: 17px; }
+    .compare-expand-row td { padding: 0; border-bottom: 1px solid var(--gray-300); }
+    .compare-panel { background: #e3ecf4; width: 100%; display: flex; flex-direction: column; }
+    .compare-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(4,74,130,.12); }
+    .compare-header h4 { font-size: 1rem; font-weight: 700; color: var(--blue-dark); }
+    .compare-body { padding: 16px 20px; }
+    .compare-body .user-count { font-size: .8125rem; font-weight: 700; color: var(--text-87); }
+
+    /* Deliberately its own class (not .data-table): this table lives nested inside a
+       <td> of the outer Departments table, and CSS descendant selectors don't respect
+       table boundaries — every "table.data-table ..." rule (sticky columns, tbl-entity
+       left offsets, box-shadows) would otherwise bleed through onto this inner table's
+       cells too, since they're technically descendants of the outer table element. */
+    table.compare-table { width: 1196px; border-collapse: separate; border-spacing: 0; table-layout: fixed; background: #fff; }
+    table.compare-table thead th { font-size: .72rem; font-weight: 700; color: var(--text-54); letter-spacing: .02em; text-align: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-300); white-space: nowrap; background: #fff; }
+    table.compare-table thead th.left { text-align: left; }
+    table.compare-table tbody td { padding: 12px 14px; font-size: .875rem; color: var(--text-87); border-bottom: 1px solid var(--gray-200); white-space: nowrap; text-align: center; }
+    table.compare-table tbody td.left { text-align: left; }
+    table.compare-table tbody tr:last-child td { border-bottom: none; }
+    table.compare-table tbody tr:hover td { background: var(--gray-50); }
+    table.compare-table tbody tr.focus-user td { background: #fdf5e5 !important; font-weight: 700; }
+
+    /* ── nested compare-table row actions (kebab menu) ── */
+    .row-actions-cell { position: relative; text-align: right !important; }
+    .row-actions-btn { background: none; border: none; cursor: pointer; color: var(--gray-600); display: inline-flex; padding: 6px; border-radius: 50%; }
+    .row-actions-btn:hover { background: var(--gray-200); }
+    .row-actions-menu { display: none; position: absolute; right: 8px; top: 34px; background: #fff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.18); padding: 6px; min-width: 180px; z-index: 50; text-align: left; }
+    .row-actions-menu.show { display: block; }
+    .row-actions-menu button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 8px 10px; border-radius: 6px; font-size: .8125rem; font-weight: 600; color: var(--text-87); white-space: nowrap; }
+    .row-actions-menu button:hover { background: var(--gray-100); }
+    .row-actions-menu .material-icons { font-size: 18px; color: var(--gray-600); }
+
     /* ── L1 tab bar (By User / By Department) ────────────────── */
     .view-tab-bar { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gray-300); margin-bottom: 16px; }
     .tab-bar-tabs { display: flex; gap: 4px; }
@@ -805,6 +841,40 @@
   </div>
 </div>
 
+<!-- ═══ COMPARE PANEL — parked here; moved into the invoking Departments-tab row's expand slot when opened ═══ -->
+<div id="comparePanelPark" style="display:none">
+  <div class="compare-panel" id="comparePanel">
+    <div class="compare-header">
+      <h4 id="compareTitle">Comparing —</h4>
+      <button class="modal-close-x" onclick="closeCompare()"><span class="material-icons">close</span></button>
+    </div>
+    <div class="compare-body">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span class="user-count" id="compareCount">0 users</span>
+        <button class="download-icon-btn" title="Download"><span class="material-icons">file_download</span></button>
+      </div>
+      <div class="data-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th class="left" style="width:220px">User</th>
+              <th style="width:130px">Variance Rate</th>
+              <th style="width:120px">Total Events</th>
+              <th style="width:130px">Total Variances</th>
+              <th style="width:150px">Unable to Reconcile</th>
+              <th style="width:120px">Reconciled</th>
+              <th style="width:130px">Open &gt; 3 Days</th>
+              <th style="width:140px">Open - Historical</th>
+              <th style="width:56px"></th>
+            </tr>
+          </thead>
+          <tbody id="compareTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ════════════════════════════════════════════════════════════════
    MOCK DATA — trimmed to what a FE-only build can compute
@@ -943,7 +1013,7 @@ function getAllUsers() {
       const numExtraDepts = Math.floor(_seededRand(u.name, 'numdepts') * 2.6);
       const otherDepts = DEPARTMENTS.filter(d2 => d2.name !== u.homeDept).map(d2 => d2.name);
       const extraDepts = _pickN(u.name, 'extradepts', otherDepts, numExtraDepts);
-      out.push(Object.assign({}, u, { activeDrugs: activeDrugs, extraDepts: extraDepts, extraDeptCount: extraDepts.length }));
+      out.push(Object.assign({}, u, { activeDrugs: activeDrugs, extraDepts: extraDepts, extraDeptCount: extraDepts.length, activeDepts: [u.homeDept].concat(extraDepts) }));
     });
   });
   _allUsers = out;
@@ -986,9 +1056,146 @@ function drugRowsForUser(user) {
   }).sort((a, b) => b.variances - a.variances);
 }
 
-function peersForUser(user) {
-  return getAllUsers().filter(u => u.homeDept === user.homeDept).sort((a, b) => b.variances - a.variances);
+/* Allocates a user's own totals across N slices by weight (used to split a user's
+   activity across each department they're active in). Rounds per-metric, with the
+   last slice absorbing any remainder so slices sum exactly to the user's totals. */
+function _allocateStats(user, weights) {
+  const totalW = weights.reduce((s, w) => s + w, 0) || 1;
+  const norm = weights.map(w => w / totalW);
+  const keys = ['totalEvents', 'variances', 'unreconciled', 'reconciled', 'open3', 'openhist'];
+  const slices = norm.map(() => ({}));
+  keys.forEach(k => {
+    const total = user[k] || 0;
+    let rem = total;
+    norm.forEach((frac, i) => {
+      const isLast = i === norm.length - 1;
+      const v = isLast ? rem : Math.round(total * frac);
+      slices[i][k] = Math.max(0, v);
+      rem -= v;
+    });
+  });
+  return slices;
 }
+
+/* Per-department stat slice for a user, keyed by department name. Home department
+   gets ~65% of the user's totals; any extra departments split the remaining 35%.
+   Cached on the user object since getAllUsers() caches the user list itself. */
+function deptStatsForUser(user) {
+  if (user._deptStats) return user._deptStats;
+  const numExtra = user.extraDepts.length;
+  const weights = user.activeDepts.map((_, i) => i === 0 ? 0.65 : (0.35 / Math.max(1, numExtra)));
+  const slices = _allocateStats(user, weights);
+  const map = {};
+  user.activeDepts.forEach((dn, i) => { map[dn] = slices[i]; });
+  user._deptStats = map;
+  return map;
+}
+
+/* One row per department the user is active in (home dept first), for the
+   "Departments" L2 sub-tab. */
+function deptRowsForUser(user) {
+  const map = deptStatsForUser(user);
+  return user.activeDepts.map(dn => Object.assign({ name: dn }, map[dn]));
+}
+
+/* All users active in a given department, each scoped to their activity within
+   that department, for the Compare panel's nested table. The focus user is
+   flagged and sorted first. */
+function usersInDept(deptName, focusUser) {
+  const rows = getAllUsers().filter(u => u.activeDepts.includes(deptName)).map(u => {
+    const slice = deptStatsForUser(u)[deptName];
+    return Object.assign({}, u, slice, { focus: u.id === focusUser.id });
+  });
+  rows.sort((a, b) => {
+    if (a.focus && !b.focus) return -1;
+    if (b.focus && !a.focus) return 1;
+    return (b.variances || 0) - (a.variances || 0);
+  });
+  return rows;
+}
+
+/* ══════════════════════════ COMPARE PANEL (inline row expansion, Departments tab) ══════════════════════════ */
+let comparePanelRows = [];
+let openCompareIdx = null;
+
+/* Moves the (single, shared) compare panel node back to its hidden parking spot
+   outside the table. Must be called before the L2 table body's innerHTML is
+   replaced — otherwise the panel node would be destroyed along with the old
+   rows, since it may currently live inside one of them. */
+function parkComparePanel() {
+  const panel = document.getElementById('comparePanel');
+  const park = document.getElementById('comparePanelPark');
+  if (panel && park) park.appendChild(panel);
+  if (panel) panel.style.display = 'none';
+  openCompareIdx = null;
+}
+
+function openCompare(deptName, idx) {
+  if (openCompareIdx === idx) { closeCompare(); return; }
+  if (openCompareIdx !== null) {
+    const prevRow = document.getElementById('compareExpandRow-' + openCompareIdx);
+    if (prevRow) prevRow.style.display = 'none';
+    const prevBtn = document.getElementById('compareBtn-' + openCompareIdx);
+    if (prevBtn) prevBtn.classList.remove('active');
+  }
+  const user = currentDrillUser();
+  comparePanelRows = usersInDept(deptName, user);
+  document.getElementById('compareTitle').textContent = "Comparing " + user.name + "'s activity in " + deptName + " with other users";
+  document.getElementById('compareCount').textContent = comparePanelRows.length + ' users';
+  document.getElementById('compareTableBody').innerHTML = comparePanelRows.map(function (p) {
+    const safeId = esc(p.id);
+    const safeName = esc(p.name);
+    const nameHtml = p.focus
+      ? p.name
+      : '<a href="#" onclick="event.preventDefault();openUserDrill(\'' + safeId + '\')">' + p.name + '</a>';
+    return '<tr' + (p.focus ? ' class="focus-user"' : '') + '>' +
+      '<td class="left"><div class="entity-cell"><div class="entity-name' + (p.focus ? '' : ' static') + '" title="' + p.name + '">' + nameHtml + '</div><div class="entity-sub">' + p.role + '</div></div></td>' +
+      '<td>' + variancePct(p.variances, p.totalEvents) + '%</td>' +
+      '<td>' + fmtNum(p.totalEvents) + '</td>' +
+      '<td>' + fmtNum(p.variances) + '</td>' +
+      '<td>' + fmtNum(p.unreconciled) + '</td><td>' + fmtNum(p.reconciled) + '</td><td>' + fmtNum(p.open3) + '</td><td>' + fmtNum(p.openhist) + '</td>' +
+      '<td class="row-actions-cell">' +
+        '<button class="row-actions-btn" title="Actions" onclick="event.stopPropagation();toggleRowActionsMenu(this)"><span class="material-icons">more_vert</span></button>' +
+        '<div class="row-actions-menu">' +
+          '<button onclick="event.stopPropagation();closeRowActionsMenus();window.alert(\'Opens Investigate Data view for ' + safeName + '.\')"><span class="material-icons">open_in_new</span>Investigate Data</button>' +
+          '<button onclick="event.stopPropagation();closeRowActionsMenus();openUserDrill(\'' + safeId + '\')"><span class="material-icons">show_chart</span>Variance Trends</button>' +
+        '</div>' +
+      '</td>' +
+    '</tr>';
+  }).join('');
+
+  const panel = document.getElementById('comparePanel');
+  const slot = document.getElementById('compareSlot-' + idx);
+  slot.appendChild(panel);
+  panel.style.display = '';
+  document.getElementById('compareExpandRow-' + idx).style.display = '';
+  const btn = document.getElementById('compareBtn-' + idx);
+  if (btn) btn.classList.add('active');
+  openCompareIdx = idx;
+}
+
+function closeCompare() {
+  if (openCompareIdx === null) return;
+  document.getElementById('comparePanel').style.display = 'none';
+  const row = document.getElementById('compareExpandRow-' + openCompareIdx);
+  if (row) row.style.display = 'none';
+  const btn = document.getElementById('compareBtn-' + openCompareIdx);
+  if (btn) btn.classList.remove('active');
+  openCompareIdx = null;
+}
+
+function toggleRowActionsMenu(btnEl) {
+  const menu = btnEl.nextElementSibling;
+  const wasOpen = menu.classList.contains('show');
+  closeRowActionsMenus();
+  if (!wasOpen) menu.classList.add('show');
+}
+function closeRowActionsMenus() {
+  document.querySelectorAll('.row-actions-menu.show').forEach(m => m.classList.remove('show'));
+}
+document.addEventListener('click', function (e) {
+  if (!e.target.closest('.row-actions-cell')) closeRowActionsMenus();
+});
 
 /* ════════════════════════════════════════════════════════════════
    SCORING / FORMATTING HELPERS  (IRIS breakdown: green 0.0–1.3, yellow 1.4–4.5, red 4.6+)
@@ -1004,14 +1211,14 @@ function esc(s) { return String(s).replace(/'/g, "\\'"); }
 ═══════════════════════════════════════════════════════════════ */
 let currentTab = 'by-user';           // 'by-user' | 'by-department' — only meaningful when drill === null
 let drill = null;                     // { type:'user', id, from:'top'|{dept} } | { type:'dept', name }
-let l2SubTab = 'drugs';                // 'drugs' | 'peers' | 'users'
+let l2SubTab = 'drugs';                // 'drugs' | 'depts' | 'users'
 let viewMode = { l1: 'table', l2: 'table' };
 let searchQuery = { l1: '', l2: '' };
 let sortState = {
   byUser:   { col: 'vtScore',   asc: false },
   byDept:   { col: 'variances', asc: false },
   drugs:    { col: 'variances', asc: false },
-  peers:    { col: 'variances', asc: false },
+  depts:    { col: 'variances', asc: false },
   deptUsers:{ col: 'vtScore',   asc: false }
 };
 let l1Chart = null, l2Chart = null;
@@ -1259,7 +1466,7 @@ function renderL2() {
     irisBtn.style.display = '';
     subtabsEl.innerHTML =
       '<button class="l2-subtab' + (l2SubTab === 'drugs' ? ' active' : '') + '" onclick="setL2SubTab(\'drugs\')">Drugs</button>' +
-      '<button class="l2-subtab' + (l2SubTab === 'peers' ? ' active' : '') + '" onclick="setL2SubTab(\'peers\')">Department Peers</button>';
+      '<button class="l2-subtab' + (l2SubTab === 'depts' ? ' active' : '') + '" onclick="setL2SubTab(\'depts\')">Departments</button>';
   } else {
     const d = currentDrillDept();
     document.getElementById('l2TitleName').textContent = d.name;
@@ -1276,7 +1483,7 @@ function renderL2() {
       '<button class="l2-subtab' + (l2SubTab === 'users' ? ' active' : '') + '" onclick="setL2SubTab(\'users\')">Users</button>';
   }
 
-  const labelMap = { drugs: 'drugs', peers: 'peers', users: 'users' };
+  const labelMap = { drugs: 'drugs', depts: 'departments', users: 'users' };
   document.getElementById('l2CountLabel').textContent = labelMap[l2SubTab] || 'rows';
   setViewMode('l2', viewMode.l2);
   renderL2Table();
@@ -1286,25 +1493,25 @@ function getL2List() {
   let list;
   if (drill.type === 'user') {
     const u = currentDrillUser();
-    list = l2SubTab === 'drugs' ? drugRowsForUser(u) : peersForUser(u);
+    list = l2SubTab === 'drugs' ? drugRowsForUser(u) : deptRowsForUser(u);
   } else {
     const d = currentDrillDept();
     list = l2SubTab === 'drugs' ? drugsForDept(d.id).map(dr => Object.assign({ name: drugDisplayName(dr) }, dr)) : usersForDept(d.id);
   }
   const q = searchQuery.l2;
   if (q) list = list.filter(r => r.name.toLowerCase().includes(q));
-  const key = l2SubTab === 'drugs' ? 'drugs' : (l2SubTab === 'peers' ? 'peers' : 'deptUsers');
+  const key = l2SubTab === 'drugs' ? 'drugs' : (l2SubTab === 'depts' ? 'depts' : 'deptUsers');
   const st = sortState[key];
   list = list.slice().sort((a, b) => compareRows(a, b, st));
   return list;
 }
 
 function renderL2Table() {
+  parkComparePanel();
   const list = getL2List();
   document.getElementById('l2Count').textContent = list.length;
   const wrap = document.getElementById('l2TableWrap');
-  const focusUserId = drill.type === 'user' ? drill.id : null;
-  const key = l2SubTab === 'drugs' ? 'drugs' : (l2SubTab === 'peers' ? 'peers' : 'deptUsers');
+  const key = l2SubTab === 'drugs' ? 'drugs' : (l2SubTab === 'depts' ? 'depts' : 'deptUsers');
   const st = sortState[key];
 
   if (l2SubTab === 'drugs') {
@@ -1330,29 +1537,28 @@ function renderL2Table() {
       return row;
     }).join('');
     wrap.innerHTML = '<div class="data-table-wrap"><table class="data-table tbl-entity tbl-entity-actions"><thead>' + head + '</thead><tbody>' + rows + '</tbody></table></div>';
-  } else if (l2SubTab === 'peers') {
+  } else if (l2SubTab === 'depts') {
     let head = '<tr>';
-    head += thSort('peers', 'name', 'Provider', st.col, st.asc, 'left', 220);
-    head += thSort('peers', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
-    head += thSort('peers', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
-    head += thSort('peers', 'variances', 'Total Variances', st.col, st.asc, null, 130);
-    head += thSort('peers', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 150);
-    head += thSort('peers', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
-    head += thSort('peers', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
-    head += thSort('peers', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
-    head += '<th style="width:150px">Actions</th></tr>';
-    const rows = list.map(p => {
-      const isFocus = p.id === focusUserId;
-      let row = '<tr' + (isFocus ? ' class="focus-user"' : '') + '>';
-      row += '<td class="left"><div class="entity-cell"><div class="entity-name' + (isFocus ? '' : ' static') + '" title="' + p.name + '">' +
-             (isFocus ? p.name : '<a href="#" onclick="event.preventDefault();openUserDrill(\'' + esc(p.id) + '\')">' + p.name + '</a>') +
-             '</div><div class="entity-sub">' + p.role + '</div></div></td>';
-      row += '<td>' + variancePct(p.variances, p.totalEvents) + '%</td>';
-      row += '<td>' + fmtNum(p.totalEvents) + '</td>';
-      row += '<td>' + fmtNum(p.variances) + '</td>';
-      row += '<td>' + fmtNum(p.unreconciled) + '</td><td>' + fmtNum(p.reconciled) + '</td><td>' + fmtNum(p.open3) + '</td><td>' + fmtNum(p.openhist) + '</td>';
-      row += '<td><a class="investigate-link" href="#" onclick="event.preventDefault();window.alert(\'Opens Investigate Data view for ' + esc(p.name) + '.\')"><span class="material-icons">open_in_new</span> Investigate</a></td>';
+    head += thSort('depts', 'name', 'Department', st.col, st.asc, 'left', 220);
+    head += thSort('depts', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
+    head += thSort('depts', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
+    head += thSort('depts', 'variances', 'Total Variances', st.col, st.asc, null, 130);
+    head += thSort('depts', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 150);
+    head += thSort('depts', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
+    head += thSort('depts', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
+    head += thSort('depts', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
+    head += '<th style="width:230px">Actions</th></tr>';
+    const rows = list.map((dp, i) => {
+      let row = '<tr>';
+      row += '<td class="left"><div class="entity-cell"><div class="entity-name static" title="' + dp.name + '">' + dp.name + '</div></div></td>';
+      row += '<td>' + variancePct(dp.variances, dp.totalEvents) + '%</td>';
+      row += '<td>' + fmtNum(dp.totalEvents) + '</td>';
+      row += '<td>' + fmtNum(dp.variances) + '</td>';
+      row += '<td>' + fmtNum(dp.unreconciled) + '</td><td>' + fmtNum(dp.reconciled) + '</td><td>' + fmtNum(dp.open3) + '</td><td>' + fmtNum(dp.openhist) + '</td>';
+      row += '<td><a class="compare-link" id="compareBtn-' + i + '" onclick="openCompare(\'' + esc(dp.name) + '\', ' + i + ')"><span class="material-icons">groups</span>Compare</a> ' +
+             '<a class="investigate-link" href="#" onclick="event.preventDefault();window.alert(\'Opens Investigate Data view for ' + esc(dp.name) + '.\')"><span class="material-icons">open_in_new</span>Investigate</a></td>';
       row += '</tr>';
+      row += '<tr class="compare-expand-row" id="compareExpandRow-' + i + '" style="display:none"><td colspan="9" id="compareSlot-' + i + '"></td></tr>';
       return row;
     }).join('');
     wrap.innerHTML = '<div class="data-table-wrap"><table class="data-table tbl-entity tbl-entity-actions"><thead>' + head + '</thead><tbody>' + rows + '</tbody></table></div>';
