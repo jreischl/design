@@ -1185,61 +1185,6 @@
       overflow: hidden;
     }
     
-    /* Slim toolbar above the chart — holds the outlier-line toggle + hint. */
-    .graph-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 0 4px 12px;
-    }
-    .graph-toolbar .graph-hint {
-      font-size: 12px;
-      color: var(--gray-600);
-    }
-    
-    /* Metric-score toggle is disabled — Distribution (scatter) is the only
-       chart type in this scoped prototype, and the overlay doesn't
-       translate to a category y-axis. */
-    .toggle-switch.disabled {
-      opacity: .4;
-      pointer-events: none;
-    }
-    
-    .toggle-switch {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .toggle-switch input { display: none; }
-    .toggle-switch .toggle-slider {
-      position: relative;
-      width: 32px; height: 18px;
-      background: var(--gray-300);
-      border-radius: 9px;
-      transition: background .15s;
-      flex-shrink: 0;
-    }
-    .toggle-switch .toggle-slider::before {
-      content: '';
-      position: absolute;
-      top: 2px; left: 2px;
-      width: 14px; height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      box-shadow: 0 1px 2px rgba(0,0,0,.2);
-      transition: transform .15s;
-    }
-    .toggle-switch input:checked + .toggle-slider { background: #F24335; }
-    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(14px); }
-    .toggle-switch .toggle-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-87);
-    }
-
   </style>
 
   <script data-cfasync="false">
@@ -3553,7 +3498,6 @@
     let visibleRules = ['firstDispenseFirstAdmin', 'lastAdminLastWaste']; // Selected rules — drives BOTH the table columns AND the chart legend. Both submetrics are checked by default.
     let selectedComparisonScore = 'overall'; // Current comparison score metric
     let timeThreshold = 60; // Current time threshold in minutes
-    let showMetricScoreLine = false; // toggle for outlier-score overlay on chart
     let chartType = 'scatter'; // Distribution is the only supported chart type in this scoped prototype.
     let tempTimeThreshold = 60; // Temporary value while adjusting
     let filteredUsers = [...ACTION_TIMES_USERS]; // Users visible based on time threshold
@@ -3746,16 +3690,6 @@
       }
     }
     
-    // Toggles the optional metric-score line overlay on the chart. Rebuilds the
-    // chart so the secondary yAxis can be added/removed cleanly.
-    function toggleMetricScoreLine(checked) {
-      showMetricScoreLine = !!checked;
-      if (currentView === 'graph') {
-        if (actionChart) { actionChart.dispose(); actionChart = null; }
-        actionChart = initActionChart();
-      }
-    }
-    
 
     function initActionChart() {
       const container = document.getElementById('action-times-graph-view');
@@ -3799,7 +3733,6 @@
       Object.keys(ruleNames).forEach(rule => {
         legendSelected[ruleNames[rule]] = visibleRules.includes(rule);
       });
-      if (showMetricScoreLine) legendSelected['Metric score'] = true;
       
       // ── Axis + zoom config branches by chart type ───────────────
       // Bar mode: x = users (category), y = avg time (value), zoom horizontal.
@@ -3862,18 +3795,6 @@
           axisLabel: { color: '#666' },
           splitLine: { lineStyle: { color: '#e5e5e5', type: 'dashed' } }
         }];
-        if (showMetricScoreLine) {
-          yAxes.push({
-            type: 'value',
-            name: 'Metric score',
-            position: 'right',
-            min: 0,
-            max: 8,
-            axisLabel: { color: '#F24335' },
-            axisLine: { show: true, lineStyle: { color: '#F24335' } },
-            splitLine: { show: false }
-          });
-        }
         xAxis = [{
           type: 'category',
           data: chartData.users,
@@ -3948,12 +3869,9 @@
       const tooltip = isScatter ? {
         trigger: 'item',
         formatter: function (p) {
-          const tier = p.data.score >= 4.6 ? 'High' : p.data.score >= 1.4 ? 'Elevated' : 'Normal';
-          const tierColor = p.data.score >= 4.6 ? '#B53228' : p.data.score >= 1.4 ? '#A49020' : '#0E7221';
           return `<strong>${p.data.userName}</strong><br/>
                   ${p.marker}${p.seriesName}<br/>
-                  <strong>${p.data.events}</strong> records at ~<strong>${p.value[0]} min</strong><br/>
-                  <span style="color:#999">Metric score:</span> <strong style="color:${tierColor}">${p.data.score.toFixed(1)} (${tier})</strong>`;
+                  <strong>${p.data.events}</strong> records at ~<strong>${p.value[0]} min</strong>`;
         }
       } : {
         trigger: 'axis',
@@ -3961,13 +3879,9 @@
         formatter: function (params) {
           const i = params[0].dataIndex;
           const name = chartData.fullNames[i];
-          const score = chartData.metricScores[i];
-          const tier = score >= 4.6 ? 'High' : score >= 1.4 ? 'Elevated' : 'Normal';
-          const tierColor = score >= 4.6 ? '#B53228' : score >= 1.4 ? '#A49020' : '#0E7221';
           
           let lines = [`<strong>${name}</strong>`];
           params.forEach(p => {
-            if (p.seriesName === 'Metric score') return;
             const v = p.value;
             const ruleKey = Object.keys(ruleNames).find(k => ruleNames[k] === p.seriesName);
             const events = ruleKey ? chartData.byRule[ruleKey].events[i] : null;
@@ -3977,14 +3891,13 @@
               lines.push(`${p.marker}${p.seriesName}: <strong>${v} min</strong> \u00b7 ${events} ev`);
             }
           });
-          lines.push(`<span style="color:#999">Metric score:</span> <strong style="color:${tierColor}">${score.toFixed(1)} (${tier})</strong>`);
           return lines.join('<br/>');
         }
       };
       
       const grid = isScatter
         ? { left: 24, right: 56, bottom: 60, top: 100, containLabel: true }
-        : { left: 24, right: showMetricScoreLine ? 48 : 24, bottom: 80, top: 100, containLabel: true };
+        : { left: 24, right: 24, bottom: 80, top: 100, containLabel: true };
       
       const titleText = isScatter ? 'Action Time Distribution by User' : 'Action Times by User';
       
@@ -4200,19 +4113,6 @@
         barGap: '20%',
         emphasis: { focus: 'series' }
       }));
-      
-      if (showMetricScoreLine) {
-        series.push({
-          name: 'Metric score',
-          type: 'line',
-          yAxisIndex: 1,
-          data: data.metricScores,
-          lineStyle: { color: '#F24335', width: 2, type: 'dashed' },
-          itemStyle: { color: '#F24335', borderWidth: 2, borderColor: '#fff' },
-          symbolSize: 7,
-          z: 5
-        });
-      }
       
       return series;
     }
@@ -5389,13 +5289,6 @@
             </div>
             <!-- Action Times Graph -->
             <div id="action-times-graph-wrap" style="display: none;">
-              <div class="graph-toolbar">
-                <label class="toggle-switch disabled" id="metric-score-toggle-wrap">
-                  <input type="checkbox" id="metric-score-toggle" onchange="toggleMetricScoreLine(this.checked)" disabled />
-                  <span class="toggle-slider"></span>
-                  <span class="toggle-label">Show metric scores</span>
-                </label>
-              </div>
               <div id="action-times-graph-view">
                 <!-- Chart will be inserted here -->
               </div>
