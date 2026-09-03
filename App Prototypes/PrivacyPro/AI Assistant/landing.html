@@ -385,10 +385,11 @@
   .sidebar-search-input::placeholder { color: rgba(255,255,255,0.4); }
   .chat-hero-input::placeholder { color: var(--bs-text-muted); }
   .chat-hero-footer {
-    display: flex; align-items: center; justify-content: flex-end;
+    display: flex; align-items: center; justify-content: space-between;
     margin-top: 14px; padding-top: 12px;
     border-top: 1px solid var(--bs-border);
   }
+  .chat-hero-card.drag-over { border-color: #0096B8; background: #E7F4F8; }
   .chat-hero-send {
     width: 40px; height: 40px; border-radius: 50%;
     background: #EB4699; border: none; cursor: pointer;
@@ -443,6 +444,22 @@
   }
   .msg.user .msg-bubble { background: #E5E5E5; color: var(--bs-text); border-radius: 12px 2px 12px 12px; }
   .msg.ai .msg-bubble { background: white; color: var(--bs-text); border: 1px solid var(--bs-border); border-radius: 2px 12px 12px 12px; }
+  .msg-content { display: flex; flex-direction: column; min-width: 0; }
+  .msg-actions {
+    display: flex; align-items: center; gap: 2px; justify-content: flex-end;
+    margin-top: 4px; opacity: 0; transition: opacity 0.15s;
+  }
+  .msg.user:hover .msg-actions { opacity: 1; }
+  .msg-timestamp { font-size: 11px; color: var(--bs-text-muted); margin-right: 6px; }
+  .msg-action-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; border-radius: 6px;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--bs-text-muted); transition: color 0.15s, background 0.15s;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 15px; line-height: 1;
+  }
+  .msg-action-btn:hover { color: #0096B8; background: #E7F4F8; }
 
   /* AI Response cards */
   .ai-response-card {
@@ -648,16 +665,72 @@
     display: flex; justify-content: center; pointer-events: none; z-index: 5;
   }
   .chat-stop-btn {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: rgba(255,255,255,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.6); color: var(--bs-text);
-    border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 2px solid #0096B8; color: #0096B8;
+    border-radius: 24px; padding: 7px 18px 7px 8px; font-size: 14px; font-weight: 700;
     font-family: 'DM Sans', sans-serif; cursor: pointer; pointer-events: auto;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
   }
-  .chat-stop-btn:hover { background: rgba(255,255,255,0.8); border-color: rgba(158,158,158,0.5); }
-  .chat-stop-icon { width: 9px; height: 9px; background: #555555; border-radius: 2px; flex-shrink: 0; }
+  .chat-stop-btn:hover { background: rgba(255,255,255,0.95); border-color: #00718A; color: #00718A; }
+  .chat-stop-icon {
+    width: 20px; height: 20px; border-radius: 50%; background: #0096B8;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .chat-stop-btn:hover .chat-stop-icon { background: #00718A; }
+  .chat-stop-icon::before { content: ''; width: 8px; height: 8px; background: white; border-radius: 2px; }
+
+  /* Attachments */
+  .chat-attach-btn {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: transparent; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--bs-text-muted); transition: color 0.15s, background 0.15s;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 19px; line-height: 1;
+  }
+  .chat-attach-btn:hover { color: #0096B8; background: #E7F4F8; }
+  .chat-input-wrap.drag-over { border-color: #0096B8; background: #E7F4F8; }
+  .chat-attachment-tray {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    max-width: 720px; margin: 0 auto 8px;
+  }
+  .chat-attachment-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #E7F4F8; border: 1px solid #B9DDE8;
+    border-radius: 8px; padding: 5px 6px 5px 8px;
+    font-size: 11px; color: #003E4B; max-width: 220px;
+  }
+  .chat-attachment-chip .file-type-icon {
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 15px; line-height: 1; color: #0096B8; flex-shrink: 0;
+  }
+  .chat-attachment-chip .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .chat-attachment-chip .file-size { color: var(--bs-text-muted); flex-shrink: 0; }
+  .chat-attachment-chip .remove-attachment-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; margin-left: 1px;
+    background: transparent; border: none; cursor: pointer; color: #0096B8;
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal; font-size: 13px; line-height: 1;
+  }
+  .chat-attachment-chip .remove-attachment-btn:hover { background: rgba(0,150,184,0.18); }
+  .chat-attachment-errors {
+    max-width: 720px; margin: 0 auto 8px;
+    background: #FCD9D7; border: 1px solid #F78E86; border-radius: 8px;
+    padding: 8px 12px; font-size: 11px; color: #631B16; line-height: 1.5;
+  }
+  .msg-attachment-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: white; border: 1px solid var(--bs-border);
+    border-radius: 8px; padding: 5px 9px; font-size: 11.5px;
+    margin-top: 6px; margin-right: 6px; color: var(--bs-text);
+  }
+  .msg-attachment-chip .file-type-icon {
+    font-family: 'Material Icons'; font-style: normal; font-weight: normal;
+    font-size: 15px; line-height: 1; color: #0096B8;
+  }
 
   /* ─── CASE ASSESSMENT SCREEN ──────────────────────────────── */
   .case-screen {
@@ -1419,13 +1492,21 @@
                 <h2 style="font-size:24px;line-height:30px;font-weight:700;color:#003E4B;margin:0 0 8px;">Prism Assistant</h2>
                 
               </div>
-              <div class="chat-hero-card">
+              <div class="chat-hero-card" id="heroInputWrap"
+                   ondragover="handleHeroAttachmentDragOver(event)"
+                   ondragleave="handleHeroAttachmentDragLeave(event)"
+                   ondrop="handleHeroAttachmentDrop(event)">
                 <textarea class="chat-hero-input" id="heroInput"
                   placeholder="What would you like to investigate?"
                   rows="3"
                   onkeydown="handleHeroKey(event)"
+                  onpaste="handleHeroAttachmentPaste(event)"
                 ></textarea>
+                <div class="chat-attachment-tray" id="heroAttachmentTray" style="display:none;"></div>
+                <div class="chat-attachment-errors" id="heroAttachmentErrors" style="display:none;"></div>
                 <div class="chat-hero-footer">
+                  <input type="file" id="heroFileInput" multiple style="display:none" onchange="handleHeroFileInputChange(event)">
+                  <button class="chat-attach-btn" onclick="document.getElementById('heroFileInput').click()" title="Attach files">attach_file</button>
                   <button class="chat-hero-send" onclick="sendHeroInput()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                   </button>
@@ -1450,13 +1531,20 @@
             </div>
 
             <div class="chat-stop-bar" id="chatStopBar" style="display:none;">
-              <button class="chat-stop-btn" onclick="stopGenerating()"><span class="chat-stop-icon"></span> Stop generating</button>
+              <button class="chat-stop-btn" onclick="stopGenerating()"><span class="chat-stop-icon"></span> Stop Generating</button>
             </div>
           </div>
 
           <div class="chat-input-area" id="chatInputArea" style="display:none;">
-            <div class="chat-input-wrap">
-              <textarea class="chat-input" id="chatInput" placeholder="What's next?" rows="1" onkeydown="handleKey(event)"></textarea>
+            <div class="chat-attachment-tray" id="chatAttachmentTray" style="display:none;"></div>
+            <div class="chat-attachment-errors" id="chatAttachmentErrors" style="display:none;"></div>
+            <div class="chat-input-wrap" id="chatInputWrap"
+                 ondragover="handleAttachmentDragOver(event)"
+                 ondragleave="handleAttachmentDragLeave(event)"
+                 ondrop="handleAttachmentDrop(event)">
+              <input type="file" id="chatFileInput" multiple style="display:none" onchange="handleFileInputChange(event)">
+              <button class="chat-attach-btn" onclick="document.getElementById('chatFileInput').click()" title="Attach files">attach_file</button>
+              <textarea class="chat-input" id="chatInput" placeholder="What's next?" rows="1" onkeydown="handleKey(event)" onpaste="handleAttachmentPaste(event)"></textarea>
               <button class="chat-send-btn" onclick="sendFromInput()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               </button>
@@ -2464,13 +2552,21 @@
         <div style="text-align:center;margin-bottom:28px;">
           <h2 style="font-size:24px;line-height:30px;font-weight:700;color:#003E4B;margin:0 0 8px;">Prism Assistant</h2>
         </div>
-        <div class="chat-hero-card">
+        <div class="chat-hero-card" id="heroInputWrap"
+             ondragover="handleHeroAttachmentDragOver(event)"
+             ondragleave="handleHeroAttachmentDragLeave(event)"
+             ondrop="handleHeroAttachmentDrop(event)">
           <textarea class="chat-hero-input" id="heroInput"
             placeholder="What would you like to investigate?"
             rows="3"
             onkeydown="handleHeroKey(event)"
+            onpaste="handleHeroAttachmentPaste(event)"
           ></textarea>
+          <div class="chat-attachment-tray" id="heroAttachmentTray" style="display:none;"></div>
+          <div class="chat-attachment-errors" id="heroAttachmentErrors" style="display:none;"></div>
           <div class="chat-hero-footer">
+            <input type="file" id="heroFileInput" multiple style="display:none" onchange="handleHeroFileInputChange(event)">
+            <button class="chat-attach-btn" onclick="document.getElementById('heroFileInput').click()" title="Attach files">attach_file</button>
             <button class="chat-hero-send" onclick="sendHeroInput()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
@@ -2902,20 +2998,132 @@
     return trimmed.length > 42 ? trimmed.slice(0, 40).trimEnd() + '…' : trimmed;
   }
 
+  // ─── HERO INPUT ATTACHMENTS ──────────────────────────────
+  // Mirrors the chat-input attachment pipeline above but targets the hero
+  // card's own tray/errors/wrap and its own pending list, since the hero
+  // input is torn down and rebuilt fresh each time newChat() runs.
+  let __pendingHeroAttachments = [];
+
+  function processHeroAttachmentFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    const rejected = [];
+    files.forEach(file => {
+      const result = validateAttachmentFile(file);
+      if (result.ok) {
+        __pendingHeroAttachments.push({ name: file.name, size: file.size, type: file.type });
+      } else {
+        rejected.push(escapeHtml(file.name) + ' — ' + result.reason);
+      }
+    });
+    renderHeroAttachmentTray();
+    renderHeroAttachmentErrors(rejected);
+  }
+
+  function renderHeroAttachmentTray() {
+    const tray = document.getElementById('heroAttachmentTray');
+    if (!tray) return;
+    if (!__pendingHeroAttachments.length) {
+      tray.style.display = 'none';
+      tray.innerHTML = '';
+      return;
+    }
+    tray.style.display = 'flex';
+    tray.innerHTML = __pendingHeroAttachments.map((f, i) => `
+      <div class="chat-attachment-chip">
+        <i class="file-type-icon">${fileTypeIcon(f)}</i>
+        <span class="file-name" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</span>
+        <span class="file-size">${formatFileSize(f.size)}</span>
+        <button class="remove-attachment-btn" onclick="removeHeroAttachment(${i})" title="Remove" aria-label="Remove ${escapeHtml(f.name)}">close</button>
+      </div>
+    `).join('');
+  }
+
+  function renderHeroAttachmentErrors(rejected) {
+    const box = document.getElementById('heroAttachmentErrors');
+    if (!box) return;
+    clearTimeout(window.__heroAttachmentErrorTimeout);
+    if (!rejected || !rejected.length) {
+      box.style.display = 'none';
+      box.innerHTML = '';
+      return;
+    }
+    box.style.display = 'block';
+    box.innerHTML = rejected.map(r => `<div>${r}</div>`).join('');
+    window.__heroAttachmentErrorTimeout = setTimeout(() => {
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }, 6000);
+  }
+
+  function removeHeroAttachment(index) {
+    __pendingHeroAttachments.splice(index, 1);
+    renderHeroAttachmentTray();
+  }
+
+  function clearHeroAttachments() {
+    __pendingHeroAttachments = [];
+    renderHeroAttachmentTray();
+    renderHeroAttachmentErrors(null);
+  }
+
+  function handleHeroFileInputChange(e) {
+    processHeroAttachmentFiles(e.target.files);
+    e.target.value = '';
+  }
+
+  function handleHeroAttachmentDragOver(e) {
+    e.preventDefault();
+    const wrap = document.getElementById('heroInputWrap');
+    if (wrap) wrap.classList.add('drag-over');
+  }
+
+  function handleHeroAttachmentDragLeave() {
+    const wrap = document.getElementById('heroInputWrap');
+    if (wrap) wrap.classList.remove('drag-over');
+  }
+
+  function handleHeroAttachmentDrop(e) {
+    e.preventDefault();
+    const wrap = document.getElementById('heroInputWrap');
+    if (wrap) wrap.classList.remove('drag-over');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      processHeroAttachmentFiles(e.dataTransfer.files);
+    }
+  }
+
+  function handleHeroAttachmentPaste(e) {
+    const items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    const files = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file') {
+        const f = items[i].getAsFile();
+        if (f) files.push(f);
+      }
+    }
+    if (files.length) {
+      e.preventDefault();
+      processHeroAttachmentFiles(files);
+    }
+  }
+
   function sendHeroInput() {
     const input = document.getElementById('heroInput');
     const val = input ? input.value.trim() : '';
-    if (!val) return;
+    const attachments = __pendingHeroAttachments.slice();
+    if (!val && !attachments.length) return;
     if (input) input.value = '';
+    clearHeroAttachments();
     document.getElementById('chatHero').style.display = 'none';
     const inputArea = document.getElementById('chatInputArea');
     if (inputArea) inputArea.style.display = 'block';
     startChat();
-    setSessionTitle(titleFromText(val));
-    appendUserMsg(val);
+    setSessionTitle(val ? titleFromText(val) : (attachments.length === 1 ? attachments[0].name : attachments.length + ' files attached'));
+    appendUserMsg(val, attachments);
     showThinking(GENERIC_THINKING_STEPS, () => {
       removeTyping();
-      appendAIResponse(buildGenericResponse(val));
+      appendAIResponse(buildGenericResponse(val, attachments.length));
     });
   }
 
@@ -3075,10 +3283,155 @@
     `;
   }
 
+  // ─── ATTACHMENTS ─────────────────────────────────────────
+  // Drag-and-drop, click-to-browse, and clipboard-paste all feed into the same
+  // processAttachmentFiles() pipeline, so validation/rendering only lives once.
+  const MAX_ATTACHMENT_SIZE = 25 * 1024 * 1024; // 25 MB
+  const ACCEPTED_ATTACHMENT_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.csv', '.txt'];
+  const ACCEPTED_ATTACHMENT_TYPES = [
+    'image/png', 'image/jpeg', 'image/gif', 'image/webp', 'application/pdf',
+    'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'text/csv', 'text/plain'
+  ];
+  let __pendingAttachments = [];
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  function fileTypeIcon(file) {
+    const type = file.type || '';
+    const name = (file.name || '').toLowerCase();
+    if (type.startsWith('image/')) return 'image';
+    if (type === 'application/pdf' || name.endsWith('.pdf')) return 'picture_as_pdf';
+    if (name.endsWith('.csv') || name.endsWith('.xlsx') || name.endsWith('.xls') || type.includes('spreadsheet') || type.includes('excel')) return 'table_chart';
+    if (name.endsWith('.doc') || name.endsWith('.docx') || type.includes('word')) return 'description';
+    return 'insert_drive_file';
+  }
+
+  function validateAttachmentFile(file) {
+    if (file.size > MAX_ATTACHMENT_SIZE) return { ok: false, reason: 'over the 25 MB limit' };
+    const name = (file.name || '').toLowerCase();
+    const ext = name.includes('.') ? name.slice(name.lastIndexOf('.')) : '';
+    const typeOk = ACCEPTED_ATTACHMENT_TYPES.includes(file.type);
+    const extOk = ACCEPTED_ATTACHMENT_EXTENSIONS.includes(ext);
+    if (!typeOk && !extOk) return { ok: false, reason: 'unsupported file type' };
+    return { ok: true };
+  }
+
+  function processAttachmentFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    const rejected = [];
+    files.forEach(file => {
+      const result = validateAttachmentFile(file);
+      if (result.ok) {
+        __pendingAttachments.push({ name: file.name, size: file.size, type: file.type });
+      } else {
+        rejected.push(escapeHtml(file.name) + ' — ' + result.reason);
+      }
+    });
+    renderAttachmentTray();
+    renderAttachmentErrors(rejected);
+  }
+
+  function renderAttachmentTray() {
+    const tray = document.getElementById('chatAttachmentTray');
+    if (!tray) return;
+    if (!__pendingAttachments.length) {
+      tray.style.display = 'none';
+      tray.innerHTML = '';
+      return;
+    }
+    tray.style.display = 'flex';
+    tray.innerHTML = __pendingAttachments.map((f, i) => `
+      <div class="chat-attachment-chip">
+        <i class="file-type-icon">${fileTypeIcon(f)}</i>
+        <span class="file-name" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</span>
+        <span class="file-size">${formatFileSize(f.size)}</span>
+        <button class="remove-attachment-btn" onclick="removeAttachment(${i})" title="Remove" aria-label="Remove ${escapeHtml(f.name)}">close</button>
+      </div>
+    `).join('');
+  }
+
+  function renderAttachmentErrors(rejected) {
+    const box = document.getElementById('chatAttachmentErrors');
+    if (!box) return;
+    clearTimeout(window.__attachmentErrorTimeout);
+    if (!rejected || !rejected.length) {
+      box.style.display = 'none';
+      box.innerHTML = '';
+      return;
+    }
+    box.style.display = 'block';
+    box.innerHTML = rejected.map(r => `<div>${r}</div>`).join('');
+    // Auto-dismiss so a stale rejection notice doesn't linger indefinitely.
+    window.__attachmentErrorTimeout = setTimeout(() => {
+      box.style.display = 'none';
+      box.innerHTML = '';
+    }, 6000);
+  }
+
+  function removeAttachment(index) {
+    __pendingAttachments.splice(index, 1);
+    renderAttachmentTray();
+  }
+
+  function clearAttachments() {
+    __pendingAttachments = [];
+    renderAttachmentTray();
+    renderAttachmentErrors(null);
+  }
+
+  function handleFileInputChange(e) {
+    processAttachmentFiles(e.target.files);
+    e.target.value = ''; // allow re-selecting the same file later
+  }
+
+  function handleAttachmentDragOver(e) {
+    e.preventDefault();
+    const wrap = document.getElementById('chatInputWrap');
+    if (wrap) wrap.classList.add('drag-over');
+  }
+
+  function handleAttachmentDragLeave() {
+    const wrap = document.getElementById('chatInputWrap');
+    if (wrap) wrap.classList.remove('drag-over');
+  }
+
+  function handleAttachmentDrop(e) {
+    e.preventDefault();
+    const wrap = document.getElementById('chatInputWrap');
+    if (wrap) wrap.classList.remove('drag-over');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      processAttachmentFiles(e.dataTransfer.files);
+    }
+  }
+
+  function handleAttachmentPaste(e) {
+    const items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    const files = [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].kind === 'file') {
+        const f = items[i].getAsFile();
+        if (f) files.push(f);
+      }
+    }
+    if (files.length) {
+      e.preventDefault(); // this was a pasted file, not text — don't also insert clipboard junk
+      processAttachmentFiles(files);
+    }
+  }
+
   function sendFromInput() {
     const input = document.getElementById('chatInput');
     const val = input.value.trim();
-    if (!val) return;
+    const attachments = __pendingAttachments.slice();
+    if (!val && !attachments.length) return;
     const earlyLower = val.toLowerCase();
     if (earlyLower.includes('timeout') || earlyLower.includes('time out') || earlyLower.includes('unavailable') ||
         earlyLower.includes("can't reach") || earlyLower.includes('cannot reach') || earlyLower.includes('error state')) {
@@ -3087,8 +3440,9 @@
       return;
     }
     startChat();
-    appendUserMsg(val);
+    appendUserMsg(val, attachments);
     input.value = '';
+    clearAttachments();
     // Map to a canned response or generic reply
     let key = null;
     const lower = val.toLowerCase();
@@ -3101,13 +3455,15 @@
 
     // Only set title on the first message of a session
     if (document.getElementById('sessionTitle').textContent === 'Untitled Session') {
-      setSessionTitle(key ? PROMPT_TITLES[key] : titleFromText(val));
+      if (key) setSessionTitle(PROMPT_TITLES[key]);
+      else if (val) setSessionTitle(titleFromText(val));
+      else setSessionTitle(attachments.length === 1 ? attachments[0].name : attachments.length + ' files attached');
     }
 
     showThinking(THINKING_STEPS[key] || GENERIC_THINKING_STEPS, () => {
       removeTyping();
       if (key) appendAIResponse(RESPONSES[key].fn());
-      else appendAIResponse(buildGenericResponse(val));
+      else appendAIResponse(buildGenericResponse(val, attachments.length));
     });
   }
 
@@ -3130,18 +3486,60 @@
     }
   }
 
-  function appendUserMsg(text) {
+  function appendUserMsg(text, attachments) {
     const msgs = document.getElementById('chatMessages');
+    const chips = (attachments || []).map(f => `
+      <div class="msg-attachment-chip">
+        <i class="file-type-icon">${fileTypeIcon(f)}</i>
+        <span>${escapeHtml(f.name)}</span>
+      </div>
+    `).join('');
+    const timestamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     msgs.insertAdjacentHTML('beforeend', `
       <div class="msg user fade-in">
         <div class="msg-avatar">SC</div>
-        <div class="msg-bubble">${text}</div>
+        <div class="msg-content">
+          <div class="msg-bubble">
+            ${text ? `<div class="msg-text">${escapeHtml(text)}</div>` : ''}
+            ${chips ? `<div style="display:flex;flex-wrap:wrap;${text ? '' : 'margin-top:0;'}">${chips}</div>` : ''}
+          </div>
+          <div class="msg-actions">
+            <span class="msg-timestamp">${timestamp}</span>
+            ${text ? `<button class="msg-action-btn" data-tip="Copy" onclick="copyUserMsg(this)">content_copy</button>` : ''}
+          </div>
+        </div>
       </div>
     `);
     msgs.scrollTop = msgs.scrollHeight;
     // Remembered so Stop can pull this back into the input for editing.
     window.__lastUserMsgText = text;
     window.__lastUserMsgEl = msgs.lastElementChild;
+  }
+
+  // Copies just the message text (not attachment filenames) back to the clipboard,
+  // with a brief checkmark confirmation — mirrors Claude's own hover-to-copy affordance.
+  function copyUserMsg(btn) {
+    const content = btn.closest('.msg-content');
+    const textEl = content ? content.querySelector('.msg-text') : null;
+    const text = textEl ? textEl.textContent : '';
+    if (!text) return;
+    const finish = () => {
+      const orig = btn.textContent;
+      btn.textContent = 'check';
+      btn.style.color = '#0E7221';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(finish).catch(finish);
+    } else {
+      finish();
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
   function showThinking(steps, cb) {
@@ -3735,10 +4133,13 @@
     ctx.closePath();
   }
 
-  function buildGenericResponse(query) {
+  function buildGenericResponse(query, attachmentCount) {
+    const intro = attachmentCount
+      ? `I've received your ${attachmentCount} attachment${attachmentCount > 1 ? 's' : ''}. To see a full demo response, try one of these:`
+      : `I can help you investigate that. To see a full demo response, try one of these:`;
     return `
       <div class="msg-bubble" style="background:white;border:1px solid var(--bs-border);border-radius:2px 12px 12px 12px;max-width:100%;font-size:13px;line-height:1.6;padding:12px 16px;color:var(--bs-text)">
-        I can help you investigate that. To see a full demo response, try one of these:
+        ${intro}
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
           <button onclick="runPrompt(\'reactive\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> Show me all users who searched for Taylor Swift in the last 6 months</button>
           <button onclick="runPrompt(\'coverage\')" style="display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #E5E5E5;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:#555555;cursor:pointer;text-align:left;font-family:\'DM Sans\',sans-serif;" onmouseover="this.style.borderColor=\'#0096B8\'" onmouseout="this.style.borderColor=\'#E5E5E5\'"><i style="font-family:\'Material Icons\';font-style:normal;font-weight:normal;font-size:14px;line-height:1;vertical-align:middle;color:#AB336F;text-transform:none;letter-spacing:normal;flex-shrink:0">reviews</i> What am I missing? Show my risk coverage and unreviewed alerts</button>
