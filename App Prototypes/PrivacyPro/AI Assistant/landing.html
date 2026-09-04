@@ -1506,7 +1506,7 @@
                 <div class="chat-attachment-errors" id="heroAttachmentErrors" style="display:none;"></div>
                 <div class="chat-hero-footer">
                   <input type="file" id="heroFileInput" multiple style="display:none" onchange="handleHeroFileInputChange(event)">
-                  <button class="chat-attach-btn" onclick="document.getElementById('heroFileInput').click()" title="Attach files">attach_file</button>
+                  <button class="chat-attach-btn" onclick="document.getElementById('heroFileInput').click()" data-tip="Attach files">attach_file</button>
                   <button class="chat-hero-send" onclick="sendHeroInput()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                   </button>
@@ -1543,7 +1543,7 @@
                  ondragleave="handleAttachmentDragLeave(event)"
                  ondrop="handleAttachmentDrop(event)">
               <input type="file" id="chatFileInput" multiple style="display:none" onchange="handleFileInputChange(event)">
-              <button class="chat-attach-btn" onclick="document.getElementById('chatFileInput').click()" title="Attach files">attach_file</button>
+              <button class="chat-attach-btn" onclick="document.getElementById('chatFileInput').click()" data-tip="Attach files">attach_file</button>
               <textarea class="chat-input" id="chatInput" placeholder="What's next?" rows="1" onkeydown="handleKey(event)" onpaste="handleAttachmentPaste(event)"></textarea>
               <button class="chat-send-btn" onclick="sendFromInput()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
@@ -2566,7 +2566,7 @@
           <div class="chat-attachment-errors" id="heroAttachmentErrors" style="display:none;"></div>
           <div class="chat-hero-footer">
             <input type="file" id="heroFileInput" multiple style="display:none" onchange="handleHeroFileInputChange(event)">
-            <button class="chat-attach-btn" onclick="document.getElementById('heroFileInput').click()" title="Attach files">attach_file</button>
+            <button class="chat-attach-btn" onclick="document.getElementById('heroFileInput').click()" data-tip="Attach files">attach_file</button>
             <button class="chat-hero-send" onclick="sendHeroInput()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
