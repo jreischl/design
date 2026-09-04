@@ -1185,6 +1185,245 @@
       overflow: hidden;
     }
     
+    /* ════════════════════════════════════════════════════════════════
+       IRIS DETAIL PANEL (overlay) — all classes namespaced "idp-" so
+       they never collide with page-specific styles. Ported verbatim from
+       controlcheck-iris-detail-panel.html.
+       ════════════════════════════════════════════════════════════════ */
+    .idp-backdrop {
+      position: fixed;
+      top: 80px; bottom: 0; right: 0;
+      left: var(--iris-panel-offset, 0px);
+      background: rgba(0,0,0,.32);
+      z-index: 900;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+    .idp-backdrop.show { opacity: 1; visibility: visible; }
+
+    .idp-panel {
+      position: fixed;
+      top: 80px; bottom: 0; right: 0;
+      width: min(78vw, 1040px);
+      max-width: calc(100% - var(--iris-panel-offset, 0px) - 56px);
+      background: #fff;
+      border-left: 1px solid var(--gray-300);
+      box-shadow: -4px 0 16px rgba(0,0,0,.10);
+      z-index: 901;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(100%);
+      visibility: hidden;
+      transition: transform .3s cubic-bezier(.4,0,.2,1), visibility .3s;
+    }
+    .idp-panel.show { transform: translateX(0); visibility: visible; }
+
+    /* ── header ─────────────────────────────────────────────── */
+    .idp-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--gray-300);
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+    .idp-name-block { flex: 1; min-width: 0; }
+    .idp-name { font-size: 1.25rem; font-weight: 700; color: var(--text-87); line-height: 1.3; }
+    .idp-role { font-size: .8125rem; color: var(--text-54); margin-top: 2px; }
+    .idp-status-select {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 7px 10px; font-family: var(--font);
+      font-size: .75rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+      color: var(--text-87); cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .idp-status-select .material-icons { font-size: 18px; color: var(--gray-600); }
+    .idp-status-select.status-in-review { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .idp-status-select.status-in-review .material-icons { color: #fff; }
+    .idp-action-btn {
+      background: none; border: none; padding: 7px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%; transition: background .15s;
+      flex-shrink: 0;
+    }
+    .idp-action-btn:hover { background: rgba(0,0,0,.06); }
+    .idp-action-btn .material-icons,
+    .idp-action-btn .material-icons-outlined { font-size: 22px; color: var(--gray-600); }
+    .idp-action-btn.primary {
+      background: var(--teal); border-radius: var(--radius); padding: 7px;
+    }
+    .idp-action-btn.primary .material-icons,
+    .idp-action-btn.primary .material-icons-outlined { color: #fff; font-size: 20px; }
+    .idp-action-btn.primary:hover { background: var(--teal-dark); }
+
+    /* ── tabs ───────────────────────────────────────────────── */
+    .idp-tabs {
+      display: flex; align-items: center;
+      border-bottom: 1px solid var(--gray-300);
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .idp-tab {
+      background: none; border: none; cursor: pointer;
+      padding: 14px 16px; font-family: var(--font);
+      font-size: .9375rem; font-weight: 500; color: var(--text-87);
+      position: relative;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .idp-tab.active { color: var(--blue-dark); font-weight: 600; }
+    .idp-tab.active::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+      height: 2px; background: var(--blue-dark);
+    }
+    .idp-tab .case-dot {
+      background: var(--blue-dark); color: #fff; border-radius: 50%;
+      width: 18px; height: 18px; font-size: .6875rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+
+    .idp-body { flex: 1; overflow: auto; padding: 24px; background: var(--gray-50); }
+    .idp-tab-panel { display: none; }
+    .idp-tab-panel.active { display: block; }
+    .idp-placeholder-text { font-size: .875rem; color: var(--gray-600); }
+
+    /* ── IRIS summary row ───────────────────────────────────── */
+    .idp-iris-summary {
+      display: flex; gap: 36px;
+      padding: 16px 18px;
+      background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,.06);
+      margin-bottom: 20px;
+    }
+    .idp-summary-item { display: flex; gap: 14px; align-items: center; }
+    .idp-summary-score { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+    .idp-summary-score.score-red    { color: var(--red); }
+    .idp-summary-score.score-yellow { color: #a8860a; }
+    .idp-summary-score.score-green  { color: var(--green); }
+    .idp-summary-score.badge-style {
+      width: 56px; height: 40px; border-radius: var(--radius);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.5rem;
+    }
+    .idp-summary-score.badge-style.score-red    { background: var(--red); color: #fff; }
+    .idp-summary-score.badge-style.score-yellow { background: var(--yellow); color: var(--text-87); }
+    .idp-summary-score.badge-style.score-green  { background: var(--green); color: #fff; }
+    .idp-summary-meta-label { color: var(--blue-dark); font-weight: 700; font-size: 1rem; }
+    .idp-summary-meta-range { color: var(--text-54); font-size: .75rem; margin-top: 2px; }
+
+    .idp-section-title {
+      font-size: 1rem; font-weight: 600; color: var(--blue-darker);
+      margin: 24px 0 12px;
+    }
+    .idp-section-title:first-child { margin-top: 0; }
+
+    /* ── chart card ─────────────────────────────────────────── */
+    .idp-chart-card {
+      background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 16px 18px; margin-bottom: 32px;
+    }
+    .idp-chart-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .idp-chart-title { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    .idp-chart-header-right { display: flex; align-items: center; gap: 14px; }
+    .idp-chart-legend {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .75rem; color: var(--text-54);
+    }
+    .idp-legend-swatch { width: 18px; height: 2px; background: var(--text-87); }
+    .idp-chart-download {
+      background: none; border: none; cursor: pointer; padding: 2px;
+      display: inline-flex; color: var(--gray-600);
+    }
+    .idp-chart-download .material-icons { font-size: 18px; }
+
+    .idp-chart-canvas { position: relative; padding: 6px 8px 28px 34px; height: 200px; box-sizing: border-box; }
+    .idp-chart-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+    .idp-chart-yaxis {
+      position: absolute; left: 0; top: 6px; bottom: 28px; width: 30px;
+      display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
+      color: var(--gray-600); font-size: 12px; line-height: 1; padding-right: 4px;
+    }
+    .idp-chart-xaxis {
+      position: absolute; left: 34px; right: 8px; bottom: 0;
+      display: grid; color: var(--gray-600); font-size: 12px; text-align: center;
+    }
+    .idp-chart-values { position: absolute; left: 34px; right: 8px; top: 6px; bottom: 28px; pointer-events: none; }
+    .idp-chart-value-chip {
+      position: absolute; transform: translate(-50%, -100%);
+      font-size: 12px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+      color: var(--text-87); white-space: nowrap;
+    }
+    .idp-chart-value-chip.score-red    { background: var(--red); color: #fff; }
+    .idp-chart-value-chip.score-yellow { background: var(--yellow); color: var(--text-87); }
+    .idp-chart-value-chip.score-green  { background: var(--green); color: #fff; }
+    .idp-chart-note {
+      position: absolute; transform: translate(-50%, -50%);
+      font-size: 11px; font-weight: 600; color: var(--gray-600);
+      text-align: center; white-space: pre-line; line-height: 1.35; width: 90px;
+    }
+    .idp-chart-bar-red    { fill: var(--red); opacity: .85; }
+    .idp-chart-bar-yellow { fill: var(--yellow); }
+    .idp-chart-bar-green  { fill: var(--green); opacity: .85; }
+    .idp-chart-avg-line   { stroke: #222; stroke-width: 2; }
+
+    .idp-disp-title { margin: 18px 0 6px; font-size: .8125rem; font-weight: 600; color: var(--text-87); }
+    .idp-disp-row {
+      display: grid; gap: 8px; font-size: .8125rem; padding: 6px 0;
+      border-bottom: 1px solid var(--gray-200); text-align: center;
+    }
+    .idp-disp-row.header { font-weight: 600; color: var(--text-54); font-size: .6875rem; text-transform: uppercase; letter-spacing: .4px; }
+    .idp-disp-row.values { color: var(--text-87); font-weight: 600; border-bottom: none; }
+
+    /* ── Detailed Risk Score Analysis ───────────────────────── */
+    .idp-drsa-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 24px 0 12px;
+    }
+    .idp-date-range {
+      font-size: .8125rem; color: var(--teal); font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+      background: none; border: none; font-family: var(--font);
+    }
+    .idp-date-range .material-icons { font-size: 18px; }
+
+    .idp-metric-list { display: flex; flex-direction: column; gap: 8px; }
+    .idp-metric-card {
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff; padding: 20px 24px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .idp-metric-badge {
+      flex-shrink: 0; width: 38px; height: 25px; border-radius: 3px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .8125rem; font-weight: 700; color: #fff; margin-top: 1px;
+    }
+    .idp-metric-badge.score-red    { background: var(--red); }
+    .idp-metric-badge.score-yellow { background: var(--yellow); color: var(--text-87); }
+    .idp-metric-badge.score-green  { background: var(--green); }
+    .idp-metric-badge.score-dash   { background: var(--gray-100); border: 1px solid var(--gray-300); color: var(--gray-600); }
+    .idp-metric-content { flex: 1; min-width: 0; }
+    .idp-metric-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; color: var(--blue-darker); }
+    .idp-metric-summary { font-size: .8125rem; color: var(--text-87); line-height: 1.45; }
+    .idp-metric-summary.muted { color: var(--text-54); }
+    .idp-metric-bullet {
+      font-size: .8125rem; color: var(--text-87); line-height: 1.45;
+      margin-top: 6px; padding-left: 16px; position: relative;
+    }
+    .idp-metric-bullet::before { content: '•'; position: absolute; left: 4px; color: var(--text-54); }
+    .idp-metric-bullet-icon {
+      font-size: 15px !important; color: var(--teal); cursor: pointer;
+      vertical-align: middle; margin-left: 4px;
+    }
+    .idp-metric-bullet-link { color: var(--teal); text-decoration: underline; cursor: pointer; }
+
+    /* animation, matches other ControlCheck overlay panels */
+    @keyframes idpFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .idp-metric-card { animation: idpFadeUp .2s ease both; }
+
   </style>
 
   <script data-cfasync="false">
@@ -3556,6 +3795,96 @@
       return `No unusual timing patterns (score: ${user.outlierScore.toFixed(1)})`;
     }
 
+    /* ── IRIS Detail Panel wiring ─────────────────────────────────
+       Deterministic seeded "random" — same algorithm used elsewhere in the
+       ControlCheck prototype family, so the same user always renders the
+       same panel contents (no re-randomizing on every open/re-render). */
+    function _seededRand(seedStr, salt) {
+      let h = 0; const s = seedStr + ':' + salt;
+      for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+      return Math.abs(Math.sin(h)) % 1;
+    }
+
+    // Builds the data object ControlCheckIrisDetail.open() expects. Real
+    // scored metrics come straight from user.scores (already in the mock
+    // dataset) — only the 6-month chart, dispense counts, and status/review
+    // count are seeded, since the dataset doesn't carry those.
+    function buildIrisDetailData(user) {
+      const seed = user.name + ':' + user.id;
+      const scores = user.scores || {};
+      const overall = scores.overall != null ? scores.overall : user.outlierScore;
+
+      const statusRoll = _seededRand(seed, 'status');
+      const status = statusRoll < 0.35 ? 'IN REVIEW' : 'NEEDS REVIEW';
+      const reviewCount = statusRoll < 0.25 ? Math.floor(_seededRand(seed, 'reviewCount') * 3) + 1 : 0;
+
+      // Flagged score sits close to the current overall, with a small seeded delta.
+      const flaggedScore = Math.max(0, overall + (_seededRand(seed, 'flaggedDelta') - 0.5) * 1.2);
+
+      const months = ['MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG'];
+      const deptAvg = Math.max(0.5, overall * 0.6);
+      const series = months.map(function (m, i) {
+        const drift = (i - (months.length - 1)) * 0.15; // slight drift toward "now"
+        const score = Math.max(0, overall + drift + (_seededRand(seed, 'chart:' + m) - 0.5) * 1.4);
+        const avg = Math.max(0.3, deptAvg + (_seededRand(seed, 'avg:' + m) - 0.5) * 0.6);
+        return { month: m, score: Math.round(score * 10) / 10, avg: Math.round(avg * 10) / 10 };
+      });
+
+      const dispenses = months.map(function (m) {
+        const cs = Math.round(2 + _seededRand(seed, 'cs:' + m) * 14);
+        const deptDisp = Math.round(2 + _seededRand(seed, 'deptdisp:' + m) * 10);
+        return cs + ' / ' + deptDisp;
+      });
+
+      function metricSummary(label, score) {
+        const lower = label.toLowerCase();
+        if (score >= 4.6) return `${user.name} has a highly unusual ${lower} pattern in department ${user.dept}.`;
+        if (score >= 1.4) return `${user.name} shows an elevated ${lower} pattern in department ${user.dept}.`;
+        return `${user.name}'s ${lower} pattern is within normal range for department ${user.dept}.`;
+      }
+
+      const metricDefs = [
+        ['actionTimes', 'Action Times'],
+        ['varianceTrends', 'Variance Trends'],
+        ['dispensePatterns', 'Dispense Patterns'],
+        ['medTrends', 'Med Trends'],
+        ['fullPackageWaste', 'Full Package Waste'],
+        ['shiftAnalysis', 'Shift Analysis']
+      ];
+      const metrics = metricDefs.map(function (def) {
+        const key = def[0], label = def[1];
+        const score = scores[key];
+        return {
+          key: key,
+          label: label,
+          score: score == null ? null : score,
+          summary: score == null
+            ? 'There is not enough data to calculate a metric score for this user within this time period.'
+            : metricSummary(label, score)
+        };
+      });
+
+      return {
+        name: user.name,
+        role: user.role,
+        unit: user.dept,
+        status: status,
+        reviewCount: reviewCount,
+        flagged: { score: Math.round(flaggedScore * 10) / 10, range: 'For Dec 18, 2025 - Jan 17, 2026' },
+        current: { score: Math.round(overall * 10) / 10, range: 'For Aug 2, 2026 - Sep 1, 2026' },
+        flaggedDateRange: '12/18/2025 - 01/17/2026',
+        chart: { months: months, series: series },
+        dispenses: dispenses,
+        metrics: metrics
+      };
+    }
+
+    function openIrisDetailForUserId(id) {
+      const user = ACTION_TIMES_USERS.find(function (u) { return u.id === id; });
+      if (!user) return;
+      window.ControlCheckIrisDetail.open(buildIrisDetailData(user));
+    }
+
     function renderUsersTable() {
       console.log('renderUsersTable called, visibleRules:', visibleRules);
       const tbody = document.getElementById('usersTableBody');
@@ -3606,7 +3935,7 @@
             </td>
             <td class="fixed-col">
               <div class="user-name">
-                ${user.isAggregate ? user.name : `<a href="#" data-tooltip="User Details">${user.name}</a>`}
+                ${user.isAggregate ? user.name : `<a href="#" data-tooltip="IRIS Detail" onclick="event.stopPropagation(); event.preventDefault(); openIrisDetailForUserId(${user.id})">${user.name}</a>`}
               </div>
               <div class="user-role-dept">${user.role}${user.dept ? ' • ' + user.dept : ''}</div>
             </td>
@@ -5299,8 +5628,320 @@
 
       </mat-drawer-content>
     </mat-drawer-container>
+
+    <!-- IRIS DETAIL PANEL — reusable component, ported from
+         controlcheck-iris-detail-panel.html. Opens from any user name link. -->
+    <div class="idp-backdrop" id="idpBackdrop" onclick="ControlCheckIrisDetail.close()"></div>
+    <aside class="idp-panel" id="idpPanel" role="dialog" aria-modal="true" aria-label="IRIS detail">
+      <div class="idp-header">
+        <div class="idp-name-block">
+          <div class="idp-name" id="idpName"></div>
+          <div class="idp-role" id="idpRole"></div>
+        </div>
+        <button class="idp-status-select" id="idpStatusBtn">
+          <span id="idpStatusText"></span> <span class="material-icons">expand_more</span>
+        </button>
+        <button class="idp-action-btn primary" title="Create case"><span class="material-icons-outlined">note_add</span></button>
+        <button class="idp-action-btn idp-close" title="Close" onclick="ControlCheckIrisDetail.close()"><span class="material-icons">close</span></button>
+      </div>
+
+      <div class="idp-tabs">
+        <button class="idp-tab active" data-tab="iris" onclick="ControlCheckIrisDetail.switchTab('iris')">IRIS</button>
+        <button class="idp-tab" data-tab="historical" onclick="ControlCheckIrisDetail.switchTab('historical')">Historical IRIS</button>
+        <button class="idp-tab" data-tab="reviews" onclick="ControlCheckIrisDetail.switchTab('reviews')">Reviews &amp; Cases <span class="case-dot" id="idpReviewDot" style="display:none;"></span></button>
+        <button class="idp-tab" data-tab="documentation" onclick="ControlCheckIrisDetail.switchTab('documentation')">Documentation</button>
+      </div>
+
+      <div class="idp-body">
+
+        <div class="idp-tab-panel active" id="idpTabIris">
+
+          <div class="idp-iris-summary" id="idpIrisSummary"></div>
+
+          <div class="idp-section-title">6 Month IRIS &amp; Activity History</div>
+
+          <div class="idp-chart-card">
+            <div class="idp-chart-header">
+              <div class="idp-chart-title">IRIS Score</div>
+              <div class="idp-chart-header-right">
+                <div class="idp-chart-legend"><span class="idp-legend-swatch"></span> Department Average</div>
+                <button class="idp-chart-download" title="Download chart"><span class="material-icons">file_download</span></button>
+              </div>
+            </div>
+            <div class="idp-chart-canvas">
+              <div class="idp-chart-yaxis" id="idpChartYAxis"></div>
+              <svg class="idp-chart-svg" viewBox="0 0 720 160" preserveAspectRatio="none" id="idpChartSvg">
+                <line x1="0" y1="158" x2="720" y2="158" stroke="#e5e5e5" stroke-width="1" vector-effect="non-scaling-stroke"/>
+              </svg>
+              <div class="idp-chart-values" id="idpChartValues"></div>
+              <div class="idp-chart-xaxis" id="idpChartXAxis"></div>
+            </div>
+
+            <div class="idp-disp-title">Average CS Dispenses Per Shift / Department Average</div>
+            <div class="idp-disp-row header" id="idpDispHeader"></div>
+            <div class="idp-disp-row values" id="idpDispValues"></div>
+          </div>
+
+          <div class="idp-drsa-header">
+            <div class="idp-section-title" style="margin:0;">Detailed Risk Score Analysis</div>
+            <button class="idp-date-range" id="idpDateRange"></button>
+          </div>
+
+          <div class="idp-metric-list" id="idpScoredMetrics"></div>
+
+          <div class="idp-metric-list" id="idpNoDataMetrics" style="margin-top:8px;"></div>
+
+        </div>
+
+        <div class="idp-tab-panel" id="idpTabHistorical">
+          <p class="idp-placeholder-text">Historical IRIS scores by evaluation period appear here.</p>
+        </div>
+
+        <div class="idp-tab-panel" id="idpTabReviews">
+          <p class="idp-placeholder-text">Reviews and cases opened for this provider appear here.</p>
+        </div>
+
+        <div class="idp-tab-panel" id="idpTabDocumentation">
+          <p class="idp-placeholder-text">Supporting documentation for this provider's IRIS activity appears here.</p>
+        </div>
+
+      </div>
+    </aside>
   </div>
 
 </app-component>
 
-<footer></app-component></body></html>
+<footer></app-component>
+
+<!-- IRIS DETAIL PANEL SCRIPT — ported verbatim from controlcheck-iris-detail-panel.html.
+     Kept in its own IIFE so its internal helpers (scoreClass, fmtScore, esc, etc.)
+     never leak into or collide with this page's global scope; only
+     window.ControlCheckIrisDetail is exposed. -->
+<script>
+(function () {
+
+  /* ── scoring — Green 0.0–1.3 · Yellow 1.4–4.5 · Red 4.6+ ─────── */
+  function scoreClass(score) {
+    if (score === null || score === undefined) return null;
+    if (score >= 4.6) return 'score-red';
+    if (score >= 1.4) return 'score-yellow';
+    return 'score-green';
+  }
+  function fmtScore(score) {
+    if (score === null || score === undefined) return '—';
+    return (Math.round(score * 10) / 10).toFixed(1);
+  }
+
+  function elFromHtml(html) {
+    const t = document.createElement('template');
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* ── header ───────────────────────────────────────────────── */
+  function renderHeader(data) {
+    document.getElementById('idpName').textContent = data.name || '';
+    document.getElementById('idpRole').textContent = [data.role, data.unit].filter(Boolean).join(' \u00b7 ');
+
+    const statusBtn = document.getElementById('idpStatusBtn');
+    const status = (data.status || 'NEEDS REVIEW').toUpperCase();
+    document.getElementById('idpStatusText').textContent = status;
+    statusBtn.classList.toggle('status-in-review', status === 'IN REVIEW');
+
+    const dot = document.getElementById('idpReviewDot');
+    if (data.reviewCount) { dot.style.display = ''; dot.textContent = data.reviewCount; }
+    else { dot.style.display = 'none'; }
+  }
+
+  /* ── IRIS summary (Flagged / Current) ────────────────────────── */
+  function renderIrisSummary(data) {
+    const wrap = document.getElementById('idpIrisSummary');
+    wrap.innerHTML = '';
+    if (data.flagged) {
+      wrap.appendChild(elFromHtml(
+        '<div class="idp-summary-item">' +
+          '<div class="idp-summary-score badge-style ' + scoreClass(data.flagged.score) + '">' + fmtScore(data.flagged.score) + '</div>' +
+          '<div class="idp-summary-meta"><div class="idp-summary-meta-label">Flagged IRIS</div>' +
+          '<div class="idp-summary-meta-range">' + esc(data.flagged.range) + '</div></div>' +
+        '</div>'
+      ));
+    }
+    if (data.current) {
+      wrap.appendChild(elFromHtml(
+        '<div class="idp-summary-item">' +
+          '<div class="idp-summary-score ' + scoreClass(data.current.score) + '">' + fmtScore(data.current.score) + '</div>' +
+          '<div class="idp-summary-meta"><div class="idp-summary-meta-label">Current IRIS</div>' +
+          '<div class="idp-summary-meta-range">' + esc(data.current.range) + '</div></div>' +
+        '</div>'
+      ));
+    }
+  }
+
+  /* ── 6-month chart ────────────────────────────────────────────── */
+  function computeAxis(rawMax) {
+    let max = Math.max(2, Math.ceil(rawMax));
+    const step = max <= 2 ? 1 : max <= 10 ? 2 : max <= 20 ? 5 : 10;
+    max = Math.ceil(max / step) * step;
+    const ticks = [];
+    for (let v = max; v >= 0; v -= step) ticks.push(v);
+    return { max, ticks };
+  }
+
+  function renderChart(data) {
+    const chart = (data.chart && data.chart.series) || [];
+    const svg = document.getElementById('idpChartSvg');
+    const valuesLayer = document.getElementById('idpChartValues');
+    const xaxisLayer = document.getElementById('idpChartXAxis');
+    const yaxisLayer = document.getElementById('idpChartYAxis');
+
+    // clear previously drawn bars/lines (keep the baseline, which is the first child)
+    while (svg.children.length > 1) svg.removeChild(svg.lastChild);
+    valuesLayer.innerHTML = '';
+    xaxisLayer.innerHTML = '';
+    yaxisLayer.innerHTML = '';
+    xaxisLayer.style.gridTemplateColumns = 'repeat(' + chart.length + ', 1fr)';
+
+    const rawMax = Math.max.apply(null, chart.map(function (d) {
+      return Math.max(d.score || 0, d.avg || 0);
+    }).concat([0]));
+    const axis = computeAxis(rawMax);
+    axis.ticks.forEach(function (t) { yaxisLayer.appendChild(elFromHtml('<div>' + t + '</div>')); });
+
+    const vbWidth = 720, vbHeight = 158;
+    const colW = vbWidth / Math.max(chart.length, 1);
+    const barW = colW * 0.42;
+    const barOffset = (colW - barW) / 2;
+
+    chart.forEach(function (d, i) {
+      const cx = colW * i;
+      xaxisLayer.appendChild(elFromHtml('<div>' + esc(d.month) + '</div>'));
+
+      if (d.note) {
+        const notePct = ((cx + colW / 2) / vbWidth) * 100;
+        const note = elFromHtml('<div class="idp-chart-note" style="left:' + notePct + '%;top:50%;">' + esc(d.note) + '</div>');
+        valuesLayer.appendChild(note);
+        return;
+      }
+      if (d.score === undefined || d.score === null) return;
+
+      const barX = cx + barOffset;
+      const h = Math.max((d.score / axis.max) * vbHeight, d.score > 0 ? 2 : 0);
+      const barY = vbHeight - h;
+      const cls = scoreClass(d.score);
+
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', barX); rect.setAttribute('y', barY);
+      rect.setAttribute('width', barW); rect.setAttribute('height', h);
+      rect.setAttribute('rx', '2');
+      rect.setAttribute('class', 'idp-chart-bar-' + cls.replace('score-', ''));
+      svg.appendChild(rect);
+
+      if (d.avg !== undefined && d.avg !== null) {
+        const avgY = vbHeight - (d.avg / axis.max) * vbHeight;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', barX - 4); line.setAttribute('x2', barX + barW + 4);
+        line.setAttribute('y1', avgY); line.setAttribute('y2', avgY);
+        line.setAttribute('class', 'idp-chart-avg-line');
+        line.setAttribute('vector-effect', 'non-scaling-stroke');
+        svg.appendChild(line);
+      }
+
+      const chipPct = ((barX + barW / 2) / vbWidth) * 100;
+      const chipTopPct = (barY / vbHeight) * 100;
+      const chip = elFromHtml('<div class="idp-chart-value-chip ' + cls + '" style="left:' + chipPct + '%;top:' + chipTopPct + '%;">' + fmtScore(d.score) + '</div>');
+      valuesLayer.appendChild(chip);
+    });
+  }
+
+  function renderDispenseRow(data) {
+    const months = (data.chart && data.chart.months) || (data.chart && data.chart.series.map(function (d) { return d.month; })) || [];
+    const values = data.dispenses || [];
+    const header = document.getElementById('idpDispHeader');
+    const vals = document.getElementById('idpDispValues');
+    header.style.gridTemplateColumns = 'repeat(' + months.length + ', 1fr)';
+    vals.style.gridTemplateColumns = 'repeat(' + months.length + ', 1fr)';
+    header.innerHTML = months.map(function (m) { return '<div>' + esc(m) + '</div>'; }).join('');
+    vals.innerHTML = values.map(function (v) { return '<div>' + esc(v) + '</div>'; }).join('');
+  }
+
+  /* ── Detailed Risk Score Analysis list ───────────────────────── */
+  function renderBullets(bullets) {
+    if (!bullets || !bullets.length) return '';
+    return bullets.map(function (b) {
+      if (b.asLink) return '<div class="idp-metric-bullet"><a href="' + (b.href || '#') + '" class="idp-metric-bullet-link" onclick="event.preventDefault();">' + esc(b.text) + '</a></div>';
+      const icon = b.icon ? '<span class="material-icons idp-metric-bullet-icon" title="View details">launch</span>' : '';
+      return '<div class="idp-metric-bullet">' + esc(b.text) + icon + '</div>';
+    }).join('');
+  }
+
+  function metricCardHtml(m) {
+    const cls = m.score === null || m.score === undefined ? 'score-dash' : scoreClass(m.score);
+    return '<div class="idp-metric-card" data-metric="' + esc(m.key || m.label) + '">' +
+      '<div class="idp-metric-badge ' + cls + '">' + fmtScore(m.score) + '</div>' +
+      '<div class="idp-metric-content">' +
+        '<div class="idp-metric-title">' + esc(m.label) + '</div>' +
+        '<div class="idp-metric-summary' + (cls === 'score-dash' ? ' muted' : '') + '">' + esc(m.summary) + '</div>' +
+        renderBullets(m.bullets) +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderMetrics(data) {
+    const metrics = data.metrics || [];
+    const scored = metrics.filter(function (m) { return m.score !== null && m.score !== undefined; })
+      .sort(function (a, b) { return b.score - a.score; });
+    const noData = metrics.filter(function (m) { return m.score === null || m.score === undefined; });
+
+    document.getElementById('idpScoredMetrics').innerHTML = scored.map(metricCardHtml).join('');
+    document.getElementById('idpNoDataMetrics').innerHTML = noData.map(metricCardHtml).join('');
+  }
+
+  /* ── tabs ─────────────────────────────────────────────────── */
+  function switchTab(name) {
+    document.querySelectorAll('.idp-tab').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.tab === name);
+    });
+    document.querySelectorAll('.idp-tab-panel').forEach(function (panel) {
+      panel.classList.remove('active');
+    });
+    const map = { iris: 'idpTabIris', historical: 'idpTabHistorical', reviews: 'idpTabReviews', documentation: 'idpTabDocumentation' };
+    const target = document.getElementById(map[name]);
+    if (target) target.classList.add('active');
+  }
+
+  /* ── open / close ─────────────────────────────────────────── */
+  function open(data) {
+    // Keep the analyze sidebar visible/uncovered, whatever width it's currently at.
+    const drawer = document.getElementById('analyze-drawer');
+    const offset = drawer ? Math.round(drawer.getBoundingClientRect().width) : 0;
+    document.documentElement.style.setProperty('--iris-panel-offset', offset + 'px');
+
+    renderHeader(data);
+    renderIrisSummary(data);
+    renderChart(data);
+    renderDispenseRow(data);
+    document.getElementById('idpDateRange').innerHTML = 'Flagged Date Range: ' + esc(data.flaggedDateRange || '') + ' <span class="material-icons">expand_more</span>';
+    renderMetrics(data);
+    switchTab('iris');
+
+    document.getElementById('idpBackdrop').classList.add('show');
+    document.getElementById('idpPanel').classList.add('show');
+    document.addEventListener('keydown', onKeydown);
+  }
+
+  function close() {
+    document.getElementById('idpBackdrop').classList.remove('show');
+    document.getElementById('idpPanel').classList.remove('show');
+    document.removeEventListener('keydown', onKeydown);
+  }
+
+  function onKeydown(e) { if (e.key === 'Escape') close(); }
+
+  window.ControlCheckIrisDetail = { open: open, close: close, switchTab: switchTab };
+
+})();
+</script>
+</body></html>
