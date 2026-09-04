@@ -360,11 +360,12 @@
     table.data-table { border-collapse: separate; border-spacing: 0; table-layout: fixed; }
     table.data-table thead th {
       font-size: .72rem; font-weight: 700; color: var(--text-54); letter-spacing: .02em;
-      text-align: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-300); white-space: nowrap; background: #fff;
+      text-align: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-300); white-space: normal; line-height: 1.3; background: #fff;
       cursor: pointer; user-select: none;
     }
     table.data-table thead th.left { text-align: left; }
-    table.data-table thead th .material-icons.sort-icon { font-size: 14px; vertical-align: -2px; opacity: .45; }
+    table.data-table thead th .material-icons.sort-icon { font-size: 14px; vertical-align: -2px; opacity: 0; transition: opacity .15s ease; }
+    table.data-table thead th.sortable:hover .sort-icon { opacity: .45; }
     table.data-table thead th.sort-active .sort-icon { opacity: 1; color: var(--blue-dark); }
     table.data-table thead th:not(.sortable) { cursor: default; }
     table.data-table tbody td { padding: 12px 14px; font-size: .875rem; color: var(--text-87); border-bottom: 1px solid var(--gray-200); white-space: nowrap; text-align: center; }
@@ -400,7 +401,7 @@
        letting long nowrap content grow the column) when the <table> itself has an explicit
        width. The Users column has no specified width, so it absorbs whatever space is left,
        letting the table stretch to fill its container instead of being a fixed pixel width. */
-    table.data-table.tbl-user { width: 100%; min-width: 1326px; }
+    table.data-table.tbl-user { width: 100%; min-width: 1282px; }
     table.data-table.tbl-user th:nth-child(1), table.data-table.tbl-user td:nth-child(1) { left: 0; }
     table.data-table.tbl-user th:nth-child(2), table.data-table.tbl-user td:nth-child(2) { left: 130px; }
     table.data-table.tbl-user th:nth-child(3), table.data-table.tbl-user td:nth-child(3) { left: 260px; min-width: 220px; }
@@ -409,8 +410,8 @@
        "Unable to Reconcile" (5th column, not sticky) has no inline width set in JS below,
        so — same trick as tbl-user's Users column — it absorbs any leftover space and lets
        the table stretch to fill its container instead of leaving a gap on the right. */
-    table.data-table.tbl-entity { width: 100%; min-width: 1196px; }
-    table.data-table.tbl-entity.tbl-entity-actions { min-width: 1290px; }
+    table.data-table.tbl-entity { width: 100%; min-width: 1070px; }
+    table.data-table.tbl-entity.tbl-entity-actions { min-width: 1240px; }
     table.data-table.tbl-entity th:nth-child(1), table.data-table.tbl-entity td:nth-child(1) { left: 0; }
     table.data-table.tbl-entity th:nth-child(2), table.data-table.tbl-entity td:nth-child(2) { left: 220px; }
     table.data-table.tbl-entity th:nth-child(3), table.data-table.tbl-entity td:nth-child(3) { left: 350px; }
@@ -430,32 +431,30 @@
     .entity-sub-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
     .dept-overflow { color: var(--teal); font-weight: 700; flex-shrink: 0; }
     .entity-name a, .entity-name a:visited { color: var(--blue-dark); text-decoration: none; }
-    .entity-name a:hover { text-decoration: underline; }
+    .entity-name a:hover { text-decoration: none; }
 
-    /* ── UI tooltip (pure-CSS, data-tooltip attribute) — mirrors prism-drsa-enhancement's .tooltip-wrapper ── */
-    .tooltip-wrapper { position: relative; display: inline-flex; align-items: center; }
-    .tooltip-wrapper::before,
-    .tooltip-wrapper::after {
-      pointer-events: none; opacity: 0;
-      transition: opacity .15s ease, transform .15s ease;
-    }
-    .tooltip-wrapper::before {
-      content: attr(data-tooltip);
-      position: absolute; bottom: calc(100% + 10px); left: 50%;
-      transform: translate(-50%, 4px);
+    /* ── Floating UI tooltip (name links -> "IRIS Detail", the "+N" extra-
+       departments badge, etc). Reparented to <body> via JS on hover instead
+       of a pure-CSS ::before/::after bubble, so it's never clipped by an
+       ancestor's overflow — e.g. .data-table-wrap's overflow-x:auto (which
+       also computes overflow-y to auto, clipping upward-popping tooltips
+       for rows near the top of the table) or .entity-name's overflow:hidden
+       ellipsis truncation. Same "escape the ancestor" technique used
+       elsewhere in this file for the row-actions menu and the Compare panel. ── */
+    .ui-tooltip-float {
+      position: fixed; transform: translate(-50%, -100%);
       background: rgba(33,33,33,.95); color: #fff;
       font-family: var(--font); font-size: .75rem; font-weight: 400; line-height: 1.4; letter-spacing: .2px;
-      padding: 8px 12px; border-radius: var(--radius);
+      padding: 6px 10px; border-radius: var(--radius);
       width: max-content; max-width: 260px; white-space: normal; text-align: left;
-      z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,.18);
+      z-index: 950; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,.18);
+      opacity: 0; transition: opacity .12s ease;
     }
-    .tooltip-wrapper::after {
-      content: ''; position: absolute; bottom: calc(100% + 4px); left: 50%;
-      transform: translate(-50%, 4px);
-      border: 6px solid transparent; border-top-color: rgba(33,33,33,.95);
+    .ui-tooltip-float.show { opacity: 1; }
+    .ui-tooltip-float::after {
+      content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent; border-top-color: rgba(33,33,33,.95);
     }
-    .tooltip-wrapper:hover::before,
-    .tooltip-wrapper:hover::after { opacity: 1; transform: translate(-50%, 0); }
 
     .metric-badge {
       display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 26px;
@@ -483,6 +482,21 @@
     .investigate-link .material-icons { font-size: 16px; }
 
     /* ── L2 drilldown ────────────────────────────────────────── */
+    .l2-context-block {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .l2-context-block-inner {
+      overflow: hidden;
+      min-height: 0;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity .22s ease, transform .28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .l2-context-block.open { grid-template-rows: 1fr; }
+    .l2-context-block.open .l2-context-block-inner { opacity: 1; transform: translateY(0); }
+
     .l2-back-row { display: flex; align-items: center; gap: 4px; margin-bottom: 14px; }
     .back-arrow-btn { background: none; border: none; cursor: pointer; color: var(--teal); display: inline-flex; padding: 4px; border-radius: 50%; }
     .back-arrow-btn:hover { background: rgba(0,150,184,.12); }
@@ -508,26 +522,240 @@
     .l2-subtab.active { color: var(--blue-dark); font-weight: 700; }
     .l2-subtab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--blue-dark); }
 
-    /* ── Right-side IRIS drawer (mirrors med-trends pattern) ─── */
-    .iris-drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.15); z-index: 500; display: none; }
-    .iris-drawer-overlay.show { display: block; }
-    .iris-drawer {
-      position: fixed; top: 0; right: -560px; width: 560px; height: 100%; background: #fff; z-index: 501;
-      box-shadow: -4px 0 16px rgba(0,0,0,.15); transition: right .25s cubic-bezier(.4,0,.2,1);
-      display: flex; flex-direction: column;
-    }
-    .iris-drawer.show { right: 0; }
-    .iris-drawer-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--gray-300); }
-    .iris-drawer-header h3 { font-size: 1.125rem; font-weight: 700; color: var(--text-87); }
-    .iris-drawer-header .role { font-size: .8125rem; color: var(--gray-600); margin-top: 2px; }
     .modal-close-x { background: none; border: none; cursor: pointer; color: var(--gray-600); }
     .modal-close-x .material-icons { font-size: 22px; }
-    .iris-drawer-body { padding: 20px 24px; overflow: auto; flex: 1 1 auto; }
-    .iris-flag-card { display: flex; align-items: center; gap: 24px; border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 20px; }
-    .iris-flag-item .label { font-size: .75rem; font-weight: 700; text-transform: uppercase; color: var(--gray-600); }
-    .iris-flag-item .value { font-size: .9375rem; color: var(--text-87); margin-top: 2px; }
-    .iris-flag-item .value.big { font-size: 1.25rem; font-weight: 700; }
-    .iris-placeholder { color: var(--gray-600); font-size: .875rem; line-height: 1.5; }
+
+    /* ════════════════════════════════════════════════════════════════
+       IRIS DETAIL PANEL (overlay) — from controlcheck-iris-detail-panel.html.
+       All classes namespaced "idp-" so they never collide with page styles.
+       ════════════════════════════════════════════════════════════════ */
+    .idp-backdrop {
+      position: fixed;
+      top: 80px; bottom: 0; right: 0;
+      left: var(--iris-panel-offset, 0px);
+      background: rgba(0,0,0,.32);
+      z-index: 900;
+      display: none;
+    }
+    .idp-backdrop.show { display: block; }
+
+    .idp-panel {
+      position: fixed;
+      top: 80px; bottom: 0; right: 0;
+      width: min(78vw, 1040px);
+      max-width: calc(100% - var(--iris-panel-offset, 0px) - 56px);
+      background: #fff;
+      border-left: 1px solid var(--gray-300);
+      box-shadow: -4px 0 16px rgba(0,0,0,.10);
+      z-index: 901;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(100%);
+      transition: transform .32s cubic-bezier(.4,0,.2,1);
+    }
+    .idp-panel.show { display: flex; }
+    .idp-panel.show.idp-slide-in { transform: translateX(0); }
+
+    .idp-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--gray-300);
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+    .idp-name-block { flex: 1; min-width: 0; }
+    .idp-name { font-size: 1.25rem; font-weight: 700; color: var(--text-87); line-height: 1.3; }
+    .idp-role { font-size: .8125rem; color: var(--text-54); margin-top: 2px; }
+    .idp-status-select {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 7px 10px; font-family: var(--font);
+      font-size: .75rem; font-weight: 700; letter-spacing: .4px; text-transform: uppercase;
+      color: var(--text-87); cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    }
+    .idp-status-select .material-icons { font-size: 18px; color: var(--gray-600); }
+    .idp-status-select.status-in-review { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .idp-status-select.status-in-review .material-icons { color: #fff; }
+    .idp-action-btn {
+      background: none; border: none; padding: 7px;
+      display: inline-flex; align-items: center; justify-content: center;
+      cursor: pointer; border-radius: 50%; transition: background .15s;
+      flex-shrink: 0;
+    }
+    .idp-action-btn:hover { background: rgba(0,0,0,.06); }
+    .idp-action-btn .material-icons,
+    .idp-action-btn .material-icons-outlined { font-size: 22px; color: var(--gray-600); }
+    .idp-action-btn.primary {
+      background: var(--teal); border-radius: var(--radius); padding: 7px;
+    }
+    .idp-action-btn.primary .material-icons,
+    .idp-action-btn.primary .material-icons-outlined { color: #fff; font-size: 20px; }
+    .idp-action-btn.primary:hover { background: var(--teal-dark); }
+
+    .idp-tabs {
+      display: flex; align-items: center;
+      border-bottom: 1px solid var(--gray-300);
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+    .idp-tab {
+      background: none; border: none; cursor: pointer;
+      padding: 14px 16px; font-family: var(--font);
+      font-size: .9375rem; font-weight: 500; color: var(--text-87);
+      position: relative;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .idp-tab.active { color: var(--blue-dark); font-weight: 600; }
+    .idp-tab.active::after {
+      content: ''; position: absolute; left: 0; right: 0; bottom: -1px;
+      height: 2px; background: var(--blue-dark);
+    }
+    .idp-tab .case-dot {
+      background: var(--blue-dark); color: #fff; border-radius: 50%;
+      width: 18px; height: 18px; font-size: .6875rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+
+    .idp-body { flex: 1; overflow: auto; padding: 24px; background: var(--gray-50); }
+    .idp-tab-panel { display: none; }
+    .idp-tab-panel.active { display: block; }
+    .idp-placeholder-text { font-size: .875rem; color: var(--gray-600); }
+
+    .idp-iris-summary {
+      display: flex; gap: 36px;
+      padding: 16px 18px;
+      background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,.06);
+      margin-bottom: 20px;
+    }
+    .idp-summary-item { display: flex; gap: 14px; align-items: center; }
+    .idp-summary-score { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+    .idp-summary-score.score-red    { color: var(--red); }
+    .idp-summary-score.score-yellow { color: #a8860a; }
+    .idp-summary-score.score-green  { color: var(--green); }
+    .idp-summary-score.badge-style {
+      width: 56px; height: 40px; border-radius: var(--radius);
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.5rem;
+    }
+    .idp-summary-score.badge-style.score-red    { background: var(--red); color: #fff; }
+    .idp-summary-score.badge-style.score-yellow { background: var(--yellow); color: var(--text-87); }
+    .idp-summary-score.badge-style.score-green  { background: var(--green); color: #fff; }
+    .idp-summary-meta-label { color: var(--blue-dark); font-weight: 700; font-size: 1rem; }
+    .idp-summary-meta-range { color: var(--text-54); font-size: .75rem; margin-top: 2px; }
+
+    .idp-section-title {
+      font-size: 1rem; font-weight: 600; color: var(--blue-darker);
+      margin: 24px 0 12px;
+    }
+    .idp-section-title:first-child { margin-top: 0; }
+
+    .idp-chart-card {
+      background: #fff;
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      padding: 16px 18px; margin-bottom: 32px;
+    }
+    .idp-chart-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .idp-chart-title { font-size: .9375rem; font-weight: 600; color: var(--text-87); }
+    .idp-chart-header-right { display: flex; align-items: center; gap: 14px; }
+    .idp-chart-legend {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .75rem; color: var(--text-54);
+    }
+    .idp-legend-swatch { width: 18px; height: 2px; background: var(--text-87); }
+    .idp-chart-download {
+      background: none; border: none; cursor: pointer; padding: 2px;
+      display: inline-flex; color: var(--gray-600);
+    }
+    .idp-chart-download .material-icons { font-size: 18px; }
+
+    .idp-chart-canvas { position: relative; padding: 6px 8px 28px 34px; height: 200px; box-sizing: border-box; }
+    .idp-chart-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+    .idp-chart-yaxis {
+      position: absolute; left: 0; top: 6px; bottom: 28px; width: 30px;
+      display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;
+      color: var(--gray-600); font-size: 12px; line-height: 1; padding-right: 4px;
+    }
+    .idp-chart-xaxis {
+      position: absolute; left: 34px; right: 8px; bottom: 0;
+      display: grid; color: var(--gray-600); font-size: 12px; text-align: center;
+    }
+    .idp-chart-values { position: absolute; left: 34px; right: 8px; top: 6px; bottom: 28px; pointer-events: none; }
+    .idp-chart-value-chip {
+      position: absolute; transform: translate(-50%, -100%);
+      font-size: 12px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+      color: var(--text-87); white-space: nowrap;
+    }
+    .idp-chart-value-chip.score-red    { background: var(--red); color: #fff; }
+    .idp-chart-value-chip.score-yellow { background: var(--yellow); color: var(--text-87); }
+    .idp-chart-value-chip.score-green  { background: var(--green); color: #fff; }
+    .idp-chart-note {
+      position: absolute; transform: translate(-50%, -50%);
+      font-size: 11px; font-weight: 600; color: var(--gray-600);
+      text-align: center; white-space: pre-line; line-height: 1.35; width: 90px;
+    }
+    .idp-chart-bar-red    { fill: var(--red); opacity: .85; }
+    .idp-chart-bar-yellow { fill: var(--yellow); }
+    .idp-chart-bar-green  { fill: var(--green); opacity: .85; }
+    .idp-chart-avg-line   { stroke: #222; stroke-width: 2; }
+
+    .idp-disp-title { margin: 18px 0 6px; font-size: .8125rem; font-weight: 600; color: var(--text-87); }
+    .idp-disp-row {
+      display: grid; gap: 8px; font-size: .8125rem; padding: 6px 0;
+      border-bottom: 1px solid var(--gray-200); text-align: center;
+    }
+    .idp-disp-row.header { font-weight: 600; color: var(--text-54); font-size: .6875rem; text-transform: uppercase; letter-spacing: .4px; }
+    .idp-disp-row.values { color: var(--text-87); font-weight: 600; border-bottom: none; }
+
+    .idp-drsa-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 24px 0 12px;
+    }
+    .idp-date-range {
+      font-size: .8125rem; color: var(--teal); font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px; cursor: pointer;
+      background: none; border: none; font-family: var(--font);
+    }
+    .idp-date-range .material-icons { font-size: 18px; }
+
+    .idp-metric-list { display: flex; flex-direction: column; gap: 8px; }
+    .idp-metric-card {
+      border: 1px solid var(--gray-300); border-radius: var(--radius);
+      background: #fff; padding: 20px 24px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .idp-metric-badge {
+      flex-shrink: 0; width: 38px; height: 25px; border-radius: 3px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: .8125rem; font-weight: 700; color: #fff; margin-top: 1px;
+    }
+    .idp-metric-badge.score-red    { background: var(--red); }
+    .idp-metric-badge.score-yellow { background: var(--yellow); color: var(--text-87); }
+    .idp-metric-badge.score-green  { background: var(--green); }
+    .idp-metric-badge.score-dash   { background: var(--gray-100); border: 1px solid var(--gray-300); color: var(--gray-600); }
+    .idp-metric-content { flex: 1; min-width: 0; }
+    .idp-metric-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; color: var(--blue-darker); }
+    .idp-metric-summary { font-size: .8125rem; color: var(--text-87); line-height: 1.45; }
+    .idp-metric-summary.muted { color: var(--text-54); }
+    .idp-metric-bullet {
+      font-size: .8125rem; color: var(--text-87); line-height: 1.45;
+      margin-top: 6px; padding-left: 16px; position: relative;
+    }
+    .idp-metric-bullet::before { content: '•'; position: absolute; left: 4px; color: var(--text-54); }
+    .idp-metric-bullet-icon {
+      font-size: 15px !important; color: var(--teal); cursor: pointer;
+      vertical-align: middle; margin-left: 4px;
+    }
+    .idp-metric-bullet-link { color: var(--teal); text-decoration: underline; cursor: pointer; }
+    .idp-name-link { color: var(--blue-dark); text-decoration: none; cursor: pointer; }
+    .idp-name-link:hover { text-decoration: underline; }
+
+    @keyframes idpFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .idp-metric-card { animation: idpFadeUp .2s ease both; }
 
     /* ── Chart (visualized data) ──────────────────────────────── */
     .chart-wrap { background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 20px 20px 8px; }
@@ -538,6 +766,9 @@
 
     .view { display: none; }
     .view.active { display: block; }
+    .view.active { opacity: 1; transform: translateX(0); transition: opacity .2s ease, transform .2s ease; }
+    .view.active.view-anim-out { opacity: 0; transform: translateX(14px); }
+    .view.active.view-anim-in-start { opacity: 0; transform: translateX(-14px); transition: none; }
 
     :focus-visible { outline: var(--teal) auto 1px; }
   </style>
@@ -780,20 +1011,24 @@
 
           <!-- ═══ L2 VIEW ═══ -->
           <div class="view" id="view-l2">
-            <div class="l2-back-row">
-              <button class="back-arrow-btn" onclick="backFromDrill()" aria-label="Back"><span class="material-icons">arrow_back</span></button>
-              <div class="l2-title">
-                <h3 id="l2TitleName">—</h3>
-                <div class="role" id="l2TitleSub">—</div>
-              </div>
-            </div>
+            <div class="l2-context-block" id="l2ContextBlock">
+              <div class="l2-context-block-inner">
+                <div class="l2-back-row">
+                  <button class="back-arrow-btn" onclick="backFromDrill()" aria-label="Back"><span class="material-icons">arrow_back</span></button>
+                  <div class="l2-title">
+                    <h3 id="l2TitleName">—</h3>
+                    <div class="role" id="l2TitleSub">—</div>
+                  </div>
+                </div>
 
-            <div class="l2-card">
-              <div style="flex:1 1 auto;min-width:0">
-                <h4>Variance Trends</h4>
-                <div class="l2-stat-row" id="l2StatRow"></div>
+                <div class="l2-card">
+                  <div style="flex:1 1 auto;min-width:0">
+                    <h4>Variance Trends</h4>
+                    <div class="l2-stat-row" id="l2StatRow"></div>
+                  </div>
+                  <button class="iris-detail-btn" id="l2IrisDetailBtn" onclick="openIrisDrawerForCurrentDrill()">IRIS Detail</button>
+                </div>
               </div>
-              <button class="iris-detail-btn" id="l2IrisDetailBtn" onclick="openIrisDrawerForCurrentDrill()">IRIS Detail</button>
             </div>
 
             <div class="l2-subtabs" id="l2Subtabs"></div>
@@ -841,24 +1076,83 @@
 </div>
 </app-component>
 
-<!-- ═══ IRIS DETAIL DRAWER ═══ -->
-<div class="iris-drawer-overlay" id="irisDrawerOverlay" onclick="closeIrisDrawer()"></div>
-<div class="iris-drawer" id="irisDrawer">
-  <div class="iris-drawer-header">
-    <div>
-      <h3 id="irisDrawerName">—</h3>
-      <div class="role" id="irisDrawerRole">—</div>
+<!-- ═══ IRIS DETAIL PANEL — from controlcheck-iris-detail-panel.html ═══ -->
+<div class="idp-backdrop" id="idpBackdrop" onclick="ControlCheckIrisDetail.close()"></div>
+<aside class="idp-panel" id="idpPanel" role="dialog" aria-modal="true" aria-label="IRIS detail">
+  <div class="idp-header">
+    <div class="idp-name-block">
+      <div class="idp-name" id="idpName"></div>
+      <div class="idp-role" id="idpRole"></div>
     </div>
-    <button class="modal-close-x" onclick="closeIrisDrawer()"><span class="material-icons">close</span></button>
+    <button class="idp-status-select" id="idpStatusBtn">
+      <span id="idpStatusText"></span> <span class="material-icons">expand_more</span>
+    </button>
+    <button class="idp-action-btn primary" title="Create case"><span class="material-icons-outlined">note_add</span></button>
+    <button class="idp-action-btn idp-close" title="Close" onclick="ControlCheckIrisDetail.close()"><span class="material-icons">close</span></button>
   </div>
-  <div class="iris-drawer-body">
-    <div class="iris-flag-card">
-      <div class="iris-flag-item"><div class="label">Flagged IRIS</div><div class="value" id="irisFlagValue">No flagged score</div></div>
-      <div class="iris-flag-item"><div class="label">Current IRIS</div><div class="value big" id="irisCurrentValue">—</div></div>
+
+  <div class="idp-tabs">
+    <button class="idp-tab active" data-tab="iris" onclick="ControlCheckIrisDetail.switchTab('iris')">IRIS</button>
+    <button class="idp-tab" data-tab="historical" onclick="ControlCheckIrisDetail.switchTab('historical')">Historical IRIS</button>
+    <button class="idp-tab" data-tab="reviews" onclick="ControlCheckIrisDetail.switchTab('reviews')">Reviews &amp; Cases <span class="case-dot" id="idpReviewDot" style="display:none;"></span></button>
+    <button class="idp-tab" data-tab="documentation" onclick="ControlCheckIrisDetail.switchTab('documentation')">Documentation</button>
+  </div>
+
+  <div class="idp-body">
+
+    <div class="idp-tab-panel active" id="idpTabIris">
+
+      <div class="idp-iris-summary" id="idpIrisSummary"></div>
+
+      <div class="idp-section-title">6 Month IRIS &amp; Activity History</div>
+
+      <div class="idp-chart-card">
+        <div class="idp-chart-header">
+          <div class="idp-chart-title">IRIS Score</div>
+          <div class="idp-chart-header-right">
+            <div class="idp-chart-legend"><span class="idp-legend-swatch"></span> Department Average</div>
+            <button class="idp-chart-download" title="Download chart"><span class="material-icons">file_download</span></button>
+          </div>
+        </div>
+        <div class="idp-chart-canvas">
+          <div class="idp-chart-yaxis" id="idpChartYAxis"></div>
+          <svg class="idp-chart-svg" viewBox="0 0 720 160" preserveAspectRatio="none" id="idpChartSvg">
+            <line x1="0" y1="158" x2="720" y2="158" stroke="#e5e5e5" stroke-width="1" vector-effect="non-scaling-stroke"/>
+          </svg>
+          <div class="idp-chart-values" id="idpChartValues"></div>
+          <div class="idp-chart-xaxis" id="idpChartXAxis"></div>
+        </div>
+
+        <div class="idp-disp-title">Average CS Dispenses Per Shift / Department Average</div>
+        <div class="idp-disp-row header" id="idpDispHeader"></div>
+        <div class="idp-disp-row values" id="idpDispValues"></div>
+      </div>
+
+      <div class="idp-drsa-header">
+        <div class="idp-section-title" style="margin:0;">Detailed Risk Score Analysis</div>
+        <button class="idp-date-range" id="idpDateRange"></button>
+      </div>
+
+      <div class="idp-metric-list" id="idpScoredMetrics"></div>
+
+      <div class="idp-metric-list" id="idpNoDataMetrics" style="margin-top:8px;"></div>
+
     </div>
-    <p class="iris-placeholder">Full IRIS history, department averages, and case &amp; review activity for this provider would render here.</p>
+
+    <div class="idp-tab-panel" id="idpTabHistorical">
+      <p class="idp-placeholder-text">Historical IRIS scores by evaluation period appear here.</p>
+    </div>
+
+    <div class="idp-tab-panel" id="idpTabReviews">
+      <p class="idp-placeholder-text">Reviews and cases opened for this provider appear here.</p>
+    </div>
+
+    <div class="idp-tab-panel" id="idpTabDocumentation">
+      <p class="idp-placeholder-text">Supporting documentation for this provider's IRIS activity appears here.</p>
+    </div>
+
   </div>
-</div>
+</aside>
 
 <!-- ═══ COMPARE PANEL — parked here; moved into the invoking Departments-tab row's expand slot when opened ═══ -->
 <div id="comparePanelPark" style="display:none">
@@ -1166,11 +1460,9 @@ function openCompare(deptName, idx) {
   document.getElementById('compareTableBody').innerHTML = comparePanelRows.map(function (p) {
     const safeId = esc(p.id);
     const safeName = esc(p.name);
-    const nameHtml = p.focus
-      ? p.name
-      : '<a href="#" onclick="event.preventDefault();openUserDrill(\'' + safeId + '\')">' + p.name + '</a>';
+    const nameHtml = '<a href="#" onmouseenter="showNameTooltip(this)" onmouseleave="hideNameTooltip()" onclick="event.preventDefault();hideNameTooltip();closeRowActionsMenus();openIrisDetailForUserId(\'' + safeId + '\')">' + p.name + '</a>';
     return '<tr' + (p.focus ? ' class="focus-user"' : '') + '>' +
-      '<td class="left"><div class="entity-cell"><div class="entity-name' + (p.focus ? '' : ' static') + '" title="' + p.name + '">' + nameHtml + '</div><div class="entity-sub">' + p.role + '</div></div></td>' +
+      '<td class="left"><div class="entity-cell"><div class="entity-name" title="' + p.name + '">' + nameHtml + '</div><div class="entity-sub">' + p.role + '</div></div></td>' +
       '<td>' + variancePct(p.variances, p.totalEvents) + '%</td>' +
       '<td>' + fmtNum(p.totalEvents) + '</td>' +
       '<td>' + fmtNum(p.variances) + '</td>' +
@@ -1310,15 +1602,47 @@ function openDeptDrill(name) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+let _backAnimating = false;
+
 function backFromDrill() {
-  if (drill && drill.type === 'user' && drill.from && typeof drill.from === 'object') {
-    drill = { type: 'dept', name: drill.from.dept };
-    l2SubTab = 'users';
-  } else {
-    drill = null;
+  if (_backAnimating) return;
+  const returningToL1 = !(drill && drill.type === 'user' && drill.from && typeof drill.from === 'object');
+  if (returningToL1) {
+    animateBackToL1();
+    return;
   }
+  drill = { type: 'dept', name: drill.from.dept };
+  l2SubTab = 'users';
   viewMode.l2 = 'table'; searchQuery.l2 = '';
   render();
+}
+
+function animateBackToL1() {
+  const l2El = document.getElementById('view-l2');
+  const l1El = document.getElementById('view-l1');
+  const ctx = document.getElementById('l2ContextBlock');
+  _backAnimating = true;
+
+  // Collapse the context block and fade/slide the whole L2 view out together.
+  if (ctx) { ctx.classList.remove('open'); }
+  _l2ContextOpen = false;
+  l2El.classList.add('view-anim-out');
+
+  setTimeout(function () {
+    drill = null;
+    viewMode.l2 = 'table'; searchQuery.l2 = '';
+    render();
+    l2El.classList.remove('view-anim-out');
+
+    // Fade/slide the L1 view in from the opposite side.
+    l1El.classList.add('view-anim-in-start');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        l1El.classList.remove('view-anim-in-start');
+        _backAnimating = false;
+      });
+    });
+  }, 200);
 }
 
 function setL2SubTab(tab) {
@@ -1388,11 +1712,37 @@ document.addEventListener('click', function (e) {
 /* ════════════════════════════════════════════════════════════════
    RENDER — TOP-LEVEL DISPATCH
 ═══════════════════════════════════════════════════════════════ */
+let _l2ContextOpen = false;
+
+function updateL2ContextBlock(showL2) {
+  const ctx = document.getElementById('l2ContextBlock');
+  if (!ctx) return;
+  if (showL2 && !_l2ContextOpen) {
+    // Entering the drilldown: paint the closed (0fr / collapsed) state first,
+    // then add .open on a later frame so the grid-row/opacity/transform
+    // transition actually has something to animate from. A single rAF can
+    // land before that paint in some browsers, so use two.
+    _l2ContextOpen = true;
+    ctx.classList.remove('open');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { ctx.classList.add('open'); });
+    });
+  } else if (!showL2) {
+    _l2ContextOpen = false;
+    ctx.classList.remove('open');
+  } else {
+    // Already open and staying in the drilldown (e.g. sub-tab change or
+    // stepping back from a user to its department) — keep it open, no re-animation.
+    ctx.classList.add('open');
+  }
+}
+
 function render() {
   const showL2 = !!drill;
   document.getElementById('view-l1').classList.toggle('active', !showL2);
   document.getElementById('view-l2').classList.toggle('active', showL2);
   if (showL2) renderL2(); else renderL1();
+  updateL2ContextBlock(showL2);
 }
 
 /* ── L1 ─────────────────────────────────────────────────────────── */
@@ -1442,22 +1792,24 @@ function renderL1Table() {
     head += thSort('byUser', 'vtScore', 'Metric Score', st.col, st.asc, null, 130);
     head += thSort('byUser', 'overallIris', 'Overall IRIS', st.col, st.asc, null, 130);
     head += thSort('byUser', 'name', 'Users', st.col, st.asc, 'left');
-    head += thSort('byUser', 'variances', 'Total Variances', st.col, st.asc, null, 130);
+    head += thSort('byUser', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('byUser', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
-    head += thSort('byUser', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 150);
-    head += thSort('byUser', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
-    head += thSort('byUser', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
-    head += thSort('byUser', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
+    head += thSort('byUser', 'variances', 'Total Variances', st.col, st.asc, null, 96);
+    head += thSort('byUser', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 108);
+    head += thSort('byUser', 'reconciled', 'Reconciled', st.col, st.asc, null, 100);
+    head += thSort('byUser', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 92);
+    head += thSort('byUser', 'openhist', 'Open - Historical', st.col, st.asc, null, 100);
     head += '<th style="width:56px"></th></tr>';
 
     const rows = list.map(u => {
-      const extra = u.extraDeptCount ? ' <span class="dept-overflow tooltip-wrapper" data-tooltip="Also active in: ' + u.extraDepts.join(', ') + '">+' + u.extraDeptCount + '</span>' : '';
+      const extra = u.extraDeptCount ? ' <span class="dept-overflow" onmouseenter="showFloatingTooltip(this, \'Also active in: ' + u.extraDepts.join(', ').replace(/'/g, "\\'") + '\')" onmouseleave="hideFloatingTooltip()">+' + u.extraDeptCount + '</span>' : '';
       let row = '<tr class="row-clickable" onclick="openUserDrill(\'' + esc(u.id) + '\')">';
       row += '<td><span class="metric-badge ' + scoreClass(u.vtScore) + '">' + fmtScore(u.vtScore) + '</span></td>';
       row += '<td><span class="score-' + scoreClass(u.overallIris) + '">' + fmtScore(u.overallIris) + '</span></td>';
-      row += '<td class="left"><div class="entity-cell"><div class="entity-name" title="' + u.name + '">' + u.name + '</div><div class="entity-sub"><span class="entity-sub-text" title="' + u.role + ' · ' + u.homeDept + '">' + u.role + ' · ' + u.homeDept + '</span>' + extra + '</div></div></td>';
-      row += '<td>' + fmtNum(u.variances) + '</td>';
+      row += '<td class="left"><div class="entity-cell"><div class="entity-name" title="' + u.name + '"><a href="#" onmouseenter="showNameTooltip(this)" onmouseleave="hideNameTooltip()" onclick="event.stopPropagation();event.preventDefault();hideNameTooltip();openIrisDetailForUserId(\'' + esc(u.id) + '\')">' + u.name + '</a></div><div class="entity-sub"><span class="entity-sub-text" title="' + u.role + ' · ' + u.homeDept + '">' + u.role + ' · ' + u.homeDept + '</span>' + extra + '</div></div></td>';
+      row += '<td>' + variancePct(u.variances, u.totalEvents) + '%</td>';
       row += '<td>' + fmtNum(u.totalEvents) + '</td>';
+      row += '<td>' + fmtNum(u.variances) + '</td>';
       row += '<td>' + fmtNum(u.unreconciled) + '</td><td>' + fmtNum(u.reconciled) + '</td><td>' + fmtNum(u.open3) + '</td><td>' + fmtNum(u.openhist) + '</td>';
       row += '<td class="row-chevron-cell"><button class="row-chevron-btn" onclick="event.stopPropagation();openUserDrill(\'' + esc(u.id) + '\')"><span class="material-icons">chevron_right</span></button></td>';
       row += '</tr>';
@@ -1471,11 +1823,11 @@ function renderL1Table() {
     head += thSort('byDept', 'name', 'Department', st.col, st.asc, 'left', 220);
     head += thSort('byDept', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('byDept', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
-    head += thSort('byDept', 'variances', 'Total Variances', st.col, st.asc, null, 130);
+    head += thSort('byDept', 'variances', 'Total Variances', st.col, st.asc, null, 96);
     head += thSort('byDept', 'unreconciled', 'Unable to Reconcile', st.col, st.asc);
-    head += thSort('byDept', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
-    head += thSort('byDept', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
-    head += thSort('byDept', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
+    head += thSort('byDept', 'reconciled', 'Reconciled', st.col, st.asc, null, 100);
+    head += thSort('byDept', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 92);
+    head += thSort('byDept', 'openhist', 'Open - Historical', st.col, st.asc, null, 100);
     head += '<th style="width:56px"></th></tr>';
 
     const rows = list.map(d => {
@@ -1574,11 +1926,11 @@ function renderL2Table() {
     head += thSort('drugs', 'name', 'Drug', st.col, st.asc, 'left', 220);
     head += thSort('drugs', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('drugs', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
-    head += thSort('drugs', 'variances', 'Total Variances', st.col, st.asc, null, 130);
+    head += thSort('drugs', 'variances', 'Total Variances', st.col, st.asc, null, 96);
     head += thSort('drugs', 'unreconciled', 'Unable to Reconcile', st.col, st.asc);
-    head += thSort('drugs', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
-    head += thSort('drugs', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
-    head += thSort('drugs', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
+    head += thSort('drugs', 'reconciled', 'Reconciled', st.col, st.asc, null, 100);
+    head += thSort('drugs', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 92);
+    head += thSort('drugs', 'openhist', 'Open - Historical', st.col, st.asc, null, 100);
     head += '<th style="width:150px">Actions</th></tr>';
     const rows = list.map(dr => {
       let row = '<tr>';
@@ -1597,11 +1949,11 @@ function renderL2Table() {
     head += thSort('depts', 'name', 'Department', st.col, st.asc, 'left', 220);
     head += thSort('depts', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('depts', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
-    head += thSort('depts', 'variances', 'Total Variances', st.col, st.asc, null, 130);
+    head += thSort('depts', 'variances', 'Total Variances', st.col, st.asc, null, 96);
     head += thSort('depts', 'unreconciled', 'Unable to Reconcile', st.col, st.asc);
-    head += thSort('depts', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
-    head += thSort('depts', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
-    head += thSort('depts', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
+    head += thSort('depts', 'reconciled', 'Reconciled', st.col, st.asc, null, 100);
+    head += thSort('depts', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 92);
+    head += thSort('depts', 'openhist', 'Open - Historical', st.col, st.asc, null, 100);
     head += '<th style="width:230px">Actions</th></tr>';
     const rows = list.map((dp, i) => {
       let row = '<tr>';
@@ -1623,20 +1975,22 @@ function renderL2Table() {
     head += thSort('deptUsers', 'vtScore', 'Metric Score', st.col, st.asc, null, 130);
     head += thSort('deptUsers', 'overallIris', 'Overall IRIS', st.col, st.asc, null, 130);
     head += thSort('deptUsers', 'name', 'Users', st.col, st.asc, 'left');
-    head += thSort('deptUsers', 'variances', 'Total Variances', st.col, st.asc, null, 130);
+    head += thSort('deptUsers', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('deptUsers', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
-    head += thSort('deptUsers', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 150);
-    head += thSort('deptUsers', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
-    head += thSort('deptUsers', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
-    head += thSort('deptUsers', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
+    head += thSort('deptUsers', 'variances', 'Total Variances', st.col, st.asc, null, 96);
+    head += thSort('deptUsers', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 108);
+    head += thSort('deptUsers', 'reconciled', 'Reconciled', st.col, st.asc, null, 100);
+    head += thSort('deptUsers', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 92);
+    head += thSort('deptUsers', 'openhist', 'Open - Historical', st.col, st.asc, null, 100);
     head += '<th style="width:56px"></th></tr>';
     const deptName = currentDrillDept().name;
     const rows = list.map(u => {
       let row = '<tr class="row-clickable" onclick="openUserDrill(\'' + esc(u.id) + '\',\'' + esc(deptName) + '\')">';
       row += '<td><span class="metric-badge ' + scoreClass(u.vtScore) + '">' + fmtScore(u.vtScore) + '</span></td>';
       row += '<td><span class="score-' + scoreClass(u.overallIris) + '">' + fmtScore(u.overallIris) + '</span></td>';
-      row += '<td class="left"><div class="entity-cell"><div class="entity-name" title="' + u.name + '">' + u.name + '</div><div class="entity-sub">' + u.role + '</div></div></td>';
-      row += '<td>' + fmtNum(u.variances) + '</td><td>' + fmtNum(u.totalEvents) + '</td>';
+      row += '<td class="left"><div class="entity-cell"><div class="entity-name" title="' + u.name + '"><a href="#" onmouseenter="showNameTooltip(this)" onmouseleave="hideNameTooltip()" onclick="event.stopPropagation();event.preventDefault();hideNameTooltip();openIrisDetailForUserId(\'' + esc(u.id) + '\')">' + u.name + '</a></div><div class="entity-sub">' + u.role + '</div></div></td>';
+      row += '<td>' + variancePct(u.variances, u.totalEvents) + '%</td>';
+      row += '<td>' + fmtNum(u.totalEvents) + '</td><td>' + fmtNum(u.variances) + '</td>';
       row += '<td>' + fmtNum(u.unreconciled) + '</td><td>' + fmtNum(u.reconciled) + '</td><td>' + fmtNum(u.open3) + '</td><td>' + fmtNum(u.openhist) + '</td>';
       row += '<td class="row-chevron-cell"><button class="row-chevron-btn" onclick="event.stopPropagation();openUserDrill(\'' + esc(u.id) + '\',\'' + esc(deptName) + '\')"><span class="material-icons">chevron_right</span></button></td>';
       row += '</tr>';
@@ -1691,24 +2045,317 @@ function renderChart(scope) {
 window.addEventListener('resize', () => { if (l1Chart) l1Chart.resize(); if (l2Chart) l2Chart.resize(); });
 
 /* ════════════════════════════════════════════════════════════════
-   IRIS DETAIL DRAWER
+   IRIS DETAIL PANEL — data adapter + shared component
+   (component script from controlcheck-iris-detail-panel.html, wired
+   here to this file's mock user data)
 ═══════════════════════════════════════════════════════════════ */
+function buildIrisDetailData(u) {
+  const rnd = (salt) => _seededRand(u.name, salt);
+  const round1 = (n) => Math.round(n * 10) / 10;
+  const dept = DEPARTMENTS.find(d => d.name === u.homeDept);
+  const deptAvgIris = dept ? Math.max(0.3, (dept.variances / Math.max(1, dept.totalEvents)) * 6) : 1.2;
+
+  const mayScore = Math.max(0, u.overallIris * (0.75 + rnd('may') * 0.5));
+  const junScore = Math.max(0, u.overallIris * (0.85 + rnd('jun') * 0.4));
+  const julScore = Math.max(0, u.overallIris);
+
+  const status = rnd('status') > 0.62 ? 'IN REVIEW' : 'NEEDS REVIEW';
+  const reviewCount = rnd('reviews') > 0.72 ? 1 : 0;
+  const dispenseFor = (salt) => Math.round(6 + rnd(salt) * 30) + ' / ' + Math.round(deptAvgIris * 4);
+
+  return {
+    name: u.name,
+    role: u.role,
+    unit: u.homeDept,
+    status: status,
+    reviewCount: reviewCount,
+    flagged: { score: round1(mayScore), range: 'For Jul 6, 2026 - Aug 4, 2026' },
+    current: { score: round1(u.overallIris), range: 'For Aug 5, 2026 - Sep 4, 2026' },
+    flaggedDateRange: '07/06/2026 - 08/04/2026',
+    chart: {
+      months: ['MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG'],
+      series: [
+        { month: 'MAR', note: 'No Data\nAvailable' },
+        { month: 'APR', note: 'No Data\nAvailable' },
+        { month: 'MAY', score: round1(mayScore), avg: round1(deptAvgIris) },
+        { month: 'JUN', score: round1(junScore), avg: round1(deptAvgIris) },
+        { month: 'JUL', score: round1(julScore), avg: round1(deptAvgIris) },
+        { month: 'AUG', note: 'Available\nafter\nSep 5th' }
+      ]
+    },
+    dispenses: ['- / -', '- / -', dispenseFor('d1'), dispenseFor('d2'), dispenseFor('d3'), '- / -'],
+    metrics: [
+      {
+        key: 'variance_trends', label: 'Variance Trends', score: round1(u.vtScore),
+        summary: u.name + ' has a highly unusual number of variances in department ' + u.homeDept + ', including ' + fmtNum(u.open3) + ' variances with a status of "Open".'
+      },
+      { key: 'dispense_patterns', label: 'Dispense Patterns', score: null, summary: 'There is not enough data to calculate a metric score for this user within this time period.' },
+      { key: 'med_trends', label: 'Med Trends', score: null, summary: 'There is not enough data to calculate a metric score for this user within this time period.' },
+      { key: 'pain_analysis', label: 'Pain-Related Analysis', score: null, summary: 'There is not enough data to calculate a metric score for this user within this time period.' }
+    ]
+  };
+}
+
+function openIrisDetailForUserId(id) {
+  const u = getAllUsers().find(x => x.id === id);
+  if (u) ControlCheckIrisDetail.open(buildIrisDetailData(u));
+}
+
+/* Generic floating tooltip, reparented to <body> so it's never clipped by an
+   ancestor's overflow (e.g. .data-table-wrap's overflow-x:auto, which also
+   clips vertically) — same "escape the ancestor" technique used elsewhere
+   in this file. Used for name-link hovers ("IRIS Detail") and the "+N"
+   extra-departments badge. */
+let _floatTip = null;
+function showFloatingTooltip(el, text) {
+  hideFloatingTooltip();
+  const tip = document.createElement('div');
+  tip.className = 'ui-tooltip-float';
+  tip.textContent = text;
+  document.body.appendChild(tip);
+  const r = el.getBoundingClientRect();
+  tip.style.left = (r.left + r.width / 2) + 'px';
+  tip.style.top = (r.top - 8) + 'px';
+  _floatTip = tip;
+  requestAnimationFrame(() => tip.classList.add('show'));
+}
+function hideFloatingTooltip() {
+  if (_floatTip) { _floatTip.remove(); _floatTip = null; }
+}
+function showNameTooltip(el) { showFloatingTooltip(el, 'IRIS Detail'); }
+function hideNameTooltip() {
+  hideFloatingTooltip();
+}
+
 function openIrisDrawerForCurrentDrill() {
   if (!drill || drill.type !== 'user') return;
-  const u = currentDrillUser();
-  document.getElementById('irisDrawerName').textContent = u.name;
-  document.getElementById('irisDrawerRole').textContent = u.role + ' · ' + u.homeDept;
-  const irisEl = document.getElementById('irisCurrentValue');
-  irisEl.textContent = fmtScore(u.overallIris);
-  irisEl.className = 'value big score-' + scoreClass(u.overallIris);
-  document.getElementById('irisDrawerOverlay').classList.add('show');
-  document.getElementById('irisDrawer').classList.add('show');
+  openIrisDetailForUserId(currentDrillUser().id);
 }
-function closeIrisDrawer() {
-  document.getElementById('irisDrawerOverlay').classList.remove('show');
-  document.getElementById('irisDrawer').classList.remove('show');
-}
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeIrisDrawer(); });
+
+(function () {
+
+  function idpScoreClass(score) {
+    if (score === null || score === undefined) return null;
+    if (score >= 4.6) return 'score-red';
+    if (score >= 1.4) return 'score-yellow';
+    return 'score-green';
+  }
+  function idpFmtScore(score) {
+    if (score === null || score === undefined) return '—';
+    return (Math.round(score * 10) / 10).toFixed(1);
+  }
+
+  function elFromHtml(html) {
+    const t = document.createElement('template');
+    t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+  function idpEsc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function renderHeader(data) {
+    document.getElementById('idpName').textContent = data.name || '';
+    document.getElementById('idpRole').textContent = [data.role, data.unit].filter(Boolean).join(' · ');
+
+    const statusBtn = document.getElementById('idpStatusBtn');
+    const status = (data.status || 'NEEDS REVIEW').toUpperCase();
+    document.getElementById('idpStatusText').textContent = status;
+    statusBtn.classList.toggle('status-in-review', status === 'IN REVIEW');
+
+    const dot = document.getElementById('idpReviewDot');
+    if (data.reviewCount) { dot.style.display = ''; dot.textContent = data.reviewCount; }
+    else { dot.style.display = 'none'; }
+  }
+
+  function renderIrisSummary(data) {
+    const wrap = document.getElementById('idpIrisSummary');
+    wrap.innerHTML = '';
+    if (data.flagged) {
+      wrap.appendChild(elFromHtml(
+        '<div class="idp-summary-item">' +
+          '<div class="idp-summary-score badge-style ' + idpScoreClass(data.flagged.score) + '">' + idpFmtScore(data.flagged.score) + '</div>' +
+          '<div class="idp-summary-meta"><div class="idp-summary-meta-label">Flagged IRIS</div>' +
+          '<div class="idp-summary-meta-range">' + idpEsc(data.flagged.range) + '</div></div>' +
+        '</div>'
+      ));
+    }
+    if (data.current) {
+      wrap.appendChild(elFromHtml(
+        '<div class="idp-summary-item">' +
+          '<div class="idp-summary-score ' + idpScoreClass(data.current.score) + '">' + idpFmtScore(data.current.score) + '</div>' +
+          '<div class="idp-summary-meta"><div class="idp-summary-meta-label">Current IRIS</div>' +
+          '<div class="idp-summary-meta-range">' + idpEsc(data.current.range) + '</div></div>' +
+        '</div>'
+      ));
+    }
+  }
+
+  function computeAxis(rawMax) {
+    let max = Math.max(2, Math.ceil(rawMax));
+    const step = max <= 2 ? 1 : max <= 10 ? 2 : max <= 20 ? 5 : 10;
+    max = Math.ceil(max / step) * step;
+    const ticks = [];
+    for (let v = max; v >= 0; v -= step) ticks.push(v);
+    return { max, ticks };
+  }
+
+  function renderIdpChart(data) {
+    const chart = (data.chart && data.chart.series) || [];
+    const svg = document.getElementById('idpChartSvg');
+    const valuesLayer = document.getElementById('idpChartValues');
+    const xaxisLayer = document.getElementById('idpChartXAxis');
+    const yaxisLayer = document.getElementById('idpChartYAxis');
+
+    while (svg.children.length > 1) svg.removeChild(svg.lastChild);
+    valuesLayer.innerHTML = '';
+    xaxisLayer.innerHTML = '';
+    yaxisLayer.innerHTML = '';
+    xaxisLayer.style.gridTemplateColumns = 'repeat(' + chart.length + ', 1fr)';
+
+    const rawMax = Math.max.apply(null, chart.map(function (d) {
+      return Math.max(d.score || 0, d.avg || 0);
+    }).concat([0]));
+    const axis = computeAxis(rawMax);
+    axis.ticks.forEach(function (t) { yaxisLayer.appendChild(elFromHtml('<div>' + t + '</div>')); });
+
+    const vbWidth = 720, vbHeight = 158;
+    const colW = vbWidth / Math.max(chart.length, 1);
+    const barW = colW * 0.42;
+    const barOffset = (colW - barW) / 2;
+
+    chart.forEach(function (d, i) {
+      const cx = colW * i;
+      xaxisLayer.appendChild(elFromHtml('<div>' + idpEsc(d.month) + '</div>'));
+
+      if (d.note) {
+        const notePct = ((cx + colW / 2) / vbWidth) * 100;
+        const note = elFromHtml('<div class="idp-chart-note" style="left:' + notePct + '%;top:50%;">' + idpEsc(d.note) + '</div>');
+        valuesLayer.appendChild(note);
+        return;
+      }
+      if (d.score === undefined || d.score === null) return;
+
+      const barX = cx + barOffset;
+      const h = Math.max((d.score / axis.max) * vbHeight, d.score > 0 ? 2 : 0);
+      const barY = vbHeight - h;
+      const cls = idpScoreClass(d.score);
+
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', barX); rect.setAttribute('y', barY);
+      rect.setAttribute('width', barW); rect.setAttribute('height', h);
+      rect.setAttribute('rx', '2');
+      rect.setAttribute('class', 'idp-chart-bar-' + cls.replace('score-', ''));
+      svg.appendChild(rect);
+
+      if (d.avg !== undefined && d.avg !== null) {
+        const avgY = vbHeight - (d.avg / axis.max) * vbHeight;
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', barX - 4); line.setAttribute('x2', barX + barW + 4);
+        line.setAttribute('y1', avgY); line.setAttribute('y2', avgY);
+        line.setAttribute('class', 'idp-chart-avg-line');
+        line.setAttribute('vector-effect', 'non-scaling-stroke');
+        svg.appendChild(line);
+      }
+
+      const chipPct = ((barX + barW / 2) / vbWidth) * 100;
+      const chipTopPct = (barY / vbHeight) * 100;
+      const chip = elFromHtml('<div class="idp-chart-value-chip ' + cls + '" style="left:' + chipPct + '%;top:' + chipTopPct + '%;">' + idpFmtScore(d.score) + '</div>');
+      valuesLayer.appendChild(chip);
+    });
+  }
+
+  function renderDispenseRow(data) {
+    const months = (data.chart && data.chart.months) || (data.chart && data.chart.series.map(function (d) { return d.month; })) || [];
+    const values = data.dispenses || [];
+    const header = document.getElementById('idpDispHeader');
+    const vals = document.getElementById('idpDispValues');
+    header.style.gridTemplateColumns = 'repeat(' + months.length + ', 1fr)';
+    vals.style.gridTemplateColumns = 'repeat(' + months.length + ', 1fr)';
+    header.innerHTML = months.map(function (m) { return '<div>' + idpEsc(m) + '</div>'; }).join('');
+    vals.innerHTML = values.map(function (v) { return '<div>' + idpEsc(v) + '</div>'; }).join('');
+  }
+
+  function renderBullets(bullets) {
+    if (!bullets || !bullets.length) return '';
+    return bullets.map(function (b) {
+      if (b.asLink) return '<div class="idp-metric-bullet"><a href="' + (b.href || '#') + '" class="idp-metric-bullet-link" onclick="event.preventDefault();">' + idpEsc(b.text) + '</a></div>';
+      const icon = b.icon ? '<span class="material-icons idp-metric-bullet-icon" title="View details">launch</span>' : '';
+      return '<div class="idp-metric-bullet">' + idpEsc(b.text) + icon + '</div>';
+    }).join('');
+  }
+
+  function metricCardHtml(m) {
+    const cls = m.score === null || m.score === undefined ? 'score-dash' : idpScoreClass(m.score);
+    return '<div class="idp-metric-card" data-metric="' + idpEsc(m.key || m.label) + '">' +
+      '<div class="idp-metric-badge ' + cls + '">' + idpFmtScore(m.score) + '</div>' +
+      '<div class="idp-metric-content">' +
+        '<div class="idp-metric-title">' + idpEsc(m.label) + '</div>' +
+        '<div class="idp-metric-summary' + (cls === 'score-dash' ? ' muted' : '') + '">' + idpEsc(m.summary) + '</div>' +
+        renderBullets(m.bullets) +
+      '</div>' +
+    '</div>';
+  }
+
+  function renderMetrics(data) {
+    const metrics = data.metrics || [];
+    const scored = metrics.filter(function (m) { return m.score !== null && m.score !== undefined; })
+      .sort(function (a, b) { return b.score - a.score; });
+    const noData = metrics.filter(function (m) { return m.score === null || m.score === undefined; });
+
+    document.getElementById('idpScoredMetrics').innerHTML = scored.map(metricCardHtml).join('');
+    document.getElementById('idpNoDataMetrics').innerHTML = noData.map(metricCardHtml).join('');
+  }
+
+  function switchTab(name) {
+    document.querySelectorAll('.idp-tab').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.tab === name);
+    });
+    document.querySelectorAll('.idp-tab-panel').forEach(function (panel) {
+      panel.classList.remove('active');
+    });
+    const map = { iris: 'idpTabIris', historical: 'idpTabHistorical', reviews: 'idpTabReviews', documentation: 'idpTabDocumentation' };
+    const target = document.getElementById(map[name]);
+    if (target) target.classList.add('active');
+  }
+
+  function open(data) {
+    const drawer = document.getElementById('analyze-drawer');
+    const offset = drawer ? Math.round(drawer.getBoundingClientRect().width) : 0;
+    document.documentElement.style.setProperty('--iris-panel-offset', offset + 'px');
+
+    renderHeader(data);
+    renderIrisSummary(data);
+    renderIdpChart(data);
+    renderDispenseRow(data);
+    document.getElementById('idpDateRange').innerHTML = 'Flagged Date Range: ' + idpEsc(data.flaggedDateRange || '') + ' <span class="material-icons">expand_more</span>';
+    renderMetrics(data);
+    switchTab('iris');
+
+    const panel = document.getElementById('idpPanel');
+    document.getElementById('idpBackdrop').classList.add('show');
+    panel.classList.remove('idp-slide-in');
+    panel.classList.add('show');
+    // Force the browser to paint the off-screen (translateX 100%) state before
+    // enabling the transition, so the panel always animates in from the right —
+    // a single rAF can land before that paint in some browsers, so use two.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { panel.classList.add('idp-slide-in'); });
+    });
+    document.addEventListener('keydown', onKeydown);
+  }
+
+  function close() {
+    document.getElementById('idpBackdrop').classList.remove('show');
+    document.getElementById('idpPanel').classList.remove('show', 'idp-slide-in');
+    document.removeEventListener('keydown', onKeydown);
+  }
+
+  function onKeydown(e) { if (e.key === 'Escape') close(); }
+
+  window.ControlCheckIrisDetail = { open: open, close: close, switchTab: switchTab };
+
+})();
 
 /* ════════════════════════════════════════════════════════════════
    SIDEBAR ACCORDION
