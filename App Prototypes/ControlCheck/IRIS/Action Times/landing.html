@@ -3741,6 +3741,10 @@
     let tempTimeThreshold = 60; // Temporary value while adjusting
     let filteredUsers = [...ACTION_TIMES_USERS]; // Users visible based on time threshold
     let searchQuery = ''; // Lowercased text from the toolbar search box, filters by user name
+    // Primary toolbar filters — empty array means "no filter, show all".
+    let selectedDepartments = [];
+    let selectedRoles = [];
+    let selectedUserIds = [];
 
     function getActionScoreClass(score) {
       if (score >= 4.6) return 'score-high';
@@ -4573,33 +4577,13 @@
     }
     
     // Provider count that sits at the end of the toolbar filters — reflects
-    // the *applied* threshold (how many users are currently above it), not
-    // the in-flight slider value.
+    // the actual current dataset (Department/User/Role filters + time
+    // threshold retention combined), so it always matches the table.
     function updateThresholdSummary() {
-      const count = calculateUserCountAtThreshold(timeThreshold);
       const el = document.getElementById('provider-count-text');
       if (el) {
-        el.textContent = `${count} providers`;
+        el.textContent = `${filteredUsers.length} providers`;
       }
-    }
-    
-    // Mirror of the retention math in filterDataByTimeThreshold(), extracted so
-    // both the live preview and the persistent summary can use it without
-    // running the full filter pipeline.
-    function calculateUserCountAtThreshold(threshold) {
-      let retentionRate;
-      if (threshold === 0) {
-        retentionRate = 1.0;
-      } else if (threshold <= 30) {
-        retentionRate = 0.60 - ((threshold - 1) / 29) * 0.30;
-      } else if (threshold <= 240) {
-        retentionRate = 0.30 - ((threshold - 30) / 210) * 0.20;
-      } else {
-        retentionRate = 0.10 - ((threshold - 240) / 240) * 0.07;
-      }
-      retentionRate = Math.max(0.03, retentionRate);
-      const total = ACTION_TIMES_USERS.length;
-      return Math.max(3, Math.round(total * retentionRate));
     }
     
     function applyTimeThreshold() {
@@ -4749,12 +4733,22 @@
       
       userRetentionRate = Math.max(0.03, userRetentionRate); // Never go below 3%
       
+      // Department / User / Role filters narrow the candidate pool *before*
+      // the threshold-based retention selection runs, so "27 of 100" becomes
+      // "27 of <department size>" when a filter is active.
+      const candidates = ACTION_TIMES_USERS.filter(u => {
+        if (selectedDepartments.length && !selectedDepartments.includes(u.dept)) return false;
+        if (selectedRoles.length && !selectedRoles.includes(u.role)) return false;
+        if (selectedUserIds.length && !selectedUserIds.includes(u.id)) return false;
+        return true;
+      });
+      
       // Determine how many users to show (minimum 3, maximum all users)
-      const totalUsers = ACTION_TIMES_USERS.length;
-      const usersToShow = Math.max(3, Math.round(totalUsers * userRetentionRate));
+      const totalUsers = candidates.length;
+      const usersToShow = Math.max(Math.min(3, totalUsers), Math.round(totalUsers * userRetentionRate));
       
       // Create filtered user list (prioritize higher outlier scores for consistency)
-      filteredUsers = [...ACTION_TIMES_USERS]
+      filteredUsers = [...candidates]
         .sort((a, b) => b.outlierScore - a.outlierScore) // Sort by highest outlier score first
         .slice(0, usersToShow);
       
@@ -4889,7 +4883,8 @@
     
     function applyPillter(wrapperId, label) {
       const checked = document.querySelectorAll(`#options-${wrapperId} input[type="checkbox"]:checked`);
-      const count = checked.length;
+      const values = Array.from(checked).map(cb => cb.dataset.value);
+      const count = values.length;
       const chipId = wrapperId.replace('pillter-', 'chip-');
       const chip = document.getElementById(chipId);
       const badge = document.getElementById(`${chipId}-badge`);
@@ -4904,8 +4899,31 @@
         badge.style.display = 'none';
       }
       
+      // Wire the three primary multi-select filters into the dataset. User ids
+      // are stored as strings on the checkbox (data-value), so parse them back
+      // to numbers to match ACTION_TIMES_USERS[i].id.
+      if (wrapperId === 'pillter-dept') {
+        selectedDepartments = values;
+      } else if (wrapperId === 'pillter-role') {
+        selectedRoles = values;
+      } else if (wrapperId === 'pillter-user') {
+        selectedUserIds = values.map(v => parseInt(v, 10));
+      }
+      
       closePillter(wrapperId);
-      // Hook: if we later wire these to affect the dataset, call filter+render here.
+      
+      // Re-run the full filter pipeline (Department/User/Role narrows the
+      // candidate pool, then the time-threshold retention selection runs on
+      // top of it) and refresh everything downstream.
+      if (wrapperId === 'pillter-dept' || wrapperId === 'pillter-user' || wrapperId === 'pillter-role') {
+        filterDataByTimeThreshold();
+        renderUsersTable();
+        updateThresholdSummary();
+        if (currentView === 'graph' && actionChart) {
+          actionChart.dispose();
+          actionChart = initActionChart();
+        }
+      }
     }
     
     function applyDatePillter() {
@@ -4956,6 +4974,18 @@
       });
       document.getElementById('chip-date-label').textContent = '04/15/2026 – 05/15/2026';
       document.getElementById('chip-date').classList.add('active'); // date always has a value
+      
+      // Reset the dataset-level filter state and refresh the table/chart.
+      selectedDepartments = [];
+      selectedRoles = [];
+      selectedUserIds = [];
+      filterDataByTimeThreshold();
+      renderUsersTable();
+      updateThresholdSummary();
+      if (currentView === 'graph' && actionChart) {
+        actionChart.dispose();
+        actionChart = initActionChart();
+      }
     }
     
     // Close menus on outside click
