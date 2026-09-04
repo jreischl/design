@@ -270,7 +270,7 @@
     .kebab-menu-item .kb-sub { font-size: .75rem; color: var(--gray-600); font-weight: 400; margin-top: 2px; }
 
     /* ── Departments tab: Compare action + inline expand panel ── */
-    .compare-link { display: inline-flex; align-items: center; gap: 4px; color: var(--blue-dark); font-size: .8125rem; font-weight: 600; text-decoration: none; cursor: pointer; padding: 4px 8px; border-radius: 4px; margin-right: 6px; }
+    .compare-link { display: inline-flex; align-items: center; gap: 4px; color: #0096b8; font-size: .8125rem; font-weight: 600; text-decoration: none; cursor: pointer; padding: 4px 8px; border-radius: 4px; margin-right: 6px; }
     .compare-link:hover { background: var(--gray-100); }
     .compare-link.active { background: #e7f4f8; }
     .compare-link .material-icons { font-size: 17px; }
@@ -286,7 +286,7 @@
        table boundaries — every "table.data-table ..." rule (sticky columns, tbl-entity
        left offsets, box-shadows) would otherwise bleed through onto this inner table's
        cells too, since they're technically descendants of the outer table element. */
-    table.compare-table { width: 1196px; border-collapse: separate; border-spacing: 0; table-layout: fixed; background: #fff; }
+    table.compare-table { width: 100%; min-width: 1196px; border-collapse: separate; border-spacing: 0; table-layout: fixed; background: #fff; }
     table.compare-table thead th { font-size: .72rem; font-weight: 700; color: var(--text-54); letter-spacing: .02em; text-align: center; padding: 12px 14px; border-bottom: 1px solid var(--gray-300); white-space: nowrap; background: #fff; }
     table.compare-table thead th.left { text-align: left; }
     table.compare-table tbody td { padding: 12px 14px; font-size: .875rem; color: var(--text-87); border-bottom: 1px solid var(--gray-200); white-space: nowrap; text-align: center; }
@@ -299,7 +299,10 @@
     .row-actions-cell { position: relative; text-align: right !important; }
     .row-actions-btn { background: none; border: none; cursor: pointer; color: var(--gray-600); display: inline-flex; padding: 6px; border-radius: 50%; }
     .row-actions-btn:hover { background: var(--gray-200); }
-    .row-actions-menu { display: none; position: absolute; right: 8px; top: 34px; background: #fff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.18); padding: 6px; min-width: 180px; z-index: 50; text-align: left; }
+    /* position/top/right are set inline in JS once the menu is reparented to
+       <body> on open (see toggleRowActionsMenu) — this default position is
+       just a harmless fallback while the menu is hidden/unopened. */
+    .row-actions-menu { display: none; position: fixed; background: #fff; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,.18); padding: 6px; min-width: 180px; z-index: 500; text-align: left; }
     .row-actions-menu.show { display: block; }
     .row-actions-menu button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: none; cursor: pointer; padding: 8px 10px; border-radius: 6px; font-size: .8125rem; font-weight: 600; color: var(--text-87); white-space: nowrap; }
     .row-actions-menu button:hover { background: var(--gray-100); }
@@ -402,12 +405,16 @@
     table.data-table.tbl-user th:nth-child(2), table.data-table.tbl-user td:nth-child(2) { left: 130px; }
     table.data-table.tbl-user th:nth-child(3), table.data-table.tbl-user td:nth-child(3) { left: 260px; min-width: 220px; }
 
-    /* Entity-shaped tables (Department/Drug/Provider | Variance Rate | Total Events) */
-    table.data-table.tbl-entity { width: 1196px; }
-    table.data-table.tbl-entity.tbl-entity-actions { width: 1290px; }
+    /* Entity-shaped tables (Department/Drug/Provider | Variance Rate | Total Events).
+       "Unable to Reconcile" (5th column, not sticky) has no inline width set in JS below,
+       so — same trick as tbl-user's Users column — it absorbs any leftover space and lets
+       the table stretch to fill its container instead of leaving a gap on the right. */
+    table.data-table.tbl-entity { width: 100%; min-width: 1196px; }
+    table.data-table.tbl-entity.tbl-entity-actions { min-width: 1290px; }
     table.data-table.tbl-entity th:nth-child(1), table.data-table.tbl-entity td:nth-child(1) { left: 0; }
     table.data-table.tbl-entity th:nth-child(2), table.data-table.tbl-entity td:nth-child(2) { left: 220px; }
     table.data-table.tbl-entity th:nth-child(3), table.data-table.tbl-entity td:nth-child(3) { left: 350px; }
+    table.data-table.tbl-entity th:nth-child(5), table.data-table.tbl-entity td:nth-child(5) { min-width: 150px; }
 
     /* Entity name truncates gracefully instead of overflowing into neighboring sticky columns.
        .entity-sub is NOT itself clipped (only its text portion is) so the "+N" badge's tooltip
@@ -547,11 +554,23 @@
       <mat-toolbar id="navigation-header" class="mat-toolbar navbar mat-toolbar-single-row">
         <a class="nav-link" href="#">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1077.38 120.1" height="21" width="185" alt="ControlCheck logo">
-            <defs><style>.cls-1,.cls-3{fill:#54c8e7}.cls-2,.cls-4{fill:#004e7d}.cls-3,.cls-4{fill-rule:evenodd}</style></defs>
-            <g><g><g>
-              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73,22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.63,34.63,0,0,1,187.35,28.25,40.73,40.73,0,0,1,202.84,25.48Z"/>
+            <defs><style>.cls-1,.cls-3{fill:#54c8e7;}.cls-2,.cls-4{fill:#004e7d;}.cls-3,.cls-4{fill-rule:evenodd;}</style></defs>
+            <g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><g id="ControlCheck_Logo_Color">
+              <path class="cls-1" d="M202.84,25.48a40.41,40.41,0,0,1,9.55,1.11A37.65,37.65,0,0,1,221,29.76a32.57,32.57,0,0,1,7.2,5.08,30.52,30.52,0,0,1,5.41,6.74l-12.3,7.53a22.16,22.16,0,0,0-7.8-7.28,21.81,21.81,0,0,0-10.76-2.61,23.25,23.25,0,0,0-9,1.72,21.51,21.51,0,0,0-7.18,4.78,22.22,22.22,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.71,9.56,25.59,25.59,0,0,0,1.76,9.73a22.06,22.06,0,0,0,4.82,7.41,21,21,0,0,0,7.18,4.69,23.84,23.84,0,0,0,8.88,1.64,22.31,22.31,0,0,0,10.74-2.56,22.68,22.68,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.66,36.66,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.66,34.66,0,0,1,167.94,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91,34.63,34.63,0,0,1,19.68-19.53A40.73,40.73,0,0,1,202.84,25.48Z"/>
+              <path class="cls-1" d="M276.73,25.48A40.31,40.31,0,0,1,292,28.28a34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86A34.78,34.78,0,0,1,292,97.1a42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55,39.26,39.26,0,0,1-2.76-14.86,39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,249.6,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,276.73,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19A26,26,0,0,0,254,62.69a26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,276.73,39.22Z"/>
+              <path class="cls-1" d="M389.41,98.56H376L339.6,50.64l-.05,47.92h-14.3V26.82h13.38l36.43,47.91V26.82h14.35Z"/>
+              <path class="cls-1" d="M460,40.19H437.78V98.56H423.49V40.19H401.25V26.82H460Z"/>
+              <path class="cls-1" d="M502.2,26.82a39.58,39.58,0,0,1,11.32,1.48,23.2,23.2,0,0,1,8.25,4.28,17.63,17.63,0,0,1,5,6.87,23.72,23.72,0,0,1,1.7,9.2A21.49,21.49,0,0,1,527,56.74a18.05,18.05,0,0,1-4.33,6.41,22.53,22.53,0,0,1-6.92,4.43,31.61,31.61,0,0,1-9.25,2.23l22.09,28.75H511.27L490.36,70h-4.2V98.56h-14.3V26.82ZM486.16,40V57.56h15.78c3.93,0,6.89-.72,8.87-2.18s3-3.69,3-6.73-1-5.21-3-6.59-5-2.07-8.79-2.07Z"/>
+              <path class="cls-1" d="M575.63,25.48a40.31,40.31,0,0,1,15.22,2.8,34.78,34.78,0,0,1,19.7,19.55,38.82,38.82,0,0,1,2.8,14.86,38.89,38.89,0,0,1-2.8,14.86,34.78,34.78,0,0,1-19.7,19.55,42.91,42.91,0,0,1-30.44,0,34.75,34.75,0,0,1-19.68-19.55A39.26,39.26,0,0,1,538,62.69a39.18,39.18,0,0,1,2.76-14.86A35.1,35.1,0,0,1,548.5,36a35.55,35.55,0,0,1,11.91-7.76A40.38,40.38,0,0,1,575.63,25.48Zm0,13.74a23.63,23.63,0,0,0-9.1,1.72,21.09,21.09,0,0,0-12,12.19,26,26,0,0,0-1.69,9.56,26,26,0,0,0,1.69,9.55,21.14,21.14,0,0,0,12,12.2,25.06,25.06,0,0,0,18.25,0,21.37,21.37,0,0,0,7.2-4.79,21.6,21.6,0,0,0,4.71-7.41,27.7,27.7,0,0,0,0-19.11,21,21,0,0,0-11.91-12.19A23.74,23.74,0,0,0,575.63,39.22Z"/>
+              <path class="cls-1" d="M676.37,98.56H624.15V26.82h14.3V85.18h37.92Z"/>
+              <path class="cls-2" d="M717.52,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74L736,49.11a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78,21.92,21.92,0,0,0-4.74,7.41,25.81,25.81,0,0,0-1.72,9.56,25.59,25.59,0,0,0,1.77,9.73,22.06,22.06,0,0,0,4.82,7.41,21.09,21.09,0,0,0,7.17,4.69,23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,682.62,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,690.38,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,717.52,25.48Z"/>
+              <path class="cls-2" d="M772.91,55.72h34.53V26.82h14.3V98.56h-14.3V69H772.91V98.56h-14.3V26.82h14.3Z"/>
+              <path class="cls-2" d="M889.59,98.56H836V26.82h53.19V39.94H850.29V55.82h37.1V68.94h-37.1v16.5h39.3Z"/>
+              <path class="cls-2" d="M936,25.48a40.41,40.41,0,0,1,9.55,1.11,37.65,37.65,0,0,1,8.59,3.17,32.57,32.57,0,0,1,7.2,5.08,30.19,30.19,0,0,1,5.4,6.74l-12.3,7.53a21.39,21.39,0,0,0-18.55-9.89,23.18,23.18,0,0,0-9,1.72,21.41,21.41,0,0,0-7.18,4.78A21.92,21.92,0,0,0,915,53.13a25.81,25.81,0,0,0-1.72,9.56A25.59,25.59,0,0,0,915,72.42a22.06,22.06,0,0,0,4.82,7.41A21.09,21.09,0,0,0,927,84.52a23.93,23.93,0,0,0,8.89,1.64,22.31,22.31,0,0,0,10.74-2.56,22.77,22.77,0,0,0,8-7.28l11.68,8.4a35.22,35.22,0,0,1-5.58,6.3,34.06,34.06,0,0,1-7,4.8,36.83,36.83,0,0,1-8.31,3,42.87,42.87,0,0,1-24.59-1.72A34.58,34.58,0,0,1,901.12,77.6a39.37,39.37,0,0,1-2.77-14.91,39.33,39.33,0,0,1,2.77-14.91A34.93,34.93,0,0,1,908.88,36a35.29,35.29,0,0,1,11.92-7.74A40.69,40.69,0,0,1,936,25.48Z"/>
               <path class="cls-2" d="M998,69h-6.61V98.56h-14.3V26.82h14.3V55.87h6.76l23.73-29h17.93l-30.08,35,32.34,36.74h-18.55Z"/>
+              <path class="cls-2" d="M1053,39.55v-10h-4V26.84H1060v2.74h-4v10Zm21.42,0V30.73l-2.87,7.61h-3.17l-2.87-7.59v8.8h-3V26.84h4.29l3.16,8.14,3.15-8.14h4.29V39.55Z"/>
               <path class="cls-3" d="M11,25.42V84.16q4,7.62,14.3,17.29a127.44,127.44,0,0,0,15.32,12.37,81.59,81.59,0,0,1-9.07,6.28,109.81,109.81,0,0,1-18.69-15.42Q3.57,95.25,0,87.83V30.07a108.47,108.47,0,0,1,11-4.65"/>
+              <path class="cls-3" d="M30.56,10.52V74.94q4.69,8.37,16.94,19a150.07,150.07,0,0,0,18.23,13.67,94.73,94.73,0,0,1-10.16,6.48A127.94,127.94,0,0,1,33.5,97.2q-11-10.35-15.22-18.49V15.37q6.38-2.86,12.28-4.85"/>
               <path class="cls-4" d="M38.76,70.27c3.56,5.91,9.88,12.61,18.79,20a149,149,0,0,0,25.34,17.29,102.51,102.51,0,0,0,23.68-16,88.5,88.5,0,0,0,14.68-16.44l0-23.81L110.92,62.07v9.22c-4.29,5.08-7.8,7.73-12.42,11.46a88.35,88.35,0,0,1-15.59,10c-5.53-3.24-10.86-6.18-16-10.5A129.56,129.56,0,0,1,51.22,66.37V14.8c12.44-2,23-2.3,31.76-.91,8.53,1.35,17.9,5.55,28.62,10.78v2.59L83.05,56.59l-7.66-9.07L57.81,45.94,83.05,75.05l38.28-40.74,0-17.38C107.31,8.66,94.67,3.36,83,1.26A85,85,0,0,0,67.91,0,144,144,0,0,0,38.76,3.34Z"/>
             </g></g></g>
           </svg>
@@ -857,7 +876,7 @@
         <table class="compare-table">
           <thead>
             <tr>
-              <th class="left" style="width:220px">User</th>
+              <th class="left" style="min-width:220px">User</th>
               <th style="width:130px">Variance Rate</th>
               <th style="width:120px">Total Events</th>
               <th style="width:130px">Total Variances</th>
@@ -1123,6 +1142,7 @@ let openCompareIdx = null;
    replaced — otherwise the panel node would be destroyed along with the old
    rows, since it may currently live inside one of them. */
 function parkComparePanel() {
+  closeRowActionsMenus();
   const panel = document.getElementById('comparePanel');
   const park = document.getElementById('comparePanelPark');
   if (panel && park) park.appendChild(panel);
@@ -1131,6 +1151,7 @@ function parkComparePanel() {
 }
 
 function openCompare(deptName, idx) {
+  closeRowActionsMenus();
   if (openCompareIdx === idx) { closeCompare(); return; }
   if (openCompareIdx !== null) {
     const prevRow = document.getElementById('compareExpandRow-' + openCompareIdx);
@@ -1184,17 +1205,51 @@ function closeCompare() {
   openCompareIdx = null;
 }
 
+/* Table rows paint their own backgrounds after earlier rows in the same
+   table, so a plain position:absolute dropdown anchored inside one row's
+   cell gets visually painted over by the next row — z-index doesn't help
+   because that's a table cell paint-order quirk, not a stacking bug. Fix:
+   reparent the menu to <body> (position:fixed, placed via the trigger
+   button's own rect) while open, same escape-the-ancestor trick used
+   elsewhere in this file. Restore it to its original cell on close so a
+   later table re-render doesn't leave an orphaned node floating in body. */
+let openRowMenuEl = null;
+let openRowMenuHome = null;
+
 function toggleRowActionsMenu(btnEl) {
-  const menu = btnEl.nextElementSibling;
-  const wasOpen = menu.classList.contains('show');
+  // Once open, the menu has been moved out to <body> — it's no longer
+  // btnEl.nextElementSibling. Track "is THIS row's menu the open one" via
+  // the cell identity instead, which stays stable across the reparenting.
+  const cell = btnEl.parentElement;
+  const isThisOneOpen = openRowMenuEl && openRowMenuHome === cell;
   closeRowActionsMenus();
-  if (!wasOpen) menu.classList.add('show');
+  if (isThisOneOpen) return;
+  const menu = cell.querySelector('.row-actions-menu');
+  openRowMenuHome = cell;
+  document.body.appendChild(menu);
+  const r = btnEl.getBoundingClientRect();
+  menu.style.position = 'fixed';
+  menu.style.top = (r.bottom + 4) + 'px';
+  menu.style.left = 'auto';
+  menu.style.right = (window.innerWidth - r.right) + 'px';
+  menu.classList.add('show');
+  openRowMenuEl = menu;
 }
 function closeRowActionsMenus() {
+  if (openRowMenuEl && openRowMenuHome) {
+    openRowMenuEl.classList.remove('show');
+    openRowMenuEl.style.position = '';
+    openRowMenuEl.style.top = '';
+    openRowMenuEl.style.left = '';
+    openRowMenuEl.style.right = '';
+    openRowMenuHome.appendChild(openRowMenuEl);
+  }
   document.querySelectorAll('.row-actions-menu.show').forEach(m => m.classList.remove('show'));
+  openRowMenuEl = null;
+  openRowMenuHome = null;
 }
 document.addEventListener('click', function (e) {
-  if (!e.target.closest('.row-actions-cell')) closeRowActionsMenus();
+  if (!e.target.closest('.row-actions-cell') && !e.target.closest('.row-actions-menu')) closeRowActionsMenus();
 });
 
 /* ════════════════════════════════════════════════════════════════
@@ -1417,7 +1472,7 @@ function renderL1Table() {
     head += thSort('byDept', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('byDept', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
     head += thSort('byDept', 'variances', 'Total Variances', st.col, st.asc, null, 130);
-    head += thSort('byDept', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 150);
+    head += thSort('byDept', 'unreconciled', 'Unable to Reconcile', st.col, st.asc);
     head += thSort('byDept', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
     head += thSort('byDept', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
     head += thSort('byDept', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
@@ -1520,7 +1575,7 @@ function renderL2Table() {
     head += thSort('drugs', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('drugs', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
     head += thSort('drugs', 'variances', 'Total Variances', st.col, st.asc, null, 130);
-    head += thSort('drugs', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 150);
+    head += thSort('drugs', 'unreconciled', 'Unable to Reconcile', st.col, st.asc);
     head += thSort('drugs', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
     head += thSort('drugs', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
     head += thSort('drugs', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
@@ -1543,7 +1598,7 @@ function renderL2Table() {
     head += thSort('depts', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
     head += thSort('depts', 'totalEvents', 'Total Events', st.col, st.asc, null, 120);
     head += thSort('depts', 'variances', 'Total Variances', st.col, st.asc, null, 130);
-    head += thSort('depts', 'unreconciled', 'Unable to Reconcile', st.col, st.asc, null, 150);
+    head += thSort('depts', 'unreconciled', 'Unable to Reconcile', st.col, st.asc);
     head += thSort('depts', 'reconciled', 'Reconciled', st.col, st.asc, null, 120);
     head += thSort('depts', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 130);
     head += thSort('depts', 'openhist', 'Open - Historical', st.col, st.asc, null, 140);
