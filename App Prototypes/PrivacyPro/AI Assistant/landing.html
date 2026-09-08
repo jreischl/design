@@ -32,6 +32,9 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  button:focus-visible, a:focus-visible, [tabindex]:focus-visible, .prompt-chip:focus-visible {
+    outline: 2px solid #74C5D8; outline-offset: 2px;
+  }
   
   body {
     font-family: 'DM Sans', sans-serif;
@@ -218,7 +221,7 @@
     padding: 6px 12px; background: white; width: 260px;
     transition: border-color 0.15s;
   }
-  .sh-search:focus-within { border-color: #0096B8; }
+  .sh-search:focus-within { border-color: #74C5D8; }
   .sh-search i { font-family: 'Material Icons'; font-style: normal; font-weight: normal; font-size: 18px; color: #9E9E9E; flex-shrink: 0; text-transform: none; letter-spacing: normal; }
   .sh-search input { border: none; outline: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: #1A2A35; width: 100%; background: transparent; }
   .sh-search input::placeholder { color: #9E9E9E; }
@@ -372,8 +375,8 @@
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   .chat-hero-card:focus-within {
-    border-color: #0096B8;
-    box-shadow: 0 4px 32px rgba(0,150,184,0.12);
+    border-color: #74C5D8;
+    box-shadow: 0 4px 32px rgba(116,197,216,0.25);
   }
   .chat-hero-input {
     width: 100%; border: none; outline: none; resize: none;
@@ -643,7 +646,7 @@
     max-width: 720px; margin: 0 auto;
     transition: border-color 0.15s;
   }
-  .chat-input-wrap:focus-within { border-color: #0096B8; }
+  .chat-input-wrap:focus-within { border-color: #74C5D8; }
   .chat-input {
     flex: 1; border: none; background: transparent;
     font-family: 'DM Sans', sans-serif; font-size: 13px;
@@ -661,7 +664,7 @@
   .chat-send-btn:disabled { background: rgba(235,70,153,0.3); border-color: transparent; cursor: not-allowed; }
   .chat-input-hint { font-size: 11px; color: var(--bs-text-muted); text-align: center; margin-top: 8px; }
   .chat-stop-bar {
-    position: absolute; left: 0; right: 0; bottom: 16px;
+    position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: 12px;
     display: flex; justify-content: center; pointer-events: none; z-index: 5;
   }
   .chat-stop-btn {
@@ -674,6 +677,7 @@
     transition: background 0.15s, border-color 0.15s, color 0.15s;
   }
   .chat-stop-btn:hover { background: rgba(255,255,255,0.95); border-color: #00718A; color: #00718A; }
+  .chat-stop-btn:focus { outline: 2px solid #74C5D8; outline-offset: 0; }
   .chat-stop-icon {
     width: 20px; height: 20px; border-radius: 50%; background: #0096B8;
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -1176,7 +1180,7 @@
     color: var(--bs-text); resize: none; outline: none;
     line-height: 1.5; transition: border-color 0.15s;
   }
-  .feedback-modal-textarea:focus { border-color: #0096B8; }
+  .feedback-modal-textarea:focus { border-color: #74C5D8; }
   .feedback-modal-textarea::placeholder { color: var(--bs-text-muted); }
   .feedback-modal-char {
     font-size: 11px; color: var(--bs-text-muted);
@@ -1529,13 +1533,12 @@
                 <div class="prompt-chip" onclick="runErrorDemo()"><i style="font-family:'Material Icons';font-style:normal;font-weight:normal;font-size:inherit;line-height:1;vertical-align:middle;color:#AB336F">reviews</i> Show me what happens if the assistant can't respond</div>
               </div>
             </div>
+          </div>
 
+          <div class="chat-input-area" id="chatInputArea" style="display:none; position:relative;">
             <div class="chat-stop-bar" id="chatStopBar" style="display:none;">
               <button class="chat-stop-btn" onclick="stopGenerating()"><span class="chat-stop-icon"></span> Stop Generating</button>
             </div>
-          </div>
-
-          <div class="chat-input-area" id="chatInputArea" style="display:none;">
             <div class="chat-attachment-tray" id="chatAttachmentTray" style="display:none;"></div>
             <div class="chat-attachment-errors" id="chatAttachmentErrors" style="display:none;"></div>
             <div class="chat-input-wrap" id="chatInputWrap"
@@ -3513,6 +3516,7 @@
     msgs.scrollTop = msgs.scrollHeight;
     // Remembered so Stop can pull this back into the input for editing.
     window.__lastUserMsgText = text;
+    window.__lastUserMsgAttachments = attachments || [];
     window.__lastUserMsgEl = msgs.lastElementChild;
   }
 
@@ -3594,19 +3598,29 @@
 
   function showStopBar() {
     const bar = document.getElementById('chatStopBar');
-    if (bar) bar.style.display = 'flex';
+    if (!bar) return;
+    bar.style.display = 'flex';
+    const btn = bar.querySelector('.chat-stop-btn');
+    if (btn) btn.focus();
   }
 
   function hideStopBar() {
     const bar = document.getElementById('chatStopBar');
-    if (bar) bar.style.display = 'none';
+    if (!bar) return;
+    const hadFocus = bar.contains(document.activeElement);
+    bar.style.display = 'none';
+    if (hadFocus) {
+      const input = document.getElementById('chatInput');
+      if (input && !input.disabled) input.focus();
+    }
   }
 
   // Cancels whatever the assistant is "thinking" about (works across every flow —
   // normal prompts, the error-state demo's retries, and its login step, since they
   // all route through showThinking/removeTyping), removes the pending user turn
-  // from the transcript, and hands the text back to the input so it can be edited
-  // and resent rather than leaving an unanswered message stuck in the conversation.
+  // from the transcript, and hands the text AND any attachments back so the whole
+  // prompt can be edited and resent rather than leaving an unanswered message —
+  // and its files — stuck in the conversation.
   function stopGenerating() {
     removeTyping();
     setChatInputEnabled(true);
@@ -3618,7 +3632,16 @@
       input.value = window.__lastUserMsgText;
       input.focus();
     }
+    if (window.__lastUserMsgAttachments && window.__lastUserMsgAttachments.length) {
+      // The chat input is always the visible one by the time a response could be
+      // in flight (the hero card is gone after the first message), so attachments
+      // restore there regardless of whether the original send came from the hero
+      // input or the ongoing chat input.
+      __pendingAttachments = __pendingAttachments.concat(window.__lastUserMsgAttachments);
+      renderAttachmentTray();
+    }
     window.__lastUserMsgText = null;
+    window.__lastUserMsgAttachments = null;
     window.__lastUserMsgEl = null;
   }
 
