@@ -364,6 +364,7 @@
       cursor: pointer; user-select: none;
     }
     table.data-table thead th.left { text-align: left; }
+    table.data-table thead th .th-label-tail { white-space: nowrap; }
     table.data-table thead th .material-icons.sort-icon { font-size: 14px; vertical-align: -2px; opacity: 0; transition: opacity .15s ease; }
     table.data-table thead th.sortable:hover .sort-icon { opacity: .45; }
     table.data-table thead th.sort-active .sort-icon { opacity: 1; color: var(--blue-dark); }
@@ -760,7 +761,15 @@
     /* ── Chart (visualized data) ──────────────────────────────── */
     .chart-wrap { background: #fff; border: 1px solid var(--gray-300); border-radius: var(--radius); padding: 20px 20px 8px; }
     .chart-legend { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 8px; }
-    .chart-legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: .8125rem; color: var(--text-54); }
+    .chart-legend-item {
+      display: inline-flex; align-items: center; gap: 6px; font-size: .8125rem; color: var(--text-54);
+      cursor: pointer; user-select: none; border-radius: 4px; padding: 3px 6px; margin: -3px -6px;
+      transition: opacity .15s ease, background-color .15s ease;
+    }
+    .chart-legend-item:hover { background: var(--gray-100); }
+    .chart-legend-item:focus-visible { outline: 2px solid var(--blue-dark); outline-offset: 1px; }
+    .chart-legend-item.legend-off { opacity: .4; }
+    .chart-legend-item.legend-off .chart-legend-dot { background: var(--gray-300) !important; }
     .chart-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
     .chart-container { width: 100%; height: 460px; }
 
@@ -998,11 +1007,11 @@
             <div id="l1TableWrap"></div>
             <div id="l1ChartWrap" style="display:none">
               <div class="chart-wrap">
-                <div class="chart-legend">
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#646a9a"></span>Unable to Reconcile</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#9ca6f1"></span>Reconciled</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#c3c9f7"></span>Open &gt; 3 Days</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#e1e4ee"></span>Open - Historical</span>
+                <div class="chart-legend" id="l1ChartLegend">
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="unreconciled" onclick="toggleChartLegend('l1','unreconciled',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l1','unreconciled',this);}"><span class="chart-legend-dot" style="background:#646a9a"></span>Unable to Reconcile</span>
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="reconciled" onclick="toggleChartLegend('l1','reconciled',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l1','reconciled',this);}"><span class="chart-legend-dot" style="background:#9ca6f1"></span>Reconciled</span>
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="open3" onclick="toggleChartLegend('l1','open3',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l1','open3',this);}"><span class="chart-legend-dot" style="background:#c3c9f7"></span>Open &gt; 3 Days</span>
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="openhist" onclick="toggleChartLegend('l1','openhist',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l1','openhist',this);}"><span class="chart-legend-dot" style="background:#e1e4ee"></span>Open - Historical</span>
                 </div>
                 <div id="l1ChartEl" class="chart-container"></div>
               </div>
@@ -1050,11 +1059,11 @@
             <div id="l2TableWrap"></div>
             <div id="l2ChartWrap" style="display:none">
               <div class="chart-wrap">
-                <div class="chart-legend">
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#646a9a"></span>Unable to Reconcile</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#9ca6f1"></span>Reconciled</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#c3c9f7"></span>Open &gt; 3 Days</span>
-                  <span class="chart-legend-item"><span class="chart-legend-dot" style="background:#e1e4ee"></span>Open - Historical</span>
+                <div class="chart-legend" id="l2ChartLegend">
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="unreconciled" onclick="toggleChartLegend('l2','unreconciled',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l2','unreconciled',this);}"><span class="chart-legend-dot" style="background:#646a9a"></span>Unable to Reconcile</span>
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="reconciled" onclick="toggleChartLegend('l2','reconciled',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l2','reconciled',this);}"><span class="chart-legend-dot" style="background:#9ca6f1"></span>Reconciled</span>
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="open3" onclick="toggleChartLegend('l2','open3',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l2','open3',this);}"><span class="chart-legend-dot" style="background:#c3c9f7"></span>Open &gt; 3 Days</span>
+                  <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="openhist" onclick="toggleChartLegend('l2','openhist',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l2','openhist',this);}"><span class="chart-legend-dot" style="background:#e1e4ee"></span>Open - Historical</span>
                 </div>
                 <div id="l2ChartEl" class="chart-container"></div>
               </div>
@@ -1569,6 +1578,7 @@ let sortState = {
   deptUsers:{ col: 'vtScore',   asc: false }
 };
 let l1Chart = null, l2Chart = null;
+let chartHiddenSeries = { l1: new Set(), l2: new Set() };
 
 const COLS_USER = [
   { key: 'variances',    label: 'Total Variances', sortKey: 'variances' },
@@ -1777,8 +1787,20 @@ function compareRows(a, b, st) {
 function thSort(tableKey, key, label, activeCol, asc, extraClass, width) {
   const isActive = activeCol === key;
   const style = width ? ' style="width:' + width + 'px"' : '';
+  const iconHtml = '<span class="material-icons sort-icon">' + (isActive && asc ? 'arrow_upward' : 'arrow_downward') + '</span>';
+  // The Material Icons glyph is display:inline-block, which the browser is
+  // always free to wrap onto its own line if it doesn't fit — a plain nbsp
+  // between the label and the icon only stops a break AT that exact
+  // character, it doesn't stop the icon (an atomic box) from being pushed to
+  // a line of its own. So glue the icon to the label's last word inside a
+  // white-space:nowrap span instead — that forces the pair to stay on
+  // whichever line the last word lands on, never orphaned by itself.
+  const lastSpace = label.lastIndexOf(' ');
+  const headText = lastSpace === -1
+    ? '<span class="th-label-tail">' + label + '&nbsp;' + iconHtml + '</span>'
+    : label.slice(0, lastSpace) + ' <span class="th-label-tail">' + label.slice(lastSpace + 1) + '&nbsp;' + iconHtml + '</span>';
   return '<th class="sortable' + (extraClass ? ' ' + extraClass : '') + (isActive ? ' sort-active' : '') + '"' + style + ' onclick="sortBy(\'' + tableKey + '\',\'' + key + '\')">' +
-    label + ' <span class="material-icons sort-icon">' + (isActive && asc ? 'arrow_upward' : 'arrow_downward') + '</span></th>';
+    headText + '</th>';
 }
 
 function renderL1Table() {
@@ -1922,6 +1944,15 @@ function renderL2Table() {
   const st = sortState[key];
 
   if (l2SubTab === 'drugs') {
+    // Comparing users only makes sense when we're looking at a specific
+    // person's drug activity (drill.type === 'user') — a department drilldown
+    // has no single "focus user" to compare against. When it does apply, the
+    // scope is always the focus user's home department: drug rows don't carry
+    // their own department, so unlike the Departments sub-tab (where each row
+    // IS a different department to compare within) there's nothing per-row to
+    // vary here — every row's Compare link opens the same home-department view.
+    const showCompare = drill.type === 'user';
+    const homeDept = showCompare ? currentDrillUser().homeDept : null;
     let head = '<tr>';
     head += thSort('drugs', 'name', 'Drug', st.col, st.asc, 'left', 220);
     head += thSort('drugs', 'varianceRate', 'Variance Rate', st.col, st.asc, null, 130);
@@ -1931,16 +1962,21 @@ function renderL2Table() {
     head += thSort('drugs', 'reconciled', 'Reconciled', st.col, st.asc, null, 100);
     head += thSort('drugs', 'open3', 'Open &gt; 3 Days', st.col, st.asc, null, 92);
     head += thSort('drugs', 'openhist', 'Open - Historical', st.col, st.asc, null, 100);
-    head += '<th style="width:150px">Actions</th></tr>';
-    const rows = list.map(dr => {
+    head += '<th style="width:' + (showCompare ? 230 : 150) + 'px">Actions</th></tr>';
+    const rows = list.map((dr, i) => {
       let row = '<tr>';
       row += '<td class="left"><div class="entity-cell"><div class="entity-name static" title="' + dr.name + '">' + dr.name + '</div></div></td>';
       row += '<td>' + variancePct(dr.variances, dr.totalEvents) + '%</td>';
       row += '<td>' + fmtNum(dr.totalEvents) + '</td>';
       row += '<td>' + fmtNum(dr.variances) + '</td>';
       row += '<td>' + fmtNum(dr.unreconciled) + '</td><td>' + fmtNum(dr.reconciled) + '</td><td>' + fmtNum(dr.open3) + '</td><td>' + fmtNum(dr.openhist) + '</td>';
-      row += '<td><a class="investigate-link" href="#" onclick="event.preventDefault();window.alert(\'Opens Investigate Data view for ' + esc(dr.name) + '.\')"><span class="material-icons">open_in_new</span> Investigate</a></td>';
+      row += '<td>' +
+        (showCompare ? '<a class="compare-link" id="compareBtn-' + i + '" onclick="openCompare(\'' + esc(homeDept) + '\', ' + i + ')"><span class="material-icons">groups</span>Compare</a> ' : '') +
+        '<a class="investigate-link" href="#" onclick="event.preventDefault();window.alert(\'Opens Investigate Data view for ' + esc(dr.name) + '.\')"><span class="material-icons">open_in_new</span> Investigate</a></td>';
       row += '</tr>';
+      if (showCompare) {
+        row += '<tr class="compare-expand-row" id="compareExpandRow-' + i + '" style="display:none"><td colspan="9" id="compareSlot-' + i + '"></td></tr>';
+      }
       return row;
     }).join('');
     wrap.innerHTML = '<div class="data-table-wrap"><table class="data-table tbl-entity tbl-entity-actions"><thead>' + head + '</thead><tbody>' + rows + '</tbody></table></div>';
@@ -2001,7 +2037,7 @@ function renderL2Table() {
 }
 
 /* ════════════════════════════════════════════════════════════════
-   CHART  (stacked % of variances by status — reused across every table)
+   CHART  (stacked totals by status — reused across every table)
 ═══════════════════════════════════════════════════════════════ */
 function renderChart(scope) {
   const el = document.getElementById(scope === 'l1' ? 'l1ChartEl' : 'l2ChartEl');
@@ -2019,15 +2055,16 @@ function renderChart(scope) {
     { key: 'open3',        name: 'Open > 3 Days',       color: '#c3c9f7' },
     { key: 'openhist',     name: 'Open - Historical',   color: '#e1e4ee' }
   ];
-  const series = statuses.map(s => ({
+  const hidden = chartHiddenSeries[scope];
+  const series = statuses.filter(s => !hidden.has(s.key)).map(s => ({
     type: 'bar', stack: 'v', name: s.name,
-    data: list.map(r => { const v = r.variances || 0; return v ? Math.round(((r[s.key] || 0) / v) * 1000) / 10 : 0; }),
+    data: list.map(r => r[s.key] || 0),
     itemStyle: { color: s.color }, barWidth: 16
   }));
 
   chartRef.setOption({
     grid: { left: 200, right: 40, top: 20, bottom: 30 },
-    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}%' } },
+    xAxis: { type: 'value', axisLabel: { formatter: (v) => fmtNum(v) } },
     yAxis: { type: 'category', data: names, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { fontSize: 12 } },
     tooltip: {
       trigger: 'axis', axisPointer: { type: 'shadow' },
@@ -2040,6 +2077,27 @@ function renderChart(scope) {
     },
     series: series
   });
+  syncChartLegendUI(scope);
+}
+
+function syncChartLegendUI(scope) {
+  const legend = document.getElementById(scope + 'ChartLegend');
+  if (!legend) return;
+  const hidden = chartHiddenSeries[scope];
+  legend.querySelectorAll('.chart-legend-item').forEach(function (item) {
+    const isOff = hidden.has(item.getAttribute('data-key'));
+    item.classList.toggle('legend-off', isOff);
+    item.setAttribute('aria-pressed', String(!isOff));
+  });
+}
+
+function toggleChartLegend(scope, key, el) {
+  const hidden = chartHiddenSeries[scope];
+  if (hidden.has(key)) hidden.delete(key); else hidden.add(key);
+  // Only the chart that's actually initialized needs a full re-render;
+  // syncChartLegendUI still runs (via renderChart) once it exists.
+  const chartRef = scope === 'l1' ? l1Chart : l2Chart;
+  if (chartRef) renderChart(scope); else syncChartLegendUI(scope);
 }
 
 window.addEventListener('resize', () => { if (l1Chart) l1Chart.resize(); if (l2Chart) l2Chart.resize(); });
