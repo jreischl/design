@@ -242,6 +242,7 @@
     .menu-option { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 16px; font-size: 13px; cursor: pointer; }
     .menu-option:hover { background: var(--gray-50); }
     .menu-option input[type="checkbox"] { accent-color: #0096b8; width: 16px; height: 16px; flex-shrink: 0; }
+    .menu-empty { padding: 16px; font-size: 13px; color: var(--gray-600); text-align: center; }
     .filter-menu .menu-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--gray-300); }
     .btn-cancel { background: none; border: none; font: 500 13px Roboto,sans-serif; color: var(--gray-700); cursor: pointer; padding: 6px 12px; }
     .btn-cancel:hover { background: var(--gray-50); border-radius: 4px; }
@@ -773,6 +774,16 @@
     .chart-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
     .chart-container { width: 100%; height: 460px; }
 
+    /* ── Chart pagination ──────────────────────────────── */
+    .chart-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 20px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--gray-200); font-size: .8125rem; color: var(--gray-700); flex-wrap: wrap; }
+    .page-size-select { color: var(--teal); font-weight: 600; cursor: pointer; background: none; border: none; font-size: .8125rem; display: inline-flex; align-items: center; gap: 2px; font-family: var(--font); }
+    .page-range-text { color: var(--gray-700); }
+    .page-nav-btns { display: flex; align-items: center; gap: 2px; }
+    .page-nav-btn { width: 28px; height: 28px; border: none; background: none; border-radius: 4px; cursor: pointer; color: var(--gray-600); display: inline-flex; align-items: center; justify-content: center; }
+    .page-nav-btn:hover:not(:disabled) { background: var(--gray-100); }
+    .page-nav-btn:disabled { color: var(--gray-300); cursor: default; }
+    .page-nav-btn .material-icons { font-size: 18px; }
+
     .view { display: none; }
     .view.active { display: block; }
     .view.active { opacity: 1; transform: translateX(0); transition: opacity .2s ease, transform .2s ease; }
@@ -931,20 +942,20 @@
               <div class="filter-wrap" id="deptWrap">
                 <span class="chip" id="deptChip" onclick="toggleFilterMenu('deptWrap')">Department</span>
                 <div class="filter-menu" style="width:260px">
-                  <div class="menu-search"><input type="text" placeholder="Search..."></div>
-                  <div class="menu-actions"><button class="link-btn">SELECT ALL</button><button class="link-btn">CLEAR</button></div>
+                  <div class="menu-search"><input type="text" id="deptFilterSearch" placeholder="Search..." oninput="renderDeptFilterOptions(this.value)"></div>
+                  <div class="menu-actions"><button class="link-btn" onclick="setAllFilterCheckboxes('deptFilterOptions', true)">SELECT ALL</button><button class="link-btn" onclick="setAllFilterCheckboxes('deptFilterOptions', false)">CLEAR</button></div>
                   <div class="menu-options" id="deptFilterOptions"></div>
-                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilterMenu('deptWrap')">Cancel</button><button class="btn-apply" onclick="closeFilterMenu('deptWrap')">Apply</button></div>
+                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilterMenu('deptWrap')">Cancel</button><button class="btn-apply" onclick="applyDeptFilter()">Apply</button></div>
                 </div>
               </div>
 
               <div class="filter-wrap" id="userWrap">
                 <span class="chip" id="userChip" onclick="toggleFilterMenu('userWrap')">User</span>
                 <div class="filter-menu" style="width:260px">
-                  <div class="menu-search"><input type="text" placeholder="Search..."></div>
-                  <div class="menu-actions"><button class="link-btn">SELECT ALL</button><button class="link-btn">CLEAR</button></div>
+                  <div class="menu-search"><input type="text" id="userFilterSearch" placeholder="Search..." oninput="renderUserFilterOptions(this.value)"></div>
+                  <div class="menu-actions"><button class="link-btn" onclick="setAllFilterCheckboxes('userFilterOptions', true)">SELECT ALL</button><button class="link-btn" onclick="setAllFilterCheckboxes('userFilterOptions', false)">CLEAR</button></div>
                   <div class="menu-options" id="userFilterOptions"></div>
-                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilterMenu('userWrap')">Cancel</button><button class="btn-apply" onclick="closeFilterMenu('userWrap')">Apply</button></div>
+                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilterMenu('userWrap')">Cancel</button><button class="btn-apply" onclick="applyUserFilter()">Apply</button></div>
                 </div>
               </div>
 
@@ -952,7 +963,7 @@
                 <span class="chip" id="roleChip" onclick="toggleFilterMenu('roleWrap')">Role</span>
                 <div class="filter-menu" style="width:220px">
                   <div class="menu-options" id="roleFilterOptions"></div>
-                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilterMenu('roleWrap')">Cancel</button><button class="btn-apply" onclick="closeFilterMenu('roleWrap')">Apply</button></div>
+                  <div class="menu-footer"><button class="btn-cancel" onclick="closeFilterMenu('roleWrap')">Cancel</button><button class="btn-apply" onclick="applyRoleFilter()">Apply</button></div>
                 </div>
               </div>
 
@@ -1014,6 +1025,24 @@
                   <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="openhist" onclick="toggleChartLegend('l1','openhist',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l1','openhist',this);}"><span class="chart-legend-dot" style="background:#e1e4ee"></span>Open - Historical</span>
                 </div>
                 <div id="l1ChartEl" class="chart-container"></div>
+                <div class="chart-pagination" id="l1ChartPagination">
+                  <div class="filter-wrap" id="l1PageSizeWrap">
+                    <span class="page-size-select" onclick="toggleFilterMenu('l1PageSizeWrap')">Show at a time: <span id="l1PageSizeVal">25</span> <span class="material-icons" style="font-size:16px">arrow_drop_down</span></span>
+                    <div class="filter-menu" style="width:110px">
+                      <div class="menu-item" onclick="setChartPageSize('l1',25)">25</div>
+                      <div class="menu-item" onclick="setChartPageSize('l1',50)">50</div>
+                      <div class="menu-item" onclick="setChartPageSize('l1',100)">100</div>
+                      <div class="menu-item" onclick="setChartPageSize('l1','all')">All</div>
+                    </div>
+                  </div>
+                  <span class="page-range-text" id="l1PageRange">1–25 of 0</span>
+                  <div class="page-nav-btns">
+                    <button class="page-nav-btn" onclick="gotoChartPage('l1','first')" title="First page"><span class="material-icons">first_page</span></button>
+                    <button class="page-nav-btn" onclick="gotoChartPage('l1','prev')" title="Previous page"><span class="material-icons">chevron_left</span></button>
+                    <button class="page-nav-btn" onclick="gotoChartPage('l1','next')" title="Next page"><span class="material-icons">chevron_right</span></button>
+                    <button class="page-nav-btn" onclick="gotoChartPage('l1','last')" title="Last page"><span class="material-icons">last_page</span></button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1066,6 +1095,24 @@
                   <span class="chart-legend-item" role="button" tabindex="0" aria-pressed="false" data-key="openhist" onclick="toggleChartLegend('l2','openhist',this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleChartLegend('l2','openhist',this);}"><span class="chart-legend-dot" style="background:#e1e4ee"></span>Open - Historical</span>
                 </div>
                 <div id="l2ChartEl" class="chart-container"></div>
+                <div class="chart-pagination" id="l2ChartPagination">
+                  <div class="filter-wrap" id="l2PageSizeWrap">
+                    <span class="page-size-select" onclick="toggleFilterMenu('l2PageSizeWrap')">Show at a time: <span id="l2PageSizeVal">25</span> <span class="material-icons" style="font-size:16px">arrow_drop_down</span></span>
+                    <div class="filter-menu" style="width:110px">
+                      <div class="menu-item" onclick="setChartPageSize('l2',25)">25</div>
+                      <div class="menu-item" onclick="setChartPageSize('l2',50)">50</div>
+                      <div class="menu-item" onclick="setChartPageSize('l2',100)">100</div>
+                      <div class="menu-item" onclick="setChartPageSize('l2','all')">All</div>
+                    </div>
+                  </div>
+                  <span class="page-range-text" id="l2PageRange">1–25 of 0</span>
+                  <div class="page-nav-btns">
+                    <button class="page-nav-btn" onclick="gotoChartPage('l2','first')" title="First page"><span class="material-icons">first_page</span></button>
+                    <button class="page-nav-btn" onclick="gotoChartPage('l2','prev')" title="Previous page"><span class="material-icons">chevron_left</span></button>
+                    <button class="page-nav-btn" onclick="gotoChartPage('l2','next')" title="Next page"><span class="material-icons">chevron_right</span></button>
+                    <button class="page-nav-btn" onclick="gotoChartPage('l2','last')" title="Last page"><span class="material-icons">last_page</span></button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1417,17 +1464,21 @@ function deptStatsForUser(user) {
    "Departments" L2 sub-tab. */
 function deptRowsForUser(user) {
   const map = deptStatsForUser(user);
-  return user.activeDepts.map(dn => Object.assign({ name: dn }, map[dn]));
+  let depts = user.activeDepts;
+  if (appliedFilters.depts.size) depts = depts.filter(dn => appliedFilters.depts.has(dn));
+  return depts.map(dn => Object.assign({ name: dn }, map[dn]));
 }
 
 /* All users active in a given department, each scoped to their activity within
    that department, for the Compare panel's nested table. The focus user is
-   flagged and sorted first. */
+   flagged and sorted first, and always shown regardless of the active
+   User/Role filters — they're the explicit subject of this comparison, not
+   an incidental list entry that should disappear out from under the panel. */
 function usersInDept(deptName, focusUser) {
   const rows = getAllUsers().filter(u => u.activeDepts.includes(deptName)).map(u => {
     const slice = deptStatsForUser(u)[deptName];
     return Object.assign({}, u, slice, { focus: u.id === focusUser.id });
-  });
+  }).filter(r => r.focus || userPassesFilters(r));
   rows.sort((a, b) => {
     if (a.focus && !b.focus) return -1;
     if (b.focus && !a.focus) return 1;
@@ -1579,6 +1630,39 @@ let sortState = {
 };
 let l1Chart = null, l2Chart = null;
 let chartHiddenSeries = { l1: new Set(), l2: new Set() };
+// 'size' is a row count (25/50/100) or the string 'all' (show every row on one page).
+let chartPageState = { l1: { size: 25, page: 0 }, l2: { size: 25, page: 0 } };
+
+/* Global header filters (Department / User / Role). Each Set holds the
+   applied selections; an empty Set means "no restriction" for that
+   dimension. Keyed by name rather than id — usersForDept() mints its own
+   per-department synthetic ids for a department's row list, distinct from
+   the deduped ids getAllUsers() assigns, so name is the one identity that's
+   stable across both. */
+let appliedFilters = { depts: new Set(), users: new Set(), roles: new Set() };
+
+function userPassesFilters(u) {
+  if (appliedFilters.roles.size && !appliedFilters.roles.has(u.role)) return false;
+  if (appliedFilters.users.size && !appliedFilters.users.has(u.name)) return false;
+  if (appliedFilters.depts.size) {
+    const active = u.activeDepts || [u.homeDept];
+    if (!active.some(dn => appliedFilters.depts.has(dn))) return false;
+  }
+  return true;
+}
+
+function deptPassesFilters(d) {
+  if (appliedFilters.depts.size && !appliedFilters.depts.has(d.name)) return false;
+  // A department aggregate's own numbers are fixed mock totals, not summed
+  // live from its users, so a User/Role filter can't shrink them — instead
+  // it decides whether the department row shows up at all, based on whether
+  // any of its users would still pass that filter.
+  if (appliedFilters.users.size || appliedFilters.roles.size) {
+    const hasMatch = getAllUsers().some(u => (u.activeDepts || [u.homeDept]).includes(d.name) && userPassesFilters(u));
+    if (!hasMatch) return false;
+  }
+  return true;
+}
 
 const COLS_USER = [
   { key: 'variances',    label: 'Total Variances', sortKey: 'variances' },
@@ -1593,21 +1677,21 @@ const COLS_USER = [
 ═══════════════════════════════════════════════════════════════ */
 function setL1Tab(tab) {
   currentTab = tab; drill = null; l2SubTab = 'drugs';
-  viewMode.l1 = 'table'; searchQuery.l1 = '';
+  viewMode.l1 = 'table'; searchQuery.l1 = ''; chartPageState.l1.page = 0;
   document.getElementById('l1SearchInput').value = '';
   render();
 }
 
 function openUserDrill(id, fromDeptName) {
   drill = { type: 'user', id: id, from: fromDeptName ? { dept: fromDeptName } : 'top' };
-  l2SubTab = 'drugs'; viewMode.l2 = 'table'; searchQuery.l2 = '';
+  l2SubTab = 'drugs'; viewMode.l2 = 'table'; searchQuery.l2 = ''; chartPageState.l2.page = 0;
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function openDeptDrill(name) {
   drill = { type: 'dept', name: name };
-  l2SubTab = 'drugs'; viewMode.l2 = 'table'; searchQuery.l2 = '';
+  l2SubTab = 'drugs'; viewMode.l2 = 'table'; searchQuery.l2 = ''; chartPageState.l2.page = 0;
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1623,7 +1707,7 @@ function backFromDrill() {
   }
   drill = { type: 'dept', name: drill.from.dept };
   l2SubTab = 'users';
-  viewMode.l2 = 'table'; searchQuery.l2 = '';
+  viewMode.l2 = 'table'; searchQuery.l2 = ''; chartPageState.l2.page = 0;
   render();
 }
 
@@ -1640,7 +1724,7 @@ function animateBackToL1() {
 
   setTimeout(function () {
     drill = null;
-    viewMode.l2 = 'table'; searchQuery.l2 = '';
+    viewMode.l2 = 'table'; searchQuery.l2 = ''; chartPageState.l2.page = 0;
     render();
     l2El.classList.remove('view-anim-out');
 
@@ -1656,7 +1740,7 @@ function animateBackToL1() {
 }
 
 function setL2SubTab(tab) {
-  l2SubTab = tab; viewMode.l2 = 'table'; searchQuery.l2 = '';
+  l2SubTab = tab; viewMode.l2 = 'table'; searchQuery.l2 = ''; chartPageState.l2.page = 0;
   document.getElementById('l2SearchInput').value = '';
   render();
 }
@@ -1672,7 +1756,12 @@ function setViewMode(scope, mode) {
 
 function onSearch(scope, val) {
   searchQuery[scope] = (val || '').toLowerCase();
+  chartPageState[scope].page = 0; // a new search is a new result set — start back on page 1
   if (scope === 'l1') renderL1Table(); else renderL2Table();
+  // The chart is only (re)built when you switch into chart view (see
+  // setViewMode) — if it's already the active view, a search needs to
+  // rebuild it too, or typing does nothing until you toggle away and back.
+  if (viewMode[scope] === 'chart') renderChart(scope);
 }
 
 function sortBy(tableKey, key) {
@@ -1695,7 +1784,43 @@ function toggleFilterMenu(id, chipId) {
   if (!wasOpen) {
     document.getElementById(id).classList.add('open');
     if (chipId) document.getElementById(chipId).classList.add('active');
+    // Rebuild the checkbox list from the last-applied filter state (not
+    // whatever was left checked from a previous open-without-Apply) and
+    // clear any leftover search text, so Cancel always has something
+    // consistent to revert to.
+    if (id === 'deptWrap') { document.getElementById('deptFilterSearch').value = ''; renderDeptFilterOptions(''); }
+    if (id === 'userWrap') { document.getElementById('userFilterSearch').value = ''; renderUserFilterOptions(''); }
+    if (id === 'roleWrap') { renderRoleFilterOptions(); }
   }
+}
+function setAllFilterCheckboxes(containerId, checked) {
+  document.querySelectorAll('#' + containerId + ' input[type=checkbox]').forEach(cb => { cb.checked = checked; });
+}
+function updateFilterChip(chipId, label, count) {
+  const chip = document.getElementById(chipId);
+  chip.textContent = count ? label + ' (' + count + ')' : label;
+  chip.classList.toggle('active', count > 0);
+}
+function applyDeptFilter() {
+  appliedFilters.depts = new Set(Array.from(document.querySelectorAll('#deptFilterOptions input:checked')).map(cb => cb.value));
+  updateFilterChip('deptChip', 'Department', appliedFilters.depts.size);
+  closeFilterMenu('deptWrap');
+  chartPageState.l1.page = 0; chartPageState.l2.page = 0;
+  render();
+}
+function applyUserFilter() {
+  appliedFilters.users = new Set(Array.from(document.querySelectorAll('#userFilterOptions input:checked')).map(cb => cb.value));
+  updateFilterChip('userChip', 'User', appliedFilters.users.size);
+  closeFilterMenu('userWrap');
+  chartPageState.l1.page = 0; chartPageState.l2.page = 0;
+  render();
+}
+function applyRoleFilter() {
+  appliedFilters.roles = new Set(Array.from(document.querySelectorAll('#roleFilterOptions input:checked')).map(cb => cb.value));
+  updateFilterChip('roleChip', 'Role', appliedFilters.roles.size);
+  closeFilterMenu('roleWrap');
+  chartPageState.l1.page = 0; chartPageState.l2.page = 0;
+  render();
 }
 function closeFilterMenu(id) {
   const wrap = document.getElementById(id);
@@ -1765,7 +1890,7 @@ function renderL1() {
 }
 
 function getL1List() {
-  let list = currentTab === 'by-user' ? getAllUsers().slice() : getAllDepartments().slice();
+  let list = currentTab === 'by-user' ? getAllUsers().filter(userPassesFilters) : getAllDepartments().filter(deptPassesFilters);
   const q = searchQuery.l1;
   if (q) list = list.filter(r => r.name.toLowerCase().includes(q));
   const st = currentTab === 'by-user' ? sortState.byUser : sortState.byDept;
@@ -1925,7 +2050,7 @@ function getL2List() {
     list = l2SubTab === 'drugs' ? drugRowsForUser(u) : deptRowsForUser(u);
   } else {
     const d = currentDrillDept();
-    list = l2SubTab === 'drugs' ? drugsForDept(d.id).map(dr => Object.assign({ name: drugDisplayName(dr) }, dr)) : usersForDept(d.id);
+    list = l2SubTab === 'drugs' ? drugsForDept(d.id).map(dr => Object.assign({ name: drugDisplayName(dr) }, dr)) : usersForDept(d.id).filter(userPassesFilters);
   }
   const q = searchQuery.l2;
   if (q) list = list.filter(r => r.name.toLowerCase().includes(q));
@@ -2042,12 +2167,29 @@ function renderL2Table() {
 function renderChart(scope) {
   const el = document.getElementById(scope === 'l1' ? 'l1ChartEl' : 'l2ChartEl');
   if (!el) return;
+
+  const fullList = (scope === 'l1' ? getL1List() : getL2List()).slice().sort((a, b) => (b.variances || 0) - (a.variances || 0));
+  const total = fullList.length;
+  const state = chartPageState[scope];
+  const pageSize = state.size === 'all' ? Math.max(total, 1) : state.size;
+  const maxPage = Math.max(0, Math.ceil(total / pageSize) - 1);
+  if (state.page > maxPage) state.page = maxPage;
+  const start = state.page * pageSize;
+  const end = Math.min(start + pageSize, total);
+  // Reversed so the highest-variance row of the page renders at the top of
+  // the (bottom-up) category axis, matching the table's descending sort.
+  const list = fullList.slice(start, end).reverse();
+  // The container has a fixed default height (460px) sized for ~16 bars; once
+  // a page holds more rows than that (e.g. "Show at a time: 100"), grow the
+  // container so bars don't get crushed. Set this *before* echarts.init so
+  // it picks up the right size on first paint rather than needing a resize().
+  el.style.height = Math.max(460, list.length * 28 + 60) + 'px';
+
   let chartRef = scope === 'l1' ? l1Chart : l2Chart;
   if (chartRef) chartRef.dispose();
   chartRef = echarts.init(el);
   if (scope === 'l1') l1Chart = chartRef; else l2Chart = chartRef;
 
-  const list = (scope === 'l1' ? getL1List() : getL2List()).slice().sort((a, b) => (b.variances || 0) - (a.variances || 0)).slice(0, 20).reverse();
   const names = list.map(r => r.name);
   const statuses = [
     { key: 'unreconciled', name: 'Unable to Reconcile', color: '#646a9a' },
@@ -2078,6 +2220,36 @@ function renderChart(scope) {
     series: series
   });
   syncChartLegendUI(scope);
+  renderChartPaginationUI(scope, total, start, end, maxPage);
+}
+
+/* ── Chart pagination ("Show at a time" + first/prev/next/last) ──────── */
+function renderChartPaginationUI(scope, total, start, end, maxPage) {
+  const state = chartPageState[scope];
+  document.getElementById(scope + 'PageSizeVal').textContent = state.size === 'all' ? 'All' : state.size;
+  document.getElementById(scope + 'PageRange').textContent = (total ? start + 1 : 0) + '–' + end + ' of ' + fmtNum(total);
+  const btns = document.querySelectorAll('#' + scope + 'ChartPagination .page-nav-btn');
+  btns[0].disabled = btns[1].disabled = (state.page === 0);
+  btns[2].disabled = btns[3].disabled = (state.page >= maxPage);
+}
+
+function setChartPageSize(scope, size) {
+  chartPageState[scope].size = size;
+  chartPageState[scope].page = 0;
+  closeFilterMenu(scope + 'PageSizeWrap');
+  renderChart(scope);
+}
+
+function gotoChartPage(scope, dir) {
+  const state = chartPageState[scope];
+  const total = (scope === 'l1' ? getL1List() : getL2List()).length;
+  const pageSize = state.size === 'all' ? Math.max(total, 1) : state.size;
+  const maxPage = Math.max(0, Math.ceil(total / pageSize) - 1);
+  if (dir === 'first') state.page = 0;
+  else if (dir === 'prev') state.page = Math.max(0, state.page - 1);
+  else if (dir === 'next') state.page = Math.min(maxPage, state.page + 1);
+  else if (dir === 'last') state.page = maxPage;
+  renderChart(scope);
 }
 
 function syncChartLegendUI(scope) {
@@ -2434,15 +2606,29 @@ function toggleDrawer() {
 /* ════════════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════════ */
-function buildFilterOptions() {
-  document.getElementById('deptFilterOptions').innerHTML = getAllDepartments().map(d =>
-    '<label class="menu-option"><input type="checkbox">' + d.name + '</label>').join('');
-  const users = getAllUsers();
-  document.getElementById('userFilterOptions').innerHTML = users.map(u =>
-    '<label class="menu-option"><input type="checkbox">' + u.name + ' (' + u.role + ')</label>').join('');
-  const roles = Array.from(new Set(users.map(u => u.role)));
+function renderDeptFilterOptions(q) {
+  q = (q || '').toLowerCase();
+  const items = getAllDepartments().filter(d => !q || d.name.toLowerCase().includes(q));
+  document.getElementById('deptFilterOptions').innerHTML = items.length ? items.map(d =>
+    '<label class="menu-option"><input type="checkbox" value="' + d.name + '"' + (appliedFilters.depts.has(d.name) ? ' checked' : '') + '>' + d.name + '</label>').join('')
+    : '<div class="menu-empty">No matches</div>';
+}
+function renderUserFilterOptions(q) {
+  q = (q || '').toLowerCase();
+  const items = getAllUsers().filter(u => !q || u.name.toLowerCase().includes(q));
+  document.getElementById('userFilterOptions').innerHTML = items.length ? items.map(u =>
+    '<label class="menu-option"><input type="checkbox" value="' + u.name + '"' + (appliedFilters.users.has(u.name) ? ' checked' : '') + '>' + u.name + ' (' + u.role + ')</label>').join('')
+    : '<div class="menu-empty">No matches</div>';
+}
+function renderRoleFilterOptions() {
+  const roles = Array.from(new Set(getAllUsers().map(u => u.role)));
   document.getElementById('roleFilterOptions').innerHTML = roles.map(r =>
-    '<label class="menu-option"><input type="checkbox">' + r + '</label>').join('');
+    '<label class="menu-option"><input type="checkbox" value="' + r + '"' + (appliedFilters.roles.has(r) ? ' checked' : '') + '>' + r + '</label>').join('');
+}
+function buildFilterOptions() {
+  renderDeptFilterOptions('');
+  renderUserFilterOptions('');
+  renderRoleFilterOptions();
 }
 
 function init() {
